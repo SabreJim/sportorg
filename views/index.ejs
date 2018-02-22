@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>A New Startup: Sign Up Today!</title>
+    <title>Sport Org</title>
 
     <!-- Bootstrap core CSS -->
     <link href="<%= static_path + "/bootstrap/css/theme/" + theme + "/bootstrap.css" %>" rel="stylesheet">
@@ -26,7 +26,7 @@
           <li><a href="#">Blog</a></li>
           <li><a href="#">Press</a></li>
         </ul>
-        <h3 class="text-muted">A New Startup</h3>
+        <h3 class="text-muted">Sport Org</h3>
       </div>
 	  <% if (flask_debug === 'true') { %>
       <div class="alert alert-danger">
@@ -34,6 +34,7 @@
       </div>
       <% } %>
       <div id="signupSuccess" class="alert alert-success" style="display:none">
+        <h2>Pipeline is DEPLOYING code</h2>
         <p id="signupSuccessText">Thanks for signing up! You'll be among the first to know when we launch.</p>
       </div>
       <div id="signupDuplicate" class="alert alert-success" style="display:none">

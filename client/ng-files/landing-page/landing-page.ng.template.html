@@ -1,0 +1,32 @@
+<div class="carousel-wrapper">
+    <div id="landingCarousel" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+            <li ng-repeat="slideItem in carousel.slides track by $index"  data-target="#landingCarousel" data-slide-to="slideItem.$index" class="slideItem.class"></li>
+        </ol>
+        <div class="carousel-inner">
+            <div ng-repeat="slideItem in carousel.slides track by $index"
+                 ng-class="{'active' : slideItem.class == 'active'}"
+                 class="item carousel-item">
+                <img class="d-block col-9 landing-slide left pd-0" ng-src="{{slideItem.image}}" alt="{{slideItem.title}}">
+                <div class="slide-sidebar col-3 right pd-0">
+                    <div class="sidebar-content">
+                        <h3>{{slideItem.title}}</h3>
+                        <p ng-bind-html="slideItem.text"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#landingCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#landingCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+</div>
+<div class="details-wrapper">
+    <h2>About Fencing in New Brunswick</h2>
+    <p>More content to be put in here ...</p>
+</div>

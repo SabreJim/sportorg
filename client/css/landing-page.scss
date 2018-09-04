@@ -1,0 +1,31 @@
+@import '_settings';
+.carousel-wrapper {
+
+  .landing-slide {
+    object-fit: cover;
+    height: $carosel-height !important;
+  }
+  .slide-sidebar {
+    background-color: #202020;
+    color: white;
+    height: $carosel-height !important;
+
+    .sidebar-content {
+      padding: 20px;
+
+      h3{
+        color:white;
+        font-size: 2.0rem;
+        text-align: center;
+      }
+      p {
+        color:white;
+        font-size: 1.1rem;
+        text-align: left;
+        overflow-y: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+  }
+}

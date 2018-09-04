@@ -1,0 +1,36 @@
+<div class="nav-header">
+    <div class="header-top clearing-container">
+        <div class="header-logo">
+            <a ui-sref="home">
+                <img class="logo-img" src="/images/header-logo-lg.png" />
+            </a>
+        </div>
+        <div class="header-bar"></div>
+        <div class="header-main clearing-container">
+            <div class="header-title">
+                <h2>{{headerTitle}}</h2>
+            </div>
+            <ul class="nav nav-bar left mg-top-20">
+                <li class="nav-item" ng-repeat="navItem in navConfig.links">
+                    <a class="nav-link" ui-sref="{{navItem.sref}}" ui-sref-active="{{navItem.active}}">{{navItem.text}}</a>
+                </li>
+            </ul>
+            <ul class="nav nav-bar right mg-right-20 mg-top-20">
+                <li class="nav-item" ng-show="session.isLoggedIn">
+                    <a class="user-name">{{session.userName}}</a>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="g-signin2 btn btn-default" data-onsuccess="googleSignIn" data-gapiscan="true" data-onload="true">
+                        <img class="auth-icon" src="/images/google-favicon-512.png"/>
+                    </button>
+                </li>
+                <li class="nav-item" ng-if="!session.isLoggedIn">
+                    <button type="button" class="btn btn-info" ng-click="login()">Log in</button>
+                </li>
+                <li class="nav-item" ng-if="session.isLoggedIn">
+                    <button type="button" class="btn btn-secondary" ng-click="logout()">Log out</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

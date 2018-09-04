@@ -6,6 +6,7 @@ const bodyParser = require('koa-body');
 const KoaStatic = require('koa-static');
 const DynamoLoader = require('./middleware/dynamo-loader');
 const routes = require('./server/routes');
+const staticdir = process.env.NODE_ENV === 'production' ? 'dist.prod' : 'dist.dev';
 
 const runServer = async function(){
     AWS.config.update({
@@ -17,33 +18,27 @@ const runServer = async function(){
         endpoint: "http://localhost:9999"
     };
 
-    var sns = new AWS.SNS();
+    const sns = new AWS.SNS();
 
-    var ddb = new AWS.DynamoDB();
+    const ddb = new AWS.DynamoDB();
 
-    var ddbTable = process.env.STARTUP_SIGNUP_TABLE;
-    var snsTopic = process.env.NEW_SIGNUP_TOPIC;
+    const ddbTable = process.env.STARTUP_SIGNUP_TABLE;
+    const snsTopic = process.env.NEW_SIGNUP_TOPIC;
     const app = new Koa();
 
     app.use(DynamoLoader.buildDBConnections(config));
     app.use(bodyParser());
-    // app.use(async function (ctx, next) {
-    //     await bodyParser();
-    //     await next();
-    // });
-        app.use(KoaStatic(__dirname + '/client/pages'));
+    app.use(KoaStatic(__dirname + '/' + staticdir));
 
-   // app.use(bodyParser.urlencoded({extended:false}));
-   // app.use(bodyParser.json());
-        app.use(routes.securedRoutes(ddb));
+
+    app.use(routes.securedRoutes(ddb));
         //app.use(routes.pages().routes());
         //app.use(routes.pages().allowedMethods());
 
 
 
-        var port = process.env.PORT || 3000;
-        //http.createServer(app.callback()).listen(port);
-        var server = app.listen(port);
+        const port = process.env.PORT || 3000;
+        const server = app.listen(port);
 
         console.log('Server running at http://127.0.0.1:' + port + '/');
 

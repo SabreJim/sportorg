@@ -1,21 +1,12 @@
-# AWS Elastic Beanstalk Express Sample App
-This sample application uses the [Express](https://expressjs.com/) framework and [Bootstrap](http://getbootstrap.com/) to build a simple, scalable customer signup form that is deployed to [AWS Elastic Beanstalk](http://aws.amazon.com/elasticbeanstalk/). The application stores data in [Amazon DynamoDB](http://aws.amazon.com/dynamodb/) and publishes notifications to the [Amazon Simple Notification Service (SNS)](http://aws.amazon.com/sns/) when a customer fills out the form.
+# AWS Angular (Bootstrap) and NodeJS application for serving regional sport organizations
 
 ## Features
-### Themes
-The code includes several Bootstrap themes from [bootswatch.com](http://bootswatch.com/). You can dynamically change the active theme by setting the THEME environment variable in the [Elastic Beanstalk Management Console](https://console.aws.amazon.com/elasticbeanstalk):
+* google OAuth2 for users
+* manage content for updating members
+* create and run tournaments within the application
 
-![](misc/theme-flow.png)
 
-Installed themes include:
-
-* [amelia](http://bootswatch.com/amelia)
-* [default](http://bootswatch.com/default)
-* [flatly](http://bootswatch.com/flatly)
-* [slate](http://bootswatch.com/slate)
-* [united](http://bootswatch.com/united)
-
-You can get started using the following steps:
+### creating an AWS environment
   1. [Install the AWS Elastic Beanstalk Command Line Interface (CLI)](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html).
   2. Create an IAM Instance Profile named **aws-elasticbeanstalk-sample-role** with the policy in [iam_policy.json](iam_policy.json). For more information on how to create an IAM Instance Profile, see [Create an IAM Instance Profile for Your Amazon EC2 Instances](https://docs.aws.amazon.com/codedeploy/latest/userguide/how-to-create-iam-instance-profile.html).
   3. Run `eb init -r <region> -p "Node.js"` to initialize the folder for use with the CLI. Replace `<region>` with a region identifier such as `us-west-2` (see [Regions and Endpoints](https://docs.amazonaws.cn/en_us/general/latest/gr/rande.html#elasticbeanstalk_region) for a full list of region identifiers). For interactive mode, run `eb init` then,
@@ -30,3 +21,12 @@ You can get started using the following steps:
     2. Enter the CNAME prefix you want to use for this environment.
   5. Once the environment creation process completes, run `eb open` to open the application in a browser.
   6. Run `eb terminate --all` to clean up.
+
+### configuring local DynamoDB
+1. add steps here
+
+### deploying changes to AWS
+1. commit and push to gitHub
+2. create an environment (pipeline is currently looking for one called "sportorg")
+3. check that the pipeline deploys to environment: https://us-east-2.console.aws.amazon.com/codepipeline/home?region=us-east-2#/view/sportorg-pipe
+4. check the environment to verify it is up and running: https://us-east-2.console.aws.amazon.com/elasticbeanstalk/home?region=us-east-2#/applications

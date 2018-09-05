@@ -42,7 +42,7 @@
     "shelljs": "^0.2.6"
   },
   "scripts": {
-    "postinstall": "bower install",
+    "postinstall": "gulp clean-build-app-dev",
     "prestart": "npm install",
     "start": "node server.js"
   }

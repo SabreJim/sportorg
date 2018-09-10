@@ -1,4 +1,5 @@
 const KoaRouter = require('koa-router');
+const Session = require('./response-handler/session');
 
 const awsExample = function (){
     const awsHandler = new KoaRouter();
@@ -104,13 +105,13 @@ const securedRoutes = function (dynamodb) {
     });
 
     secured.get('/rest/getter', (ctx) => {
-        console.log("getter", ctx);
-
-
-
         ctx.status = 200;
         ctx.body = {name: "works"};
     });
+
+    secured.get('/rest/login',  (ctx) => Session.login(ctx));
+    secured.get('/rest/logout', (ctx) => Session.logout(ctx));
+
 
     return secured.middleware();
 };

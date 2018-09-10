@@ -13,6 +13,17 @@ var paths = {
     styles: ['./client/css/**/*.css', './client/css/**/*.scss'],
     images: './client/images/**/*',
     index: './client/pages/index.html',
+    clientSrc: [
+        "node_modules/jquery/dist/jquery.js",
+        "node_modules/jquery.cookie/jquery.cookie.js",
+        "node_modules/jquery.placeholder/jquery.placeholder.js",
+        'node_modules/angular/angular.js',
+        'node_modules/angular-ui-router/release/angular-ui-router.js',
+        'node_modules/angular-animate/angular-animate.js',
+        'node_modules/angular-sanitize/angular-sanitize.js',
+        'node_modules/bootstrap/dist/js/bootstrap.js',
+        'node_modules/foundation/js/foundation/foundation.js'
+    ],
     partials: ['client/**/*.html', '!client/pages/index.html'],
     distDev: './dist.dev',
     distProd: './dist.prod',
@@ -63,8 +74,11 @@ pipes.builtAppScriptsProd = function() {
 };
 
 pipes.builtVendorScriptsDev = function() {
-    return gulp.src(bowerFiles( ))
-        .pipe(gulp.dest('dist.dev/bower_components'));
+    // return gulp.src(bowerFiles( ))
+    //     .pipe(gulp.dest('dist.dev/bower_components'));
+
+    return gulp.src(paths.clientSrc)
+        .pipe(gulp.dest('dist.dev/client_lib'));
 };
 
 pipes.builtVendorScriptsProd = function() {
@@ -243,13 +257,13 @@ gulp.task('build-app-dev', pipes.builtAppDev);
 gulp.task('build-app-prod', pipes.builtAppProd);
 
 // cleans and builds a complete dev environment
-gulp.task('clean-build-app-dev', ['clean-dev'], pipes.builtAppDev);
+gulp.task('rebuild-dev', ['clean-dev'], pipes.builtAppDev);
 
 // cleans and builds a complete prod environment
 gulp.task('clean-build-app-prod', ['clean-prod'], pipes.builtAppProd);
 
 // clean, build, and watch live changes to the dev environment
-gulp.task('watch-dev', ['clean-build-app-dev', 'validate-devserver-scripts'], function() {
+gulp.task('watch-dev', ['rebuild-dev', 'validate-devserver-scripts'], function() {
 
     // start nodemon to auto-reload the dev server
     plugins.nodemon({ script: 'server.js', ext: 'js', watch: ['devServer/'], env: {NODE_ENV : 'development'} })

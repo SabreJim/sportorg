@@ -1,6 +1,6 @@
 /*jshint esversion: 6 */
 angular.module('SportOrg')
-.factory('SessionService', function() {
+.factory('SessionService', [ '$http' , function($http) {
     const getDefaultSession = function(){
         return {
             isLoggedIn: false,
@@ -18,10 +18,12 @@ angular.module('SportOrg')
     };
 
     const login = function(){
-        // TODO: send login request
-        session.userName = "Jim";
-        session.isLoggedIn = true;
-        return session;
+        return $http.get('/rest/login?user=Jim').then(function(response){
+            console.log("login", response);
+            session = response.data;
+            return session;
+        });
+
     };
 
     const getSession = function() {
@@ -42,4 +44,4 @@ angular.module('SportOrg')
         logout,
         getSession
     });
-});
+}]);

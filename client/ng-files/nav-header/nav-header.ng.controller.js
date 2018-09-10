@@ -1,6 +1,6 @@
 /*jshint esversion: 6 */
 angular.module('SportOrg')
-    .controller('navHeader', ['$scope', 'SessionService', function($scope, SessionService) {
+    .controller('navHeader', ['$scope', 'SessionService', 'ConfigService', function($scope, SessionService, ConfigService) {
         $scope.headerTitle = $scope.headerTitle || "Fencing Escrime New Brunswick";
 
         // default configuration
@@ -17,6 +17,8 @@ angular.module('SportOrg')
             ]
         };
 
+        ConfigService.getMenus();
+
         const googleSignIn = function(googleUser){
             console.log("called callback");
             const profile = googleUser.getBasicProfile();
@@ -27,7 +29,9 @@ angular.module('SportOrg')
         $scope.session = SessionService.getSession();
 
         $scope.login = function(){
-            $scope.session = SessionService.login();
+            SessionService.login().then(function(session){
+                $scope.session = session;
+            });
         };
 
         $scope.logout = function(){

@@ -46,6 +46,7 @@
     "jshint-stylish": "^2.2.1",
     "main-bower-files": "^2.5.0",
     "method-override": "^2.1.2",
+    "node-sass": "^4.9.3",
     "popper.js": "^1.14.4",
     "protractor": "^5.4.1",
     "q": "^1.1.2",

@@ -2,7 +2,6 @@ var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')();
 var del = require('del');
 var es = require('event-stream');
-var bowerFiles = require('main-bower-files');
 var print = require('gulp-print');
 var Q = require('q');
 
@@ -82,11 +81,17 @@ pipes.builtVendorScriptsDev = function() {
 };
 
 pipes.builtVendorScriptsProd = function() {
-    return gulp.src(bowerFiles('**/*.js'))
-        .pipe(pipes.orderedVendorScripts())
+    return gulp.src(paths.clientSrc)
+        // .pipe(pipes.orderedVendorScripts())
         .pipe(plugins.concat('vendor.min.js'))
         .pipe(plugins.uglify())
         .pipe(gulp.dest(paths.distScriptsProd));
+
+    // return gulp.src(bowerFiles('**/*.js'))
+    //     .pipe(pipes.orderedVendorScripts())
+    //     .pipe(plugins.concat('vendor.min.js'))
+    //     .pipe(plugins.uglify())
+    //     .pipe(gulp.dest(paths.distScriptsProd));
 };
 
 pipes.validatedDevServerScripts = function() {
@@ -159,7 +164,7 @@ pipes.builtIndexDev = function() {
 
     return pipes.validatedIndex()
         .pipe(gulp.dest(paths.distDev)) // write first to get relative path for inject
-        .pipe(plugins.inject(orderedVendorScripts, {relative: true, name: 'bower'}))
+        .pipe(plugins.inject(orderedVendorScripts, {relative: true, name: 'npm'}))
         .pipe(plugins.inject(orderedAppScripts, {relative: true}))
         .pipe(plugins.inject(appStyles, {relative: true}))
         .pipe(gulp.dest(paths.distDev));
@@ -173,7 +178,7 @@ pipes.builtIndexProd = function() {
 
     return pipes.validatedIndex()
         .pipe(gulp.dest(paths.distProd)) // write first to get relative path for inject
-        .pipe(plugins.inject(vendorScripts, {relative: true, name: 'bower'}))
+        .pipe(plugins.inject(vendorScripts, {relative: true, name: 'npm'}))
         .pipe(plugins.inject(appScripts, {relative: true}))
         .pipe(plugins.inject(appStyles, {relative: true}))
         .pipe(plugins.htmlmin({collapseWhitespace: true, removeComments: true}))

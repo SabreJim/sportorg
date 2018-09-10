@@ -54,7 +54,6 @@
   },
   "scripts": {
     "prestart": "npm install",
-    "postinstall": "gulp rebuild-dev",
     "start": "node server.js"
   }
 }

@@ -5,6 +5,9 @@ var es = require('event-stream');
 var print = require('gulp-print');
 var Q = require('q');
 
+// remove all npm
+// npm uninstall `ls -1 node_modules | tr '/\n' ' '`
+
 // == PATH STRINGS ========
 
 var paths = {
@@ -15,7 +18,6 @@ var paths = {
     clientSrc: [
         "node_modules/jquery/dist/jquery.js",
         "node_modules/jquery.cookie/jquery.cookie.js",
-        "node_modules/jquery.placeholder/jquery.placeholder.js",
         'node_modules/angular/angular.js',
         'node_modules/angular-ui-router/release/angular-ui-router.js',
         'node_modules/angular-animate/angular-animate.js',

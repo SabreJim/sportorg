@@ -4,7 +4,7 @@ const AWS = require('aws-sdk');
 const Koa = require('koa');
 const bodyParser = require('koa-body');
 const KoaStatic = require('koa-static');
-const DynamoLoader = require('./middleware/dynamo-loader');
+const DynamoLoader = require('./server/middleware/dynamo-loader');
 const routes = require('./server/routes');
 const staticdir = process.env.NODE_ENV === 'production' ? 'dist.prod' : 'dist.dev';
 

@@ -1,0 +1,75 @@
+.coder-stack {
+  display:flex;
+  flex-direction: column;
+
+//  panel specific values
+  work-area {
+    min-height: 500px;
+
+    textarea, ui-codemirror {
+      height: 100%;
+      padding: 5px 0;
+      position: absolute;
+    }
+
+    .spacer-col{
+      flex: 0 0 0;
+
+      button {
+        left: 20%;
+        top: 30%;
+      }
+    }
+  }
+  question {
+    min-height: 25%;
+
+    .question-word {
+      padding-top: 15px;
+
+      span {
+        font-size: 3em;
+        color:black;
+        vertical-align:top;
+      }
+
+      .easy {
+        color: green;
+      }
+      .medium {
+        color: blue;
+      }
+      .question-number {
+        font-size: 4em;
+        padding: 16px 25px;
+        color:white;
+        background-color: darkgray;
+        border-radius: 40px;
+      }
+    }
+    .requirements, .question-content {
+      font-size: 1.4em;
+      ul {
+        margin: 3px 3px 3px 1.25em;
+      }
+    }
+  }
+  answer {
+    min-height: 25%;
+  }
+}
+.coder-panel{
+  border: 3px solid blue;
+  border-radius: 10px;
+  padding: 5px;
+  margin: 5px;
+  display: flex;
+  flex: 1 1 100%;
+
+  .main-component {
+    flex-direction: row;
+    flex: 1;
+    display: flex;
+  }
+}
+

@@ -11,10 +11,10 @@ var Q = require('q');
 // == PATH STRINGS ========
 
 var paths = {
-    scripts: 'client/**/*.js',
-    styles: ['./client/css/**/*.css', './client/css/**/*.scss'],
-    images: './client/images/**/*',
-    index: './client/pages/index.html',
+    scripts: 'client_old/**/*.js',
+    styles: ['./client_old/css/**/*.css', './client_old/css/**/*.scss'],
+    images: './client_old/images/**/*',
+    index: './client_old/pages/index.html',
     clientSrc: [
         "node_modules/jquery/dist/jquery.js",
         "node_modules/jquery.cookie/jquery.cookie.js",
@@ -22,10 +22,11 @@ var paths = {
         'node_modules/angular-ui-router/release/angular-ui-router.js',
         'node_modules/angular-animate/angular-animate.js',
         'node_modules/angular-sanitize/angular-sanitize.js',
+        'node_modules/angular-ui-codemirror/src/ui-codemirror.js',
         'node_modules/bootstrap/dist/js/bootstrap.js',
         'node_modules/foundation/js/foundation/foundation.js'
     ],
-    partials: ['client/**/*.html', '!client/pages/index.html'],
+    partials: ['client_old/**/*.html', '!client_old/pages/index.html'],
     distDev: './dist.dev',
     distProd: './dist.prod',
     distScriptsProd: './dist.prod/scripts',

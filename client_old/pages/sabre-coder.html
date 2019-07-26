@@ -1,0 +1,29 @@
+<div class="page-wrapper" ng-app="SabreCoder">
+    <div class="body-wrapper container-fluid ">
+        <div class="coder-stack" ng-class="{'col-9': showSidePanel, 'col-12' : !showSidePanel}"
+             ng-controller="sabreCoderCtrl">
+            <div style="width:100%; align-content: center">
+                <h1>Sabre Coder</h1>
+            </div>
+            <question class="coder-panel"
+                      question-number="question.questionNumber"
+                      question-type="question.questionType"
+                      question-content="question.questionContent"
+                      show-side-panel="showSidePanel"
+                      required-items="question.requiredItems"
+            ></question>
+            <work-area class="coder-panel"
+                      initial-code="question.defaultCode"
+                      user-code="userCode.codeText"
+                      final-output="userCode.output"
+            ></work-area>
+            <answer class="coder-panel"
+                    hint="question.answerHint"
+                    secret-answer="question.secretAnswer"
+
+            ></answer>
+        </div>
+        <div class="right" ng-class="{'col-3': showSidePanel, 'col-0' : !showSidePanel}">
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+<div class="menu-wrapper">
+  <ng-container *ngIf="isStuck" >
+    <div class="info-section" >
+      512 George Street
+    </div>
+  </ng-container>
+
+  <nav class="menu-stack">
+    <a  class="mat-button" mat-button="" routerLink="/" routerLinkActive="active-link" tabindex="0" >Home</a>
+    <a class="mat-button" mat-button="" routerLink="/classes" routerLinkActive="active-link" tabindex="0" >Classes</a>
+    <a class="mat-button" mat-button="" routerLink="/fencers" routerLinkActive="active-link" tabindex="0" >Fencers</a>
+    <a class="mat-button" mat-button="" routerLink="/events" routerLinkActive="active-link" tabindex="0" >Events</a>
+    <a class="mat-button" mat-button="" routerLink="/about-us" routerLinkActive="active-link" tabindex="0" >About Us</a>
+
+    <button mat-raised-button color="primary" [matMenuTriggerFor]="exampleMenu">
+      Version: {{version}}
+    </button>
+    <mat-menu #exampleMenu>
+      <ng-container *ngFor="let versionItem of availableVersions">
+        <button mat-menu-item (click)="exampleClick(versionItem)">{{versionItem}}</button>
+      </ng-container>
+    </mat-menu>
+
+</nav>
+</div>
+

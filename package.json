@@ -4,15 +4,18 @@
   "private": true,
   "main": "server.js",
   "dependencies": {
-    "@angular/cli": "^8.1.2",
-    "@angular/common": "^8.1.2",
-    "@angular/core": "^8.1.2",
-    "angular-ui-codemirror": "^0.3.0",
+    "@types/node": "^12.7.1",
     "aws-sdk": "latest",
+    "body-parser": "^1.19.0",
+    "camelcase": "^5.3.1",
+    "decamelize": "^3.2.0",
     "ejs": "latest",
     "express": "latest",
     "koa-static": "^4.0.2",
     "node-uuid": "^1.4.8",
+    "path": "^0.12.7",
+    "pg": "^7.12.1",
+    "ramda": "^0.26.1",
     "uuid": "^3.3.2",
     "zone.js": "^0.9.1"
   },
@@ -20,6 +23,9 @@
   "scripts": {
     "prestart": "npm install",
     "postinstall": "",
-    "start": "node server.js"
+    "start": "node http-server.js env=local",
+    "start-prod": "node http-server.js env=prod",
+    "build": "cd ./sportorg-client && ng build && cd ..",
+    "start-dev": "cd ./sportorg-client/ && ng serve --baseHref='/app/'"
   }
 }

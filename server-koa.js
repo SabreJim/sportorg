@@ -5,7 +5,7 @@ const Koa = require('koa');
 const bodyParser = require('koa-body');
 const KoaStatic = require('koa-static');
 const DynamoLoader = require('./server/middleware/dynamo-loader');
-const routes = require('./server/routes');
+const routes = require('./server/routes-old');
 const staticdir = process.env.NODE_ENV === 'production' ? 'dist.prod' : 'dist.dev';
 
 const runServer = async function(){

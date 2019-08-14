@@ -3,4 +3,5 @@
 # Elastic Beanstalk CLI Files
 .elasticbeanstalk/*
 node_modules/**
-client/node_modules/**
+sportorg-client/node_modules/**
+/node_modules/

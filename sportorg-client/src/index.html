@@ -1,12 +1,28 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>SportorgClient</title>
-  <base href="/">
-
+  <base href="/app/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Beaches Sabre Club East</title>
+  <meta name="description" content="The East Coast branch of the legendary Beaches Sabre Club">
+  <!--<meta name="google-signin-client_id" content="300411801360-qiag8kn5vs35hp8hktk4gp7or4g5o1gb.apps.googleusercontent.com">-->
+  <meta name="google-signin-client_id" content="300411801360-8ktpfroi6j274j2f6coap5ntjj6nur5j.apps.googleusercontent.com">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Google authentication -->
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+  <script type="text/javascript">
+      function googleSignIn(googleUser){
+          console.log("called callback");
+          const profile = googleUser.getBasicProfile();
+          console.log("after sign in", googleUser, profile, profile.getName());
+      }
+  </script>
+
 </head>
 <body>
   <app-root></app-root>

@@ -1,0 +1,24 @@
+.menu-wrapper{
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.info-section{
+  flex: 1 1 auto;
+}
+.menu-stack {
+  flex: 8 8 auto;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+}
+.user-menu {
+  flex: 1 1 auto;
+  justify-self: flex-end;
+}
+
+.active-link {
+  background-color: darkgoldenrod;
+}

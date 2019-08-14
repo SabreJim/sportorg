@@ -1,0 +1,30 @@
+.header-wrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+}
+
+.logo-img {
+  height: 18vh;
+  flex: 1 1 0;
+  align-self: flex-start;
+  padding-top: 12px;
+  padding-left: 12px;
+}
+h1 {
+  flex: 3 3 auto;
+  align-self: center;
+  text-align:center;
+  margin: 0;
+  font-size: 5vw;
+}
+
+.info-box {
+  flex: 1 1 150px;
+  display: flex;
+  align-self: center;
+  flex-flow: column nowrap;
+  justify-content: center;
+  padding: 12px;
+  line-height: 2px;
+}

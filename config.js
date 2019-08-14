@@ -1,7 +1,7 @@
 const config = {
     prod: {
         env: 'prod',
-        port: 80,
+        port: 8081,
         AWS: {
             region: "us-west-2",
             endpoint: "http://localhost:9999"

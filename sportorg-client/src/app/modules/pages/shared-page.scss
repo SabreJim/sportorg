@@ -1,0 +1,40 @@
+.page-wrapper {
+  margin: 20px 20px;
+  background-color: white;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+h1 {
+  text-align: center;
+  font-size: 4vw;
+  margin:0;
+}
+h2 {
+  text-align: start;
+  font-size: 3vw;
+  padding-left: 100px;
+  align-self: flex-start;
+}
+h3 {
+  text-align: start;
+  font-size: 2.5vw;
+  font-style: italic;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  padding-left: 50px;
+  align-self: flex-start;
+}
+h4 {
+  text-align: center;
+  font-size: 2vw;
+  font-style: italic;
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+p {
+  padding:0 40px;
+  max-width: 800px;
+  flex: 1 1 auto;
+}

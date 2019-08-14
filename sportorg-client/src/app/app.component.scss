@@ -5,8 +5,18 @@
   align-items: stretch;
 }
 
+org-menu-bar {
+  flex: 1 1 auto;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  position:sticky;
+  z-index: 1;
+  top:0;
+  background-color: white;
+}
+
 .page-header {
-  background-color: grey;
   flex: 1 1 auto;
   display: flex;
   flex-flow: column nowrap;
@@ -21,13 +31,21 @@
   height: 95vh;
 
   .main-content {
-    background-color: green;
     flex: 4 1 auto;
   }
 
   .side-bar-content {
-    background-color: blue;
     flex: 1 1 auto;
+    display:block;
+    padding: 20px;
+    min-width: 250px;
+    max-width: 450px;
+  }
+
+  @media (max-width: 800px) {
+    .side-bar-content {
+      display: none !important;
+    }
   }
 }
 

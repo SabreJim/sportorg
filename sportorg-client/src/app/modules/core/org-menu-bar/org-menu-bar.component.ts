@@ -1,4 +1,5 @@
 import {Component, OnInit} from "@angular/core";
+import {RecentItem} from "../models/ui-objects";
 
 
 @Component({
@@ -9,12 +10,14 @@ import {Component, OnInit} from "@angular/core";
 export class OrgMenuBarComponent implements OnInit {
   public isStuck: false;
 
-  public version = '0.0.1';
-  public availableVersions = ['0.0.1', '1.0.0', '2.e'];
+  public recentItems: RecentItem[] = [
+    {title: 'CFF Registration', link: 'http://www.fencing.ca', type: 'external'},
+    {title: 'Beaches Renovations', link: '/about-us', type: 'internal'},
+    {title: 'New Class Structure', link: '/classes', type: 'internal'}
+  ];
 
-  public exampleClick = (value: string) => {
-    console.log('got click', value, this.version);
-    this.version = value;
+  public exampleClick = (value: RecentItem) => {
+    console.log('got click', value);
   }
   ngOnInit(): void {
 

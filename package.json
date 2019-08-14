@@ -20,7 +20,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "prestart": "npm run install-client",
+    "prestart": "",
     "postinstall": "",
     "start-local": "node http-server.js env=local",
     "start": "node http-server.js env=prod",

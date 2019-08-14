@@ -1,6 +1,7 @@
 const config = {
     prod: {
         env: 'prod',
+        port: 80,
         AWS: {
             region: "us-west-2",
             endpoint: "http://localhost:9999"
@@ -15,6 +16,7 @@ const config = {
     },
     local: {
         env: 'local',
+        port: 8080,
         AWS: {
             accessKeyId: 'abcde',
             secretAccessKey: 'abcde',

@@ -1,7 +1,6 @@
 {
   "name": "sportorg",
   "version": "0.0.1",
-  "private": true,
   "main": "server.js",
   "dependencies": {
     "@types/node": "^12.7.1",

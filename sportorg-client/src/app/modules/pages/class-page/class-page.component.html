@@ -1,3 +1,18 @@
 <div class="page-wrapper">
-  <h1>Classes</h1>
+  <div class="season-selector">
+    <h4>Program Season to view</h4>
+    <mat-form-field >
+      <mat-label>Select a season:</mat-label>
+      <mat-select  [compareWith]="compareSeasons" [(ngModel)]="selectedSeason">
+        <mat-option *ngFor="let season of availableSeasons" [value]="season">
+          <strong>{{season.name}}</strong> ({{season.year}})</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+
+  <h1>Classes Schedule</h1>
+  <app-schedule-card
+    [scheduleItems]="currentScheduleItems"
+  ></app-schedule-card>
 </div>

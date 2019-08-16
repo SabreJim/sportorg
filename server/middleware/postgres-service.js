@@ -17,17 +17,18 @@ const cleanRows = (rows) => {
         }, row);
         return camelObj;
     }, rows);
-}
+};
 
-const runQuery = async (query, params) => {
+const runQuery = async (query, params = []) => {
     const conn = await DB.connect();
+    let safeParams = (R.is(Array, params)) ? params : [params];
     try {
-        const result = await conn.query(query, params);
+        const result = await conn.query(query, safeParams);
         console.log('PG Query:', query, result.rows[0]);
         return cleanRows(result.rows);
     } catch (dbError) {
         console.log('Error at Data level', dbError);
-        return {rows: [] };
+        return  [] ;
     } finally {
         console.log('releasing connection');
         conn.release();

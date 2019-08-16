@@ -1,45 +1,21 @@
 const Entity = require('../data-access/dynamo-entity-helper');
 const DB = require('../middleware/postgres-service');
+const Postgres = require('../middleware/postgres-service');
+const { returnResults } = require('../middleware/response-handler');
+
 const R = require('ramda');
 
 const getClass = async (ctx, req, res) => {
 
 };
 
-// build a query for classes where (year, season, minAge, maxAge, dayOfWeek, level) can be searched
-const buildQuery = (request) => {
-    let query = Entity.parseItem(request, 'year', 'N', ':y', '=', null);
-    query = Entity.parseItem(request, 'season', 'S', ':s', '=', query);
-    query = Entity.parseItem(request, 'minAge', 'N', ':minA', 'GE', query);
-    query = Entity.parseItem(request, 'maxAge', 'N', ':maxA', 'LE', query);
-    query = Entity.parseItem(request, 'dayOfWeek', 'S', ':d', '=', query);
-    query = Entity.parseItem(request, 'level', 'S', ':l', '=', query);
-    return query;
+const getAllClasses = async(req, res, next) => {
+    const requestedSeason = req.query.seasonId || 1 ;
+    const query = 'SELECT * FROM v_program_schedules where season_id = $1';
+    const classes = await Postgres.runQuery(query, [requestedSeason]);
+    returnResults(res, classes);
 };
 
-const searchClasses = async (ctx, req, res, next) => {
-    console.log('query', req.query);
-    let pgQ = await DB.runQuery('select * from class_levels');
-    console.log('PG WORKS?', pgQ);
-    res.json(pgQ);
-
-    // // 'season' is the partition key and MUST be included in any search
-    // if (R.has('season', req.query)) {
-    //     const query = buildQuery(req.query);
-    //     Entity.searchEntity(ctx, res, 'Classes', query).then((result) => {
-    //         console.log('RESPONSE in class', result);
-    //         res.json(result);
-    //     });
-    //
-    //
-    // } else {
-    //     Entity.getAllEntities(ctx, 'Classes').then((result) => {
-    //         console.log('SCANN back', result);
-    //         res.json(result);
-    //     });
-    //
-    // }
-};
 
 const addClass = async (ctx, req, res) => {
     let body = req.body;
@@ -61,7 +37,7 @@ const deleteClass = async (ctx, req, res) => {
 
 module.exports = {
     getClass,
-    searchClasses,
+    getAllClasses,
     addClass,
     updateClass,
     deleteClass

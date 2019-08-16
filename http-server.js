@@ -25,5 +25,5 @@ app.use('/app', express.static(path.join(__dirname, '/sportorg-client/dist/sport
 app.use('/', async (req, res) => {
     await res.redirect('/app');
 });
-const port = (config.port) ? config.port : 80;
+const port = (config.port) ? config.port : 8080;
 app.listen(port, () => console.log(`App listening on port: ${port}`));

@@ -24,6 +24,8 @@
     "@angular/router": "~8.1.2",
     "@types/angular-material": "^1.1.68",
     "@types/rx": "^4.1.1",
+    "jqwidgets-ng": "^8.1.4",
+    "jqwidgets-scripts": "^8.1.4",
     "rxjs": "~6.4.0",
     "tslib": "^1.9.0",
     "zone.js": "~0.9.1"

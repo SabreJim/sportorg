@@ -6,6 +6,7 @@ const Postgres = require('./middleware/postgres-service');
 
 const TableBuilder = require('./data-access/table-builder');
 const Classes = require('./response-handler/classes');
+const Lookups = require('./response-handler/lookups');
 
 const { curry } = require('ramda');
 
@@ -16,19 +17,13 @@ const createRouter = (config) => {
 
 
 // middleware that is specific to this router
-// router.use(function timeLog (req, res, next) {
-//     console.log('Time: ', Date.now())
-//     next()
-// })
-    // create the AWS middleware and use it on the appRouter
-    const sns = new AWS.SNS();
-
-    const ddb = new AWS.DynamoDB();
+//     router.use(function timeLog (req, res, next) {
+//         console.log('Time: ', Date.now())
+//         next()
+//     });
 
     const ctx = {};
 
-
-  // router.use(DynamoLoader.buildDBConnectionsXP(config.AWS, ctx));
 
     // define the home page route
     router.get('/fencers', function (req, res) {
@@ -40,11 +35,16 @@ const createRouter = (config) => {
         res.send('fencers');
     });
 
-    router.get('/rebuild-tables', curry(TableBuilder.rebuildTables)(ctx));
+    // router.get('/rebuild-tables', curry(TableBuilder.rebuildTables)(ctx));
+
+    // lookup item getters
+    router.get('/seasons', Lookups.getActiveSeasons);
+    router.get('/program-details', Lookups.getProgramDetails);
 
 
-    router.get('/classes/', curry(Classes.searchClasses)(ctx));
-    router.put('/classes', jsonBody, curry(Classes.addClass)(ctx));
+    router.get('/classes/', Classes.getAllClasses);
+
+    router.put('/classes', jsonBody, Classes.addClass);
 
     return router;
 };

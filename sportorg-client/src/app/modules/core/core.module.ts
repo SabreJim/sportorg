@@ -5,23 +5,30 @@ import {OrgMenuBarComponent} from "./org-menu-bar/org-menu-bar.component";
 import {RouterModule} from "@angular/router";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
+import {HttpClientModule} from "@angular/common/http";
+import { ScheduleCardComponent } from './schedule-card/schedule-card.component';
+import {jqxSchedulerModule} from "jqwidgets-ng/jqxscheduler";
 
 
 @NgModule({
   declarations: [
     OrgHeaderComponent,
-    OrgMenuBarComponent
+    OrgMenuBarComponent,
+    ScheduleCardComponent
   ],
   exports: [
     OrgHeaderComponent,
-    OrgMenuBarComponent
+    OrgMenuBarComponent,
+    ScheduleCardComponent
   ],
   imports: [
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    CommonModule
+    HttpClientModule,
+    CommonModule,
+    jqxSchedulerModule
   ],
   providers: [
 

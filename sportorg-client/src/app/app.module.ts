@@ -7,6 +7,7 @@ import {MaterialModule} from "./modules/material.module";
 import {PagesModule} from "./modules/pages/pages.module";
 import {CoreModule} from "./modules/core/core.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {jqxSchedulerModule} from "jqwidgets-ng/jqxscheduler";
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     BrowserAnimationsModule,
     MaterialModule,
     CoreModule,
-    PagesModule
+    PagesModule,
+    jqxSchedulerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

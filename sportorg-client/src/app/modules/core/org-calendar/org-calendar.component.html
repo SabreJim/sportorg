@@ -1,5 +1,8 @@
-<mat-expansion-panel [expanded]="true">
-  <mat-expansion-panel-header class="calendar-header">
+<mat-expansion-panel [expanded]="isExpanded" (opened)="isExpanded = true" (closed)="isExpanded = false" >
+  <mat-expansion-panel-header >
+    <h3>{{panelTitle}} <span [hidden]="isExpanded"> : {{ currentDate | calendarDate:(view + 'ViewTitle'):'en' }}</span></h3>
+  </mat-expansion-panel-header>
+  <div class="calendar-header">
     <div class="nav-buttons">
       <button mat-raised-button color="primary" class="other-button" mwlCalendarPreviousView title="previous week"
               [view]="view" [(viewDate)]="currentDate" (click)="changingWeek($event)">
@@ -18,7 +21,7 @@
       <h3>{{ currentDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
     </div>
     <div class="empty"></div>
-  </mat-expansion-panel-header>
+  </div>
   <div class="calendar-body">
     <mwl-calendar-week-view
       [viewDate]="currentDate"
@@ -39,7 +42,7 @@
     <span class="cal-day-number">{{event.title}}</span>
     <mat-icon title="{{event.location}}" class="location-icon">my_location</mat-icon>
   </div>
-  <div>Ages: {{event.details}}</div>
+  <div class="cal-description">Ages: {{event.details}}</div>
 </ng-template>
 
 

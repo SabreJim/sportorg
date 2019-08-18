@@ -10,13 +10,33 @@
     </mat-form-field>
   </div>
 
-
-  <h1>Classes Schedule</h1>
     <org-calendar class="wide-calendar"
+                  [panelTitle]="'Class Schedule'"
                   [addCalendarItems]="currentScheduleItems"
                   [setCurrentDate]="seasonDate"
     ></org-calendar>
 
   <h2>Programs</h2>
-  <p>text about programs here</p>
+  <mat-accordion [multi]="true">
+    <mat-expansion-panel *ngFor="let programItem of currentPrograms"
+         [expanded]="programItem.expanded"
+         [ngStyle]="{ 'border-width': '2px', 'border-style': 'solid', 'border-color': programItem.colorValue }">
+      <mat-expansion-panel-header>
+        <h1>{{programItem.levelName}}</h1>
+        <ng-container *ngIf="programItem.registrationMethod === 'INTERNAL'">
+          <button mat-raised-button color="primary" class="registration-link">Register I</button>
+        </ng-container>
+        <ng-container *ngIf="programItem.registrationMethod !== 'INTERNAL'">
+          <button mat-raised-button color="primary" class="registration-link">Register</button>
+        </ng-container>
+      </mat-expansion-panel-header>
+        <!-- Panel Content -->
+        <mat-chip-list class="info-chips">
+          <mat-chip>Season: {{programItem.seasonName}} {{programItem.year}}</mat-chip>
+          <mat-chip>Day(s): {{programItem.schedule[0].dayOfWeek}}</mat-chip>
+          <mat-chip>Class length: {{programItem.schedule[0].duration}} minutes</mat-chip>
+        </mat-chip-list>
+        <p [innerHTML]="programItem.levelDescription"></p>
+    </mat-expansion-panel>
+  </mat-accordion>
 </div>

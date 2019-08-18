@@ -35,10 +35,9 @@ const createRouter = (config) => {
         res.send('fencers');
     });
 
-    // router.get('/rebuild-tables', curry(TableBuilder.rebuildTables)(ctx));
-
     // lookup item getters
     router.get('/seasons', Lookups.getActiveSeasons);
+    router.get('/programs/:seasonId', Lookups.getProgramsBySeason);
     router.get('/program-details', Lookups.getProgramDetails);
 
 

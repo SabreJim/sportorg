@@ -1,6 +1,6 @@
 import {RestProxyService} from "./rest-proxy.service";
-import {ProgramLevel, ProgramSeason} from "../models/data-objects";
-import {Observable, of} from "rxjs";
+import {ProgramDescription, ProgramSeason} from "../models/data-objects";
+import {Observable, of, Subject} from "rxjs";
 import {ApiResponse} from "../models/rest-objects";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
@@ -15,8 +15,8 @@ export class LookupProxyService extends RestProxyService {
   }
   // cached results for non-volatile lookup values
   protected AllSeasons: ProgramSeason[] = [];
-  protected AllPrograms: ProgramLevel[] = [];
-
+  public AllPrograms: Subject<ProgramDescription[]> = new Subject<ProgramDescription[]>();
+  protected programsCache: ProgramDescription[] = [];
 
 
   public getBestUpcomingSeason = (seasons: ProgramSeason[]) => {
@@ -36,12 +36,24 @@ export class LookupProxyService extends RestProxyService {
           if (response.hasErrors()) {
             console.log('Error getting seasons', response.message);
           }
-          console.log('GOT BACK', response);
           this.AllSeasons = response.data;
           subscription.next(response.data);
         })
       });
     }
+  }
 
+  public getPrograms = (seasonId: number)=> {
+    if (this.programsCache.length > 0) {
+      this.AllPrograms.next(this.programsCache);
+    } else {
+        this.get(`programs/${seasonId}` ).subscribe((response: ApiResponse) => {
+          if (response.hasErrors()) {
+            console.log('Error getting programs', response.message);
+          }
+          this.programsCache = response.data;
+          this.AllPrograms.next(this.programsCache);
+        });
+    }
   }
 }

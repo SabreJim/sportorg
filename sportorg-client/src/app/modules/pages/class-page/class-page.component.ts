@@ -1,10 +1,11 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Class, ProgramSchedule, ProgramSeason} from "../../core/models/data-objects";
+import {Class, ProgramDescription, ProgramSchedule, ProgramSeason} from "../../core/models/data-objects";
 import {LookupProxyService} from "../../core/services/lookup-proxy.service";
 import {ClassesProxyService} from "../../core/services/classes-proxy.service";
 import {Subscription} from "rxjs";
-import { RecurringScheduleItem } from "../../core/models/ui-objects";
+import { RecurringScheduleItem, ORG_COLORS } from "../../core/models/ui-objects";
 import {map} from 'ramda';
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-class-page',
@@ -22,6 +23,7 @@ export class ClassPageComponent implements OnInit, OnDestroy {
     if (newSeason) {
       this._selectedSeason = newSeason;
       this.classProxy.getClasses(newSeason.seasonId);
+      this.lookupProxy.getPrograms(newSeason.seasonId);
     }
   }
 
@@ -30,12 +32,16 @@ export class ClassPageComponent implements OnInit, OnDestroy {
   }
 
   private classSubscription: Subscription;
+  private programSubscription: Subscription;
   public availableSeasons: ProgramSeason[] = [];
 
   public currentScheduleItems: RecurringScheduleItem[] = [];
   public seasonDate: Date;
 
-  constructor(protected lookupProxy: LookupProxyService, protected classProxy: ClassesProxyService) { }
+  public currentPrograms: ProgramDescription[] = [];
+
+  constructor(protected lookupProxy: LookupProxyService, protected classProxy: ClassesProxyService,
+              private htmlSanitizer: DomSanitizer) { }
 
   ngOnInit() {
     this.lookupProxy.getSeasons().subscribe((seasons: ProgramSeason[]) => {
@@ -43,7 +49,17 @@ export class ClassPageComponent implements OnInit, OnDestroy {
       if (seasons.length > 0) {
         this.selectedSeason = this.lookupProxy.getBestUpcomingSeason(seasons);
       }
-    })
+    });
+    this.lookupProxy.AllPrograms.subscribe((programs: ProgramDescription[]) => {
+      this.currentPrograms = programs;
+      map((program) => {
+        program.expanded = true;
+        program.levelDescription = this.htmlSanitizer.bypassSecurityTrustHtml(program.levelDescription);
+        program.colorValue = ORG_COLORS[program.colorId].secondary;
+        return program;
+      }, programs);
+      console.log('page got programs', programs);
+    });
     this.classSubscription = this.classProxy.AllClasses.subscribe((scheduleItems: ProgramSchedule[]) => {
       this.currentScheduleItems = map((item: ProgramSchedule) => {
         return new RecurringScheduleItem(item);
@@ -53,6 +69,7 @@ export class ClassPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.classSubscription.unsubscribe();
+    this.programSubscription.unsubscribe();
   }
 
 }

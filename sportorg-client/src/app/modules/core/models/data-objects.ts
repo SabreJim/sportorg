@@ -21,11 +21,21 @@ export interface ClassDateTime {
   duration: number;
 }
 
-export interface ProgramLevel {
+export interface ProgramDescription {
+  year: number;
+  seasonId: number;
   levelId: number;
+  seasonName: string;
   levelName: string;
-  levelValue: number;
+  startDate: Date;
+  endDate: Date;
   levelDescription: string;
+  registrationMethod: string;
+  registrationLink: string;
+  schedule: ProgramSchedule[];
+  expanded?: boolean;
+  colorId: number;
+  colorValue?: string;
 }
 
 export interface ProgramSeason {
@@ -45,9 +55,11 @@ export interface ProgramSchedule {
   dayOfWeek: string;
   startTime: string;
   endTime: string;
+  duration?: number;
   levelName: string;
   locationId: number;
   sessionId: number;
   minAge: number;
   maxAge: number;
+  colorId: number;
 }

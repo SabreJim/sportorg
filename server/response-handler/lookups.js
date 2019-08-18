@@ -14,7 +14,18 @@ const getProgramDetails = async (req, res, next) => {
     returnResults(res, programs);
 };
 
+const getProgramsBySeason = async(req, res, next) => {
+    const requestedSeason = req.params.seasonId || -1 ;
+    const query = `
+        SELECT * from v_programs
+        WHERE season_id = $1  OR ($1 = -1 AND season_id = 1)
+        ORDER BY level_id`;
+    const programs = await Postgres.runQuery(query, [requestedSeason]);
+    returnResults(res, programs);
+};
+
 module.exports = {
     getActiveSeasons,
-    getProgramDetails
+    getProgramDetails,
+    getProgramsBySeason
 };

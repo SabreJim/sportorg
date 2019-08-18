@@ -68,12 +68,9 @@ export class RecurringScheduleItem {
     const dateDiff = (7 - (startDate.getUTCDay() - targetDayOfWeek)) % 7;
     const currentDate = new Date(startDate);
     currentDate.setUTCDate(currentDate.getUTCDate() + dateDiff); // adjusted to correct start day of week
-    console.log([targetDayOfWeek, dateDiff, currentDate.getUTCDay(), startDate.getUTCDay(),
-      currentDate.getUTCDate(),startDate.getUTCDate()]);
 
     const startArr = map(parseInt, pSchedule.startTime.split(':'));
     const endArr = map(parseInt, pSchedule.endTime.split(':'));
-    const tzOffset = startDate.getTimezoneOffset() / 60; // required to fix timezone differences
     let maxLoop = 0; // safety net against infinite loop
     while (currentDate < endDate && maxLoop < 50) {
 
@@ -83,7 +80,6 @@ export class RecurringScheduleItem {
       const endTime = new Date(currentDate);
       endTime.setDate(currentDate.getUTCDate());
       endTime.setHours(endArr[0], endArr[1]);
-      console.log('with TIMES', startTime, pSchedule.levelName);
 
       const pickColor = pSchedule.colorId || 0;
       // pSchedule.groupId to select a class? or color

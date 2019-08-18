@@ -58,7 +58,6 @@ export class ClassPageComponent implements OnInit, OnDestroy {
         program.colorValue = ORG_COLORS[program.colorId].secondary;
         return program;
       }, programs);
-      console.log('page got programs', programs);
     });
     this.classSubscription = this.classProxy.AllClasses.subscribe((scheduleItems: ProgramSchedule[]) => {
       this.currentScheduleItems = map((item: ProgramSchedule) => {

@@ -39,7 +39,6 @@ export class OrgCalendarComponent {
 
   public isExpanded = true;
   public changingWeek(ev: Event) {
-    console.log('week changed');
     ev.preventDefault();
     ev.stopPropagation();
   }

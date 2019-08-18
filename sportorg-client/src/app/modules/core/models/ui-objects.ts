@@ -68,6 +68,8 @@ export class RecurringScheduleItem {
     const dateDiff = (7 - (startDate.getUTCDay() - targetDayOfWeek)) % 7;
     const currentDate = new Date(startDate);
     currentDate.setUTCDate(currentDate.getUTCDate() + dateDiff); // adjusted to correct start day of week
+    console.log([targetDayOfWeek, dateDiff, currentDate.getUTCDay(), startDate.getUTCDay(),
+      currentDate.getUTCDate(),startDate.getUTCDate()]);
 
     const startArr = map(parseInt, pSchedule.startTime.split(':'));
     const endArr = map(parseInt, pSchedule.endTime.split(':'));

@@ -80,6 +80,7 @@ export class RecurringScheduleItem {
       startTime.setHours(startArr[0], startArr[1]);
       const endTime = new Date(currentDate);
       endTime.setHours(endArr[0], endArr[1]);
+      console.log('with TIMES', startTime, pSchedule.levelName);
 
       const pickColor = pSchedule.colorId || 0;
       // pSchedule.groupId to select a class? or color

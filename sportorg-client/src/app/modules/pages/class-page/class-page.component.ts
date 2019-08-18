@@ -3,7 +3,7 @@ import {Class, ProgramSchedule, ProgramSeason} from "../../core/models/data-obje
 import {LookupProxyService} from "../../core/services/lookup-proxy.service";
 import {ClassesProxyService} from "../../core/services/classes-proxy.service";
 import {Subscription} from "rxjs";
-import {ScheduleItem} from "../../core/models/ui-objects";
+import { RecurringScheduleItem } from "../../core/models/ui-objects";
 import {map} from 'ramda';
 
 @Component({
@@ -32,7 +32,8 @@ export class ClassPageComponent implements OnInit, OnDestroy {
   private classSubscription: Subscription;
   public availableSeasons: ProgramSeason[] = [];
 
-  public currentScheduleItems: ScheduleItem[] = [];
+  public currentScheduleItems: RecurringScheduleItem[] = [];
+  public seasonDate: Date;
 
   constructor(protected lookupProxy: LookupProxyService, protected classProxy: ClassesProxyService) { }
 
@@ -45,7 +46,7 @@ export class ClassPageComponent implements OnInit, OnDestroy {
     })
     this.classSubscription = this.classProxy.AllClasses.subscribe((scheduleItems: ProgramSchedule[]) => {
       this.currentScheduleItems = map((item: ProgramSchedule) => {
-        return new ScheduleItem(item);
+        return new RecurringScheduleItem(item);
       }, scheduleItems);
     })
   }

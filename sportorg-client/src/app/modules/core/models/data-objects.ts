@@ -37,11 +37,11 @@ export interface ProgramSeason {
 }
 
 export interface ProgramSchedule {
-  classId: number;
+  scheduleId: number;
+  programId: number;
   locationName: string;
   startDate: Date;
   endDate: Date;
-  recurrenceRule: string;
   dayOfWeek: string;
   startTime: string;
   endTime: string;

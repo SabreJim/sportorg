@@ -22,3 +22,7 @@
 .active-link {
   background-color: darkgoldenrod;
 }
+
+@media(max-width: 800px) {
+  .optional-button { display: none !important; }
+}

@@ -1,4 +1,6 @@
 const express = require('express');
+const HTTPS = require('https');
+const fs = require('fs');
 const app = express();
 const path = require('path');
 const postgresDB = require('./server/middleware/postgres-service');
@@ -26,4 +28,15 @@ app.use('/', async (req, res) => {
     await res.redirect('/app');
 });
 const port = (config.port) ? config.port : 8080;
-app.listen(port, () => console.log(`App listening on port: ${port}`));
+
+if (environment === 'local'){
+    const privateKey  = fs.readFileSync('rsa/selfsigned.key', 'utf8');
+    const certificate = fs.readFileSync('rsa/selfsigned.crt', 'utf8');
+    const HTTPSserver = HTTPS.createServer({key: privateKey, cert: certificate}, app);
+    HTTPSserver.listen(port, () => console.log(`App listening on port: ${port}`));
+} else {
+    app.listen(port, () => console.log(`App listening on port: ${port}`));
+}
+
+
+

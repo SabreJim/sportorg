@@ -1,0 +1,45 @@
+<mat-expansion-panel [expanded]="true">
+  <mat-expansion-panel-header class="calendar-header">
+    <div class="nav-buttons">
+      <button mat-raised-button color="primary" class="other-button" mwlCalendarPreviousView title="previous week"
+              [view]="view" [(viewDate)]="currentDate" (click)="changingWeek($event)">
+        <mat-icon>navigate_before</mat-icon>
+      </button>
+      <button mat-raised-button class="today-button" mwlCalendarToday title="jump to today"
+              [(viewDate)]="currentDate" (click)="changingWeek($event)">
+        Today
+      </button>
+      <button mat-raised-button color="primary" class="other-button" mwlCalendarNextView title="next week"
+              [view]="view" [(viewDate)]="currentDate" (click)="changingWeek($event)">
+        <mat-icon>navigate_next</mat-icon>
+      </button>
+    </div>
+    <div class="week-text">
+      <h3>{{ currentDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+    </div>
+    <div class="empty"></div>
+  </mat-expansion-panel-header>
+  <div class="calendar-body">
+    <mwl-calendar-week-view
+      [viewDate]="currentDate"
+      [events]="calendarEvents"
+      [refresh]="refresh"
+      [dayStartHour]="10"
+      [dayEndHour]="22"
+      [hourSegments]="2"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      [eventTitleTemplate]="customCellTemplate"
+    >
+    </mwl-calendar-week-view>
+  </div>
+</mat-expansion-panel>
+
+<ng-template #customCellTemplate let-event="event" let-locale="locale">
+  <div class="cal-cell-top">
+    <span class="cal-day-number">{{event.title}}</span>
+    <mat-icon title="{{event.location}}" class="location-icon">my_location</mat-icon>
+  </div>
+  <div>Ages: {{event.details}}</div>
+</ng-template>
+
+

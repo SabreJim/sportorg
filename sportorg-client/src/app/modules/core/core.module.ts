@@ -6,20 +6,21 @@ import {RouterModule} from "@angular/router";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
 import {HttpClientModule} from "@angular/common/http";
-import { ScheduleCardComponent } from './schedule-card/schedule-card.component';
-import {jqxSchedulerModule} from "jqwidgets-ng/jqxscheduler";
+import { CalendarModule, DateAdapter } from "angular-calendar";
+import {adapterFactory} from "angular-calendar/date-adapters/date-fns";
+import {OrgCalendarComponent} from "./org-calendar/org-calendar.component";
 
 
 @NgModule({
   declarations: [
     OrgHeaderComponent,
     OrgMenuBarComponent,
-    ScheduleCardComponent
+    OrgCalendarComponent
   ],
   exports: [
     OrgHeaderComponent,
     OrgMenuBarComponent,
-    ScheduleCardComponent
+    OrgCalendarComponent
   ],
   imports: [
     MaterialModule,
@@ -28,10 +29,14 @@ import {jqxSchedulerModule} from "jqwidgets-ng/jqxscheduler";
     RouterModule,
     HttpClientModule,
     CommonModule,
-    jqxSchedulerModule
+    CalendarModule.forRoot(
+      {
+        provide: DateAdapter,
+        useFactory: adapterFactory
+      },
+    )
   ],
   providers: [
-
   ]
 })
 export class CoreModule { }

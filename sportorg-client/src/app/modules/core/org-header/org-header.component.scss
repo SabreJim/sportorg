@@ -11,6 +11,21 @@
   padding-top: 12px;
   padding-left: 12px;
 }
+@media (max-width: 1000px) {
+  .logo-img{ height: 13vh; }
+  h1 { font-size: 4vw; }
+}
+
+@media (max-width: 800px) {
+  .logo-img{ height: 10vh; }
+  h1 { font-size: 3vw; }
+  .info-box .info-line{font-size: 14px; }
+}
+@media (max-width: 600px) {
+  .logo-img{ height: 6vh; }
+  h1 { font-size: 2.5vw; }
+  .info-box { display: none !important; }
+}
 h1 {
   flex: 3 3 auto;
   align-self: center;
@@ -25,6 +40,8 @@ h1 {
   align-self: center;
   flex-flow: column nowrap;
   justify-content: center;
-  padding: 12px;
-  line-height: 2px;
+  padding-left: 10px;
+  .info-line {
+    margin: 0 !important;
+  }
 }

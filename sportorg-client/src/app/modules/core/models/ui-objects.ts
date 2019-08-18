@@ -78,7 +78,8 @@ export class RecurringScheduleItem {
     while (currentDate < endDate && maxLoop < 50) {
 
       const startTime = new Date(currentDate);
-      startTime.setHours(parseInt(startArr[0], 10) - tzOffset, startArr[1]);
+      startTime.setDate(currentDate.getUTCDate()); // undo date discrepancies
+      startTime.setHours(startArr[0], startArr[1]);
       const endTime = new Date(currentDate);
       endTime.setHours(endArr[0], endArr[1]);
       console.log('with TIMES', startTime, pSchedule.levelName);

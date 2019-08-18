@@ -37,27 +37,45 @@ GROUP BY
     s.end_date
 ;
 
-CREATE VIEW V_PROGRAMS as
+create view v_programs as
 SELECT
-    pl.level_name,
-    l.name location_name,
     s.year,
-    s.name,
+    s.season_id,
+    p.level_id,
+    pl.level_description,
+    MAX(p.color_id) color_id,
+    p.registration_method,
+    p.registration_link,
+json_agg(json_build_object(
+    'minAge', p.min_age,
+    'maxAge', p.max_age,
+    'programId', p.program_id,
+    'locationName', l.name,
+    'dayOfWeek', ps.day_of_week,
+    'startTime', ps.start_time,
+    'endTime', ps.end_time,
+    'duration', ps.duration
+)) as "schedule",
+s.name as "season name",
+    pl.level_name,
+    s.start_date,
+    s.end_date
+FROM programs p
+LEFT JOIN program_levels pl ON p.level_id = pl.level_id
+LEFT JOIN seasons s ON p.season_id = s.season_id
+LEFT JOIN locations l ON p.location_id = l.location_id
+LEFT JOIN program_schedules ps ON p.program_id = ps.program_id
+GROUP BY
+    s.year,
+    s.season_id,
+    p.level_id,
     pl.level_description,
     p.registration_method,
     p.registration_link,
+    s.name,
+    pl.level_name,
     s.start_date,
-    s.end_date,
-    p.program_id,
-    p.level_id,
-    p.season_id,
-    p.min_age,
-    p.max_age,
-    p.location_id
-FROM programs p
-    LEFT JOIN program_levels pl ON pl.level_id = p.level_id
-    LEFT JOIN seasons s ON s.season_id = p.season_id
-    LEFT JOIN locations l ON l.location_id = p.location_id
+    s.end_date
 ;
 
 CREATE VIEW V_PROGRAM_SCHEDULES AS

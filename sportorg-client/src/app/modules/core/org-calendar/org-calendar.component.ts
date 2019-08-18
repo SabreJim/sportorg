@@ -4,20 +4,29 @@ import {
   ChangeDetectorRef, Input
 } from '@angular/core';
 
-import { CalendarEvent, CalendarEventTimesChangedEvent, CalendarView } from 'angular-calendar';
+import {
+  CalendarEvent,
+  CalendarEventTimesChangedEvent,
+  CalendarEventTitleFormatter,
+  CalendarView
+} from 'angular-calendar';
 import { ViewPeriod } from 'calendar-utils';
 import {Subject} from "rxjs";
 import {RecurringScheduleItem } from "../models/ui-objects";
+import {OrgTitleFormatterProvider} from "./org-title-formatter.provider";
 
 
 @Component({
   selector: 'org-calendar',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './org-calendar.component.html',
-  styleUrls: ['./org-calendar.component.scss']
+  styleUrls: ['./org-calendar.component.scss'],
+  providers: [
+    {provide: CalendarEventTitleFormatter, useClass: OrgTitleFormatterProvider }
+  ]
 })
 export class OrgCalendarComponent {
-
+  @Input() panelTitle: string;
   @Input() set addCalendarItems(newItems: RecurringScheduleItem[]) {
     if(newItems && newItems.length) {
       this.updateCalendarEvents(newItems);
@@ -28,6 +37,7 @@ export class OrgCalendarComponent {
     console.log('got new date', newDate);
   }
 
+  public isExpanded = true;
   public changingWeek(ev: Event) {
     console.log('week changed');
     ev.preventDefault();

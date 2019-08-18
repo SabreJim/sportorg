@@ -38,3 +38,21 @@ p {
   max-width: 800px;
   flex: 1 1 auto;
 }
+.mat-accordion {
+  width: 100%;
+}
+.mat-expansion-panel-header {
+  display:flex;
+  flex-direction: row;
+  h1 {
+    font-size: 24px;
+    flex: 5 5 auto;
+    text-align: left;
+  }
+  .registration-link {
+    max-width: 100px;
+    width: 100px;
+    flex: 1 1 auto;
+    margin-right: 20px;
+  }
+}

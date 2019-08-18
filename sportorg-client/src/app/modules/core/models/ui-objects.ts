@@ -81,6 +81,7 @@ export class RecurringScheduleItem {
       startTime.setDate(currentDate.getUTCDate()); // undo date discrepancies
       startTime.setHours(startArr[0], startArr[1]);
       const endTime = new Date(currentDate);
+      endTime.setDate(currentDate.getUTCDate());
       endTime.setHours(endArr[0], endArr[1]);
       console.log('with TIMES', startTime, pSchedule.levelName);
 

@@ -73,11 +73,12 @@ export class RecurringScheduleItem {
 
     const startArr = map(parseInt, pSchedule.startTime.split(':'));
     const endArr = map(parseInt, pSchedule.endTime.split(':'));
+    const tzOffset = startDate.getTimezoneOffset() / 60; // required to fix timezone differences
     let maxLoop = 0; // safety net against infinite loop
     while (currentDate < endDate && maxLoop < 50) {
 
       const startTime = new Date(currentDate);
-      startTime.setHours(startArr[0], startArr[1]);
+      startTime.setHours(parseInt(startArr[0], 10) - tzOffset, startArr[1]);
       const endTime = new Date(currentDate);
       endTime.setHours(endArr[0], endArr[1]);
       console.log('with TIMES', startTime, pSchedule.levelName);

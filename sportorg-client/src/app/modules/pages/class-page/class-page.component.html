@@ -12,7 +12,11 @@
 
 
   <h1>Classes Schedule</h1>
-  <app-schedule-card
-    [scheduleItems]="currentScheduleItems"
-  ></app-schedule-card>
+    <org-calendar class="wide-calendar"
+                  [addCalendarItems]="currentScheduleItems"
+                  [setCurrentDate]="seasonDate"
+    ></org-calendar>
+
+  <h2>Programs</h2>
+  <p>text about programs here</p>
 </div>

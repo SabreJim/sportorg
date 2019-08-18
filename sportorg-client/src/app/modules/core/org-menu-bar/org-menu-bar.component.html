@@ -9,12 +9,11 @@
     <a  class="mat-button" routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" tabindex="0" >Home</a>
     <a mat-button  routerLink="/classes" routerLinkActive="active-link" tabindex="0" >Classes</a>
     <a mat-button routerLink="/fencers" routerLinkActive="active-link" tabindex="0" >Fencers</a>
-    <a class="mat-button" mat-button="" routerLink="/events" routerLinkActive="active-link" tabindex="0" >Events</a>
-    <a class="mat-button" mat-button="" routerLink="/about-us" routerLinkActive="active-link" tabindex="0" >About Us</a>
-
-    <button mat-raised-button color="primary" [matMenuTriggerFor]="exampleMenu">
+    <a mat-button routerLink="/events" routerLinkActive="active-link" tabindex="0" >Events</a>
+    <a mat-button routerLink="/about-us" routerLinkActive="active-link" tabindex="0" >About Us</a>
+    <a mat-button class="optional-button" [matMenuTriggerFor]="exampleMenu" tabindex="0" >
       Recent Items
-    </button>
+    </a>
     <mat-menu #exampleMenu>
       <ng-container *ngFor="let item of recentItems">
         <button mat-menu-item (click)="exampleClick(item)">{{item.title}}</button>

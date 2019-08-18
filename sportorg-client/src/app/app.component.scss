@@ -13,7 +13,7 @@ org-menu-bar {
   flex-flow: row nowrap;
   justify-content: center;
   position:sticky;
-  z-index: 1;
+  z-index: 10;
   top:0;
   background-color: mat-color($primary, 800);
   color: mat-color($primary, '800-contrast');
@@ -43,6 +43,8 @@ org-menu-bar {
     padding: 20px;
     min-width: 250px;
     max-width: 450px;
+    margin-top: 10px;
+    margin-left: 5px;
   }
 
   @media (max-width: 800px) {

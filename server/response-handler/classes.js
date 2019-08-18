@@ -10,8 +10,14 @@ const getClass = async (ctx, req, res) => {
 };
 
 const getAllClasses = async(req, res, next) => {
-    const requestedSeason = req.query.seasonId || 1 ;
-    const query = 'SELECT * FROM v_program_schedules where season_id = $1';
+    const requestedSeason = req.query.seasonId || -1 ;
+    // if no season is specified, get the current season
+
+    const query = `
+        SELECT * from v_program_schedules
+        WHERE season_id = $1 
+        OR ($1 = -1 AND start_date <= current_date AND end_date > current_date)
+        OR season_id = 1`;
     const classes = await Postgres.runQuery(query, [requestedSeason]);
     returnResults(res, classes);
 };

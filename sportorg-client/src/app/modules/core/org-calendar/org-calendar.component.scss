@@ -1,0 +1,43 @@
+@import "~src/styles";
+
+.calendar-header{
+  display:flex;
+  flex-flow: row nowrap;
+  .nav-buttons{
+    flex: 1 1 0;
+    .today-button {
+      background-color: mat-color($green, 500);
+    }
+    .other-button {
+      height: 36px;
+    }
+  }
+  .week-text {
+    flex: 3 3 auto;
+    text-align: center;
+    h3 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+  }
+  .empty {
+    flex: 1 1 0;
+  }
+}
+
+.calendar-body {
+
+}
+
+.cal-cell-top {
+  font-size: 15px;
+  font-weight: bolder;
+  font-weight: 800;
+}
+.location-icon {
+  color: mat-color($primary, 300);
+  width: 15px;
+  height: 15px;
+  font-size: 15px;
+  float: right;
+}

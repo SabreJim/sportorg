@@ -12,7 +12,7 @@ import {RegistrationDialogComponent} from "./registration-dialog/registration-di
 })
 export class RegistrationButtonComponent implements OnInit {
 
-  public optionText = 'View Registration Fees';
+  public optionText = 'Learn More';
   public isExternalRegistration = false;
   public showOptions = true;
   public externalRegistrationLink: string;
@@ -26,7 +26,6 @@ export class RegistrationButtonComponent implements OnInit {
       this.isExternalRegistration = newProgram.registrationMethod !== 'INTERNAL';
       if (this.isExternalRegistration) {
         this.externalRegistrationLink = newProgram.registrationLink;
-        this.optionText = newProgram.registrationMethod;
       }
       this._program = newProgram;
     }
@@ -41,7 +40,6 @@ export class RegistrationButtonComponent implements OnInit {
       this.isExternalRegistration = newFees.registrationLink && newFees.registrationLink.length > 0;
       if (this.isExternalRegistration) {
         this.externalRegistrationLink = newFees.registrationLink;
-        this.optionText = 'Register directly through the YMCA';
       }
       this.showOptions = false;
       this._fees = newFees;

@@ -1,17 +1,9 @@
-<ng-container *ngIf="isExternalRegistration">
   <button mat-raised-button color="primary" (click)="noClose($event)" class="registration-link"
           [matMenuTriggerFor]="optionMenuExternal">Register</button>
   <mat-menu #optionMenuExternal>
     <button mat-menu-item *ngIf="showOptions" routerLink="/classes/fees">{{optionText}}</button>
-    <a mat-menu-item [href]="externalRegistrationLink" >{{optionText}}</a>
+    <a mat-menu-item *ngIf="isExternalRegistration" [href]="externalRegistrationLink" >Register directly with YMCA</a>
+    <button mat-menu-item *ngIf="!isExternalRegistration" (click)="openRegistrationModal()" >Register Now</button>
   </mat-menu>
-</ng-container>
-<ng-container *ngIf="!isExternalRegistration">
-  <button mat-raised-button color="primary" class="registration-link" (click)="noClose($event)"
-          [matMenuTriggerFor]="optionMenu">Register</button>
-  <mat-menu #optionMenu>
 
-    <button mat-menu-item (click)="openRegistrationModal()" >Register Now</button>
-  </mat-menu>
-</ng-container>
 

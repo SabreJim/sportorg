@@ -1,7 +1,7 @@
 import {RestProxyService} from "./rest-proxy.service";
-import {ProgramDescription, ProgramSeason} from "../models/data-objects";
+import {FeeStructure, ProgramDescription, ProgramSeason} from "../models/data-objects";
 import {Observable, of, Subject} from "rxjs";
-import {ApiResponse} from "../models/rest-objects";
+import {ApiResponse, IndexedCache} from "../models/rest-objects";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
@@ -14,9 +14,11 @@ export class LookupProxyService extends RestProxyService {
     super(http, appRouter);
   }
   // cached results for non-volatile lookup values
-  protected AllSeasons: ProgramSeason[] = [];
+  protected seasonCache: ProgramSeason[] = [];
+  public AllFees: Subject<FeeStructure[]> = new Subject<FeeStructure[]>();
   public AllPrograms: Subject<ProgramDescription[]> = new Subject<ProgramDescription[]>();
-  protected programsCache: ProgramDescription[] = [];
+  protected programsCache: IndexedCache<ProgramDescription[]> = { cache: [] };
+  protected feesCache: FeeStructure[] = [];
 
 
   public getBestUpcomingSeason = (seasons: ProgramSeason[]) => {
@@ -28,15 +30,15 @@ export class LookupProxyService extends RestProxyService {
   };
 
   public getSeasons = (): Observable<ProgramSeason[]> => {
-    if (this.AllSeasons.length > 0) {
-      return of(this.AllSeasons);
+    if (this.seasonCache.length > 0) {
+      return of(this.seasonCache);
     } else {
       return new Observable<ProgramSeason[]>((subscription) => {
         this.get('seasons' ).subscribe((response: ApiResponse) => {
           if (response.hasErrors()) {
             console.log('Error getting seasons', response.message);
           }
-          this.AllSeasons = response.data;
+          this.seasonCache = response.data;
           subscription.next(response.data);
         })
       });
@@ -44,16 +46,30 @@ export class LookupProxyService extends RestProxyService {
   }
 
   public getPrograms = (seasonId: number)=> {
-    if (this.programsCache.length > 0) {
-      this.AllPrograms.next(this.programsCache);
+    if (this.programsCache[seasonId]) {
+      this.AllPrograms.next(this.programsCache[seasonId]);
     } else {
         this.get(`programs/${seasonId}` ).subscribe((response: ApiResponse) => {
           if (response.hasErrors()) {
             console.log('Error getting programs', response.message);
           }
-          this.programsCache = response.data;
-          this.AllPrograms.next(this.programsCache);
+          this.programsCache[seasonId] = response.data;
+          this.AllPrograms.next(this.programsCache[seasonId]);
         });
+    }
+  }
+
+  public getFees = ()=> {
+    if (this.feesCache && this.feesCache.length > 0) {
+      this.AllFees.next(this.feesCache);
+    } else {
+      this.get(`fees/` ).subscribe((response: ApiResponse) => {
+        if (response.hasErrors()) {
+          console.log('Error getting fees', response.message);
+        }
+        this.feesCache = response.data;
+        this.AllFees.next(this.feesCache);
+      });
     }
   }
 }

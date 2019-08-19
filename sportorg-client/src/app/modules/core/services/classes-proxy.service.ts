@@ -20,7 +20,6 @@ export class ClassesProxyService extends RestProxyService {
       if (response.hasErrors()) {
         console.log('Error getting classes', response.message);
       }
-      console.log('GOT BACK', response);
       this.AllClasses.next(response.data);
     })
   }

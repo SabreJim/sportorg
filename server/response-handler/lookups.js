@@ -24,8 +24,15 @@ const getProgramsBySeason = async(req, res, next) => {
     returnResults(res, programs);
 };
 
+const getFeeStructures = async(req, res, next) => {
+    const query = `SELECT * from fee_structures order by fee_id`;
+    const fees = await Postgres.runQuery(query);
+    returnResults(res, fees);
+};
+
 module.exports = {
     getActiveSeasons,
     getProgramDetails,
+    getFeeStructures,
     getProgramsBySeason
 };

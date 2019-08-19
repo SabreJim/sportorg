@@ -98,3 +98,10 @@ export class RecurringScheduleItem {
     }
   }
 }
+
+export interface RegistrationDialogData {
+  programName: string;
+  programFees: number;
+  season: string;
+  year: number;
+}

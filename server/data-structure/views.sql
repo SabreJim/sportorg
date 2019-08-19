@@ -45,7 +45,8 @@ SELECT
     pl.level_description,
     MAX(p.color_id) color_id,
     p.registration_method,
-    p.registration_link,
+    f.fee_value,
+    f.fee_id,
 json_agg(json_build_object(
     'minAge', p.min_age,
     'maxAge', p.max_age,
@@ -65,13 +66,15 @@ LEFT JOIN program_levels pl ON p.level_id = pl.level_id
 LEFT JOIN seasons s ON p.season_id = s.season_id
 LEFT JOIN locations l ON p.location_id = l.location_id
 LEFT JOIN program_schedules ps ON p.program_id = ps.program_id
+LEFT JOIN fee_structures f ON p.fee_id = f.fee_id
 GROUP BY
     s.year,
     s.season_id,
     p.level_id,
     pl.level_description,
     p.registration_method,
-    p.registration_link,
+    f.fee_value,
+    f.fee_id,
     s.name,
     pl.level_name,
     s.start_date,

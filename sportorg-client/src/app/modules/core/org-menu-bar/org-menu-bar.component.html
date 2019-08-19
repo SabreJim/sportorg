@@ -7,14 +7,21 @@
 
   <nav class="menu-stack" >
     <a  class="mat-button" routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" tabindex="0" >Home</a>
-    <a mat-button  routerLink="/classes" routerLinkActive="active-link" tabindex="0" >Classes</a>
+    <a mat-button routerLinkActive="active-link" [matMenuTriggerFor]="classMenu" tabindex="0" >
+      Classes
+    </a>
+    <mat-menu #classMenu>
+      <button mat-menu-item routerLink="/classes" fragment="schedule" >Schedule</button>
+      <button mat-menu-item routerLink="/classes" fragment="programs" >Programs</button>
+      <button mat-menu-item routerLink="/classes/fees" >Fees</button>
+    </mat-menu>
     <a mat-button routerLink="/fencers" routerLinkActive="active-link" tabindex="0" >Fencers</a>
     <a mat-button routerLink="/events" routerLinkActive="active-link" tabindex="0" >Events</a>
     <a mat-button routerLink="/about-us" routerLinkActive="active-link" tabindex="0" >About Us</a>
-    <a mat-button class="optional-button" [matMenuTriggerFor]="exampleMenu" tabindex="0" >
+    <a mat-button class="optional-button" [matMenuTriggerFor]="recentMenu" tabindex="0" >
       Recent Items
     </a>
-    <mat-menu #exampleMenu>
+    <mat-menu #recentMenu>
       <ng-container *ngFor="let item of recentItems">
         <button mat-menu-item (click)="exampleClick(item)">{{item.title}}</button>
       </ng-container>

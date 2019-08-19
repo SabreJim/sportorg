@@ -20,7 +20,6 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor (private appRouter: Router) {
     appRouter.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
-        console.log('Navigation', event);
         // if not logged in and required to be, redirect to login
       }
     })

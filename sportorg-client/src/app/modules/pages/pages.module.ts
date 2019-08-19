@@ -11,6 +11,7 @@ import {HttpClientModule} from "@angular/common/http";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {jqxSchedulerModule} from "jqwidgets-ng/jqxscheduler";
 import {CoreModule} from "../core/core.module";
+import {FeesPageComponent} from "./fees-page/fees-page.component";
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import {CoreModule} from "../core/core.module";
     ClassPageComponent,
     FencerPageComponent,
     EventPageComponent,
-    AboutPageComponent
+    AboutPageComponent,
+    FeesPageComponent
   ],
   exports: [
 

@@ -39,7 +39,7 @@ const createRouter = (config) => {
     router.get('/seasons', Lookups.getActiveSeasons);
     router.get('/programs/:seasonId', Lookups.getProgramsBySeason);
     router.get('/program-details', Lookups.getProgramDetails);
-
+    router.get('/fees', Lookups.getFeeStructures);
 
     router.get('/classes/', Classes.getAllClasses);
 

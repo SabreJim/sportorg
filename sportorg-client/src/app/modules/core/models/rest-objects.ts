@@ -16,3 +16,7 @@ export class ApiResponse {
     return this.message && this.message.length > 0;
   }
 }
+
+export interface IndexedCache<T> {
+  cache: Record<number, T>
+}

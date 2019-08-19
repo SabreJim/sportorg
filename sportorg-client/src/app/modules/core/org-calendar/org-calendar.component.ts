@@ -34,7 +34,6 @@ export class OrgCalendarComponent {
   }
 
   @Input() set setCurrentDate(newDate: Date) {
-    console.log('got new date', newDate);
   }
 
   public isExpanded = true;

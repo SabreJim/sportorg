@@ -31,6 +31,8 @@ export interface ProgramDescription {
   endDate: Date;
   levelDescription: string;
   registrationMethod: string;
+  feeId: number;
+  feeValue: number;
   registrationLink: string;
   schedule: ProgramSchedule[];
   expanded?: boolean;
@@ -62,4 +64,14 @@ export interface ProgramSchedule {
   minAge: number;
   maxAge: number;
   colorId: number;
+}
+
+export interface FeeStructure {
+  feeId: number;
+  feeValue: number;
+  feePeriod: string;
+  feeName: string;
+  feeDescription: string;
+  registrationLink: string;
+  expanded?: boolean;
 }

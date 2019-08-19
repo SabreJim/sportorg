@@ -9,18 +9,27 @@ import {HttpClientModule} from "@angular/common/http";
 import { CalendarModule, DateAdapter } from "angular-calendar";
 import {adapterFactory} from "angular-calendar/date-adapters/date-fns";
 import {OrgCalendarComponent} from "./org-calendar/org-calendar.component";
+import {RegistrationButtonComponent} from "./registration-button/registration-button.component";
+import {RegistrationDialogComponent} from "./registration-button/registration-dialog/registration-dialog.component";
+import {SafePipe} from "./pipes/safe-html.pipe";
 
 
 @NgModule({
   declarations: [
     OrgHeaderComponent,
     OrgMenuBarComponent,
-    OrgCalendarComponent
+    OrgCalendarComponent,
+    RegistrationButtonComponent,
+    RegistrationDialogComponent,
+    SafePipe
   ],
   exports: [
     OrgHeaderComponent,
     OrgMenuBarComponent,
-    OrgCalendarComponent
+    OrgCalendarComponent,
+    RegistrationButtonComponent,
+    RegistrationDialogComponent,
+    SafePipe
   ],
   imports: [
     MaterialModule,
@@ -37,6 +46,9 @@ import {OrgCalendarComponent} from "./org-calendar/org-calendar.component";
     )
   ],
   providers: [
+  ],
+  entryComponents: [
+    RegistrationDialogComponent
   ]
 })
 export class CoreModule { }

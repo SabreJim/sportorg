@@ -12,7 +12,7 @@ import {
 } from 'angular-calendar';
 import { ViewPeriod } from 'calendar-utils';
 import {Subject} from "rxjs";
-import {RecurringScheduleItem } from "../models/ui-objects";
+import {DAYS_OF_WEEK, RecurringScheduleItem} from "../models/ui-objects";
 import {OrgTitleFormatterProvider} from "./org-title-formatter.provider";
 
 
@@ -28,14 +28,22 @@ import {OrgTitleFormatterProvider} from "./org-title-formatter.provider";
 export class OrgCalendarComponent {
   @Input() panelTitle: string;
   @Input() set addCalendarItems(newItems: RecurringScheduleItem[]) {
-    if(newItems && newItems.length) {
-      this.updateCalendarEvents(newItems);
+    if(newItems) {
+      if (newItems.length) {
+        this.updateCalendarEvents(newItems);
+      } else {
+        this.updateCalendarEvents([]);
+      }
     }
   }
 
   @Input() set setCurrentDate(newDate: Date) {
+    if (newDate) {
+      this.currentDate = newDate;
+      this.cdr.detectChanges();
+    }
   }
-
+  public weekStartsOn = 1; // DAYS_OF_WEEK.MONDAY;
   public isExpanded = true;
   public changingWeek(ev: Event) {
     ev.preventDefault();
@@ -66,7 +74,6 @@ export class OrgCalendarComponent {
     newSchedule.forEach((schedule) => {
       this.calendarEvents = this.calendarEvents.concat(schedule.weeklyEvents);
     });
-    this.currentDate = (this.calendarEvents[0].start);
     this.cdr.detectChanges();
   }
 }

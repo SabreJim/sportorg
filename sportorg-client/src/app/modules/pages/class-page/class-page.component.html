@@ -1,11 +1,11 @@
 <div class="page-wrapper">
   <div class="season-selector">
     <h4>Program Season to view</h4>
-    <mat-form-field >
+    <mat-form-field class="season-input">
       <mat-label>Select a season:</mat-label>
       <mat-select  [compareWith]="compareSeasons" [(ngModel)]="selectedSeason">
         <mat-option *ngFor="let season of availableSeasons" [value]="season">
-          <strong>{{season.name}}</strong> ({{season.year}})</mat-option>
+          <strong>{{season.name}} {{season.year}}</strong> ({{season.startDate | date: 'shortDate'}} - {{season.endDate | date: 'shortDate'}})</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
@@ -30,7 +30,7 @@
         <!-- Panel Content -->
         <mat-chip-list class="info-chips">
           <mat-chip>Season: {{programItem.seasonName}} {{programItem.year}}</mat-chip>
-          <mat-chip>Day(s): {{programItem.schedule[0].dayOfWeek}}</mat-chip>
+          <mat-chip>Day(s): <span *ngFor="let schedule of programItem.schedule">{{schedule.dayOfWeek}} </span></mat-chip>
           <mat-chip>Class length: {{programItem.schedule[0].duration}} minutes</mat-chip>
         </mat-chip-list>
         <p [innerHTML]="programItem.levelDescription | safePipe: 'html'"></p>

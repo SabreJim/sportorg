@@ -4,7 +4,7 @@ const returnResults = (response, data) => {
         response.json({data: data });
     } else {
         response.status = 204;
-        response.json = {data: [] };
+        response.json({ data: [] });
     }
 };
 

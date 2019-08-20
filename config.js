@@ -2,32 +2,22 @@ const config = {
     prod: {
         env: 'prod',
         port: 8081,
-        AWS: {
-            region: "us-west-2",
-            endpoint: "http://localhost:9999"
-        },
         postgres: {
             user: 'orgAdmin',
             host: 'sport-org-db.cksjutalogqa.us-east-2.rds.amazonaws.com',
             database: 'sportorg',
-            password: 'abcd1234',
+            password: 'notrealpassword',
             port: 5432
         }
     },
     local: {
         env: 'local',
         port: 8080,
-        AWS: {
-            accessKeyId: 'abcde',
-            secretAccessKey: 'abcde',
-            region: "us-west-2",
-            endpoint: "http://localhost:8000"
-        },
         postgres: {
             user: 'orgAdmin',
             host: 'sport-org-db.cksjutalogqa.us-east-2.rds.amazonaws.com',
             database: 'sportorg',
-            password: 'abcd1234',
+            password: 'notrealpassword',
             port: 5432
         }
     }

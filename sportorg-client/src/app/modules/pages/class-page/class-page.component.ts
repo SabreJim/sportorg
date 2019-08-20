@@ -6,6 +6,7 @@ import {Subscription} from "rxjs";
 import {ORG_COLORS, RecurringScheduleItem} from "../../core/models/ui-objects";
 import {map} from 'ramda';
 import {NavigationEnd, Router} from "@angular/router";
+import {MatSelectChange} from "@angular/material";
 
 @Component({
   selector: 'app-class-page',
@@ -22,13 +23,14 @@ export class ClassPageComponent implements OnInit, OnDestroy {
   }public set selectedSeason(newSeason: ProgramSeason) {
     if (newSeason) {
       this._selectedSeason = newSeason;
+      this.seasonDate = new Date(newSeason.startDate);
       this.classProxy.getClasses(newSeason.seasonId);
       this.lookupProxy.getPrograms(newSeason.seasonId);
     }
   }
 
   public compareSeasons = (s1: ProgramSeason, s2: ProgramSeason) => {
-    return s1.seasonId === s2.seasonId;
+    return s1 && s2 && s1.seasonId === s2.seasonId;
   }
 
   private classSubscription: Subscription;
@@ -59,7 +61,6 @@ export class ClassPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
     this. programSubscription = this.lookupProxy.AllPrograms.subscribe((programs: ProgramDescription[]) => {
       programs = map((program) => {
         program.expanded = true;
@@ -73,7 +74,7 @@ export class ClassPageComponent implements OnInit, OnDestroy {
         return new RecurringScheduleItem(item);
       }, scheduleItems);
     });
-    // this can return from cache before the dependant subscriptions are added
+    // this can return from cache before the dependent subscriptions are added
     this.lookupProxy.getSeasons().subscribe((seasons: ProgramSeason[]) => {
       this.availableSeasons = seasons;
       if (seasons.length > 0) {

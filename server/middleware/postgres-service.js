@@ -24,7 +24,7 @@ const runQuery = async (query, params = []) => {
     let safeParams = (R.is(Array, params)) ? params : [params];
     try {
         const result = await conn.query(query, safeParams);
-        console.log('PG Query:', query, result.rows[0]);
+        console.log('PG Query:', query, params, result.rows[0]);
         return cleanRows(result.rows);
     } catch (dbError) {
         console.log('Error at Data level', dbError);

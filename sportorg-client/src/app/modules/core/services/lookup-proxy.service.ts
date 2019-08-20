@@ -24,9 +24,11 @@ export class LookupProxyService extends RestProxyService {
   public getBestUpcomingSeason = (seasons: ProgramSeason[]) => {
     const now = new Date();
     now.setMonth(now.getUTCMonth() - 3);
-    return head(filter((season: ProgramSeason) => {
+    const firstMatch = head(filter((season: ProgramSeason) => {
       return season.endDate > now.toISOString();
     }, seasons));
+
+    return (firstMatch) ? firstMatch : seasons[0];
   };
 
   public getSeasons = (): Observable<ProgramSeason[]> => {

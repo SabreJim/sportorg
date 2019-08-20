@@ -39,6 +39,7 @@ export class OrgCalendarComponent {
 
   @Input() set setCurrentDate(newDate: Date) {
     if (newDate) {
+      newDate.setUTCDate(newDate.getUTCDate() + 2);
       this.currentDate = newDate;
       this.cdr.detectChanges();
     }

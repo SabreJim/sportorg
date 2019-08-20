@@ -14,6 +14,11 @@ process.argv.forEach((val) => {
 });
 const config = require('./config.js')(environment);
 
+// ready in environment variable
+if (process.env && process.env.SPORTORG_PG && config.postgres){
+    config.postgres.password = process.env.SPORTORG_PG;
+    console.log('Configuring DB from environment variable');
+}
 // establish DB connection pool
 postgresDB.buildDBConnections(config);
 

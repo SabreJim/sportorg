@@ -38,6 +38,7 @@ export interface ProgramDescription {
   expanded?: boolean;
   colorId: number;
   colorValue?: string;
+  daysText?: string;
 }
 
 export interface ProgramSeason {

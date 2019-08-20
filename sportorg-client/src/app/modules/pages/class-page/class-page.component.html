@@ -30,7 +30,7 @@
         <!-- Panel Content -->
         <mat-chip-list class="info-chips">
           <mat-chip>Season: {{programItem.seasonName}} {{programItem.year}}</mat-chip>
-          <mat-chip>Day(s): <span *ngFor="let schedule of programItem.schedule">{{schedule.dayOfWeek}} </span></mat-chip>
+          <mat-chip>Day(s): {{programItem.daysText}}</mat-chip>
           <mat-chip>Class length: {{programItem.schedule[0].duration}} minutes</mat-chip>
         </mat-chip-list>
         <p [innerHTML]="programItem.levelDescription | safePipe: 'html'"></p>

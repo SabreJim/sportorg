@@ -4,9 +4,8 @@ import {LookupProxyService} from "../../core/services/lookup-proxy.service";
 import {ClassesProxyService} from "../../core/services/classes-proxy.service";
 import {Subscription} from "rxjs";
 import {ORG_COLORS, RecurringScheduleItem} from "../../core/models/ui-objects";
-import {map} from 'ramda';
+import {join, map, pluck, uniq} from 'ramda';
 import {NavigationEnd, Router} from "@angular/router";
-import {MatSelectChange} from "@angular/material";
 
 @Component({
   selector: 'app-class-page',
@@ -65,6 +64,7 @@ export class ClassPageComponent implements OnInit, OnDestroy {
       programs = map((program) => {
         program.expanded = true;
         program.colorValue = ORG_COLORS[program.colorId].secondary;
+        program.daysText = (program.schedule) ? join(' ', uniq(pluck('dayOfWeek', program.schedule))) : '';
         return program;
       }, programs);
       this.currentPrograms = programs;

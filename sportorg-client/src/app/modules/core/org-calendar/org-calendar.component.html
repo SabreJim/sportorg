@@ -41,9 +41,12 @@
 <ng-template #customCellTemplate let-event="event" let-locale="locale">
   <div class="cal-cell-top">
     <span class="cal-day-number">{{event.title}}</span>
-    <mat-icon title="{{event.location}}" class="location-icon">my_location</mat-icon>
+    <mat-icon class="location-icon" [matMenuTriggerFor]="moreInfo">more_vert</mat-icon>
+    <mat-menu #moreInfo>
+      <div mat-menu-item>Program: {{event.title}}</div>
+      <div mat-menu-item>Age range: {{event.details}}</div>
+      <div mat-menu-item>Location: {{event.location}}</div>
+    </mat-menu>
   </div>
   <div class="cal-description">Ages: {{event.details}}</div>
 </ng-template>
-
-

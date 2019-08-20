@@ -9,7 +9,7 @@ export class OrgTitleFormatterProvider extends CalendarEventTitleFormatter {
   }
 
   weekTooltip(event: OrgCalendarEvent): string {
-    return event.location;
+    return 'Location: ' + event.location;
   }
 
   dayTooltip(event: OrgCalendarEvent): string {

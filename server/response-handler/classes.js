@@ -1,6 +1,5 @@
 const Entity = require('../data-access/dynamo-entity-helper');
-const DB = require('../middleware/postgres-service');
-const Postgres = require('../middleware/postgres-service');
+const MySQL = require('../middleware/mysql-service');
 const { returnResults } = require('../middleware/response-handler');
 
 const R = require('ramda');
@@ -15,8 +14,8 @@ const getAllClasses = async(req, res, next) => {
 
     const query = `
         SELECT * from v_program_schedules
-        WHERE season_id = $1`;
-    const classes = await Postgres.runQuery(query, [requestedSeason]);
+        WHERE season_id = ?`;
+    const classes = await MySQL.runQuery(query, [requestedSeason]);
     returnResults(res, classes);
 };
 

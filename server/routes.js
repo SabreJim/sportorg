@@ -1,8 +1,5 @@
 const express = require('express');
 const AWS = require('aws-sdk');
-const DynamoLoader = require('../server/middleware/dynamo-loader');
-const Postgres = require('./middleware/postgres-service');
-
 
 const TableBuilder = require('./data-access/table-builder');
 const Classes = require('./response-handler/classes');

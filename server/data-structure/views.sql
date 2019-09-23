@@ -81,7 +81,7 @@ GROUP BY
     s.end_date
 ;
 
-CREATE VIEW V_PROGRAM_SCHEDULES AS
+CREATE VIEW v_program_schedules AS
 SELECT
     ps.schedule_id,
     ps.program_id,
@@ -94,6 +94,7 @@ SELECT
     pl.level_name,
     p.location_id,
     p.season_id,
+    p.color_id,
     p.min_age,
     p.max_age
 FROM program_schedules ps

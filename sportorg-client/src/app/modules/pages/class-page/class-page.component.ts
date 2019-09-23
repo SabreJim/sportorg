@@ -64,7 +64,11 @@ export class ClassPageComponent implements OnInit, OnDestroy {
       programs = map((program) => {
         program.expanded = true;
         program.colorValue = ORG_COLORS[program.colorId].secondary;
-        program.daysText = (program.schedule) ? join(' ', uniq(pluck('dayOfWeek', program.schedule))) : '';
+        try {
+          program.daysText = uniq(JSON.parse(program.daysOfWeek));
+        } catch {
+          program.daysText = '';
+        }
         return program;
       }, programs);
       this.currentPrograms = programs;

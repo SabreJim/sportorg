@@ -34,7 +34,8 @@ export interface ProgramDescription {
   feeId: number;
   feeValue: number;
   registrationLink: string;
-  schedule: ProgramSchedule[];
+  duration: string;
+  daysOfWeek: string;
   expanded?: boolean;
   colorId: number;
   colorValue?: string;

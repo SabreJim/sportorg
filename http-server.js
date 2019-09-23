@@ -3,7 +3,7 @@ const HTTPS = require('https');
 const fs = require('fs');
 const app = express();
 const path = require('path');
-const postgresDB = require('./server/middleware/postgres-service');
+const mysqlDB = require('./server/middleware/mysql-service');
 let environment = 'local';
 
 process.argv.forEach((val) => {
@@ -15,12 +15,13 @@ process.argv.forEach((val) => {
 const config = require('./config.js')(environment);
 
 // ready in environment variable
-if (process.env && process.env.SPORTORG_PG && config.postgres){
-    config.postgres.password = process.env.SPORTORG_PG;
+if (process.env && process.env.SPORTORG_MYSQL && config.mysql){
+    // config.postgres.password = process.env.SPORTORG_PG;
+    config.mysql.password = process.env.SPORTORG_MYSQL;
     console.log('Configuring DB from environment variable');
 }
 // establish DB connection pool
-postgresDB.buildDBConnections(config);
+mysqlDB.buildDBConnections(config);
 
 // a REST router for server-side calls
 const appRouter = require('./server/routes');

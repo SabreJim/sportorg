@@ -19,6 +19,14 @@ const config = {
             database: 'sportorg',
             password: 'notrealpassword',
             port: 5432
+        },
+        mysql: {
+            user: 'sportorg',
+            password: 'notarealpassword',
+            host: '162.216.113.174',
+            port: 3306,
+            database: 'beaches',
+            connectionLimit: 10
         }
     }
 

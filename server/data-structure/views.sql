@@ -37,27 +37,19 @@ GROUP BY
     s.end_date
 ;
 
-create view v_programs as
+CREATE OR REPLACE VIEW v_programs as
 SELECT
     s.year,
     s.season_id,
     p.level_id,
     pl.level_description,
-    MAX(p.color_id) color_id,
+    MAX(p.color_id) as "color_id",
     p.registration_method,
     f.fee_value,
     f.fee_id,
-json_agg(json_build_object(
-    'minAge', p.min_age,
-    'maxAge', p.max_age,
-    'programId', p.program_id,
-    'locationName', l.name,
-    'dayOfWeek', ps.day_of_week,
-    'startTime', ps.start_time,
-    'endTime', ps.end_time,
-    'duration', ps.duration
-)) as "schedule",
-s.name as "season name",
+    JSON_ARRAYAGG(ps.day_of_week) as "day_of_week",
+    MAX(ps.duration) as "duration",
+    s.name as "season name",
     pl.level_name,
     s.start_date,
     s.end_date

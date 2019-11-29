@@ -1,22 +1,33 @@
 .menu-wrapper{
   display: flex;
+  flex: 1 1 auto;
   flex-flow: row nowrap;
-  justify-content: flex-start;
-  align-items: stretch;
 }
 
 .info-section{
   flex: 1 1 auto;
 }
 .menu-stack {
-  flex: 8 8 auto;
+  flex: 1 1 100%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
+  align-items: center;
 }
-.user-menu {
-  flex: 1 1 auto;
-  justify-self: flex-end;
+.login {
+  flex: 1 1 100px;
+  display:flex;
+  max-height: 50px;
+  justify-content: flex-end;
+  padding-right: 10px;
+  .welcome-splash{
+
+    img {
+      max-height: 50px;
+      max-width: 50px;
+      border-radius: 50%;
+    }
+  }
 }
 
 .active-link {

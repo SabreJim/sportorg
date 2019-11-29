@@ -4,6 +4,7 @@ const AWS = require('aws-sdk');
 const TableBuilder = require('./data-access/table-builder');
 const Classes = require('./response-handler/classes');
 const Lookups = require('./response-handler/lookups');
+const Authentication = require('./middleware/server-authentication');
 
 const { curry } = require('ramda');
 
@@ -41,6 +42,8 @@ const createRouter = (config) => {
     router.get('/classes/', Classes.getAllClasses);
 
     router.put('/classes', jsonBody, Classes.addClass);
+
+    router.get('/session', Authentication.verifyToken)
 
     return router;
 };

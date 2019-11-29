@@ -28,6 +28,5 @@ export class ClassesProxyService extends RestProxyService {
         this.AllClasses.next(this.classCache[seasonId]);
       });
     }
-
   }
 }

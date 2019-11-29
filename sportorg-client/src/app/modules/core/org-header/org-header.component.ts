@@ -7,7 +7,11 @@ import {Component, OnInit} from "@angular/core";
   styleUrls: ['./org-header.component.scss']
 })
 export class OrgHeaderComponent implements OnInit {
+
+
   ngOnInit(): void {
   }
 
-}
+
+
+ }

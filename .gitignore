@@ -5,3 +5,4 @@
 node_modules/**
 sportorg-client/node_modules/**
 /node_modules/
+/sportorg-client/dist/**

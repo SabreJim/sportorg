@@ -4,6 +4,7 @@ const fs = require('fs');
 const app = express();
 const path = require('path');
 const mysqlDB = require('./server/middleware/mysql-service');
+const firebase = require('./server/middleware/server-authentication');
 let environment = 'local';
 
 process.argv.forEach((val) => {
@@ -12,16 +13,19 @@ process.argv.forEach((val) => {
         environment = val.slice(4);
     }
 });
-const config = require('./config.js')(environment);
+const config = require('./config.js');
 
 // ready in environment variable
 if (process.env && process.env.SPORTORG_MYSQL && config.mysql){
-    // config.postgres.password = process.env.SPORTORG_PG;
+    // keep login information in environment variables
     config.mysql.password = process.env.SPORTORG_MYSQL;
+    config.mysql.user = process.env.SPORTORG_USER;
+    config.mysql.database = process.env.SPORTORG_DB;
     console.log('Configuring DB from environment variable');
 }
 // establish DB connection pool
 mysqlDB.buildDBConnections(config);
+app.use('/rest', firebase.initializeFirebase);
 
 // a REST router for server-side calls
 const appRouter = require('./server/routes');

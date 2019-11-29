@@ -30,3 +30,8 @@
 2. create an environment (pipeline is currently looking for one called "sportorg")
 3. check that the pipeline deploys to environment: https://us-east-2.console.aws.amazon.com/codepipeline/home?region=us-east-2#/view/sportorg-pipe
 4. check the environment to verify it is up and running: https://us-east-2.console.aws.amazon.com/elasticbeanstalk/home?region=us-east-2#/applications
+
+### config changes to make
+1. switch to local mySQL. edit /etc/mysql/mysql.conf.d/mysqld.cnf. set bind-address to 127.0.0.1
+2. update config.js to use localhost
+3. restart sql sudo /etc/init.d/mysql restart

@@ -3,12 +3,14 @@ const firebase = require('firebase-admin');
 
 
 const initializeFirebase = async (req, res, next) => {
+    if (!firebase.apps.length){
         firebase.initializeApp({
             credential: firebase.credential.applicationDefault(),
             databaseURL: 'https://<DATABASE_NAME>.firebaseio.com'
         });
-        await next();
-    };
+    }
+    await next();
+};
     // firebase.initializeApp({
     //     credential: admin.credential.refreshToken(refreshToken),
     //     databaseURL: 'https://<DATABASE_NAME>.firebaseio.com'

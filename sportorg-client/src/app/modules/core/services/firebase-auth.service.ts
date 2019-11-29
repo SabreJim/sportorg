@@ -43,6 +43,7 @@ export class FirebaseAuthService extends RestProxyService {
         this.getSession();
         this.CurrentUser.next(this.currentUser);
       } else {
+        console.log('no user found');
         this.logout();
       }
     });
@@ -55,6 +56,7 @@ export class FirebaseAuthService extends RestProxyService {
   public toggleLogin = (authName: string) => {
     if (this.currentUser.isAnonymous) {
       auth().signInWithPopup(this.GProvider).then((result) => {
+        console.log('popup result', result);
       }).catch(function(error) {
         // Handle Errors here.
       });

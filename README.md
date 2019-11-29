@@ -35,3 +35,5 @@
 1. switch to local mySQL. edit /etc/mysql/mysql.conf.d/mysqld.cnf. set bind-address to 127.0.0.1
 2. update config.js to use localhost
 3. restart sql sudo /etc/init.d/mysql restart
+4. updating Apache to allow ssl:443 and a dev implementation redirect
+5. in /etc/apache2/sites-enabled 

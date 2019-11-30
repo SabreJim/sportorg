@@ -11,14 +11,15 @@ const application = {
     secretKey: null
 };
 
-
 const initializeFirebase = async (req, res, next) => {
-    if (!firebase.apps.length){
+    if (!firebase.apps.length) {
+        // cert can only come from a cert file
         firebase.initializeApp({
             credential: firebase.credential.applicationDefault(),
             databaseURL: 'https://<DATABASE_NAME>.firebaseio.com'
         });
     }
+
     if (!application.secretKey) {
         // get the key from the DB
         const query = `SELECT * from projects WHERE project_name = ? AND type = ?`;
@@ -53,15 +54,18 @@ const getSessionFromHeader = async(request) => {
 const getSession = async(userId) => {
     // get the userId and any other session information required to validate requests from the user
     const sessionQuery = `SELECT
+            s.session_token as 'sessionToken',
             u.user_id,
             u.is_admin,
             m.member_id,
             m.is_active,
             u.email,
             m.year_of_birth
-        FROM beaches.users u
-        LEFT JOIN beaches.members m ON m.user_id = u.user_id
-        WHERE u.user_id = ?; `;
+        FROM beaches.sessions s
+        LEFT JOIN beaches.users u ON u.user_id = s.user_id
+        LEFT JOIN beaches.member_users mu ON mu.user_id = u.user_id AND mu.is_primary = 'Y'
+        LEFT JOIN beaches.members m ON m.member_id = mu.member_id
+        WHERE s.user_id = ?; `;
     return await MySQL.runCommand(sessionQuery, [userId]);
 };
 
@@ -81,8 +85,7 @@ const verifyToken = async(req, res, next) => {
             const userResponse = await MySQL.runCommand(userQuery, [appSession.userId, decodedToken.email]);
 
             // get a sessionToken if a session already exists
-            const sessionQuery = `select s.session_token as 'sessionToken' FROM beaches.sessions s WHERE s.user_id = ? ;`;
-            const oldToken = await MySQL.runCommand(sessionQuery, [userResponse.userId]);
+            const oldToken = await getSession(userResponse.userId);
             if (oldToken && oldToken.sessionToken) {
                 appSession.sessionToken = crypto.AES.encrypt(oldToken.sessionToken, application.secretKey).toString();
             } else { // otherwise make a new token
@@ -92,7 +95,6 @@ const verifyToken = async(req, res, next) => {
                 const sessionInsert = `INSERT INTO sessions (user_id, session_token) VALUES (?, ?)`;
                 await MySQL.runQuery(sessionInsert, [userResponse.userId, appSession.sessionToken]);
             }
-
 
             return returnSingle(res, appSession);
         }).catch(function(error) {

@@ -28,10 +28,10 @@ if (process.env && process.env.SPORTORG_MYSQL && config.mysql){
 mysqlDB.buildDBConnections(config);
 app.use('/rest', firebase.initializeFirebase);
 
-app.use('/', async(req, res, next) => {
-    console.log('intercept!', req.originalUrl);
-    await next();
-})
+// app.use('/', async(req, res, next) => {
+//     console.log('intercept!', req.originalUrl);
+//     await next();
+// })
 
 // a REST router for server-side calls
 const appRouter = require('./server/routes');

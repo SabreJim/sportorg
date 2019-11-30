@@ -1,5 +1,6 @@
 const Entity = require('../data-access/dynamo-entity-helper');
 const MySQL = require('../middleware/mysql-service');
+const Auth = require('../middleware/server-authentication');
 const { returnResults } = require('../middleware/response-handler');
 
 const R = require('ramda');

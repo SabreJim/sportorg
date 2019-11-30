@@ -36,6 +36,7 @@
     "rrule": "^2.6.2",
     "rxjs": "~6.4.0",
     "tslib": "^1.9.0",
+    "uuid": "^3.3.3",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {

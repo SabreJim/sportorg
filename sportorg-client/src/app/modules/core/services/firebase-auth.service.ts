@@ -1,10 +1,11 @@
 import {Injectable} from "@angular/core";
 import {auth, initializeApp, User} from "firebase";
 import GoogleAuthProvider = auth.GoogleAuthProvider;
-import {AppUser} from "../models/authentication";
+import {AppSession, AppUser} from "../models/authentication";
 import {Subject} from "rxjs";
 import {RestProxyService} from "./rest-proxy.service";
 import {ApiResponse} from "../models/rest-objects";
+import {StaticValuesService} from "./static-values.service";
 
 
 @Injectable({providedIn: 'root'})
@@ -29,7 +30,6 @@ export class FirebaseAuthService extends RestProxyService {
     initializeApp(FirebaseAuthService.firebaseConfig);
     // analytics();
     this.GProvider = new auth.GoogleAuthProvider();
-    console.log('made provider', this.GProvider );
     auth().onAuthStateChanged((user: User) => {
       if (user) { // User is signed in.
        this.currentUser.displayName = user.displayName;
@@ -37,47 +37,61 @@ export class FirebaseAuthService extends RestProxyService {
         this.currentUser.isAnonymous = false;
         this.currentUser.photoURL = user.photoURL;
         this.currentUser.userId = user.uid;
-        this.currentUser.refreshToken = user.refreshToken;
         this.currentUser.providerId = 'google.com';
-       console.log('got user?', this.currentUser);
         this.getSession();
-        this.CurrentUser.next(this.currentUser);
       } else {
-        console.log('no user found');
         this.logout();
       }
     });
-  }
-  public logout = () => {
-    auth().signOut();
-    this.currentUser = new AppUser();
-    this.CurrentUser.next(this.currentUser);
-  }
+  };
+
   public toggleLogin = (authName: string) => {
     if (this.currentUser.isAnonymous) {
       auth().signInWithPopup(this.GProvider).then((result) => {
-        console.log('popup result', result);
       }).catch(function(error) {
         // Handle Errors here.
       });
     } else {
       this.logout();
     }
-  }
+  };
 
   public getSession = (): void => {
     if (this.currentUser && !this.currentUser.isAnonymous) {
       auth().currentUser.getIdToken().then((actualToken) => {
-        console.log('getIDToken worked?', actualToken);
-        this.get('session', {token: actualToken} ).subscribe((response: ApiResponse) => {
+        this.get('session-token', {token: actualToken} ).subscribe((response: ApiResponse<AppSession>) => {
           if (response.hasErrors()) {
-            console.log('Error verifying user', response.message);
+            this.currentUser = new AppUser();
+            this.CurrentUser.next(this.currentUser);
           }
-          console.log('got back session?', response);
+          // update the token so subsequent requests can be authenticated
+          StaticValuesService.setToken(response.data.sessionToken);
+          this.CurrentUser.next(this.currentUser);
         });
       });
     } else {
-      console.log('anonymous use', this.currentUser);
+      this.CurrentUser.next(this.currentUser);
+    }
+  };
+
+  public logout = (): void => {
+    const purgeSession = () => {
+      StaticValuesService.setToken(''); // clear the header token
+      this.currentUser = new AppUser(); // reset the user state
+      this.CurrentUser.next(this.currentUser); // notify any listeners
+      auth().signOut(); // end the firebase session client-side
+    }
+    if (StaticValuesService.getToken()) {
+      // send a signal to the app server to clear the session
+      this.put('end-session', {token: StaticValuesService.getToken()} ).subscribe((response: ApiResponse<boolean>) => {
+        if (response.hasErrors()) {
+          console.log('Error logging out user', response.message);
+          purgeSession();
+        }
+       purgeSession();
+      });
+    } else {
+      purgeSession();
     }
   }
 }

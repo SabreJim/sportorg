@@ -17,8 +17,19 @@ const returnSingle = (response, data) => {
         response.json({ data: 'success' });
     }
 }
+const returnSuccess = (response, success) => {
+    response.status = 200;
+    response.json({data: success });
+}
+
+const returnError = (response, errorMessage, errorCode = 500) => {
+    response.status = errorCode;
+    response.json({data: null, errorMessage: errorMessage});
+}
 
 module.exports = {
     returnResults,
-    returnSingle
+    returnSingle,
+    returnSuccess,
+    returnError
 }

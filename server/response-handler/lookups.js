@@ -1,4 +1,5 @@
 const MySQL = require('../middleware/mysql-service');
+const Auth = require('../middleware/server-authentication');
 const { returnResults } = require('../middleware/response-handler');
 
 const getActiveSeasons = async(req, res, next) => {

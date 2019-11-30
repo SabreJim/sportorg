@@ -1,5 +1,6 @@
 const config = {
     port: 8080,
+    applicationName: 'beachesEast',
     mysql: {
         user: 'sportorg',
         password: 'notarealpassword',

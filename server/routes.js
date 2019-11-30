@@ -25,11 +25,6 @@ const createRouter = (config) => {
 
     // define the home page route
     router.get('/fencers', function (req, res) {
-        console.log('saw ctx', ctx.docClient);
-        ctx.dbTable.listTables({}, (err, result) => {
-            console.log('tables?', err, result);
-
-        });
         res.send('fencers');
     });
 
@@ -43,7 +38,8 @@ const createRouter = (config) => {
 
     router.put('/classes', jsonBody, Classes.addClass);
 
-    router.get('/session', Authentication.verifyToken)
+    router.get('/session-token', Authentication.verifyToken);
+    router.put('/end-session', jsonBody, Authentication.endSession);
 
     return router;
 };

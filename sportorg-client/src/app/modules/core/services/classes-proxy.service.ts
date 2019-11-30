@@ -20,7 +20,7 @@ export class ClassesProxyService extends RestProxyService {
     if (this.classCache[seasonId]) {
       this.AllClasses.next(this.classCache[seasonId]);
     } else {
-      this.get('classes', {seasonId: seasonId} ).subscribe((response: ApiResponse) => {
+      this.get('classes', {seasonId: seasonId} ).subscribe((response: ApiResponse<ProgramSchedule[]>) => {
         if (response.hasErrors()) {
           console.log('Error getting classes', response.message);
         }

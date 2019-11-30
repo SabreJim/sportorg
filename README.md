@@ -22,14 +22,17 @@
   5. Once the environment creation process completes, run `eb open` to open the application in a browser.
   6. Run `eb terminate --all` to clean up.
 
-### configuring local DynamoDB
-1. add steps here
+### configuring local MySQL
+1. install MySQL server
+2. add appuser account @localhost and create database
+3. add optional external account @ '%'
+4. grant permisssions for external account on appuser database 
 
-### deploying changes to AWS
-1. commit and push to gitHub
-2. create an environment (pipeline is currently looking for one called "sportorg")
-3. check that the pipeline deploys to environment: https://us-east-2.console.aws.amazon.com/codepipeline/home?region=us-east-2#/view/sportorg-pipe
-4. check the environment to verify it is up and running: https://us-east-2.console.aws.amazon.com/elasticbeanstalk/home?region=us-east-2#/applications
+### Using the Firebase server-side configuration
+1. paste in the Firebase configuration file
+2. update the environment variable to point to the file: 
+export GOOGLE_APPLICATION_CREDENTIALS="/server/sportorg/server/beaches-sportorg-firebase-adminsdk-jfp8a-40b94b9e9c.json";
+
 
 ### config changes to make
 1. switch to local mySQL. edit /etc/mysql/mysql.conf.d/mysqld.cnf. set bind-address to 127.0.0.1

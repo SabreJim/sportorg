@@ -4,6 +4,7 @@ const AWS = require('aws-sdk');
 const TableBuilder = require('./data-access/table-builder');
 const Classes = require('./response-handler/classes');
 const Lookups = require('./response-handler/lookups');
+const Authentication = require('./middleware/server-authentication');
 
 const { curry } = require('ramda');
 
@@ -24,11 +25,6 @@ const createRouter = (config) => {
 
     // define the home page route
     router.get('/fencers', function (req, res) {
-        console.log('saw ctx', ctx.docClient);
-        ctx.dbTable.listTables({}, (err, result) => {
-            console.log('tables?', err, result);
-
-        });
         res.send('fencers');
     });
 
@@ -41,6 +37,9 @@ const createRouter = (config) => {
     router.get('/classes/', Classes.getAllClasses);
 
     router.put('/classes', jsonBody, Classes.addClass);
+
+    router.get('/session-token', Authentication.verifyToken);
+    router.put('/end-session', jsonBody, Authentication.endSession);
 
     return router;
 };

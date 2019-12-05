@@ -1,8 +1,5 @@
-/* You can add global styles to this file, and also import other style files */
-@import url(https://fonts.googleapis.com/css?family=Playfair+Display:400,70);
-@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,700);
-@import url(https://fonts.googleapis.com/css?family=Material+Icons);
 
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 @import "~angular-calendar/css/angular-calendar.css";
 
 @import '~@angular/material/theming';
@@ -21,3 +18,19 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 @include angular-material-theme($sportorg-theme);
+
+// global styles for overlay elements and menus
+.mat-menu-item {
+  i {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  i.blue {
+    color: mat-color($primary, 700);
+  }
+  i.right-align {
+    right: 0;
+    position: absolute;
+    top: 16px;
+  }
+}

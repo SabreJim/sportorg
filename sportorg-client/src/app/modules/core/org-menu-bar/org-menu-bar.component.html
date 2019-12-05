@@ -27,6 +27,24 @@
       </ng-container>
     </mat-menu>
 
-</nav>
+  </nav>
+  <div class="login">
+    <a mat-button *ngIf="isAnon" [matMenuTriggerFor]="authMenu" tabindex="0" >
+      Sign in
+    </a>
+    <mat-menu #authMenu>
+      <button mat-menu-item (click)="login('google')"><i class="fab fa-google blue"></i>Google</button>
+      <button mat-menu-item (click)="login('fb')"><i class="fab fa-facebook blue"></i>Facebook</button>
+      <button mat-menu-item (click)="login('twitter')"><i class="fab fa-twitter blue"></i>Twitter</button>
+    </mat-menu>
+    <div class="welcome-splash" *ngIf="!isAnon">
+      <img src="{{currentUser.photoURL}}" title="Welcome {{currentUser.displayName}}" [matMenuTriggerFor]="profileMenu">
+      <mat-menu #profileMenu>
+        <button mat-menu-item  routerLink="/my-profile"><mat-icon>perm_identity</mat-icon>My Profile</button>
+        <button mat-menu-item  (click)="logout()"><mat-icon>exit_to_app</mat-icon>Logout</button>
+      </mat-menu>
+    </div>
+
+  </div>
 </div>
 

@@ -43,8 +43,34 @@ const runQuery = (query, params = []) => {
     });
 };
 
+const runCommand = (query, params = []) => {
+    let safeParams = (R.is(Array, params)) ? params : [params];
+    return new Promise((resolve, reject) => {
+        try {
+            // const pool = MYSQL.createPool(savedConfig.mysql);
+            DB.query(query, safeParams, function (error, results, fields) {
+                if (error) {
+                    console.log('MySQL data errors', error);
+                    reject([]);
+                } else {
+                    if (results.length) {
+                        resolve(results[0]);
+                    } else {
+                        resolve(results);
+                    }
+
+                }
+            });
+        } catch (dbError) {
+            console.log('Error connecting to MYSQL', dbError);
+            reject([]);
+        }
+    });
+};
+
 
 module.exports = {
     buildDBConnections,
-    runQuery
+    runQuery,
+    runCommand
 };

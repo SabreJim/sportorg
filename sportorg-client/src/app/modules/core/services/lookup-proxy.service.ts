@@ -36,7 +36,7 @@ export class LookupProxyService extends RestProxyService {
       return of(this.seasonCache);
     } else {
       return new Observable<ProgramSeason[]>((subscription) => {
-        this.get('seasons' ).subscribe((response: ApiResponse) => {
+        this.get('seasons' ).subscribe((response: ApiResponse<ProgramSeason[]>) => {
           if (response.hasErrors()) {
             console.log('Error getting seasons', response.message);
           }
@@ -51,7 +51,7 @@ export class LookupProxyService extends RestProxyService {
     if (this.programsCache[seasonId]) {
       this.AllPrograms.next(this.programsCache[seasonId]);
     } else {
-        this.get(`programs/${seasonId}` ).subscribe((response: ApiResponse) => {
+        this.get(`programs/${seasonId}` ).subscribe((response: ApiResponse<ProgramDescription[]>) => {
           if (response.hasErrors()) {
             console.log('Error getting programs', response.message);
           }
@@ -65,7 +65,7 @@ export class LookupProxyService extends RestProxyService {
     if (this.feesCache && this.feesCache.length > 0) {
       this.AllFees.next(this.feesCache);
     } else {
-      this.get(`fees/` ).subscribe((response: ApiResponse) => {
+      this.get(`fees/` ).subscribe((response: ApiResponse<FeeStructure[]>) => {
         if (response.hasErrors()) {
           console.log('Error getting fees', response.message);
         }

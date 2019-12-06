@@ -25,6 +25,12 @@ const getProgramsBySeason = async(req, res, next) => {
     returnResults(res, programs);
 };
 
+const getAllClasses = async(req, res, next) => {
+    const query = `SELECT * from v_classes ORDER BY season_id, program_id`;
+    const programs = await MySQL.runQuery(query);
+    returnResults(res, programs);
+};
+
 const getFeeStructures = async(req, res, next) => {
     const query = `SELECT * from fee_structures order by fee_id`;
     const fees = await MySQL.runQuery(query);
@@ -35,5 +41,6 @@ module.exports = {
     getActiveSeasons,
     getProgramDetails,
     getFeeStructures,
-    getProgramsBySeason
+    getProgramsBySeason,
+    getAllClasses
 };

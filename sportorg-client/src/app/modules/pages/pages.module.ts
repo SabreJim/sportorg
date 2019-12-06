@@ -12,6 +12,8 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {jqxSchedulerModule} from "jqwidgets-ng/jqxscheduler";
 import {CoreModule} from "../core/core.module";
 import {FeesPageComponent} from "./fees-page/fees-page.component";
+import { AdminPageComponent } from './admin-page/admin-page.component';
+import { MyProfilePageComponent } from './my-profile-page/my-profile-page.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import {FeesPageComponent} from "./fees-page/fees-page.component";
     FencerPageComponent,
     EventPageComponent,
     AboutPageComponent,
-    FeesPageComponent
+    FeesPageComponent,
+    AdminPageComponent,
+    MyProfilePageComponent
   ],
   exports: [
 

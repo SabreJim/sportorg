@@ -1,0 +1,41 @@
+<table class="sportorg-table">
+  <thead>
+    <tr class="header-row">
+      <th class="header-cell edit-header">&nbsp;</th>
+      <ng-container *ngFor="let column of tableColumns"
+                    [ngTemplateOutlet]="headerCell"
+                    [ngTemplateOutletContext]="{column: column }"></ng-container>
+    </tr>
+  </thead>
+
+  <cdk-virtual-scroll-viewport itemSize="30" class="body-scroll"
+                               [minBufferPx]="SCROLL_MIN_BUFFER"
+                               [maxBufferPx]="SCROLL_MAX_BUFFER">
+    <ng-container *cdkVirtualFor="let row of gridData">
+      <tr class="body-row">
+        <td class="body-cell edit-cell"><mat-icon (click)="sendEdit(row)">edit</mat-icon></td>
+        <ng-container *ngFor="let column of tableColumns">
+          <ng-container [ngTemplateOutlet]="dataCell"
+                        [ngTemplateOutletContext]="{row: row, column: column }"></ng-container>
+        </ng-container>
+      </tr>
+    </ng-container>
+  </cdk-virtual-scroll-viewport>
+</table>
+
+<ng-template #headerCell let-column="column">
+  <th class="header-cell {{column.type}}-header" [hidden]="!column.showColumn">
+    <button class="sort-button"
+            [ngClass]="{'sorted-on': sortColumn === column.fieldName, 'not-sorted': sortColumn !== column.fieldName}">
+      <mat-icon *ngIf="column.sortDirection === 'ASC'">arrow_upward</mat-icon>
+      <mat-icon *ngIf="column.sortDirection === 'DESC'">arrow_downward</mat-icon>
+    </button>
+    <div class="header-text">{{column.title}}</div>
+  </th>
+</ng-template>
+
+<ng-template #dataCell let-row="row" let-column="column">
+  <td class="body-cell {{column.type}}-cell" [hidden]="!column.showColumn">
+    {{row[column.displayField]}}
+  </td>
+</ng-template>

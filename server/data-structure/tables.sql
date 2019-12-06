@@ -47,3 +47,8 @@ CREATE TABLE beaches.projects(
     client_id VARCHAR(100),
     PRIMARY KEY(project_id)
     );
+
+ALTER TABLE beaches.programs
+ADD start_date DATE;
+ALTER TABLE beaches.programs
+ADD end_date DATE;

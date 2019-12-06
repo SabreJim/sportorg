@@ -59,6 +59,21 @@ export class LookupProxyService extends RestProxyService {
           this.AllPrograms.next(this.programsCache[seasonId]);
         });
     }
+    return this.AllPrograms;
+  }
+
+  public getAllClasses = (): Observable<ProgramDescription[]> => {
+    return new Observable((subscription) => {
+      this.get(`all-classes` ).subscribe((response: ApiResponse<ProgramDescription[]>) => {
+        if (response.hasErrors()) {
+          console.log('Error getting programs', response.message);
+          subscription.next([]);
+        } else {
+          subscription.next(response.data);
+        }
+
+      }, (error: any) => {});
+    })
   }
 
   public getFees = ()=> {

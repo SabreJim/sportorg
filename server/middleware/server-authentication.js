@@ -56,13 +56,13 @@ const getSession = async(userId) => {
     const sessionQuery = `SELECT
             s.session_token as 'sessionToken',
             u.user_id,
-            u.is_admin,
-            m.member_id,
-            m.is_active,
+            u.is_admin as 'isAdmin',
+            m.member_id as 'memberId',
+            m.is_active as 'isActive',
             u.email,
             m.year_of_birth
-        FROM beaches.sessions s
-        LEFT JOIN beaches.users u ON u.user_id = s.user_id
+        FROM beaches.users u
+        LEFT JOIN beaches.sessions s ON u.user_id = s.user_id
         LEFT JOIN beaches.member_users mu ON mu.user_id = u.user_id AND mu.is_primary = 'Y'
         LEFT JOIN beaches.members m ON m.member_id = mu.member_id
         WHERE s.user_id = ?; `;
@@ -95,6 +95,9 @@ const verifyToken = async(req, res, next) => {
                 const sessionInsert = `INSERT INTO sessions (user_id, session_token) VALUES (?, ?)`;
                 await MySQL.runQuery(sessionInsert, [userResponse.userId, appSession.sessionToken]);
             }
+            appSession.isAdmin = oldToken.isAdmin;
+            appSession.isActive = oldToken.isActive;
+            appSession.memberId = oldToken.memberId;
 
             return returnSingle(res, appSession);
         }).catch(function(error) {

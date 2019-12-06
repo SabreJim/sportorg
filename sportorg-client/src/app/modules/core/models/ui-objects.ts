@@ -15,6 +15,31 @@ export interface OrgCalendarEvent extends CalendarEvent {
   groupName?: string;
 }
 
+export class TableColumn {
+  title: string;
+  type: string;
+  fieldName: string;
+  displayField?: string;
+  showColumn: boolean;
+  sortDirection: 'ASC' | 'DESC';
+  constructor (fieldName: string, title: string, type: string, displayField?: string) {
+    this.fieldName = fieldName;
+    this.title = title;
+    if (displayField) {
+      this.displayField = displayField;
+    } else {
+      this.displayField = fieldName;
+    }
+    if (['string' , 'long-string' , 'number' , 'currency' ,'date' , 'select'].includes(type)) {
+      this.type = type;
+    } else {
+      this.type = 'string';
+    }
+    this.showColumn = true;
+    this.sortDirection = 'DESC';
+  }
+}
+
 export const ORG_COLORS: EventColor[] = [
   // reds: border / background 0 - 5
   { primary: '#1a237e', secondary: '#e53935'},

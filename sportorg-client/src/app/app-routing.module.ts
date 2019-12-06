@@ -6,6 +6,9 @@ import {FencerPageComponent} from "./modules/pages/fencer-page/fencer-page.compo
 import {EventPageComponent} from "./modules/pages/event-page/event-page.component";
 import {AboutPageComponent} from "./modules/pages/about-page/about-page.component";
 import {FeesPageComponent} from "./modules/pages/fees-page/fees-page.component";
+import {AdminPageComponent} from "./modules/pages/admin-page/admin-page.component";
+import {RouteGuardService} from "./modules/core/route-guard/route-guard.service";
+import {MyProfilePageComponent} from "./modules/pages/my-profile-page/my-profile-page.component";
 
 
 const routes: Routes = [
@@ -15,6 +18,8 @@ const routes: Routes = [
   { path: 'fencers', component: FencerPageComponent },
   { path: 'events', component: EventPageComponent },
   { path: 'about-us', component: AboutPageComponent },
+  { path: 'my-profile', component: MyProfilePageComponent },
+  { path: 'admin', component: AdminPageComponent, canActivate: [RouteGuardService] }
 
 ];
 

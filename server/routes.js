@@ -31,6 +31,7 @@ const createRouter = (config) => {
     // lookup item getters
     router.get('/seasons', Lookups.getActiveSeasons);
     router.get('/programs/:seasonId', Lookups.getProgramsBySeason);
+    router.get('/all-classes', Lookups.getAllClasses);  // TODO: lots of overlap with this and /classes/
     router.get('/program-details', Lookups.getProgramDetails);
     router.get('/fees', Lookups.getFeeStructures);
 

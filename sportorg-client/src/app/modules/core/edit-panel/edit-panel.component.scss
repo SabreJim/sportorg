@@ -1,0 +1,13 @@
+@import "~src/styles";
+.panel {
+  display: flex;
+  flex-flow: column nowrap;
+  flex: 1 1 auto;
+  background-color: #fafafa;
+}
+.panel-header {
+  background-color: mat-color($primary, 100) !important;
+  .header-description {
+    align-items: center;
+  }
+}

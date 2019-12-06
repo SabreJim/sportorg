@@ -1,0 +1,17 @@
+<mat-expansion-panel class="panel" (opened)="refreshData()">
+  <mat-expansion-panel-header class="panel-header">
+    <mat-panel-title>
+      <h3 class="panel-title">{{panelTitle}}</h3>
+    </mat-panel-title>
+    <mat-panel-description class="header-description">
+      <span class="">{{description}}</span>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+<!--  local filter input-->
+
+  <app-table
+    [tableColumns]="columns"
+    [gridData]="gridData"
+    [isEditable]="true"
+  ></app-table>
+</mat-expansion-panel>

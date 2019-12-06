@@ -66,6 +66,9 @@ export class FirebaseAuthService extends RestProxyService {
           }
           // update the token so subsequent requests can be authenticated
           StaticValuesService.setToken(response.data.sessionToken);
+          console.log('back from REST', response.data);
+          this.currentUser.isAdmin = response.data.isAdmin === 'Y';
+          this.currentUser.isActive = response.data.isActive === 'Y';
           this.CurrentUser.next(this.currentUser);
         });
       });
@@ -73,6 +76,10 @@ export class FirebaseAuthService extends RestProxyService {
       this.CurrentUser.next(this.currentUser);
     }
   };
+
+  public isAdmin = (): boolean => {
+    return (this.currentUser && !this.currentUser.isAnonymous && this.currentUser.isAdmin);
+  }
 
   public logout = (): void => {
     const purgeSession = () => {

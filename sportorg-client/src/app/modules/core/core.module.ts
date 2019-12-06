@@ -12,6 +12,9 @@ import {OrgCalendarComponent} from "./org-calendar/org-calendar.component";
 import {RegistrationButtonComponent} from "./registration-button/registration-button.component";
 import {RegistrationDialogComponent} from "./registration-button/registration-dialog/registration-dialog.component";
 import {SafePipe} from "./pipes/safe-html.pipe";
+import {RouteGuardService} from "./route-guard/route-guard.service";
+import { EditPanelComponent } from './edit-panel/edit-panel.component';
+import { AppTableComponent } from './app-table/app-table.component';
 
 
 @NgModule({
@@ -21,7 +24,9 @@ import {SafePipe} from "./pipes/safe-html.pipe";
     OrgCalendarComponent,
     RegistrationButtonComponent,
     RegistrationDialogComponent,
-    SafePipe
+    SafePipe,
+    EditPanelComponent,
+    AppTableComponent
   ],
   exports: [
     OrgHeaderComponent,
@@ -29,7 +34,9 @@ import {SafePipe} from "./pipes/safe-html.pipe";
     OrgCalendarComponent,
     RegistrationButtonComponent,
     RegistrationDialogComponent,
-    SafePipe
+    SafePipe,
+    EditPanelComponent,
+    AppTableComponent
   ],
   imports: [
     MaterialModule,
@@ -46,9 +53,11 @@ import {SafePipe} from "./pipes/safe-html.pipe";
     )
   ],
   providers: [
+    RouteGuardService
   ],
   entryComponents: [
-    RegistrationDialogComponent
+    RegistrationDialogComponent,
+    AppTableComponent
   ]
 })
 export class CoreModule { }

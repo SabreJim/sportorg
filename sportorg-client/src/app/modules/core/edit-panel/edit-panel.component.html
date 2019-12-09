@@ -7,11 +7,30 @@
       <span class="">{{description}}</span>
     </mat-panel-description>
   </mat-expansion-panel-header>
-<!--  local filter input-->
+  <!--  local filter input-->
 
-  <app-table
-    [tableColumns]="columns"
-    [gridData]="gridData"
-    [isEditable]="true"
-  ></app-table>
+
+  <mat-sidenav-container class="example-sidenav-container">
+    <!--  side-nav for editor -->
+    <mat-sidenav #editNav [mode]="'side'" [opened]="editorOpen" class="side-nav"
+                 [fixedInViewport]="false" fixedTopGap="56">
+        <app-dynamic-form
+          [formFields]="columns"
+          [editingRow]="editingRow"
+        ></app-dynamic-form>
+    </mat-sidenav>
+
+    <mat-sidenav-content (click)="hideSideNav()" class="main-content">
+<!--  table content to display   -->
+      <app-table
+        [tableColumns]="columns"
+        [gridData]="gridData"
+        [isEditable]="true"
+        (editRow)="editRow($event)"
+      ></app-table>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+
+
+
 </mat-expansion-panel>

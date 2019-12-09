@@ -1,5 +1,5 @@
 
-CREATE OR REPLACE VIEW beaches.v_programs as
+CREATE OR REPLACE VIEW v_programs as
 SELECT
     s.year,
     s.season_id,
@@ -14,7 +14,7 @@ SELECT
     s.name as "season name",
     pl.level_name,
     COALESCE(p.start_date, s.start_date) start_date,
-    COALESCE(p.end_date, s.end_date) end_date,
+    COALESCE(p.end_date, s.end_date) end_date
 FROM programs p
 LEFT JOIN program_levels pl ON p.level_id = pl.level_id
 LEFT JOIN seasons s ON p.season_id = s.season_id
@@ -35,13 +35,13 @@ GROUP BY
     COALESCE(p.end_date, s.end_date)
 ;
 
-CREATE VIEW sportorg.v_program_schedules AS
+CREATE VIEW v_program_schedules AS
 SELECT
     ps.schedule_id,
     ps.program_id,
     l.name location_name,
-    s.start_date,
-    s.end_date,
+    DATE_FORMAT(s.start_date, '%Y-%m-%d') as 'start_date',
+    DATE_FORMAT(s.end_date, '%Y-%m-%d') as 'end_date',
     ps.day_of_week,
     ps.start_time,
     ps.end_time,
@@ -58,7 +58,7 @@ FROM program_schedules ps
     LEFT OUTER JOIN program_levels pl ON p.level_id = pl.level_id
 ;
 
-CREATE VIEW beaches.v_classes AS
+CREATE VIEW v_classes AS
 SELECT
     ps.schedule_id,
     ps.season_id,
@@ -67,8 +67,8 @@ SELECT
     pl.level_name,
     p.location_id,
     l.name location_name,
-    s.start_date,
-    s.end_date,
+    DATE_FORMAT(s.start_date, '%Y-%m-%d') as 'start_date',
+    DATE_FORMAT(s.end_date, '%Y-%m-%d') as 'end_date',
     ps.day_of_week,
     ps.start_time,
     ps.end_time,
@@ -81,3 +81,12 @@ FROM program_schedules ps
     LEFT OUTER JOIN locations l ON l.location_id = p.location_id
     LEFT OUTER JOIN program_levels pl ON p.level_id = pl.level_id
 ;
+
+CREATE VIEW v_lookups AS
+SELECT f.fee_id as 'id', f.fee_name as 'name', CONCAT('$', f.fee_value) as 'more_info', 'fees' as 'lookup' FROM fee_structures f
+UNION
+SELECT l.location_id as 'id', l.name as 'name', l.street_address as 'more_info', 'locations' as 'lookup' FROM locations l
+UNION
+SELECT pl.level_id as 'id', pl.level_name as 'name', pl.level_value as 'more_info', 'program_levels' as 'lookup' FROM program_levels pl
+UNION
+SELECT s.season_id as 'id', CONCAT(s.name, ' ', s.year) as 'name', date_format(s.start_date,'%Y-%m-%d') as 'more_info', 'seasons' as 'lookup' FROM seasons s;

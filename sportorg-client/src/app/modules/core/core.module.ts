@@ -15,6 +15,7 @@ import {SafePipe} from "./pipes/safe-html.pipe";
 import {RouteGuardService} from "./route-guard/route-guard.service";
 import { EditPanelComponent } from './edit-panel/edit-panel.component';
 import { AppTableComponent } from './app-table/app-table.component';
+import { DynamicFormComponent } from './dynamic-form/dynamic-form.component';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { AppTableComponent } from './app-table/app-table.component';
     RegistrationDialogComponent,
     SafePipe,
     EditPanelComponent,
-    AppTableComponent
+    AppTableComponent,
+    DynamicFormComponent
   ],
   exports: [
     OrgHeaderComponent,

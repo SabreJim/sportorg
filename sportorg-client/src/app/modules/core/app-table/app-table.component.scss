@@ -39,9 +39,16 @@
       td {
         display: flex;
         height: 35px;
+        max-height:35px;
         padding: 5px;
         border: 1px solid black;
         align-items: center;
+        span.content {
+          text-overflow: ellipsis;
+          max-width: 100%;
+          overflow: hidden;
+          white-space: nowrap;
+        }
       }
     }
   }
@@ -86,10 +93,12 @@
 .number-cell, .number-header {
   flex: 1 1 110px;
   min-width: 110px;
+  justify-content: center;
 }
 .date-cell, .date-header {
   flex: 1 1 100px;
   min-width: 100px;
+  justify-content: center;
 }
 .edit-cell, .edit-header {
   flex: 1 1 50px;
@@ -105,5 +114,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer; // TODO: just put this in a button
   }
 }

@@ -4,7 +4,7 @@ const config = {
     mysql: {
         user: 'sportorg',
         password: 'notarealpassword',
-        host: '162.216.113.174',
+        host: 'localhost',
         port: 3306,
         database: 'beaches',
         connectionLimit: 10

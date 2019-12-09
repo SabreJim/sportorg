@@ -31,6 +31,7 @@ export class AppTableComponent implements OnInit {
   public sendEdit = (row: any) => {
     if (this.isEditable) {
       console.log('row to edit', row);
+      this.editRow.emit(row);
     }
   }
   ngOnInit() {

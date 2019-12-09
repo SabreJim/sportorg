@@ -11,3 +11,17 @@
     align-items: center;
   }
 }
+
+.mat-expansion-panel {
+  max-height: 600px;
+  .mat-expansion-panel-content {
+    display: flex;
+  }
+}
+.side-nav {
+  display: flex;
+}
+.main-content {
+  display: flex;
+  height: auto;
+}

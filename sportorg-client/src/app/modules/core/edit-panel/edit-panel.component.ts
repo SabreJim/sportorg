@@ -1,4 +1,12 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges
+} from '@angular/core';
 import {TableColumn} from "../models/ui-objects";
 import {Observable} from "rxjs";
 
@@ -10,7 +18,7 @@ import {Observable} from "rxjs";
 })
 export class EditPanelComponent implements OnInit, OnChanges {
 
-  constructor() { }
+  constructor(private detector: ChangeDetectorRef) { }
 
   @Input() panelTitle = '';
   @Input() description = '';
@@ -21,6 +29,8 @@ export class EditPanelComponent implements OnInit, OnChanges {
   }
 
   public gridData: any[] = [];
+  public editorOpen = false;
+  public editingRow: any = null;
 
   public refreshData = () => {
     if (this.columns && this.columns.length && this.getterFunction) {
@@ -30,7 +40,26 @@ export class EditPanelComponent implements OnInit, OnChanges {
         this.gridData = rows;
       })
     }
-  }
+  };
+
+  public editRow = (rowObject: any) => {
+    console.log('open sidenav for row', rowObject);
+    this.editingRow = rowObject;
+    setTimeout(() => {
+      this.editorOpen = true;
+      this.detector.detectChanges();
+      console.log('opening');
+    });
+
+  };
+
+  public hideSideNav = () => {
+    if (this.editorOpen) {
+      this.editorOpen = false;
+      this.detector.detectChanges();
+      console.log('hiding');
+    }
+  };
 
   ngOnChanges(changes: SimpleChanges): void {
     const hasValue = (prop: string) => changes[prop] && changes[prop].currentValue;

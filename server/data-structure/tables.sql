@@ -52,3 +52,63 @@ ALTER TABLE beaches.programs
 ADD start_date DATE;
 ALTER TABLE beaches.programs
 ADD end_date DATE;
+
+
+-- data tables
+CREATE TABLE fee_structures (
+fee_id MEDIUMINT NOT NULL auto_increment,
+fee_value int,
+fee_period VARCHAR (40),
+fee_description VARCHAR(1000),
+fee_name VARCHAR(100),
+registration_link VARCHAR(100),
+PRIMARY KEY(fee_id)
+);
+CREATE TABLE locations (
+location_id MEDIUMINT NOT NULL auto_increment,
+street_address VARCHAR(100),
+city VARCHAR(100),
+contact_phone VARCHAR(100),
+name VARCHAR(100),
+PRIMARY KEY(location_id)
+);
+CREATE TABLE seasons (
+season_id MEDIUMINT NOT NULL auto_increment,
+name VARCHAR(100),
+year int,
+start_date DATE,
+end_date DATE,
+PRIMARY KEY(season_id)
+);
+CREATE TABLE program_levels (
+level_id MEDIUMINT NOT NULL auto_increment,
+level_name VARCHAR(100),
+level_value int,
+level_description VARCHAR(2000),
+PRIMARY KEY(level_id)
+);
+
+CREATE TABLE programs (
+program_id MEDIUMINT NOT NULL auto_increment,
+level_id MEDIUMINT NOT NULL REFERENCES beaches.program_levels(level_id),
+season_id MEDIUMINT NOT NULL REFERENCES beaches.seasons(season_id),
+min_age int,
+max_age int,
+location_id MEDIUMINT NOT NULL REFERENCES beaches.locations(location_id),
+registration_method VARCHAR(100),
+color_id int,
+fee_id MEDIUMINT NOT NULL REFERENCES beaches.fee_structures(fee_id),
+start_date DATE,
+end_date DATE,
+PRIMARY KEY(program_id)
+);
+CREATE TABLE program_schedules (
+schedule_id MEDIUMINT NOT NULL auto_increment,
+program_id MEDIUMINT NOT NULL REFERENCES beaches.programs(program_id),
+season_id MEDIUMINT NOT NULL REFERENCES beaches.seasons(season_id),
+start_time VARCHAR(100),
+end_time VARCHAR(100),
+duration int,
+day_of_week VARCHAR(20),
+PRIMARY KEY(schedule_id)
+);

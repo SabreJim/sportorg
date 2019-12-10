@@ -34,6 +34,7 @@ const createRouter = (config) => {
     router.get('/all-classes', Lookups.getAllClasses);  // TODO: lots of overlap with this and /classes/
     router.get('/program-details', Lookups.getProgramDetails);
     router.get('/fees', Lookups.getFeeStructures);
+    router.get('/lookups', Lookups.getLookupValues);
 
     router.get('/classes/', Classes.getAllClasses);
 

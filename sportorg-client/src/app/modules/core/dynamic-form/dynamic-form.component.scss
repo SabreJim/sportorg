@@ -4,6 +4,7 @@
   display:flex;
   margin-left: auto;
   padding-right: 10px;
+  align-items: center;
 }
 
 .field-wrapper {
@@ -16,3 +17,15 @@
 h3 {
   padding-right:10px;
 }
+app-select-input {
+  max-width: 300px;
+}
+.title-bar {
+  display: flex;
+  flex-flow: row nowrap;
+  padding: 10px;
+  .save-button {
+    margin-left: auto;
+  }
+}
+

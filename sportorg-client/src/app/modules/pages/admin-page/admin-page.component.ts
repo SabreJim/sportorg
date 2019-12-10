@@ -11,13 +11,16 @@ import {Observable} from "rxjs";
 export class AdminPageComponent implements OnInit {
   public classColumns: TableColumn[] = [
 
-    new TableColumn('season', 'Season', 'select', 'seasonName'),
-    new TableColumn('programId', 'Program', 'select', 'levelName'),
+    new TableColumn('seasonId', 'Season', 'select', 'seasonName', 'seasons'),
+    new TableColumn('programId', 'Program', 'select', 'levelName', 'programLevels'),
+    new TableColumn('dayOfWeek', 'Week Day', 'select', 'dayOfWeek', 'weekDays'),
+    new TableColumn('startTime', 'Start Time', 'time'),
+    new TableColumn('endTime', 'End Time', 'time'),
     new TableColumn('startDate', 'Start Date', 'date'),
     new TableColumn('endDate', 'End Date', 'date'),
-    new TableColumn('location', 'Location', 'select', 'locationName'),
+    new TableColumn('locationId', 'Location', 'select', 'locationName', 'locations'),
     new TableColumn('registrationMethod', 'Register', 'string'),
-    new TableColumn('color', 'Color', 'select'),
+    new TableColumn('colorId', 'Color', 'select', 'colorName'),
     new TableColumn('minAge', 'Min Age', 'number'),
     new TableColumn('maxAge', 'Max Age', 'number'),
   ];

@@ -1,7 +1,7 @@
 import {RestProxyService} from "./rest-proxy.service";
 import {FeeStructure, ProgramDescription, ProgramSeason} from "../models/data-objects";
 import {Observable, of, Subject} from "rxjs";
-import {ApiResponse, IndexedCache} from "../models/rest-objects";
+import {ApiResponse, IndexedCache, LookupItem} from "../models/rest-objects";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
@@ -19,6 +19,18 @@ export class LookupProxyService extends RestProxyService {
   public AllPrograms: Subject<ProgramDescription[]> = new Subject<ProgramDescription[]>();
   protected programsCache: IndexedCache<ProgramDescription[]> = { cache: [] };
   protected feesCache: FeeStructure[] = [];
+  // newer pattern for lookups
+  protected feeCache: LookupItem[] = [];
+  protected locationCache: LookupItem[] = [];
+  protected programLevelCache: LookupItem[] = [];
+  protected seasonCache2: LookupItem[] = [];
+
+  public Subjects: Record<string, Subject<LookupItem[]>> = {
+    fees: new Subject<LookupItem[]>(),
+    locations: new Subject<LookupItem[]>(),
+    programLevels: new Subject<LookupItem[]>(),
+    seasons: new Subject<LookupItem[]>()
+  };
 
 
   public getBestUpcomingSeason = (seasons: ProgramSeason[]) => {
@@ -75,6 +87,35 @@ export class LookupProxyService extends RestProxyService {
       }, (error: any) => {});
     })
   }
+
+  public refreshLookups = (repull: boolean = false) => {
+    if (repull) {
+      this.get(`lookups` ).subscribe((response: ApiResponse<LookupItem[]>) => {
+        if (response.hasErrors()) {
+          console.log('Error getting lookups', response.message);
+          // dummy response so UI doesn't error out
+          return { subject: new Subject<LookupItem[]>(), cache: [] };
+        } else {
+          console.log('split up by type', response.data);
+          this.feeCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'fees');
+          this.locationCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'locations');
+          this.programLevelCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'program_levels');
+          this.seasonCache2 = response.data.filter((lookup: LookupItem) => lookup.lookup === 'seasons');
+
+          this.Subjects.fees.next(this.feeCache);
+          this.Subjects.locations.next(this.locationCache);
+          this.Subjects.programLevels.next(this.programLevelCache);
+          this.Subjects.seasons.next(this.seasonCache2);
+        }
+      }, (error: any) => {});
+    } else {
+      this.Subjects.fees.next(this.feeCache);
+      this.Subjects.locations.next(this.locationCache);
+      this.Subjects.programLevels.next(this.programLevelCache);
+      this.Subjects.seasons.next(this.seasonCache2);
+    }
+
+  };
 
   public getFees = ()=> {
     if (this.feesCache && this.feesCache.length > 0) {

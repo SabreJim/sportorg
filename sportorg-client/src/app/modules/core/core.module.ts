@@ -16,6 +16,12 @@ import {RouteGuardService} from "./route-guard/route-guard.service";
 import { EditPanelComponent } from './edit-panel/edit-panel.component';
 import { AppTableComponent } from './app-table/app-table.component';
 import { DynamicFormComponent } from './dynamic-form/dynamic-form.component';
+import { SelectInputComponent } from './inputs/select-input/select-input.component';
+import { DatePickerComponent } from './inputs/date-picker/date-picker.component';
+import { StringInputComponent } from './inputs/string-input/string-input.component';
+import { HtmlInputComponent } from './inputs/html-input/html-input.component';
+import { NumberInputComponent } from './inputs/number-input/number-input.component';
+import { TimeInputComponent } from './inputs/time-input/time-input.component';
 
 
 @NgModule({
@@ -28,7 +34,13 @@ import { DynamicFormComponent } from './dynamic-form/dynamic-form.component';
     SafePipe,
     EditPanelComponent,
     AppTableComponent,
-    DynamicFormComponent
+    DynamicFormComponent,
+    SelectInputComponent,
+    DatePickerComponent,
+    StringInputComponent,
+    HtmlInputComponent,
+    NumberInputComponent,
+    TimeInputComponent
   ],
   exports: [
     OrgHeaderComponent,

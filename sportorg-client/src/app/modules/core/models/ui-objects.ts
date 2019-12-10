@@ -20,9 +20,10 @@ export class TableColumn {
   type: string;
   fieldName: string;
   displayField?: string;
+  lookupField?: string;
   showColumn: boolean;
   sortDirection: 'ASC' | 'DESC';
-  constructor (fieldName: string, title: string, type: string, displayField?: string) {
+  constructor (fieldName: string, title: string, type: string, displayField?: string, lookupField?: string) {
     this.fieldName = fieldName;
     this.title = title;
     if (displayField) {
@@ -30,11 +31,12 @@ export class TableColumn {
     } else {
       this.displayField = fieldName;
     }
-    if (['string' , 'long-string' , 'number' , 'currency' ,'date' , 'select'].includes(type)) {
+    if (['string' , 'long-string' , 'number' , 'currency' ,'date', 'time', 'select'].includes(type)) {
       this.type = type;
     } else {
       this.type = 'string';
     }
+    this.lookupField = lookupField;
     this.showColumn = true;
     this.sortDirection = 'DESC';
   }

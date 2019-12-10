@@ -1,32 +1,39 @@
-<form novalidate class="edit-form">
-
+<div class="edit-form">
+  <div class="title-bar">
+    <h2>Edit Record</h2>
+    <button mat-raised-button color="primary" class="save-button"
+            (click)="saveChanges()" [disabled]="!isDirty">Save</button>
+  </div>
   <ng-container *ngFor="let editField of formFields">
     <div class="field-wrapper">
     <h3>{{editField.title}}</h3>
-    <mat-form-field class="editor-field">
+    <div class="editor-field">
         <ng-container *ngIf="editField.type ==='string'">
           <input matInput/>
         </ng-container>
         <ng-container *ngIf="editField.type ==='number'">
           <input matInput/>
         </ng-container>
+      <ng-container *ngIf="editField.type ==='time'">
+        <app-time-input [value]="currentRow[editField.fieldName]" ></app-time-input>
+      </ng-container>
         <ng-container *ngIf="editField.type ==='date'">
-          <input matInput [matDatepicker]="picker" placeholder="Choose a date">
-          <button mat-button *ngIf="currentRow[editField.fieldName]" matSuffix mat-icon-button
-                  (click)="clearDate(editField.fieldName)">
-            <mat-icon>close</mat-icon>
-          </button>
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
+          <app-date-picker
+            [dateValue]="currentRow[editField.fieldName]"
+            (dateValueChanged)="updateDate($event, editField.fieldName)"
+          ></app-date-picker>
         </ng-container>
         <ng-container *ngIf="editField.type ==='select'">
-        <div>make select input</div>
-          <input matInput/>
+          <app-select-input
+            [lookupType]="editField.lookupField"
+            [selected]="currentRow[editField.fieldName]"
+            (selectedChanged)="updateSelection($event, editField.fieldName)"
+          ></app-select-input>
         </ng-container>
-      </mat-form-field>
+      </div>
     </div>
   </ng-container>
-</form>
+</div>
 <!--title: string;-->
 <!--type: string;-->
 <!--fieldName: string;-->

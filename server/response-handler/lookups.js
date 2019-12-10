@@ -37,10 +37,17 @@ const getFeeStructures = async(req, res, next) => {
     returnResults(res, fees);
 };
 
+const getLookupValues = async(req, res, next) => {
+    const query = `SELECT * from v_lookups order by lookup`;
+    const lookups = await MySQL.runQuery(query);
+    returnResults(res, lookups);
+};
+
 module.exports = {
     getActiveSeasons,
     getProgramDetails,
     getFeeStructures,
     getProgramsBySeason,
-    getAllClasses
+    getAllClasses,
+    getLookupValues
 };

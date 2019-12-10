@@ -1,0 +1,14 @@
+.mat-select{
+  border: 1px solid grey;
+  padding: 5px;
+}
+.main-text {
+
+}
+.alt-text {
+  margin-left: auto;
+}
+
+::ng-deep .mat-option-text {
+  display: inline-flex !important;
+}

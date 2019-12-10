@@ -16,7 +16,7 @@ import {Observable} from "rxjs";
   styleUrls: ['./edit-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EditPanelComponent implements OnInit, OnChanges {
+export class EditPanelComponent implements OnInit {
 
   constructor(private detector: ChangeDetectorRef) { }
 
@@ -60,15 +60,5 @@ export class EditPanelComponent implements OnInit, OnChanges {
       console.log('hiding');
     }
   };
-
-  ngOnChanges(changes: SimpleChanges): void {
-    const hasValue = (prop: string) => changes[prop] && changes[prop].currentValue;
-    if (hasValue('columns') && hasValue('getterFunction')) {
-      // build the table
-      console.log('saw columns', changes.columns.currentValue);
-
-      // call the getter function to populate it
-    }
-  }
 
 }

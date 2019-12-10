@@ -18,22 +18,32 @@ import {TableColumn} from "../models/ui-objects";
 export class AppTableComponent implements OnInit {
 
   @Input() tableColumns: TableColumn[] = [];
-  @Input() gridData: any[] = [];
+  @Input() set gridData(rows: any[]){
+    console.log('incoming rows', rows);
+    this.gridDataRows = rows;
+    this.detector.detectChanges();
+  } get gridData () { return this.gridDataRows; }
   @Input() isEditable = false;
   @Output() editRow = new EventEmitter<any>();
 
   constructor(private detector: ChangeDetectorRef) { }
-
-  public SCROLL_MIN_BUFFER = 20;
-  public SCROLL_MAX_BUFFER = 100;
+  public gridDataRows: any[] = [];
+  public readonly ROW_SIZE = 46;
+  public SCROLL_MIN_BUFFER = 20 * this.ROW_SIZE;
+  public SCROLL_MAX_BUFFER = 100 * this.ROW_SIZE;
   public sortColumn: string = '';
 
   public sendEdit = (row: any) => {
     if (this.isEditable) {
-      console.log('row to edit', row);
       this.editRow.emit(row);
     }
   }
+  public addNew = () => {
+    if (this.isEditable) {
+      this.editRow.emit({});
+    }
+  }
+
   ngOnInit() {
   }
 

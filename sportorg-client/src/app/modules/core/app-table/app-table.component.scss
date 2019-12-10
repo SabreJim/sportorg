@@ -19,8 +19,12 @@
         align-items: center;
         height: 40px;
         padding: 5px;
-        border: 1px solid white;
+        border-right: 1px solid white;
+        border-bottom: 1px solid white;
         background-color: mat-color($primary, 300) !important;
+        mat-icon {
+          background-color: white;
+        }
       }
     }
   }
@@ -36,12 +40,14 @@
     tr {
       display: flex;
       flex-flow: row nowrap;
+      border-left: 1px solid black;
       td {
         display: flex;
         height: 35px;
         max-height:35px;
         padding: 5px;
-        border: 1px solid black;
+        border-right: 1px solid black;
+        border-bottom: 1px solid black;
         align-items: center;
         span.content {
           text-overflow: ellipsis;
@@ -95,7 +101,7 @@
   min-width: 110px;
   justify-content: center;
 }
-.date-cell, .date-header {
+.date-cell, .date-header, .time-cell, .time-header {
   flex: 1 1 100px;
   min-width: 100px;
   justify-content: center;

@@ -28,7 +28,6 @@ export class DynamicFormComponent implements OnInit {
   }
 
   public updateDate = (newDate: string, fieldName: string) => {
-    console.log('setting new date', newDate, fieldName);
     if (newDate !== this.currentRow[fieldName]){
       this.currentRow[fieldName] = newDate;
       this.isDirty = true;

@@ -26,6 +26,7 @@
         <ng-container *ngIf="editField.type ==='select'">
           <app-select-input
             [lookupType]="editField.lookupField"
+            [staticLookup]="editField.lookupStatic"
             [selected]="currentRow[editField.fieldName]"
             (selectedChanged)="updateSelection($event, editField.fieldName)"
           ></app-select-input>

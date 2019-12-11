@@ -24,4 +24,6 @@
 .main-content {
   display: flex;
   height: auto;
+  margin-left: auto !important;
+  flex: 1 1 auto;
 }

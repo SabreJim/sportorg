@@ -1,0 +1,37 @@
+<div class="cal-card">
+  <div class="actions">
+    <button mat-raised-button color="primary" (click)="toggleExpand()">{{isExpanded ? 'Collapse': 'Expand'}}</button>
+    <div class="selector">
+      <h4>Selected season:</h4>
+      <app-select-input
+        [lookupType]="'seasons'"
+        [selected]="currentSeasonId"
+        (selectedChanged)="updateSelection($event)"
+      ></app-select-input>
+    </div>
+  </div>
+  <div class="calendar">
+    <ng-container *ngFor="let day of weekdays">
+      <div ngClass="day-column {{(!isExpanded && day.isHidden) ? 'hide-column' : ''}}">
+        <div ngClass="title-cell {{isExpanded ? 'expanded' : 'min-wide'}}">
+          <span class="day-name">{{day.dayName}}</span>
+          <span class="exact-date">{{day.specificDate}}</span>
+        </div>
+        <ng-container *ngFor="let event of timeSlotGrid[day.id]">
+          <ng-container *ngIf="event.type === 'empty'">
+            <div ngClass="empty-cell  {{isExpanded ? 'expanded' : 'min-wide'}}"></div>
+          </ng-container>
+          <ng-container *ngIf="event.type === 'class'">
+            <div ngClass="event-cell tall-{{event.height}}  {{isExpanded ? 'expanded' : 'min-wide'}}"
+                 [style.backgroundColor]="event.bgColor"
+                 [style.color]="event.textColor"
+            >
+              <span class="event-name">{{event.eventName}}</span>
+              <span class="start-time">{{event.startTime}}</span>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+    </ng-container>
+  </div>
+</div>

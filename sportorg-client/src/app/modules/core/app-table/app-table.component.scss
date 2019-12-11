@@ -31,6 +31,7 @@
   .body-scroll {
     display: block;
     height: 100%;
+    overflow-x: hidden;
     ::ng-deep .cdk-virtual-scroll-content-wrapper {
       min-width: 100%;
       display: flex;

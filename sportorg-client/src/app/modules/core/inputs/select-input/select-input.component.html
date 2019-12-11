@@ -1,5 +1,5 @@
 <mat-select [(ngModel)]="selectedValue" [name]="lookupType" (selectionChange)="itemSelected($event)" >
   <mat-option *ngFor="let option of options" [value]="option.id">
-    <span class="main-text">{{option.name}}</span><span class="alt-text">({{option.moreInfo}})</span>
+    <span class="main-text">{{option.name}}</span> <span *ngIf="option.moreInfo" class="alt-text">({{option.moreInfo}})</span>
   </mat-option>
 </mat-select>

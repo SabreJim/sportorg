@@ -2,6 +2,7 @@ import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output} from '@an
 import {LookupProxyService} from "../../services/lookup-proxy.service";
 import {LookupItem} from "../../models/rest-objects";
 import {MatSelectChange} from "@angular/material";
+import {StaticValuesService} from "../../services/static-values.service";
 
 @Component({
   selector: 'app-select-input',
@@ -11,6 +12,7 @@ import {MatSelectChange} from "@angular/material";
 export class SelectInputComponent implements OnInit, AfterViewInit {
 
   @Input() lookupType: string;
+  @Input() staticLookup: LookupItem[];
 
   @Input() set selected(newValue: number) {
     if (newValue !== null && newValue !== undefined && this.options.length) {
@@ -26,18 +28,25 @@ export class SelectInputComponent implements OnInit, AfterViewInit {
   }
 
   public itemSelected = (newSelection: MatSelectChange) => {
-    this.selectedChanged.emit(newSelection.value.id);
+    this.selectedChanged.emit(newSelection.value);
   }
   ngAfterViewInit(): void {
-    if (this.lookupService.Subjects[this.lookupType]){
+    if (this.lookupService.Subjects[this.lookupType]) {
       this.lookupService.Subjects[this.lookupType].subscribe((items: LookupItem[]) => {
         this.options = items;
         if (this.selectedValue) {
           this.selected = this.selectedValue; // in case of timing issue
         }
       });
+      this.lookupService.refreshLookups();
     }
-    this.lookupService.refreshLookups();
+    if (this.staticLookup && this.staticLookup.length) {
+      console.log('using static', this.staticLookup);
+      this.options = this.staticLookup;
+      if (this.selectedValue) {
+        this.selected = this.selectedValue; // in case of timing issue
+      }
+    }
   }
 
 }

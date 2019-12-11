@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from "@angular/core";
 import {RecentItem, RegistrationDialogData} from "../models/ui-objects";
-import {FeeStructure, ProgramDescription, ProgramSchedule} from "../models/data-objects";
+import {FeeStructure, ClassRecord, ProgramSchedule} from "../models/data-objects";
 import {MatDialog} from "@angular/material";
 import {RegistrationDialogComponent} from "./registration-dialog/registration-dialog.component";
 
@@ -17,11 +17,11 @@ export class RegistrationButtonComponent implements OnInit {
   public showOptions = true;
   public externalRegistrationLink: string;
 
-  protected _program: ProgramDescription;
-  @Input() get program(): ProgramDescription {
+  protected _program: ClassRecord;
+  @Input() get program(): ClassRecord {
     return this._program;
   }
-  set program(newProgram: ProgramDescription) {
+  set program(newProgram: ClassRecord) {
     if (newProgram) {
       this.isExternalRegistration = newProgram.registrationMethod !== 'INTERNAL';
       if (this.isExternalRegistration) {

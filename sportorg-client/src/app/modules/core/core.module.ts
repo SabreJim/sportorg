@@ -22,6 +22,7 @@ import { StringInputComponent } from './inputs/string-input/string-input.compone
 import { HtmlInputComponent } from './inputs/html-input/html-input.component';
 import { NumberInputComponent } from './inputs/number-input/number-input.component';
 import { TimeInputComponent } from './inputs/time-input/time-input.component';
+import { SportorgCalendarComponent } from './sportorg-calendar/sportorg-calendar.component';
 
 
 @NgModule({
@@ -40,7 +41,8 @@ import { TimeInputComponent } from './inputs/time-input/time-input.component';
     StringInputComponent,
     HtmlInputComponent,
     NumberInputComponent,
-    TimeInputComponent
+    TimeInputComponent,
+    SportorgCalendarComponent
   ],
   exports: [
     OrgHeaderComponent,
@@ -50,7 +52,8 @@ import { TimeInputComponent } from './inputs/time-input/time-input.component';
     RegistrationDialogComponent,
     SafePipe,
     EditPanelComponent,
-    AppTableComponent
+    AppTableComponent,
+    SportorgCalendarComponent
   ],
   imports: [
     MaterialModule,

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {TableColumn} from "../../core/models/ui-objects";
 import {LookupProxyService} from "../../core/services/lookup-proxy.service";
 import {Observable} from "rxjs";
+import {ClassesProxyService} from "../../core/services/classes-proxy.service";
+import {StaticValuesService} from "../../core/services/static-values.service";
 
 @Component({
   selector: 'app-admin-page',
@@ -13,7 +15,8 @@ export class AdminPageComponent implements OnInit {
 
     new TableColumn('seasonId', 'Season', 'select', 'seasonName', 'seasons'),
     new TableColumn('programId', 'Program', 'select', 'levelName', 'programLevels'),
-    new TableColumn('dayOfWeek', 'Week Day', 'select', 'dayOfWeek', 'weekDays'),
+    new TableColumn('dayOfWeek', 'Week Day', 'select', 'dayOfWeek', null,
+      StaticValuesService.WEEK_DAYS),
     new TableColumn('startTime', 'Start Time', 'time'),
     new TableColumn('endTime', 'End Time', 'time'),
     new TableColumn('startDate', 'Start Date', 'date'),
@@ -24,8 +27,8 @@ export class AdminPageComponent implements OnInit {
     new TableColumn('minAge', 'Min Age', 'number'),
     new TableColumn('maxAge', 'Max Age', 'number'),
   ];
-  public getClasses = this.lookupService.getAllClasses;
-  constructor(private lookupService: LookupProxyService) { }
+  public getClasses = () => this.classService.getAllClasses(-1);
+  constructor(private lookupService: LookupProxyService, private classService: ClassesProxyService) { }
 
   ngOnInit() {
   }

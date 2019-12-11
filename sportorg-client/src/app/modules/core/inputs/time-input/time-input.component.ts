@@ -8,7 +8,6 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 export class TimeInputComponent implements OnInit {
 
   @Input() set value (newValue: string) {
-    console.log('incoming time', newValue);
     this.timeValue = newValue;
   }
   @Output() timeChanged = new EventEmitter<string>();

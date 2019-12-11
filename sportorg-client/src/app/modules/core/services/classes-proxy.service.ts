@@ -1,5 +1,5 @@
 import {RestProxyService} from "./rest-proxy.service";
-import {Class, ProgramSchedule} from "../models/data-objects";
+import {Class, ClassRecord, ProgramSchedule} from "../models/data-objects";
 import {Observable, Subject} from "rxjs";
 import {ApiResponse, IndexedCache} from "../models/rest-objects";
 import {HttpClient} from "@angular/common/http";
@@ -28,5 +28,20 @@ export class ClassesProxyService extends RestProxyService {
         this.AllClasses.next(this.classCache[seasonId]);
       });
     }
+  }
+
+  public getAllClasses = (seasonId: number = null): Observable<ClassRecord[]> => {
+    return new Observable((subscription) => {
+      const url = (seasonId === null) ? 'all-classes' : `all-classes?seasonId=${seasonId}`;
+      this.get(url).subscribe((response: ApiResponse<ClassRecord[]>) => {
+        if (response.hasErrors()) {
+          console.log('Error getting programs', response.message);
+          subscription.next([]);
+        } else {
+          subscription.next(response.data);
+        }
+
+      }, (error: any) => {});
+    })
   }
 }

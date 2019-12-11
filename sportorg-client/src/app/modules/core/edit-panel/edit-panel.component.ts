@@ -34,7 +34,6 @@ export class EditPanelComponent implements OnInit {
 
   public refreshData = () => {
     if (this.columns && this.columns.length && this.getterFunction) {
-      console.log('refresh on open', this.columns);
       this.getterFunction().subscribe((rows: any) => {
         console.log('got rows', rows);
         this.gridData = rows;

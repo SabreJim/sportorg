@@ -21,23 +21,35 @@ export interface ClassDateTime {
   duration: number;
 }
 
-export interface ProgramDescription {
-  year: number;
-  seasonId: number;
-  levelId: number;
-  seasonName: string;
+export interface ClassRecord {
+  colorId: number;
+  dayOfWeek: string;
+  dayId: number;
+  endDate: string;
+  endTime: string;
   levelName: string;
-  startDate: Date;
-  endDate: Date;
+  locationId: number;
+  locationName: string;
+  maxAge: number;
+  minAge: number;
+  programId: number;
+  scheduleId: number;
+  seasonId: number;
+  seasonName: string;
+  startDate: string;
+  startTime: string;
+  duration: number;
+
+  year: number;
+
+  levelId: number;
   levelDescription: string;
   registrationMethod: string;
   feeId: number;
   feeValue: number;
   registrationLink: string;
-  duration: string;
   daysOfWeek: string;
   expanded?: boolean;
-  colorId: number;
   colorValue?: string;
   daysText?: string;
 }

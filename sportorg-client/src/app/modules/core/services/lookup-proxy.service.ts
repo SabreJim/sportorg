@@ -1,11 +1,12 @@
 import {RestProxyService} from "./rest-proxy.service";
-import {FeeStructure, ProgramDescription, ProgramSeason} from "../models/data-objects";
+import {FeeStructure, ClassRecord, ProgramSeason} from "../models/data-objects";
 import {Observable, of, Subject} from "rxjs";
 import {ApiResponse, IndexedCache, LookupItem} from "../models/rest-objects";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
 import {head, filter} from 'ramda';
+import {StaticValuesService} from "./static-values.service";
 
 
 @Injectable({providedIn: 'root'})
@@ -16,14 +17,15 @@ export class LookupProxyService extends RestProxyService {
   // cached results for non-volatile lookup values
   protected seasonCache: ProgramSeason[] = [];
   public AllFees: Subject<FeeStructure[]> = new Subject<FeeStructure[]>();
-  public AllPrograms: Subject<ProgramDescription[]> = new Subject<ProgramDescription[]>();
-  protected programsCache: IndexedCache<ProgramDescription[]> = { cache: [] };
+  public AllPrograms: Subject<ClassRecord[]> = new Subject<ClassRecord[]>();
+  protected programsCache: IndexedCache<ClassRecord[]> = { cache: [] };
   protected feesCache: FeeStructure[] = [];
   // newer pattern for lookups
   protected feeCache: LookupItem[] = [];
   protected locationCache: LookupItem[] = [];
   protected programLevelCache: LookupItem[] = [];
   protected seasonCache2: LookupItem[] = [];
+
 
   public Subjects: Record<string, Subject<LookupItem[]>> = {
     fees: new Subject<LookupItem[]>(),
@@ -59,35 +61,32 @@ export class LookupProxyService extends RestProxyService {
     }
   }
 
-  public getPrograms = (seasonId: number)=> {
+  public getPrograms = (seasonId: number = null)=> {
     if (this.programsCache[seasonId]) {
       this.AllPrograms.next(this.programsCache[seasonId]);
     } else {
-        this.get(`programs/${seasonId}` ).subscribe((response: ApiResponse<ProgramDescription[]>) => {
+        this.get(`programs/${seasonId}` ).subscribe((response: ApiResponse<ClassRecord[]>) => {
           if (response.hasErrors()) {
             console.log('Error getting programs', response.message);
           }
-          this.programsCache[seasonId] = response.data;
-          this.AllPrograms.next(this.programsCache[seasonId]);
+          if (seasonId) {
+            this.programsCache[seasonId] = response.data;
+            this.AllPrograms.next(this.programsCache[seasonId]);
+          } else {
+            this.AllPrograms.next(response.data);
+          }
+
         });
     }
     return this.AllPrograms;
   }
 
-  public getAllClasses = (): Observable<ProgramDescription[]> => {
-    return new Observable((subscription) => {
-      this.get(`all-classes` ).subscribe((response: ApiResponse<ProgramDescription[]>) => {
-        if (response.hasErrors()) {
-          console.log('Error getting programs', response.message);
-          subscription.next([]);
-        } else {
-          subscription.next(response.data);
-        }
-
-      }, (error: any) => {});
-    })
-  }
-
+  protected pushLookups = () => {
+    this.Subjects.fees.next(this.feeCache);
+    this.Subjects.locations.next(this.locationCache);
+    this.Subjects.programLevels.next(this.programLevelCache);
+    this.Subjects.seasons.next(this.seasonCache2);
+  };
   public refreshLookups = (repull: boolean = false) => {
     if (repull) {
       this.get(`lookups` ).subscribe((response: ApiResponse<LookupItem[]>) => {
@@ -96,26 +95,31 @@ export class LookupProxyService extends RestProxyService {
           // dummy response so UI doesn't error out
           return { subject: new Subject<LookupItem[]>(), cache: [] };
         } else {
-          console.log('split up by type', response.data);
+
           this.feeCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'fees');
           this.locationCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'locations');
           this.programLevelCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'program_levels');
           this.seasonCache2 = response.data.filter((lookup: LookupItem) => lookup.lookup === 'seasons');
-
-          this.Subjects.fees.next(this.feeCache);
-          this.Subjects.locations.next(this.locationCache);
-          this.Subjects.programLevels.next(this.programLevelCache);
-          this.Subjects.seasons.next(this.seasonCache2);
+          this.pushLookups();
         }
       }, (error: any) => {});
     } else {
-      this.Subjects.fees.next(this.feeCache);
-      this.Subjects.locations.next(this.locationCache);
-      this.Subjects.programLevels.next(this.programLevelCache);
-      this.Subjects.seasons.next(this.seasonCache2);
+      this.pushLookups();
     }
-
   };
+
+  public getLookup = (lookupName: string): Observable<LookupItem[]> => {
+      return new Observable<LookupItem[]>((subscription) => {
+        if (!this.Subjects[lookupName]) {
+          //check for static sets
+          subscription.next([]);
+        }
+        this.Subjects[lookupName].subscribe((items: LookupItem[]) => {
+          subscription.next(items);
+        });
+        this.pushLookups();
+      });
+  }
 
   public getFees = ()=> {
     if (this.feesCache && this.feesCache.length > 0) {

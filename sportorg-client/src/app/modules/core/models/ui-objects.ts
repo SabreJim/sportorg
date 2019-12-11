@@ -2,6 +2,7 @@ import {ProgramSchedule} from "./data-objects";
 import { map } from 'ramda';
 import { CalendarEvent } from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
+import {LookupItem} from "./rest-objects";
 
 export interface RecentItem {
   title: string;
@@ -21,9 +22,11 @@ export class TableColumn {
   fieldName: string;
   displayField?: string;
   lookupField?: string;
+  lookupStatic?: LookupItem[];
   showColumn: boolean;
   sortDirection: 'ASC' | 'DESC';
-  constructor (fieldName: string, title: string, type: string, displayField?: string, lookupField?: string) {
+  constructor (fieldName: string, title: string, type: string, displayField?: string, lookupField?: string,
+               lookupStatic?: LookupItem[]) {
     this.fieldName = fieldName;
     this.title = title;
     if (displayField) {
@@ -37,6 +40,7 @@ export class TableColumn {
       this.type = 'string';
     }
     this.lookupField = lookupField;
+    this.lookupStatic = lookupStatic;
     this.showColumn = true;
     this.sortDirection = 'DESC';
   }

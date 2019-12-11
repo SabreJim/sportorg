@@ -1,21 +1,4 @@
 <div class="page-wrapper">
-  <div class="season-selector">
-    <h4>Program Season to view</h4>
-    <mat-form-field class="season-input">
-      <mat-label>Select a season:</mat-label>
-      <mat-select  [compareWith]="compareSeasons" [(ngModel)]="selectedSeason">
-        <mat-option *ngFor="let season of availableSeasons" [value]="season">
-          <strong>{{season.name}} {{season.year}}</strong> ({{season.startDate | date: 'shortDate'}} - {{season.endDate | date: 'shortDate'}})</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-    <h2>Class Schedule</h2>
-    <org-calendar class="wide-calendar" id="schedule"
-                  [panelTitle]="'Class Schedule'"
-                  [addCalendarItems]="currentScheduleItems"
-                  [setCurrentDate]="seasonDate"
-    ></org-calendar>
-
   <h2>Programs</h2>
   <mat-accordion [multi]="true" id="programs">
     <mat-expansion-panel *ngFor="let programItem of currentPrograms"

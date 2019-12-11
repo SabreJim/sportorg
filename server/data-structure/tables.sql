@@ -112,3 +112,22 @@ duration int,
 day_of_week VARCHAR(20),
 PRIMARY KEY(schedule_id)
 );
+
+CREATE TABLE week_days (
+day_id MEDIUMINT NOT NULL,
+day_name VARCHAR(20) NOT NULL);
+ALTER TABLE program_schedules
+add column day_id mediumInt references beaches.week_days(day_id);
+drop view v_classes;
+INSERT INTO beaches.week_days (day_id, day_name)
+VALUES
+(0, 'Monday'),
+(1, 'Tuesday'),
+(2, 'Wednesday'),
+(3, 'Thursday'),
+(4, 'Friday'),
+(5, 'Saturday'),
+(6, 'Sunday');
+-- update ids based on lookup before dropping column
+ALTER TABLE program_schedules
+drop column day_of_week;

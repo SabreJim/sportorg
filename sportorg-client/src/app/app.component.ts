@@ -27,4 +27,8 @@ export class AppComponent implements OnInit, OnDestroy {
     });
     this.lookupService.refreshLookups(true); // populate lookups initially
   }
+  public sidebarExpanded = false;
+  public toggleExpand = (doExpand: boolean) => {
+    this.sidebarExpanded = doExpand;
+  }
 }

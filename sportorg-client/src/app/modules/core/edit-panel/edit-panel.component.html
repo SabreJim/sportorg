@@ -17,6 +17,7 @@
         <app-dynamic-form
           [formFields]="columns"
           [editingRow]="editingRow"
+          (saveRecord)="runUpsert($event)"
         ></app-dynamic-form>
     </mat-sidenav>
 

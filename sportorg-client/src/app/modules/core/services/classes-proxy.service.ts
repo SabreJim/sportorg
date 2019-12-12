@@ -1,6 +1,6 @@
 import {RestProxyService} from "./rest-proxy.service";
-import {Class, ClassRecord, ProgramSchedule} from "../models/data-objects";
-import {Observable, Subject} from "rxjs";
+import {ClassRecord } from "../models/data-objects";
+import {Observable} from "rxjs";
 import {ApiResponse, IndexedCache} from "../models/rest-objects";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
@@ -12,36 +12,41 @@ export class ClassesProxyService extends RestProxyService {
   constructor(http: HttpClient, appRouter: Router) {
     super(http, appRouter);
   }
-  // Subjects that any consumer can watch
-  public AllClasses: Subject<ProgramSchedule[]> = new Subject<ProgramSchedule[]>();
-  protected classCache: IndexedCache<ProgramSchedule[]> = { cache: [] };
-
-  public getClasses = (seasonId: number): void => {
-    if (this.classCache[seasonId]) {
-      this.AllClasses.next(this.classCache[seasonId]);
-    } else {
-      this.get('classes', {seasonId: seasonId} ).subscribe((response: ApiResponse<ProgramSchedule[]>) => {
-        if (response.hasErrors()) {
-          console.log('Error getting classes', response.message);
-        }
-        this.classCache[seasonId] = response.data;
-        this.AllClasses.next(this.classCache[seasonId]);
-      });
-    }
-  }
+  // cache any requested season of programs/classes
+  protected classCache: IndexedCache<ClassRecord[]> = { cache: [] };
 
   public getAllClasses = (seasonId: number = null): Observable<ClassRecord[]> => {
     return new Observable((subscription) => {
-      const url = (seasonId === null) ? 'all-classes' : `all-classes?seasonId=${seasonId}`;
-      this.get(url).subscribe((response: ApiResponse<ClassRecord[]>) => {
-        if (response.hasErrors()) {
-          console.log('Error getting programs', response.message);
-          subscription.next([]);
+      if (seasonId !== -1 && this.classCache[seasonId]) {
+        subscription.next(this.classCache[seasonId]);
+      } else {
+        const url = (seasonId === null) ? 'all-classes' : `all-classes?seasonId=${seasonId}`;
+        this.get(url).subscribe((response: ApiResponse<ClassRecord[]>) => {
+          if (response.hasErrors()) {
+            console.log('Error getting programs', response.message);
+            subscription.next([]);
+          } else {
+            if (seasonId !== -1) {
+              this.classCache[seasonId] = response.data;
+            }
+            subscription.next(response.data || []);
+          }
+        }, (error: any) => {});
+      }
+    });
+  }
+
+  public upsertClass = (classBody: ClassRecord) => {
+    return new Observable((subscription) => {
+      this.put('classes', classBody).subscribe((response: ApiResponse<any>) => {
+        console.log('got body response', response);
+        if (response.hasErrors() || !response.success) {
+          subscription.next(false);
         } else {
-          subscription.next(response.data);
+          subscription.next(true);
         }
 
       }, (error: any) => {});
-    })
+    });
   }
 }

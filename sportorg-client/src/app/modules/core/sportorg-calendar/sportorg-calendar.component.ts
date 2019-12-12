@@ -67,7 +67,11 @@ export class SportorgCalendarComponent implements OnInit {
   public getClassData = (seasonId: number = null) => {
     this.classService.getAllClasses(seasonId).subscribe((classes: ClassRecord[]) => {
       console.log('got classes', classes);
-      this.currentSeasonId = classes[0].seasonId;
+      if (classes.length) {
+        this.currentSeasonId = classes[0].seasonId;
+      } else {
+        this.currentSeasonId = 1; // default to first
+      }
       let startTimes:string[] = [];
       classes.map((item) => {
         if (!startTimes.includes(item.startTime)){

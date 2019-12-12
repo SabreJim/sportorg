@@ -6,9 +6,6 @@ import {RouterModule} from "@angular/router";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
 import {HttpClientModule} from "@angular/common/http";
-import { CalendarModule, DateAdapter } from "angular-calendar";
-import {adapterFactory} from "angular-calendar/date-adapters/date-fns";
-import {OrgCalendarComponent} from "./org-calendar/org-calendar.component";
 import {RegistrationButtonComponent} from "./registration-button/registration-button.component";
 import {RegistrationDialogComponent} from "./registration-button/registration-dialog/registration-dialog.component";
 import {SafePipe} from "./pipes/safe-html.pipe";
@@ -29,7 +26,6 @@ import { SportorgCalendarComponent } from './sportorg-calendar/sportorg-calendar
   declarations: [
     OrgHeaderComponent,
     OrgMenuBarComponent,
-    OrgCalendarComponent,
     RegistrationButtonComponent,
     RegistrationDialogComponent,
     SafePipe,
@@ -47,7 +43,6 @@ import { SportorgCalendarComponent } from './sportorg-calendar/sportorg-calendar
   exports: [
     OrgHeaderComponent,
     OrgMenuBarComponent,
-    OrgCalendarComponent,
     RegistrationButtonComponent,
     RegistrationDialogComponent,
     SafePipe,
@@ -61,13 +56,7 @@ import { SportorgCalendarComponent } from './sportorg-calendar/sportorg-calendar
     ReactiveFormsModule,
     RouterModule,
     HttpClientModule,
-    CommonModule,
-    CalendarModule.forRoot(
-      {
-        provide: DateAdapter,
-        useFactory: adapterFactory
-      },
-    )
+    CommonModule
   ],
   providers: [
     RouteGuardService

@@ -1,5 +1,5 @@
-
-CREATE OR REPLACE VIEW v_programs as
+drop view v_programs;
+CREATE VIEW v_programs as
 SELECT
     s.year,
     s.season_id,
@@ -9,12 +9,12 @@ SELECT
     p.registration_method,
     f.fee_value,
     f.fee_id,
-    JSON_ARRAYAGG(wd.day_name) as "day_of_week",
+    JSON_ARRAYAGG(wd.day_name) as "days_of_week",
     MAX(ps.duration) as "duration",
     s.name as "season name",
     pl.level_name,
-    COALESCE(p.start_date, s.start_date) start_date,
-    COALESCE(p.end_date, s.end_date) end_date
+    COALESCE(ps.start_date, s.start_date) start_date,
+    COALESCE(ps.end_date, s.end_date) end_date
 FROM programs p
 LEFT JOIN program_levels pl ON p.level_id = pl.level_id
 LEFT JOIN seasons s ON p.season_id = s.season_id
@@ -32,8 +32,8 @@ GROUP BY
     f.fee_id,
     s.name,
     pl.level_name,
-    COALESCE(p.start_date, s.start_date),
-    COALESCE(p.end_date, s.end_date)
+    COALESCE(ps.start_date, s.start_date),
+    COALESCE(ps.end_date, s.end_date)
 ;
 
 CREATE VIEW v_program_schedules AS
@@ -61,28 +61,30 @@ FROM program_schedules ps
     LEFT OUTER JOIN program_levels pl ON p.level_id = pl.level_id
 ;
 
+drop view v_classes;
 CREATE VIEW v_classes AS
 SELECT
     ps.schedule_id,
-    ps.season_id,
+    p.season_id,
     CONCAT(s.name, ' ', s.year) as 'season_name',
     ps.program_id,
     pl.level_name,
+    CONCAT(pl.level_name, ' ', s.name, ' ', s.year) as 'long_program_name',
     p.location_id,
     l.name location_name,
-    DATE_FORMAT(s.start_date, '%Y-%m-%d') as 'start_date',
-    DATE_FORMAT(s.end_date, '%Y-%m-%d') as 'end_date',
+    DATE_FORMAT(COALESCE(ps.start_date, s.start_date), '%Y-%m-%d') as 'start_date',
+    DATE_FORMAT(COALESCE(ps.end_date, s.end_date), '%Y-%m-%d') as 'end_date',
     wd.day_name as day_of_week,
     ps.day_id,
     ps.start_time,
     ps.end_time,
     ps.duration,
     p.color_id,
-    p.min_age,
-    p.max_age
+    ps.min_age,
+    ps.max_age
 FROM program_schedules ps
     LEFT OUTER JOIN programs p ON ps.program_id = p.program_id
-    LEFT OUTER JOIN seasons s ON ps.season_id = s.season_id
+    LEFT OUTER JOIN seasons s ON p.season_id = s.season_id
     LEFT OUTER JOIN locations l ON l.location_id = p.location_id
     LEFT OUTER JOIN week_days wd ON wd.day_id = ps.day_id
     LEFT OUTER JOIN program_levels pl ON p.level_id = pl.level_id

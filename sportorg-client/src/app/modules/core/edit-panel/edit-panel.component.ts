@@ -35,19 +35,25 @@ export class EditPanelComponent implements OnInit {
   public refreshData = () => {
     if (this.columns && this.columns.length && this.getterFunction) {
       this.getterFunction().subscribe((rows: any) => {
-        console.log('got rows', rows);
         this.gridData = rows;
       })
     }
   };
 
+  public runUpsert = (body: any) => {
+    this.upsertFunction(body).subscribe((result: any) => {
+      console.log('do something', result);
+      this.editorOpen = false;
+      this.refreshData();
+      this.detector.detectChanges();
+    });
+  };
+
   public editRow = (rowObject: any) => {
-    console.log('open sidenav for row', rowObject);
     this.editingRow = rowObject;
     setTimeout(() => {
       this.editorOpen = true;
       this.detector.detectChanges();
-      console.log('opening');
     });
 
   };
@@ -56,7 +62,6 @@ export class EditPanelComponent implements OnInit {
     if (this.editorOpen) {
       this.editorOpen = false;
       this.detector.detectChanges();
-      console.log('hiding');
     }
   };
 

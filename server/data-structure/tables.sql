@@ -131,3 +131,26 @@ VALUES
 -- update ids based on lookup before dropping column
 ALTER TABLE program_schedules
 drop column day_of_week;
+
+
+ALTER TABLE program_schedules
+add column max_age int;
+ALTER TABLE program_schedules
+add column min_age int;
+ALTER TABLE program_schedules
+add column start_date date;
+ALTER TABLE program_schedules
+add column end_date date;
+
+UPDATE program_schedules ps
+SET min_age = (select min_age from programs p where ps.program_id = p.program_id);
+UPDATE program_schedules ps
+SET max_age = (select max_age from programs p where ps.program_id = p.program_id);
+
+ALTER TABLE program_schedules
+drop column season_id;
+
+ALTER TABLE programs DROP COLUMN min_age;
+ALTER TABLE programs DROP COLUMN max_age;
+ALTER TABLE programs DROP COLUMN start_date;
+ALTER TABLE programs DROP COLUMN end_date;

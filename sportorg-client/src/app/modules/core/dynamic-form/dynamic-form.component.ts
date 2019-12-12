@@ -13,7 +13,6 @@ export class DynamicFormComponent implements OnInit {
   @Input() set editingRow (row: any) {
     const fields = row ? Object.keys(row) : [];
     if (fields.length) {
-      console.log('apply existing values', row);
       this.currentRow = row;
     }
   }
@@ -23,7 +22,6 @@ export class DynamicFormComponent implements OnInit {
   public isDirty = false;
 
   public saveChanges = () => {
-    // TODO actually send save request
     this.saveRecord.emit(this.currentRow);
   }
 
@@ -32,15 +30,21 @@ export class DynamicFormComponent implements OnInit {
       this.currentRow[fieldName] = newDate;
       this.isDirty = true;
     }
-  }
+  };
   public updateSelection = (newId: number, fieldName: string) => {
     console.log('setting new select', newId, fieldName);
     if (newId !== this.currentRow[fieldName]){
       this.currentRow[fieldName] = newId;
       this.isDirty = true;
     }
-  }
-
+  };
+  public updateTime = (newTime: string, fieldName: string) => {
+    if (newTime !== this.currentRow[fieldName]){
+      this.currentRow[fieldName] = newTime;
+      this.isDirty = true;
+      console.log('got time', newTime);
+    }
+  };
   constructor(private lookupService: LookupProxyService) { }
 
   ngOnInit() {

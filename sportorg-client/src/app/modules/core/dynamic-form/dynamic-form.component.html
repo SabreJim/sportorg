@@ -15,7 +15,10 @@
           <input matInput/>
         </ng-container>
       <ng-container *ngIf="editField.type ==='time'">
-        <app-time-input [value]="currentRow[editField.fieldName]" ></app-time-input>
+        <app-time-input
+          [value]="currentRow[editField.fieldName]"
+          (timeChanged)="updateTime($event, editField.fieldName)"
+        ></app-time-input>
       </ng-container>
         <ng-container *ngIf="editField.type ==='date'">
           <app-date-picker

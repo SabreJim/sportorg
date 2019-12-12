@@ -10,6 +10,8 @@ const application = {
     applicationName: '',
     secretKey: null
 };
+const defaultSession = { isAnonymous: true };
+let CurrentSession = Object.assign({}, defaultSession);
 
 const initializeFirebase = async (req, res, next) => {
     if (!firebase.apps.length) {
@@ -47,8 +49,26 @@ const decodeToken = (token) => {
 }
 
 const getSessionFromHeader = async(request) => {
-    const sportorgToken = request.get('SportorgToken');
-    return await getSession(decodeToken(sportorgToken));
+    const sportorgToken = request.headers['sportorgtoken'];
+    CurrentSession = await getSessionByToken(decodeToken(sportorgToken));
+    return CurrentSession;
+}
+
+const getSessionByToken = async(token) => {
+    const sessionQuery = `SELECT
+            s.session_token as 'sessionToken',
+            u.user_id,
+            u.is_admin as 'isAdmin',
+            m.member_id as 'memberId',
+            m.is_active as 'isActive',
+            u.email,
+            m.year_of_birth
+        FROM beaches.users u
+        LEFT JOIN beaches.sessions s ON u.user_id = s.user_id
+        LEFT JOIN beaches.member_users mu ON mu.user_id = u.user_id AND mu.is_primary = 'Y'
+        LEFT JOIN beaches.members m ON m.member_id = mu.member_id
+        WHERE s.session_token = ?; `;
+    return await MySQL.runCommand(sessionQuery, [token]);
 }
 
 const getSession = async(userId) => {
@@ -83,22 +103,23 @@ const verifyToken = async(req, res, next) => {
             // get or create a user
             const userQuery = `select beaches.get_or_create_user(?, 'google', ?) as 'userId';`;
             const userResponse = await MySQL.runCommand(userQuery, [appSession.userId, decodedToken.email]);
-
             // get a sessionToken if a session already exists
-            const oldToken = await getSession(userResponse.userId);
-            if (oldToken && oldToken.sessionToken) {
-                appSession.sessionToken = crypto.AES.encrypt(oldToken.sessionToken, application.secretKey).toString();
+            let existingSession = await getSession(userResponse.userId);
+            let orgToken; // saving the decoded value in the DB, but passing the encoded version to the client
+            if (existingSession && existingSession.sessionToken) {
+                orgToken = existingSession.sessionToken;
             } else { // otherwise make a new token
                 const newToken = uuid();
-                appSession.sessionToken = crypto.AES.encrypt(newToken, application.secretKey).toString();
+                orgToken = uuid();
                 // insert the new session
                 const sessionInsert = `INSERT INTO sessions (user_id, session_token) VALUES (?, ?)`;
-                await MySQL.runQuery(sessionInsert, [userResponse.userId, appSession.sessionToken]);
+                await MySQL.runQuery(sessionInsert, [userResponse.userId, orgToken]);
+                existingSession = await getSession(userResponse.userId);
             }
-            appSession.isAdmin = oldToken.isAdmin;
-            appSession.isActive = oldToken.isActive;
-            appSession.memberId = oldToken.memberId;
-
+            appSession.isAdmin = existingSession.isAdmin;
+            appSession.isActive = existingSession.isActive;
+            appSession.memberId = existingSession.memberId;
+            appSession.sessionToken = crypto.AES.encrypt(orgToken, application.secretKey).toString();
             return returnSingle(res, appSession);
         }).catch(function(error) {
         // Handle error

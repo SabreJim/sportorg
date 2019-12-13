@@ -58,11 +58,11 @@ export class SportorgCalendarComponent implements OnInit {
   public toggleExpand = () => {
     this.isExpanded = !this.isExpanded;
     this.doExpand.emit(this.isExpanded);
-  }
+  };
 
   public updateSelection = (newId: number) => {
-    console.log('switching season', newId);
-  }
+    this.getClassData(newId);
+  };
 
   public getClassData = (seasonId: number = null) => {
     this.classService.getAllClasses(seasonId).subscribe((classes: ClassRecord[]) => {

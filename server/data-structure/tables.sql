@@ -154,3 +154,25 @@ ALTER TABLE programs DROP COLUMN min_age;
 ALTER TABLE programs DROP COLUMN max_age;
 ALTER TABLE programs DROP COLUMN start_date;
 ALTER TABLE programs DROP COLUMN end_date;
+
+CREATE TABLE menus (
+menu_id MEDIUMINT NOT NULL auto_increment,
+title VARCHAR (30) NOT NULL,
+alt_title VARCHAR(30),
+link VARCHAR(100) NOT NULL,
+mobile_only VARCHAR(1) NOT NULL DEFAULT 'N',
+parent_menu_id MEDIUMINT,
+order_number INT,
+PRIMARY KEY(menu_id)
+);
+
+INSERT INTO menus (title, link, mobile_only, order_number, alt_title)
+VALUES
+('Home', '/', 'N', 1, 'principale'),
+('Schedule', '/schedule', 'Y', 2, 'Programme'),
+('Classes', '/classes', 'N', 3, 'Classes'),
+('Register', '/register', 'N', 4, 'Registre'),
+('Members', '/members', 'N', 5, 'Membres'),
+('Events', '/events', 'N', 6, 'Événements'),
+('About Us', '/about-us', 'N', 7, 'À Nous'),
+('Recent Items', '/', 'N', 8, 'Récents');

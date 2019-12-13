@@ -5,14 +5,14 @@ import {Subscription} from "rxjs";
 import {map} from 'ramda';
 
 @Component({
-  selector: 'app-fees-page',
-  templateUrl: './fees-page.component.html',
+  selector: 'app-register-page',
+  templateUrl: './register-page.component.html',
   styleUrls: [
     '../shared-page.scss',
-    './fees-page.component.scss'
+    './register-page.component.scss'
   ]
 })
-export class FeesPageComponent implements OnInit, OnDestroy {
+export class RegisterPageComponent implements OnInit, OnDestroy {
 
   public setActiveFee = () => {
 

@@ -9,7 +9,7 @@
 }
 .menu-stack {
   flex: 1 1 100%;
-  display: flex;
+  display: flex !important;
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
@@ -34,6 +34,12 @@
   background-color: darkgoldenrod;
 }
 
-@media(max-width: 800px) {
+.burger-menu { display: none !important; }
+.mobile-only { display: none !important; }
+
+@media(max-width: 1000px) {
   .optional-button { display: none !important; }
+  .mobile-only { display: block !important; }
+  .burger-menu { display:block !important;  }
+  .menu-stack { display: none !important; }
 }

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FencerPageComponent } from './fencer-page.component';
+import { MemberPageComponent } from './member-page.component';
 
 describe('FencerPageComponent', () => {
-  let component: FencerPageComponent;
-  let fixture: ComponentFixture<FencerPageComponent>;
+  let component: MemberPageComponent;
+  let fixture: ComponentFixture<MemberPageComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FencerPageComponent ]
+      declarations: [ MemberPageComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FencerPageComponent);
+    fixture = TestBed.createComponent(MemberPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

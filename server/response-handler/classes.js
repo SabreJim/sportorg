@@ -37,7 +37,6 @@ const upsertClass = async (req, res, next) => {
         }
         console.log('query to run', statement);
         const statementResult = await MySQL.runCommand(statement);
-        console.log('did run?', statementResult);
         if (statementResult && statementResult.affectedRows) {
             returnSingle(res, {affectedRows: statementResult.affectedRows});
         } else {

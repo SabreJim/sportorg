@@ -170,9 +170,29 @@ INSERT INTO menus (title, link, mobile_only, order_number, alt_title)
 VALUES
 ('Home', '/', 'N', 1, 'principale'),
 ('Schedule', '/schedule', 'Y', 2, 'Programme'),
-('Classes', '/classes', 'N', 3, 'Classes'),
+('Programs', '/programs', 'N', 3, 'Classes'),
 ('Register', '/register', 'N', 4, 'Registre'),
 ('Members', '/members', 'N', 5, 'Membres'),
 ('Events', '/events', 'N', 6, 'Événements'),
-('About Us', '/about-us', 'N', 7, 'À Nous'),
-('Recent Items', '/', 'N', 8, 'Récents');
+('About Us', '/about-us', 'N', 7, 'À Nous');
+
+ALTER TABLE programs
+add column is_active VARCHAR(1) default 'Y';
+update programs set is_active = 'Y';
+
+ALTER TABLE seasons add column is_active VARCHAR(1) DEFAULT 'Y';
+update seasons set is_active = 'Y';
+
+ALTER TABLE program_schedules add column season_id MEDIUMINT references seasons(season_id);
+update program_schedules set season_id = 1;
+
+ALTER TABLE programs add column program_name VARCHAR(100);
+update programs p set p.program_name = (select pl.level_name from program_levels pl where pl.level_id = p.level_id);
+
+ALTER TABLE programs add column program_description VARCHAR(2000);
+update programs p set p.program_description = (select pl.level_description from program_levels pl where pl.level_id = p.level_id);
+
+ALTER TABLE programs drop column level_id;
+ALTER TABLE programs DROP FOREIGN KEY fk_season_id;
+ALTER TABLE programs drop column season_id;
+drop table program_levels;

@@ -1,8 +1,12 @@
 const decamelize = require('decamelize');
-const mixedJoin = (source) => {
+const mixedJoin = (source, skipHead = false) => {
     let arr = '';
     if (!source.length) return arr;
-    source.map((item) => {
+    let safeSource = source;
+    if (skipHead) {
+        safeSource = source.slice(1);
+    }
+    safeSource.map((item) => {
         if (typeof item === 'string'){
             arr = arr.concat(`"${item}", `)
         } else {
@@ -18,9 +22,15 @@ const getCleanBody = (body, schema) => {
     // functions for getting safe values
     const validate = (value, field) => {
         if (value === undefined) {
-            isValid = false;
-            cleanBody[field.fieldName] = null;
-            return false; // stop checking
+            if (field.fieldName === schema.primaryKey) { // implicitly an insert
+                cleanBody[field.fieldName] = null;
+            } else if (field.allowNull) {
+                cleanBody[field.fieldName] = null;
+            } else {
+                isValid = false;
+                cleanBody[field.fieldName] = null;
+                return false; // stop checking
+            }
         } else if (value === null) {
             if (field.allowNull) {
                 cleanBody[field.fieldName] = null;
@@ -45,9 +55,9 @@ const getCleanBody = (body, schema) => {
     const cleanDate = (field) => {
         const value = body[field.fieldName];
         if (validate(value, field)) {
+            if (cleanBody[field.fieldName]  === null) return; // don't process empty date
             try {
                 const dateObj = new Date(value);
-                // dateObj.setDate((new Date(value)).getUTCDate());
                 cleanBody[field.fieldName] = dateObj.toISOString().slice(0, 10);
             } catch (err) {
                 isValid = false;
@@ -95,7 +105,7 @@ const getCleanBody = (body, schema) => {
         }
 
     }
-    const insertValues = `( ${mixedJoin(keys)} ) VALUES (${mixedJoin(values)})`;
+    const insertValues = `( ${keys.slice(1).join(', ')} ) VALUES (${mixedJoin(values, true)})`;
 
     return {
         isEdit: !!cleanBody[schema.primaryKey],
@@ -121,7 +131,22 @@ const classScheduleSchema = {
         {fieldName: 'endTime', type: 'string', allowNull: false }
     ]
 };
+
+const programSchema = {
+    primaryKey: 'programId',
+    fields: [
+        {fieldName: 'programId', type: 'int', allowNull: false },
+        {fieldName: 'programName', type: 'string', allowNull: false },
+        {fieldName: 'locationId', type: 'int', allowNull: false },
+        {fieldName: 'registrationMethod', type: 'string', allowNull: true },
+        {fieldName: 'colorId', type: 'int', allowNull: true },
+        {fieldName: 'feeId', type: 'int', allowNull: false },
+        {fieldName: 'isActive', type: 'string', allowNull: true }
+        // , {fieldName: 'programDescription', type: 'string', allowNull: true }
+    ]
+};
 module.exports = {
     getCleanBody,
-    classScheduleSchema
+    classScheduleSchema,
+    programSchema
 };

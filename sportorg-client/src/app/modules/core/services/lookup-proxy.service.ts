@@ -5,6 +5,7 @@ import {ApiResponse, IndexedCache, LookupItem} from "../models/rest-objects";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
+import {MenuItem} from "../models/ui-objects";
 
 
 @Injectable({providedIn: 'root'})
@@ -20,14 +21,14 @@ export class LookupProxyService extends RestProxyService {
 
   protected feeCache: LookupItem[] = [];
   protected locationCache: LookupItem[] = [];
-  protected programLevelCache: LookupItem[] = [];
+  protected programCache: LookupItem[] = [];
   protected seasonCache: LookupItem[] = [];
 
 
   public Subjects: Record<string, Subject<LookupItem[]>> = {
     fees: new Subject<LookupItem[]>(),
     locations: new Subject<LookupItem[]>(),
-    programLevels: new Subject<LookupItem[]>(),
+    programs: new Subject<LookupItem[]>(),
     seasons: new Subject<LookupItem[]>()
   };
 
@@ -54,7 +55,7 @@ export class LookupProxyService extends RestProxyService {
   protected pushLookups = () => {
     this.Subjects.fees.next(this.feeCache);
     this.Subjects.locations.next(this.locationCache);
-    this.Subjects.programLevels.next(this.programLevelCache);
+    this.Subjects.programs.next(this.programCache);
     this.Subjects.seasons.next(this.seasonCache);
   };
   public refreshLookups = (repull: boolean = false) => {
@@ -68,7 +69,7 @@ export class LookupProxyService extends RestProxyService {
 
           this.feeCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'fees');
           this.locationCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'locations');
-          this.programLevelCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'program_levels');
+          this.programCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'programs');
           this.seasonCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'seasons');
           this.pushLookups();
         }
@@ -91,6 +92,17 @@ export class LookupProxyService extends RestProxyService {
       });
   }
 
+  public getMenus = (): Observable<MenuItem[]> => {
+    return new Observable<MenuItem[]>((subscription) => {
+      this.get(`menus/` ).subscribe((response: ApiResponse<MenuItem[]>) => {
+        if (response.hasErrors()) {
+          console.log('Error getting menus', response.message);
+          subscription.next([]);
+        }
+        subscription.next(response.data || []);
+      });
+    });
+  }
   public getFees = ()=> {
     if (this.feesCache && this.feesCache.length > 0) {
       this.AllFees.next(this.feesCache);

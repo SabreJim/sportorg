@@ -1,5 +1,6 @@
 const express = require('express');
 const Classes = require('./response-handler/classes');
+const Programs = require('./response-handler/programs');
 const Lookups = require('./response-handler/lookups');
 const Authentication = require('./middleware/server-authentication');
 const ResponseHandler = require('./middleware/response-handler');
@@ -34,10 +35,18 @@ const createRouter = (config) => {
     router.get('/programs/:seasonId', Lookups.getProgramsBySeason);
     router.get('/fees', Lookups.getFeeStructures);
     router.get('/lookups', Lookups.getLookupValues);
+    router.get('/menus', Lookups.getMenus);
 
     // Class getters and setters
     router.get('/all-classes', addSession, Classes.getAllClasses);
     router.put('/classes', jsonBody, adminRequired, Classes.upsertClass);
+    router.delete('/classes/:scheduleId', adminRequired, Classes.deleteClass);
+
+    // Program getters and setters
+    router.get('/all-programs', addSession, Programs.getAllPrograms);
+    router.get('/programs', Programs.getActivePrograms);
+    router.put('/programs', jsonBody, adminRequired, Programs.upsertProgram);
+    router.delete('/programs/:programId', adminRequired, Programs.deleteProgram);
 
     // member/athlete endpoints
     router.get('/fencers', function (req, res) {

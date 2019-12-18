@@ -1,1 +1,6 @@
-<p>number-input works!</p>
+<mat-form-field>
+  <input matInput type="number" [value]="numberValue"  (input)="updateValue($event)" />
+  <button mat-button *ngIf="numberValue" matSuffix mat-icon-button (click)="clearNumber()">
+    <mat-icon>close</mat-icon>
+  </button>
+</mat-form-field>

@@ -1,11 +1,12 @@
 <table class="sportorg-table">
   <thead>
-    <tr class="header-row">
+    <tr class="header-row" [style.width]="sharedWidth" [style.max-width]="sharedWidth">
       <th *ngIf="isEditable" class="header-cell edit-header"><mat-icon (click)="addNew()">add_box</mat-icon></th>
       <ng-container *ngFor="let column of tableColumns"
                     [ngTemplateOutlet]="headerCell"
                     [ngTemplateOutletContext]="{column: column }"></ng-container>
     </tr>
+    <th class="header-cell scroll-spanner"></th>
   </thead>
 
   <cdk-virtual-scroll-viewport [itemSize]="ROW_SIZE" class="body-scroll"
@@ -24,7 +25,7 @@
 </table>
 
 <ng-template #headerCell let-column="column">
-  <th class="header-cell {{column.type}}-header" [hidden]="!column.showColumn">
+  <th class="header-cell {{column.displayType}}-header" [hidden]="!column.showColumn">
     <button class="sort-button"
             [ngClass]="{'sorted-on': sortColumn === column.fieldName, 'not-sorted': sortColumn !== column.fieldName}">
       <mat-icon *ngIf="column.sortDirection === 'ASC'">arrow_upward</mat-icon>
@@ -35,7 +36,7 @@
 </ng-template>
 
 <ng-template #dataCell let-row="row" let-column="column">
-  <td class="body-cell {{column.type}}-cell" [hidden]="!column.showColumn">
+  <td class="body-cell {{column.displayType}}-cell" [hidden]="!column.showColumn">
     <span class="content">{{row[column.displayField]}}</span>
   </td>
 </ng-template>

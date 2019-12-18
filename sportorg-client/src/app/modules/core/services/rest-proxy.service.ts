@@ -100,4 +100,15 @@ export class RestProxyService {
         { params: this.convertHttpParam(params), headers: this.authenticatedHeaders}
       ));
   }
+
+  public delete(url: string, headers?: object): Observable<ApiResponse<any>> {
+    const composedUrl = `${this.baseUrl}/${url}`;
+    this.setHeaders(headers);
+    // send the request and safely handle the response
+    return  this.handleRestResponse(
+      this._http.delete<ApiResponse<any>>(
+        composedUrl,
+        { headers: this.authenticatedHeaders}
+      ));
+  }
 }

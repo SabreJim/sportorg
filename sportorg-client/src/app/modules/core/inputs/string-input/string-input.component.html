@@ -1,1 +1,6 @@
-<p>string-input works!</p>
+<mat-form-field>
+  <input matInput type="text" [value]="stringValue"  (input)="updateValue($event)" />
+  <button mat-button *ngIf="stringValue" matSuffix mat-icon-button (click)="clearString()">
+    <mat-icon>close</mat-icon>
+  </button>
+</mat-form-field>

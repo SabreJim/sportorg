@@ -27,7 +27,7 @@ export interface ClassRecord {
   dayId: number;
   endDate: string;
   endTime: string;
-  levelName: string;
+  programName: string;
   locationId: number;
   locationName: string;
   maxAge: number;
@@ -40,26 +40,24 @@ export interface ClassRecord {
   startTime: string;
   duration: number;
 
-  year: number;
-
-  levelId: number;
-  levelDescription: string;
-  registrationMethod: string;
+  year?: number;
   feeId: number;
   feeValue: number;
-  registrationLink: string;
-  daysOfWeek: string;
-  expanded?: boolean;
-  colorValue?: string;
-  daysText?: string;
 }
 
-export interface ProgramSeason {
-  seasonId: number;
-  name: string;
-  year: number;
-  startDate: string;
-  endDate: string;
+export interface ProgramRecord {
+  programId: number;
+  programName: string;
+  locationId: number;
+  locationName: string;
+  feeId: number;
+  feeValue: number;
+  registrationMethod: string;
+  programDescription: string;
+  colorId: number;
+  isActive: 'Y' | 'N';
+  expanded?: boolean;
+  colorValue?: string;
 }
 
 export interface ProgramSchedule {

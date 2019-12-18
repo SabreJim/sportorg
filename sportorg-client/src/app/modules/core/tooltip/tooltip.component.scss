@@ -1,0 +1,44 @@
+.tip-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.tip-content {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  opacity: 1 !important;
+}
+.hide-render {
+  opacity: 0 !important;
+}
+
+.w400 { min-width: 400px;}
+.w600 { min-width: 600px;}
+.w1000 { min-width: 1000px;}
+
+.h400 { max-height: 400px;}
+.h600 { max-height: 600px;}
+.h1000 { max-height: 600px;}
+
+@media(max-width: 1200px) {
+  .w400 {
+    min-width: 50vw;
+    max-width: 50vw;
+    position: fixed;
+    top: 150px;
+    left: 50px;}
+  .w600 {
+    min-width: 70vw;
+    max-width: 70vw;
+    position: fixed;
+    top: 150px;
+    left: 50px;}
+  .w1000 {
+    min-width: 80vw;
+    max-width: 80vw;
+    position: fixed;
+    top: 150px;
+    left: 50px;}
+}

@@ -6,14 +6,11 @@
   </ng-container>
 
   <nav class="menu-stack" >
-    <a  class="mat-button" routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" tabindex="0" >Home</a>
-    <a  class="mat-button mobile-only" routerLink="/schedule" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" tabindex="0" >Schedule</a>
-    <a  class="mat-button" routerLink="/classes" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" tabindex="0" >Programs</a>
-    <a  class="mat-button" routerLink="/register" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" tabindex="0" >Register</a>
-
-    <a mat-button routerLink="/members" routerLinkActive="active-link" tabindex="0" >Fencers</a>
-    <a mat-button routerLink="/events" routerLinkActive="active-link" tabindex="0" >Events</a>
-    <a mat-button routerLink="/about-us" routerLinkActive="active-link" tabindex="0" >About Us</a>
+    <ng-container *ngFor="let menu of appMenus">
+      <a  ngClass="mat-button {{menu.mobileOnly === 'Y' ? 'mobile-only': ''}}"
+          routerLink="{{menu.link}}" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" tabindex="0"
+      >{{menu.title}}</a>
+    </ng-container>
     <a mat-button [matMenuTriggerFor]="recentMenu" tabindex="0" >
       Recent Items
     </a>
@@ -29,9 +26,11 @@
       <mat-icon>menu</mat-icon>
     </button>
 
-    <mat-menu #mobileMenu>
-      <ng-container *ngFor="let item of recentItems">
-        <button mat-menu-item (click)="exampleClick(item)">{{item.title}}</button>
+    <mat-menu #mobileMenu class="burger-menu-items">
+      <ng-container *ngFor="let menu of appMenus">
+        <a ngClass="mat-button {{menu.mobileOnly === 'Y' ? 'mobile-only': ''}}"
+           routerLink="{{menu.link}}" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" tabindex="0"
+        >{{menu.title}}</a>
       </ng-container>
     </mat-menu>
   </div>

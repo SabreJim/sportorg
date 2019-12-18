@@ -7,6 +7,7 @@ export class RouteGuardService implements CanActivate, CanLoad {
   // for disabling components
   public canActivate(route: ActivatedRouteSnapshot): boolean {
     if (!this.auth.isAdmin()) {
+      this.router.navigate(['/'])
       return false;
     }
     return true;
@@ -15,7 +16,7 @@ export class RouteGuardService implements CanActivate, CanLoad {
   // cannot load admin resources
   public canLoad(route: Route): boolean {
     if (!this.auth.isAdmin()) {
-      this.router.navigate(['/'])
+      this.router.navigate(['/']);
       return false;
     }
     return true;

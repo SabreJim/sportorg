@@ -13,7 +13,7 @@ import {MyProfilePageComponent} from "./modules/pages/my-profile-page/my-profile
 
 const routes: Routes = [
   { path: '', component: HomePageComponent },
-  { path: 'classes', component: ClassPageComponent },
+  { path: 'programs', component: ClassPageComponent },
   { path: 'register', component: RegisterPageComponent },
   { path: 'members', component: MemberPageComponent },
   { path: 'events', component: EventPageComponent },

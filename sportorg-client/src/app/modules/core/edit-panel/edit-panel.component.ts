@@ -7,7 +7,7 @@ import {
   OnInit,
   SimpleChanges
 } from '@angular/core';
-import {TableColumn} from "../models/ui-objects";
+import {AdminConfig, TableColumn} from "../models/ui-objects";
 import {Observable} from "rxjs";
 
 @Component({
@@ -20,11 +20,7 @@ export class EditPanelComponent implements OnInit {
 
   constructor(private detector: ChangeDetectorRef) { }
 
-  @Input() panelTitle = '';
-  @Input() description = '';
-  @Input() columns: TableColumn[] = [];
-  @Input() getterFunction: () => Observable<any[]>;
-  @Input() upsertFunction: (entity: any) => Observable<boolean>;
+  @Input() configObject: AdminConfig;
   ngOnInit() {
   }
 
@@ -33,16 +29,24 @@ export class EditPanelComponent implements OnInit {
   public editingRow: any = null;
 
   public refreshData = () => {
-    if (this.columns && this.columns.length && this.getterFunction) {
-      this.getterFunction().subscribe((rows: any) => {
+    if (this.configObject.columns && this.configObject.columns.length && this.configObject.getter) {
+      this.configObject.getter().subscribe((rows: any) => {
         this.gridData = rows;
       })
     }
   };
 
   public runUpsert = (body: any) => {
-    this.upsertFunction(body).subscribe((result: any) => {
-      console.log('do something', result);
+    this.configObject.setter(body).subscribe((result: boolean) => {
+      this.editorOpen = false;
+      this.refreshData();
+      this.detector.detectChanges();
+    });
+  };
+
+  public runDeletion = (record: any) => {
+    this.configObject.delete(record).subscribe((result: boolean) => {
+      console.log('deleted successfully');
       this.editorOpen = false;
       this.refreshData();
       this.detector.detectChanges();

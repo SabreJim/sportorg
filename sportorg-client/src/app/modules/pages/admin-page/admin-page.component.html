@@ -1,18 +1,17 @@
 <div class="page-wrapper">
   <h1>Administrative Features</h1>
   <edit-panel class="admin-panel"
-    [panelTitle]="'Classes'"
-    [description]="'Edit Classes'"
-    [columns]="classColumns"
-    [getterFunction]="getClasses"
-    [upsertFunction]="upsertClasses"
+              [configObject]="classConfig"
   ></edit-panel>
   <edit-panel class="admin-panel"
-    [panelTitle]="'Members'"
-    [description]="'Manage Members'"
+              [configObject]="programConfig"
   ></edit-panel>
-  <edit-panel class="admin-panel"
-    [panelTitle]="'Users'"
-    [description]="'Manage Users'"
-  ></edit-panel>
+<!--  <edit-panel class="admin-panel"-->
+<!--    [panelTitle]="'Members'"-->
+<!--    [description]="'Manage Members'"-->
+<!--  ></edit-panel>-->
+<!--  <edit-panel class="admin-panel"-->
+<!--    [panelTitle]="'Users'"-->
+<!--    [description]="'Manage Users'"-->
+<!--  ></edit-panel>-->
 </div>

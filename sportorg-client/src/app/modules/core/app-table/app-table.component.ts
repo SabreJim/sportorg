@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -15,12 +16,14 @@ import {TableColumn} from "../models/ui-objects";
   styleUrls: ['./app-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppTableComponent implements OnInit {
+export class AppTableComponent implements AfterViewInit {
 
   @Input() tableColumns: TableColumn[] = [];
   @Input() set gridData(rows: any[]){
-    console.log('incoming rows', rows);
     this.gridDataRows = rows;
+    if (this.ViewArea) {
+      this.sharedWidth = `${this.ViewArea.scrollWidth}px`;
+    }
     this.detector.detectChanges();
   } get gridData () { return this.gridDataRows; }
   @Input() isEditable = false;
@@ -31,20 +34,31 @@ export class AppTableComponent implements OnInit {
   public readonly ROW_SIZE = 46;
   public SCROLL_MIN_BUFFER = 20 * this.ROW_SIZE;
   public SCROLL_MAX_BUFFER = 100 * this.ROW_SIZE;
+  public sharedWidth = '100px';
+  public ViewArea: HTMLElement;
+  public HeaderRow: HTMLElement;
   public sortColumn: string = '';
 
   public sendEdit = (row: any) => {
     if (this.isEditable) {
       this.editRow.emit(row);
     }
-  }
+  };
   public addNew = () => {
     if (this.isEditable) {
       this.editRow.emit({});
     }
-  }
+  };
 
-  ngOnInit() {
+  protected scrollSync = (event: Event) => {
+    this.HeaderRow.scrollLeft = this.ViewArea.scrollLeft;
+    this.detector.detectChanges();
+  };
+
+  ngAfterViewInit(): void {
+    this.ViewArea = document.querySelector('.body-scroll');
+    this.HeaderRow = document.querySelector('.header-row');
+    this.ViewArea.onscroll = this.scrollSync;
   }
 
 }

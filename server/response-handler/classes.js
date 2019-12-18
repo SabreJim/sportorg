@@ -42,16 +42,23 @@ const upsertClass = async (req, res, next) => {
         } else {
             returnError(res, 'An error occurred when updating this record');
         }
-
     } else {
         returnError(res,'Class could not be updated');
     }
-
 };
 
-
-const deleteClass = async (ctx, req, res) => {
-
+const deleteClass = async (req, res) => {
+    const scheduleId = req.params.scheduleId;
+    if (!scheduleId) {
+        return returnError(res, 'A class schedule ID is required');
+    }
+    const statement = `DELETE FROM program_schedules WHERE schedule_id = ${scheduleId}`;
+    const statementResult = await MySQL.runCommand(statement);
+    if (statementResult && statementResult.affectedRows) {
+        returnSingle(res, {affectedRows: statementResult.affectedRows});
+    } else {
+        returnError(res, 'An error occurred when deleting this record');
+    }
 };
 
 module.exports = {

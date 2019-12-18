@@ -1,0 +1,15 @@
+<mat-expansion-panel [expanded]="expanded"
+                     [ngStyle]="{ 'border-width': '2px', 'border-style': 'solid', 'border-color': programItem?.colorValue }">
+  <mat-expansion-panel-header>
+    <h1>{{programItem?.programName}}</h1>
+    <mat-chip-list class="info-chips">
+      <mat-chip>Fee: {{programItem?.feeValue | currency:'USD': 'symbol': '1.0-2'}}</mat-chip>
+      <mat-chip>Location: {{programItem?.locationName}}</mat-chip>
+    </mat-chip-list>
+    <org-registration-button
+      [program]="programItem"
+    ></org-registration-button>
+  </mat-expansion-panel-header>
+  <!-- Panel Content -->
+  <p [innerHTML]="programItem?.programDescription | safePipe: 'html'"></p>
+</mat-expansion-panel>

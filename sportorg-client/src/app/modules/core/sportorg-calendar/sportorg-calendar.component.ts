@@ -2,8 +2,12 @@ import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import {LookupItem} from "../models/rest-objects";
 import {LookupProxyService} from "../services/lookup-proxy.service";
 import {ClassesProxyService} from "../services/classes-proxy.service";
-import {ClassRecord} from "../models/data-objects";
+import {ClassRecord, ProgramRecord} from "../models/data-objects";
 import {StaticValuesService} from "../services/static-values.service";
+import {Subscription} from "rxjs";
+import {ProgramsProxyService} from "../services/programs-proxy.service";
+import {MatDialog} from "@angular/material";
+import {ProgramModalComponent} from "../modals/program-modal/program-modal.component";
 
 export interface TimeSlot {
   id: number;
@@ -16,6 +20,7 @@ export interface TimeSlot {
   textColor?: string;
   startDate?: string;
   endDate?: string;
+  programId?: number;
 }
 export interface DateHeader {
   id: number;
@@ -30,17 +35,22 @@ export interface DateHeader {
 })
 export class SportorgCalendarComponent implements OnInit {
 
-  // public weekdays: LookupItem[] = StaticValuesService.WEEK_DAYS;
   public weekdays: DateHeader[] = [];
   public timeSlotGrid: TimeSlot[][] = [];
   public currentSeasonId: number = null;
+  public programs: ProgramRecord[] = [];
+  protected programSub: Subscription;
   @Input() isExpanded = true;
   @Output() doExpand = new EventEmitter<boolean>();
-  constructor(private lookupService: LookupProxyService, private classService: ClassesProxyService) { }
+  constructor(private lookupService: LookupProxyService, private classService: ClassesProxyService,
+              private programService: ProgramsProxyService, public dialog: MatDialog) { }
 
   ngOnInit() {
     this.getClassData();
-
+    this.programSub = this.programService.Programs.subscribe((newPrograms: ProgramRecord[]) => {
+      this.programs = newPrograms;
+    });
+    this.programService.getPrograms();
     // build date headers
     StaticValuesService.WEEK_DAYS.map((item: LookupItem) => {
       this.weekdays.push({id: item.id, dayName: item.name, specificDate: ''})
@@ -66,7 +76,6 @@ export class SportorgCalendarComponent implements OnInit {
 
   public getClassData = (seasonId: number = null) => {
     this.classService.getAllClasses(seasonId).subscribe((classes: ClassRecord[]) => {
-      console.log('got classes', classes);
       if (classes.length) {
         this.currentSeasonId = classes[0].seasonId;
       } else {
@@ -93,7 +102,8 @@ export class SportorgCalendarComponent implements OnInit {
               id: matchingClass.scheduleId,
               type: 'class',
               startTime: StaticValuesService.getUITime(matchingClass.startTime),
-              eventName: matchingClass.levelName,
+              eventName: matchingClass.programName,
+              programId: matchingClass.programId,
               height: height,
               colorId: matchingClass.colorId,
               bgColor: colorMatch.secondary,
@@ -112,4 +122,7 @@ export class SportorgCalendarComponent implements OnInit {
     })
   }
 
+  public getProgram = (programId: number) => {
+    return this.programs.find((item: ProgramRecord) => item.programId === programId);
+  }
 }

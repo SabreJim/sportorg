@@ -11,7 +11,9 @@
     align-items: center;
   }
 }
-
+.data-grid {
+  flex: 1 1 auto;
+}
 .mat-expansion-panel {
   max-height: 600px;
   .mat-expansion-panel-content {

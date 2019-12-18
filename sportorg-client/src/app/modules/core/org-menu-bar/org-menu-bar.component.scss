@@ -1,3 +1,4 @@
+@import "~src/styles";
 .menu-wrapper{
   display: flex;
   flex: 1 1 auto;
@@ -34,12 +35,32 @@
   background-color: darkgoldenrod;
 }
 
-.burger-menu { display: none !important; }
+::ng-deep .burger-menu-items {
+  color: red;
+  ::ng-deep .mat-menu-content {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    background-color: mat-color($primary, 800);
+    color: mat-color($primary, '800-contrast');
+  }
+}
+.burger-menu {
+  display: none;
+  align-items: center;
+  padding-left: 5px;
+  button {
+    background-color: white;
+    color: mat-color($primary, 800);
+    height: 40px;
+  }
+}
 .mobile-only { display: none !important; }
 
 @media(max-width: 1000px) {
   .optional-button { display: none !important; }
   .mobile-only { display: block !important; }
-  .burger-menu { display:block !important;  }
+  .burger-menu { display:flex !important;  }
   .menu-stack { display: none !important; }
 }

@@ -36,16 +36,29 @@ export class ClassesProxyService extends RestProxyService {
     });
   }
 
-  public upsertClass = (classBody: ClassRecord) => {
+  public upsertClass = (classBody: ClassRecord): Observable<boolean> => {
     return new Observable((subscription) => {
       this.put('classes', classBody).subscribe((response: ApiResponse<any>) => {
-        console.log('got body response', response);
         if (response.hasErrors() || !response.success) {
           subscription.next(false);
         } else {
           subscription.next(true);
         }
-
+      }, (error: any) => {});
+    });
+  }
+  public deleteClass = (classBody: ClassRecord): Observable<boolean> => {
+    return new Observable((subscription) => {
+      const classId = classBody.scheduleId;
+      if (!classId) { // no ID to delete on
+        subscription.next(false);
+      }
+      this.delete(`classes/${classId}`).subscribe((response: ApiResponse<any>) => {
+        if (response.hasErrors() || !response.success) {
+          subscription.next(false);
+        } else {
+          subscription.next(true);
+        }
       }, (error: any) => {});
     });
   }

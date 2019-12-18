@@ -20,6 +20,12 @@ import { HtmlInputComponent } from './inputs/html-input/html-input.component';
 import { NumberInputComponent } from './inputs/number-input/number-input.component';
 import { TimeInputComponent } from './inputs/time-input/time-input.component';
 import { SportorgCalendarComponent } from './sportorg-calendar/sportorg-calendar.component';
+import { ConfirmModalComponent } from './modals/confirm-modal/confirm-modal.component';
+import { BooleanInputComponent } from './inputs/boolean-input/boolean-input.component';
+import { ProgramPanelComponent } from './program-panel/program-panel.component';
+import { ProgramModalComponent } from './modals/program-modal/program-modal.component';
+import { TooltipComponent } from './tooltip/tooltip.component';
+import {TooltipDirective} from "./tooltip/tooltip.directive";
 
 
 @NgModule({
@@ -38,7 +44,13 @@ import { SportorgCalendarComponent } from './sportorg-calendar/sportorg-calendar
     HtmlInputComponent,
     NumberInputComponent,
     TimeInputComponent,
-    SportorgCalendarComponent
+    SportorgCalendarComponent,
+    ConfirmModalComponent,
+    BooleanInputComponent,
+    ProgramPanelComponent,
+    ProgramModalComponent,
+    TooltipComponent,
+    TooltipDirective
   ],
   exports: [
     OrgHeaderComponent,
@@ -48,7 +60,9 @@ import { SportorgCalendarComponent } from './sportorg-calendar/sportorg-calendar
     SafePipe,
     EditPanelComponent,
     AppTableComponent,
-    SportorgCalendarComponent
+    SportorgCalendarComponent,
+    ProgramPanelComponent,
+    TooltipDirective
   ],
   imports: [
     MaterialModule,
@@ -63,7 +77,10 @@ import { SportorgCalendarComponent } from './sportorg-calendar/sportorg-calendar
   ],
   entryComponents: [
     RegistrationDialogComponent,
-    AppTableComponent
+    AppTableComponent,
+    ConfirmModalComponent,
+    ProgramModalComponent,
+    TooltipComponent
   ]
 })
 export class CoreModule { }

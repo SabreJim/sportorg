@@ -1,11 +1,12 @@
-import {Component, OnDestroy, OnInit, SecurityContext} from '@angular/core';
-import {ClassRecord, ProgramSchedule, ProgramSeason} from "../../core/models/data-objects";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ClassRecord, ProgramRecord} from "../../core/models/data-objects";
 import {LookupProxyService} from "../../core/services/lookup-proxy.service";
 import {ClassesProxyService} from "../../core/services/classes-proxy.service";
 import {Subscription} from "rxjs";
-import {ORG_COLORS} from "../../core/models/ui-objects";
 import {join, map, pluck, uniq} from 'ramda';
 import {NavigationEnd, Router} from "@angular/router";
+import {StaticValuesService} from "../../core/services/static-values.service";
+import {ProgramsProxyService} from "../../core/services/programs-proxy.service";
 
 @Component({
   selector: 'app-class-page',
@@ -16,16 +17,12 @@ import {NavigationEnd, Router} from "@angular/router";
   ]
 })
 export class ClassPageComponent implements OnInit, OnDestroy {
-  public compareSeasons = (s1: ProgramSeason, s2: ProgramSeason) => {
-    return s1 && s2 && s1.seasonId === s2.seasonId;
-  }
   private programSubscription: Subscription;
-  public availableSeasons: ProgramSeason[] = [];
 
-  public currentPrograms: ClassRecord[] = [];
+  public currentPrograms: ProgramRecord[] = [];
 
   constructor(protected lookupProxy: LookupProxyService, protected classProxy: ClassesProxyService,
-              private appRouter: Router) {
+              private appRouter: Router, private programProxy: ProgramsProxyService) {
     appRouter.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         // get the 'fragment' and scroll the html anchor into view
@@ -43,10 +40,10 @@ export class ClassPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this. programSubscription = this.lookupProxy.AllPrograms.subscribe((programs: ClassRecord[]) => {
+    this. programSubscription = this.programProxy.Programs.subscribe((programs: ProgramRecord[]) => {
       programs = map((program) => {
         program.expanded = true;
-        program.colorValue = ORG_COLORS[program.colorId].secondary;
+        program.colorValue = StaticValuesService.ORG_COLORS[program.colorId].secondary;
         try {
           program.daysText = uniq(JSON.parse(program.daysOfWeek));
         } catch {
@@ -56,7 +53,7 @@ export class ClassPageComponent implements OnInit, OnDestroy {
       }, programs);
       this.currentPrograms = programs;
     });
-    this.lookupProxy.getPrograms();
+    this.programProxy.getPrograms();
   }
 
   ngOnDestroy(): void {

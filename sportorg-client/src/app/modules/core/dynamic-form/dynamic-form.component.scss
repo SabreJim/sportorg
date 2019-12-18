@@ -24,7 +24,7 @@ app-select-input {
   display: flex;
   flex-flow: row nowrap;
   padding: 10px;
-  .save-button {
+  .save-button, .delete-button {
     margin-left: auto;
   }
 }

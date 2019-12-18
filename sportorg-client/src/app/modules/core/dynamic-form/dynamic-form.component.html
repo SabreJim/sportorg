@@ -1,6 +1,9 @@
 <div class="edit-form">
   <div class="title-bar">
-    <h2>Edit Record</h2>
+    <h2>Edit {{entityType}}</h2>
+    <button mat-raised-button color="warn" class="delete-button"
+            [disabled]="!entitySaved" (click)="requestDelete()"
+    >Delete</button>
     <button mat-raised-button color="primary" class="save-button"
             (click)="saveChanges()" [disabled]="!isDirty">Save</button>
   </div>
@@ -9,11 +12,23 @@
     <h3>{{editField.title}}</h3>
     <div class="editor-field">
         <ng-container *ngIf="editField.type ==='string'">
-          <input matInput/>
+          <app-string-input
+            [value]="currentRow[editField.fieldName]"
+            (stringChanged)="updateString($event, editField.fieldName)"
+          ></app-string-input>
         </ng-container>
         <ng-container *ngIf="editField.type ==='number'">
-          <input matInput/>
+          <app-number-input
+            [value]="currentRow[editField.fieldName]"
+            (numberChanged)="updateNumber($event, editField.fieldName)"
+          ></app-number-input>
         </ng-container>
+      <ng-container *ngIf="editField.type ==='boolean'">
+        <app-boolean-input
+          [value]="currentRow[editField.fieldName]"
+          (valueChanged)="updateBoolean($event, editField.fieldName)"
+        ></app-boolean-input>
+      </ng-container>
       <ng-container *ngIf="editField.type ==='time'">
         <app-time-input
           [value]="currentRow[editField.fieldName]"

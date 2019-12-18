@@ -24,8 +24,14 @@ const getLookupValues = async(req, res, next) => {
     returnResults(res, lookups);
 };
 
+const getMenus = async (req, res, next) => {
+    const query = 'SELECT * from menus ORDER BY order_number';
+    const menus = await MySQL.runQuery(query);
+    returnResults(res, menus);
+}
 module.exports = {
     getFeeStructures,
     getProgramsBySeason,
-    getLookupValues
+    getLookupValues,
+    getMenus
 };

@@ -1,3 +1,6 @@
+<ng-template #programTemplate let-data="data">
+    <app-program-panel [programItem]="data"></app-program-panel>
+</ng-template>
 <div class="cal-card">
   <div class="actions">
     <button mat-raised-button color="primary" (click)="toggleExpand()">{{isExpanded ? 'Collapse': 'Expand'}}</button>
@@ -26,7 +29,9 @@
                  [style.backgroundColor]="event.bgColor"
                  [style.color]="event.textColor"
             >
-              <span class="event-name">{{event.eventName}}</span>
+              <a class="event-name" appTooltip [tooltipData]="getProgram(event.programId)"
+                 [tooltipTemplate]="programTemplate" [tooltipPanelClass]="'w1000'"
+              >{{event.eventName}}</a>
               <span class="start-time">{{event.startTime}}</span>
             </div>
           </ng-container>

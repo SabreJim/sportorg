@@ -4,7 +4,7 @@
   flex: 1 1 auto;
   display: flex;
   flex-flow: column nowrap;
-  overflow: auto;
+  overflow-x: hidden;
   max-height: 500px;
   margin: 5px;
   thead {
@@ -13,6 +13,9 @@
       display: flex;
       flex: 1 1 auto;
       flex-flow: row nowrap;
+      overflow-x: auto;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar { height: 0 !important; }
       th {
         display: flex;
         flex-flow: row nowrap;
@@ -31,7 +34,7 @@
   .body-scroll {
     display: block;
     height: 100%;
-    overflow-x: hidden;
+    overflow-y: scroll;
     ::ng-deep .cdk-virtual-scroll-content-wrapper {
       min-width: 100%;
       display: flex;
@@ -84,7 +87,12 @@
     opacity: 0.4 !important;
   }
 }
+.scroll-spanner {
+  min-width: 5px;
+  max-width: 5px;
+}
 
+// styles for each type of column
 .select-cell, .select-header {
   flex: 1 1 150px;
   min-width: 150px;
@@ -93,16 +101,17 @@
   flex: 1 1 150px;
   min-width: 150px;
 }
-.long-string-cell, .long-string-header {
+.long-string-cell, .long-string-header, .html-cell, .html-header {
   flex: 1 1 250px;
   min-width: 250px;
+  max-width: 250px;
 }
 .number-cell, .number-header {
   flex: 1 1 110px;
   min-width: 110px;
   justify-content: center;
 }
-.date-cell, .date-header, .time-cell, .time-header {
+.date-cell, .date-header, .time-cell, .time-header, .boolean-cell, .boolean-header {
   flex: 1 1 100px;
   min-width: 100px;
   justify-content: center;

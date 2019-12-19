@@ -7,7 +7,6 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
 import {HttpClientModule} from "@angular/common/http";
 import {RegistrationButtonComponent} from "./registration-button/registration-button.component";
-import {RegistrationDialogComponent} from "./registration-button/registration-dialog/registration-dialog.component";
 import {SafePipe} from "./pipes/safe-html.pipe";
 import {RouteGuardService} from "./route-guard/route-guard.service";
 import { EditPanelComponent } from './edit-panel/edit-panel.component';
@@ -23,7 +22,6 @@ import { SportorgCalendarComponent } from './sportorg-calendar/sportorg-calendar
 import { ConfirmModalComponent } from './modals/confirm-modal/confirm-modal.component';
 import { BooleanInputComponent } from './inputs/boolean-input/boolean-input.component';
 import { ProgramPanelComponent } from './program-panel/program-panel.component';
-import { ProgramModalComponent } from './modals/program-modal/program-modal.component';
 import { TooltipComponent } from './tooltip/tooltip.component';
 import {TooltipDirective} from "./tooltip/tooltip.directive";
 
@@ -33,7 +31,6 @@ import {TooltipDirective} from "./tooltip/tooltip.directive";
     OrgHeaderComponent,
     OrgMenuBarComponent,
     RegistrationButtonComponent,
-    RegistrationDialogComponent,
     SafePipe,
     EditPanelComponent,
     AppTableComponent,
@@ -48,7 +45,6 @@ import {TooltipDirective} from "./tooltip/tooltip.directive";
     ConfirmModalComponent,
     BooleanInputComponent,
     ProgramPanelComponent,
-    ProgramModalComponent,
     TooltipComponent,
     TooltipDirective
   ],
@@ -56,13 +52,13 @@ import {TooltipDirective} from "./tooltip/tooltip.directive";
     OrgHeaderComponent,
     OrgMenuBarComponent,
     RegistrationButtonComponent,
-    RegistrationDialogComponent,
     SafePipe,
     EditPanelComponent,
     AppTableComponent,
     SportorgCalendarComponent,
     ProgramPanelComponent,
-    TooltipDirective
+    TooltipDirective,
+    SelectInputComponent
   ],
   imports: [
     MaterialModule,
@@ -76,10 +72,8 @@ import {TooltipDirective} from "./tooltip/tooltip.directive";
     RouteGuardService
   ],
   entryComponents: [
-    RegistrationDialogComponent,
     AppTableComponent,
     ConfirmModalComponent,
-    ProgramModalComponent,
     TooltipComponent
   ]
 })

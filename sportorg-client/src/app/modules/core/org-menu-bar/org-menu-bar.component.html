@@ -8,7 +8,7 @@
   <nav class="menu-stack" >
     <ng-container *ngFor="let menu of appMenus">
       <a  ngClass="mat-button {{menu.mobileOnly === 'Y' ? 'mobile-only': ''}}"
-          routerLink="{{menu.link}}" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" tabindex="0"
+          routerLink="{{menu.link}}" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: menu.link === '/'}" tabindex="0"
       >{{menu.title}}</a>
     </ng-container>
     <a mat-button [matMenuTriggerFor]="recentMenu" tabindex="0" >
@@ -29,7 +29,7 @@
     <mat-menu #mobileMenu class="burger-menu-items">
       <ng-container *ngFor="let menu of appMenus">
         <a ngClass="mat-button {{menu.mobileOnly === 'Y' ? 'mobile-only': ''}}"
-           routerLink="{{menu.link}}" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" tabindex="0"
+           routerLink="{{menu.link}}" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: menu.link === '/'}" tabindex="0"
         >{{menu.title}}</a>
       </ng-container>
     </mat-menu>

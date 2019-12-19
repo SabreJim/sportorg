@@ -12,14 +12,22 @@ import {StaticValuesService} from "../../services/static-values.service";
 export class SelectInputComponent implements OnInit, AfterViewInit {
 
   @Input() lookupType: string;
-  @Input() staticLookup: LookupItem[];
+  @Input() set staticLookup (items: LookupItem[]) {
+    if (items && items.length) {
+      this.options = items;
+    }
+  };
 
   @Input() set selected(newValue: number) {
     if (newValue !== null && newValue !== undefined && this.options.length) {
-      this.selectedValue = newValue;
+      setTimeout(() => {
+        this.selectedValue = newValue;
+      });
+
     }
   } get selected() { return this.selectedValue; }
   @Output() selectedChanged =  new EventEmitter<number>();
+  @Output() selectionObject =  new EventEmitter<LookupItem>();
   public selectedValue: number = null;
   public options: LookupItem[] = [];
   constructor(private lookupService: LookupProxyService) { }
@@ -29,6 +37,8 @@ export class SelectInputComponent implements OnInit, AfterViewInit {
 
   public itemSelected = (newSelection: MatSelectChange) => {
     this.selectedChanged.emit(newSelection.value);
+    const foundItem = this.options.find(item => item.id === newSelection.value);
+    this.selectionObject.emit(foundItem);
   }
   ngAfterViewInit(): void {
     if (this.lookupService.Subjects[this.lookupType]) {
@@ -39,13 +49,6 @@ export class SelectInputComponent implements OnInit, AfterViewInit {
         }
       });
       this.lookupService.refreshLookups();
-    }
-    if (this.staticLookup && this.staticLookup.length) {
-      console.log('using static', this.staticLookup);
-      this.options = this.staticLookup;
-      if (this.selectedValue) {
-        this.selected = this.selectedValue; // in case of timing issue
-      }
     }
   }
 

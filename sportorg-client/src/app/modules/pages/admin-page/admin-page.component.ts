@@ -28,7 +28,6 @@ export class AdminPageComponent implements OnInit {
       new TableColumn('endDate', 'End Date', 'date'),
       new TableColumn('minAge', 'Min Age', 'number'),
       new TableColumn('maxAge', 'Max Age', 'number'),
-
     ],
     getter: () => this.classService.getAllClasses(-1),
     setter: this.classService.upsertClass,

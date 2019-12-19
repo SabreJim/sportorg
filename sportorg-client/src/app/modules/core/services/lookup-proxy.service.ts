@@ -14,11 +14,6 @@ export class LookupProxyService extends RestProxyService {
     super(http, appRouter);
   }
   // cached results for non-volatile lookup values
-  public AllFees: Subject<FeeStructure[]> = new Subject<FeeStructure[]>();
-  public AllPrograms: Subject<ClassRecord[]> = new Subject<ClassRecord[]>();
-  protected programsCache: IndexedCache<ClassRecord[]> = { cache: [] };
-  protected feesCache: FeeStructure[] = [];
-
   protected feeCache: LookupItem[] = [];
   protected locationCache: LookupItem[] = [];
   protected programCache: LookupItem[] = [];
@@ -31,26 +26,6 @@ export class LookupProxyService extends RestProxyService {
     programs: new Subject<LookupItem[]>(),
     seasons: new Subject<LookupItem[]>()
   };
-
-  public getPrograms = (seasonId: number = null)=> {
-    if (this.programsCache[seasonId]) {
-      this.AllPrograms.next(this.programsCache[seasonId]);
-    } else {
-        this.get(`programs/${seasonId}` ).subscribe((response: ApiResponse<ClassRecord[]>) => {
-          if (response.hasErrors()) {
-            console.log('Error getting programs', response.message);
-          }
-          if (seasonId) {
-            this.programsCache[seasonId] = response.data;
-            this.AllPrograms.next(this.programsCache[seasonId]);
-          } else {
-            this.AllPrograms.next(response.data);
-          }
-
-        });
-    }
-    return this.AllPrograms;
-  }
 
   protected pushLookups = () => {
     this.Subjects.fees.next(this.feeCache);
@@ -102,18 +77,5 @@ export class LookupProxyService extends RestProxyService {
         subscription.next(response.data || []);
       });
     });
-  }
-  public getFees = ()=> {
-    if (this.feesCache && this.feesCache.length > 0) {
-      this.AllFees.next(this.feesCache);
-    } else {
-      this.get(`fees/` ).subscribe((response: ApiResponse<FeeStructure[]>) => {
-        if (response.hasErrors()) {
-          console.log('Error getting fees', response.message);
-        }
-        this.feesCache = response.data;
-        this.AllFees.next(this.feesCache);
-      });
-    }
   }
 }

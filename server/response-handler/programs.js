@@ -23,7 +23,6 @@ const upsertProgram = async (req, res, next) => {
         } else {
             statement = `INSERT INTO program_schedules ${cleanProgram.insertValues}`;
         }
-        console.log('query to run', statement);
         const statementResult = await MySQL.runCommand(statement);
         if (statementResult && statementResult.affectedRows) {
             returnSingle(res, {affectedRows: statementResult.affectedRows});
@@ -32,7 +31,6 @@ const upsertProgram = async (req, res, next) => {
         }
 
     } else {
-        console.log('RQ', body, cleanProgram);
         returnError(res,'Program could not be updated');
     }
 };

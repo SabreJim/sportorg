@@ -1,7 +1,7 @@
 import {RestProxyService} from "./rest-proxy.service";
-import {ProgramRecord } from "../models/data-objects";
+import {ClassRecord, ProgramRecord} from "../models/data-objects";
 import {Observable, Subject} from "rxjs";
-import {ApiResponse} from "../models/rest-objects";
+import {ApiResponse, IndexedCache} from "../models/rest-objects";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";

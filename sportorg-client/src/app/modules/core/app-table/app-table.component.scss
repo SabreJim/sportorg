@@ -1,40 +1,48 @@
 @import "~src/styles";
 // overall layout
 .sportorg-table {
-  flex: 1 1 auto;
+  flex: 1 1 500px;
   display: flex;
   flex-flow: column nowrap;
   overflow-x: hidden;
   max-height: 500px;
   margin: 5px;
   thead {
-    display: block;
+    display: flex;
+    flex-flow: row nowrap;
+    min-height: 50px;
+    overflow: hidden;
+    .header-container {
+      display: flex;
+      flex-flow: row nowrap;
+      min-height: 50px;
+      overflow-y: hidden;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar { height: 0 !important; }
+    }
     tr {
       display: flex;
       flex: 1 1 auto;
       flex-flow: row nowrap;
-      overflow-x: auto;
-      -ms-overflow-style: none;
-      &::-webkit-scrollbar { height: 0 !important; }
-      th {
-        display: flex;
-        flex-flow: row nowrap;
-        align-items: center;
-        height: 40px;
-        padding: 5px;
-        border-right: 1px solid white;
-        border-bottom: 1px solid white;
-        background-color: mat-color($primary, 300) !important;
-        mat-icon {
-          background-color: white;
-        }
+    }
+    th {
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: center;
+      height: 40px;
+      padding: 5px;
+      border-right: 1px solid white;
+      border-bottom: 1px solid white;
+      background-color: mat-color($primary, 300) !important;
+      mat-icon {
+        background-color: white;
       }
     }
   }
   .body-scroll {
-    display: block;
+    display: flex;
     height: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
     ::ng-deep .cdk-virtual-scroll-content-wrapper {
       min-width: 100%;
       display: flex;
@@ -73,6 +81,9 @@
     margin: 0;
     background-color: transparent;
     outline: -webkit-focus-ring-color auto 0;
+    .mat-icon {
+      background-color: transparent;
+    }
   }
   .sorted-on {
     opacity: 1 !important;
@@ -90,6 +101,13 @@
 .scroll-spanner {
   min-width: 5px;
   max-width: 5px;
+  margin-left: auto;
+}
+.hide-spanner {
+  display: none !important;
+}
+.shorter-header {
+  width: calc(100% - 17px);
 }
 
 // styles for each type of column

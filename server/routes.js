@@ -1,6 +1,7 @@
 const express = require('express');
 const Classes = require('./response-handler/classes');
 const Programs = require('./response-handler/programs');
+const Members = require('./response-handler/members');
 const Lookups = require('./response-handler/lookups');
 const Authentication = require('./middleware/server-authentication');
 const ResponseHandler = require('./middleware/response-handler');
@@ -32,7 +33,6 @@ const createRouter = (config) => {
     };
 
     // lookup item getters
-    router.get('/programs/:seasonId', Lookups.getProgramsBySeason);
     router.get('/fees', Lookups.getFeeStructures);
     router.get('/lookups', Lookups.getLookupValues);
     router.get('/menus', Lookups.getMenus);
@@ -49,10 +49,11 @@ const createRouter = (config) => {
     router.delete('/programs/:programId', adminRequired, Programs.deleteProgram);
 
     // member/athlete endpoints
-    router.get('/fencers', function (req, res) {
-        res.send('fencers');
-    });
-
+    router.get('/my-members', addSession, Members.getMyMembers);
+    router.get('/members', addSession, Members.getAnonymousMembers);
+    router.put('/members', jsonBody, addSession, Members.upsertMember);
+    router.delete('/members/:memberId', adminRequired, Members.deleteMember);
+    router.put('/link-members/member/:memberId/user/:userId', adminRequired, Members.linkMembers);
     // event endpoints
 
 

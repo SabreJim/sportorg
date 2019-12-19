@@ -87,3 +87,22 @@ export interface FeeStructure {
   registrationLink: string;
   expanded?: boolean;
 }
+
+export interface AppMember {
+  memberId: number;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  name: string;
+  yearOfBirth: number;
+  competeGender: 'M' | 'F',
+  isActive: 'Y' | 'N';
+  isAthlete: 'Y' | 'N';
+  membershipStart: string;
+  homeAddress? : string;
+  email?: string;
+  cellPhone?: string;
+  homePhone?: string;
+  license: string;
+  confirmed?: 'Y' | 'N';
+}

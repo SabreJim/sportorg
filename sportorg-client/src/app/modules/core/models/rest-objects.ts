@@ -22,6 +22,7 @@ export interface LookupItem {
   name: string;
   moreInfo?: string;
   lookup: string;
+  description?: string;
 }
 
 export interface IndexedCache<T> {

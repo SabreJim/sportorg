@@ -7,7 +7,6 @@ import {StaticValuesService} from "../services/static-values.service";
 import {Subscription} from "rxjs";
 import {ProgramsProxyService} from "../services/programs-proxy.service";
 import {MatDialog} from "@angular/material";
-import {ProgramModalComponent} from "../modals/program-modal/program-modal.component";
 
 export interface TimeSlot {
   id: number;

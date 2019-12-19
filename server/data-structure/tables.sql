@@ -196,3 +196,8 @@ ALTER TABLE programs drop column level_id;
 ALTER TABLE programs DROP FOREIGN KEY fk_season_id;
 ALTER TABLE programs drop column season_id;
 drop table program_levels;
+
+alter table members
+add column confirmed VARCHAR(1);
+alter table members
+add column license VARCHAR(50);

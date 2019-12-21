@@ -7,7 +7,6 @@ const getMyEnrollments = async (req, res) => {
     const query = `select * from v_enrollments
     WHERE member_id IN (select mu.member_id from member_users mu WHERE mu.user_id = ${userId})
     OR ((SELECT u.is_admin FROM users u where u.user_id = ${userId}) = 'Y')`;
-    console.log('QUERY', query);
     const myEnrollments = await MySQL.runQuery(query);
     returnResults(res, myEnrollments);
 };

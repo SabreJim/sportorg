@@ -17,7 +17,11 @@ export class MemberModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.member.email = this.data.email || '';
+    if (this.data.memberId) {
+      this.member = this.data;
+    } else { // a new member object
+      this.member.email = this.data.email || '';
+    }
   }
 
   public member: AppMember = {

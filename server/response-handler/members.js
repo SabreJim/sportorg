@@ -55,7 +55,7 @@ const upsertMember = async (req, res, next) => {
         let statement;
         if (cleanMember.isEdit) {
             // edits can only happen on existing records so don't worry about duplication
-            statement = `UPDATE members SET ${cleanMember.setters.join(', ')} WHERE member_id = ${cleanMember.cleanBody.programId}`;
+            statement = `UPDATE members SET ${cleanMember.setters.join(', ')} WHERE member_id = ${cleanMember.cleanBody.memberId}`;
             const statementResult = await MySQL.runCommand(statement);
             if (statementResult && statementResult.affectedRows) {
                 returnSingle(res, {affectedRows: statementResult.affectedRows});

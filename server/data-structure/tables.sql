@@ -25,7 +25,9 @@ CREATE TABLE beaches.members (
     is_active CHAR(1),
     is_athlete CHAR(1) DEFAULT 'Y',
     membership_start DATE,
-    home_address VARCHAR(150),
+    street_address VARCHAR(150),
+    city VARCHAR(50),
+    postal_code VARCHAR(20),
     email VARCHAR(100),
     cell_phone VARCHAR(20),
     home_phone VARCHAR(20),
@@ -211,3 +213,31 @@ CREATE TABLE class_enrollments (
     enrollment_cost FLOAT,
     PRIMARY KEY(enroll_id)
 );
+
+alter table members
+add column city VARCHAR(50);
+alter table members
+add column postal_code VARCHAR(20);
+
+create table regions (
+    region_id MEDIUMINT NOT NULL auto_increment,
+    region_name VARCHAR(50) NOT NULL,
+    country_code VARCHAR(10),
+    region_code VARCHAR(4),
+    primary key(region_id)
+);
+INSERT INTO regions (region_name, region_code, country_code)
+VALUES
+('Alberta', 'AB', 'CAN'),
+('British Columbia', 'BC', 'CAN'),
+('Manitoba', 'MB', 'CAN'),
+('New Brunswick', 'NB', 'CAN'),
+('Newfoundland', 'NL', 'CAN'),
+('Nova Scotia', 'NS', 'CAN'),
+('Ontario', 'ON', 'CAN'),
+('Quebec', 'QC', 'CAN'),
+('Northwest Territories', 'NWT', 'CAN'),
+('Nunavut', 'NV', 'CAN'),
+('Yukon', 'YU', 'CAN');
+ALTER TABLE members
+add column province_id MEDIUMINT references regions(region_id);

@@ -15,13 +15,18 @@ const getMyMembers = async(req, res, next) => {
             m.is_active,
             m.is_athlete,
             DATE_FORMAT(m.membership_start, '%Y-%m-%d') as 'membership_start',
-            m.home_address,
+            m.street_address,
+            m.city,
+            m.province_id,
+            r.region_name as province_name,
+            m.postal_code,
             m.email,
             m.cell_phone,
             m.home_phone,
             m.license,
             m.confirmed
         FROM members m
+        LEFT JOIN regions r ON r.region_id = m.province_id
         WHERE (m.is_active = 'Y'
             AND EXISTS (SELECT user_id from member_users mu where m.member_id = mu.member_id AND mu.user_id = ${myUserId}))
             OR ((SELECT u.is_admin FROM users u where u.user_id = ${myUserId}) = 'Y');`;

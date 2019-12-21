@@ -72,26 +72,36 @@
   <mat-card class="field-card">
     <div class="form-header">
       <h2>Address</h2>
-      <input matInput [disabled]="true" [value]="member?.homeAddress" class="input-item-disabled">
+      <input matInput [disabled]="true" [value]="composedAddress" class="input-item-disabled">
     </div>
 
     <div class="multi-field">
       <div class="form-field">
         <h3>Street Address</h3>
         <div class="input-item">
-          <app-string-input [value]="tempAddress.street" (stringChanged)="updateAddress($event, 'street')"></app-string-input>
+          <app-string-input [value]="member.streetAddress" (stringChanged)="updateAddress($event, 'streetAddress')"></app-string-input>
         </div>
       </div>
       <div class="form-field">
         <h3>City</h3>
         <div class="input-item">
-          <app-string-input [value]="tempAddress.city" (stringChanged)="updateAddress($event, 'city')"></app-string-input>
+          <app-string-input [value]="member.city" (stringChanged)="updateAddress($event, 'city')"></app-string-input>
+        </div>
+      </div>
+      <div class="form-field">
+        <h3>Province</h3>
+        <div ngClass="input-item select-item">
+          <app-select-input
+            [lookupType]="'regions'"
+            [selected]="member.provinceId"
+            (selectedChanged)="selectProvince($event)"
+          ></app-select-input>
         </div>
       </div>
       <div class="form-field">
         <h3>Postal Code</h3>
         <div ngClass="input-item {{invalid.postalCode ? 'invalid' : ''}}">
-          <app-string-input [value]="tempAddress.postalCode" (stringChanged)="updateAddress($event, 'postalCode')"></app-string-input>
+          <app-string-input [value]="member.postalCode" (stringChanged)="updateAddress($event, 'postalCode')"></app-string-input>
           <mat-error *ngIf="invalid.postalCode">Postal code must be valid</mat-error>
         </div>
       </div>

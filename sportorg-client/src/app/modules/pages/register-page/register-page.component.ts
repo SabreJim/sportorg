@@ -60,7 +60,7 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
     new TableColumn('membershipStart', 'Joined', 'date'),
     TableColumn.fromConfig({fieldName: 'email', title: 'Contact Email', type: 'string', displayType: 'long-string'}),
     new TableColumn('license', 'License #', 'number'),
-    TableColumn.fromConfig({fieldName: 'homeAddress', title: 'Address', type: 'string', displayType: 'long-string'}),
+    TableColumn.fromConfig({fieldName: 'streetAddress', title: 'Address', type: 'string', displayType: 'long-string'}),
     new TableColumn('cellPhone', 'Cell #', 'string'),
     new TableColumn('homePhone', 'Home #', 'string')
   ];

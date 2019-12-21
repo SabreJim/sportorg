@@ -19,13 +19,15 @@ export class LookupProxyService extends RestProxyService {
   protected locationCache: LookupItem[] = [];
   protected programCache: LookupItem[] = [];
   protected seasonCache: LookupItem[] = [];
+  protected regionCache: LookupItem[] = [];
 
 
   public Subjects: Record<string, Subject<LookupItem[]>> = {
     fees: new Subject<LookupItem[]>(),
     locations: new Subject<LookupItem[]>(),
     programs: new Subject<LookupItem[]>(),
-    seasons: new Subject<LookupItem[]>()
+    seasons: new Subject<LookupItem[]>(),
+    regions: new Subject<LookupItem[]>()
   };
 
   protected pushLookups = () => {
@@ -33,6 +35,7 @@ export class LookupProxyService extends RestProxyService {
     this.Subjects.locations.next(this.locationCache);
     this.Subjects.programs.next(this.programCache);
     this.Subjects.seasons.next(this.seasonCache);
+    this.Subjects.regions.next(this.regionCache);
   };
   public refreshLookups = (repull: boolean = false) => {
     if (repull) {
@@ -47,6 +50,7 @@ export class LookupProxyService extends RestProxyService {
           this.locationCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'locations');
           this.programCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'programs');
           this.seasonCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'seasons');
+          this.regionCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'regions');
           this.pushLookups();
         }
       }, (error: any) => {});

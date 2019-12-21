@@ -1,7 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 import {AppMember} from "../../models/data-objects";
-import {FormBuilder, FormGroup} from "@angular/forms";
 import {LookupItem} from "../../models/rest-objects";
 import {StaticValuesService} from "../../services/static-values.service";
 
@@ -18,7 +17,9 @@ export class MemberModalComponent implements OnInit {
 
   ngOnInit() {
     if (this.data.memberId) {
-      this.member = this.data;
+      setTimeout(()=> {
+        this.member = this.data; // allow lookups to load first
+      });
     } else { // a new member object
       this.member.email = this.data.email || '';
     }
@@ -35,7 +36,11 @@ export class MemberModalComponent implements OnInit {
     isActive: 'Y',
     isAthlete: 'Y',
     membershipStart: null,
-    homeAddress: null,
+    streetAddress: null,
+    city: null,
+    provinceId: null,
+    provinceName: null,
+    postalCode: null,
     email: '',
     cellPhone: null,
     homePhone: null,
@@ -44,12 +49,7 @@ export class MemberModalComponent implements OnInit {
   };
 
   public invalid: any = {};
-  public tempAddress = {
-    street: '',
-    city: '',
-    province: '',
-    postalCode: '',
-  };
+  public composedAddress = '';
   public genderLookup: LookupItem[] = [
     {id: 1, lookup: 'gender', name: 'Male', description: 'M'},
     {id: 2, lookup: 'gender', name: 'Female', description: 'F'}
@@ -60,9 +60,13 @@ export class MemberModalComponent implements OnInit {
       return item.description === value;
     });
     return (foundItem) ? foundItem.id : null;
-  }
+  };
   public selectGender = (newValue: LookupItem) => {
     this.member.competeGender = (newValue.description === 'M') ? 'M' : 'F';
+  };
+
+  public selectProvince = (newId: number) => {
+    this.member.provinceId = newId;
   };
 
   public updateLicense = (newValue: string) => {
@@ -91,8 +95,8 @@ export class MemberModalComponent implements OnInit {
     this.member.name = `${this.member.lastName || ''}, ${this.member.firstName || ''} ${this.member.middleName || ''}`;
   };
   public updateAddress = (newValue: string, position: string) => {
-    this.tempAddress[position] = newValue || '';
-    this.member.homeAddress = `${this.tempAddress.street || ''}, ${this.tempAddress.city || ''} ${this.tempAddress.province || ''}, ${this.tempAddress.postalCode || ''}`;
+    this.composedAddress = `${this.member.streetAddress || ''}, ${this.member.city || ''} ${this.member.provinceName || ''}, ${this.member.postalCode || ''}`;
+    this.member[position] = newValue;
   };
 
   // validate the input and send the data to be saved

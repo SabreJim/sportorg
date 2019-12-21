@@ -99,7 +99,11 @@ export interface AppMember {
   isActive: 'Y' | 'N';
   isAthlete: 'Y' | 'N';
   membershipStart: string;
-  homeAddress? : string;
+  streetAddress? : string;
+  city? : string;
+  provinceId?: number;
+  provinceName?: string;
+  postalCode? : string;
   email?: string;
   cellPhone?: string;
   homePhone?: string;

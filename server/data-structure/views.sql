@@ -76,7 +76,9 @@ SELECT l.location_id as 'id', l.name as 'name', l.street_address as 'more_info',
 UNION
 SELECT p.program_id as 'id', p.program_name as 'name', null as 'more_info', 'programs' as 'lookup' FROM programs p
 UNION
-SELECT s.season_id as 'id', CONCAT(s.name, ' ', s.year) as 'name', date_format(s.start_date,'%Y-%m-%d') as 'more_info', 'seasons' as 'lookup' FROM seasons s;
+SELECT s.season_id as 'id', CONCAT(s.name, ' ', s.year) as 'name', date_format(s.start_date,'%Y-%m-%d') as 'more_info', 'seasons' as 'lookup' FROM seasons s
+UNION
+SELECT  r.region_id as 'id', r.region_name as 'name', r.region_code as 'more_info', 'regions' as 'lookup' FROM regions r;
 
 CREATE VIEW v_enrollments AS
 SELECT

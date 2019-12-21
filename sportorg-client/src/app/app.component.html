@@ -7,10 +7,16 @@
     <div class="main-content">
       <router-outlet></router-outlet>
     </div>
-    <mat-card class="side-bar-content">
 
-    </mat-card>
   </div>
 
+  <mat-card ngClass="side-bar-content {{sidebarExpanded ? 'expanded' : 'normal'}}">
+    <sportorg-calendar
+      class="side-card"
+      [isExpanded]="false"
+      (doExpand)="toggleExpand($event)"
+    ></sportorg-calendar>
+  </mat-card>
 </div>
+<app-org-snackbar></app-org-snackbar>
 

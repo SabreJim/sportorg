@@ -25,7 +25,9 @@ CREATE TABLE beaches.members (
     is_active CHAR(1),
     is_athlete CHAR(1) DEFAULT 'Y',
     membership_start DATE,
-    home_address VARCHAR(150),
+    street_address VARCHAR(150),
+    city VARCHAR(50),
+    postal_code VARCHAR(20),
     email VARCHAR(100),
     cell_phone VARCHAR(20),
     home_phone VARCHAR(20),
@@ -47,3 +49,195 @@ CREATE TABLE beaches.projects(
     client_id VARCHAR(100),
     PRIMARY KEY(project_id)
     );
+
+ALTER TABLE beaches.programs
+ADD start_date DATE;
+ALTER TABLE beaches.programs
+ADD end_date DATE;
+
+
+-- data tables
+CREATE TABLE fee_structures (
+fee_id MEDIUMINT NOT NULL auto_increment,
+fee_value int,
+fee_period VARCHAR (40),
+fee_description VARCHAR(1000),
+fee_name VARCHAR(100),
+registration_link VARCHAR(100),
+PRIMARY KEY(fee_id)
+);
+CREATE TABLE locations (
+location_id MEDIUMINT NOT NULL auto_increment,
+street_address VARCHAR(100),
+city VARCHAR(100),
+contact_phone VARCHAR(100),
+name VARCHAR(100),
+PRIMARY KEY(location_id)
+);
+CREATE TABLE seasons (
+season_id MEDIUMINT NOT NULL auto_increment,
+name VARCHAR(100),
+year int,
+start_date DATE,
+end_date DATE,
+PRIMARY KEY(season_id)
+);
+CREATE TABLE program_levels (
+level_id MEDIUMINT NOT NULL auto_increment,
+level_name VARCHAR(100),
+level_value int,
+level_description VARCHAR(2000),
+PRIMARY KEY(level_id)
+);
+
+CREATE TABLE programs (
+program_id MEDIUMINT NOT NULL auto_increment,
+level_id MEDIUMINT NOT NULL REFERENCES beaches.program_levels(level_id),
+season_id MEDIUMINT NOT NULL REFERENCES beaches.seasons(season_id),
+min_age int,
+max_age int,
+location_id MEDIUMINT NOT NULL REFERENCES beaches.locations(location_id),
+registration_method VARCHAR(100),
+color_id int,
+fee_id MEDIUMINT NOT NULL REFERENCES beaches.fee_structures(fee_id),
+start_date DATE,
+end_date DATE,
+PRIMARY KEY(program_id)
+);
+CREATE TABLE program_schedules (
+schedule_id MEDIUMINT NOT NULL auto_increment,
+program_id MEDIUMINT NOT NULL REFERENCES beaches.programs(program_id),
+season_id MEDIUMINT NOT NULL REFERENCES beaches.seasons(season_id),
+start_time VARCHAR(100),
+end_time VARCHAR(100),
+duration int,
+day_of_week VARCHAR(20),
+PRIMARY KEY(schedule_id)
+);
+
+CREATE TABLE week_days (
+day_id MEDIUMINT NOT NULL,
+day_name VARCHAR(20) NOT NULL);
+ALTER TABLE program_schedules
+add column day_id mediumInt references beaches.week_days(day_id);
+drop view v_classes;
+INSERT INTO beaches.week_days (day_id, day_name)
+VALUES
+(0, 'Monday'),
+(1, 'Tuesday'),
+(2, 'Wednesday'),
+(3, 'Thursday'),
+(4, 'Friday'),
+(5, 'Saturday'),
+(6, 'Sunday');
+-- update ids based on lookup before dropping column
+ALTER TABLE program_schedules
+drop column day_of_week;
+
+
+ALTER TABLE program_schedules
+add column max_age int;
+ALTER TABLE program_schedules
+add column min_age int;
+ALTER TABLE program_schedules
+add column start_date date;
+ALTER TABLE program_schedules
+add column end_date date;
+
+UPDATE program_schedules ps
+SET min_age = (select min_age from programs p where ps.program_id = p.program_id);
+UPDATE program_schedules ps
+SET max_age = (select max_age from programs p where ps.program_id = p.program_id);
+
+ALTER TABLE program_schedules
+drop column season_id;
+
+ALTER TABLE programs DROP COLUMN min_age;
+ALTER TABLE programs DROP COLUMN max_age;
+ALTER TABLE programs DROP COLUMN start_date;
+ALTER TABLE programs DROP COLUMN end_date;
+
+CREATE TABLE menus (
+menu_id MEDIUMINT NOT NULL auto_increment,
+title VARCHAR (30) NOT NULL,
+alt_title VARCHAR(30),
+link VARCHAR(100) NOT NULL,
+mobile_only VARCHAR(1) NOT NULL DEFAULT 'N',
+parent_menu_id MEDIUMINT,
+order_number INT,
+PRIMARY KEY(menu_id)
+);
+
+INSERT INTO menus (title, link, mobile_only, order_number, alt_title)
+VALUES
+('Home', '/', 'N', 1, 'principale'),
+('Schedule', '/schedule', 'Y', 2, 'Programme'),
+('Programs', '/programs', 'N', 3, 'Classes'),
+('Register', '/register', 'N', 4, 'Registre'),
+('Members', '/members', 'N', 5, 'Membres'),
+('Events', '/events', 'N', 6, 'Événements'),
+('About Us', '/about-us', 'N', 7, 'À Nous');
+
+ALTER TABLE programs
+add column is_active VARCHAR(1) default 'Y';
+update programs set is_active = 'Y';
+
+ALTER TABLE seasons add column is_active VARCHAR(1) DEFAULT 'Y';
+update seasons set is_active = 'Y';
+
+ALTER TABLE program_schedules add column season_id MEDIUMINT references seasons(season_id);
+update program_schedules set season_id = 1;
+
+ALTER TABLE programs add column program_name VARCHAR(100);
+update programs p set p.program_name = (select pl.level_name from program_levels pl where pl.level_id = p.level_id);
+
+ALTER TABLE programs add column program_description VARCHAR(2000);
+update programs p set p.program_description = (select pl.level_description from program_levels pl where pl.level_id = p.level_id);
+
+ALTER TABLE programs drop column level_id;
+ALTER TABLE programs DROP FOREIGN KEY fk_season_id;
+ALTER TABLE programs drop column season_id;
+drop table program_levels;
+
+alter table members
+add column confirmed VARCHAR(1);
+alter table members
+add column license VARCHAR(50);
+
+CREATE TABLE class_enrollments (
+    enroll_id MEDIUMINT NOT NULL auto_increment,
+    member_id MEDIUMINT NOT NULL references members(member_id),
+    schedule_id MEDIUMINT NOT NULL references program_schedules(schedule_id),
+    created_by MEDIUMINT NOT NULL references users(user_id),
+    created_date DATE NOT NULL,
+    enrollment_cost FLOAT,
+    PRIMARY KEY(enroll_id)
+);
+
+alter table members
+add column city VARCHAR(50);
+alter table members
+add column postal_code VARCHAR(20);
+
+create table regions (
+    region_id MEDIUMINT NOT NULL auto_increment,
+    region_name VARCHAR(50) NOT NULL,
+    country_code VARCHAR(10),
+    region_code VARCHAR(4),
+    primary key(region_id)
+);
+INSERT INTO regions (region_name, region_code, country_code)
+VALUES
+('Alberta', 'AB', 'CAN'),
+('British Columbia', 'BC', 'CAN'),
+('Manitoba', 'MB', 'CAN'),
+('New Brunswick', 'NB', 'CAN'),
+('Newfoundland', 'NL', 'CAN'),
+('Nova Scotia', 'NS', 'CAN'),
+('Ontario', 'ON', 'CAN'),
+('Quebec', 'QC', 'CAN'),
+('Northwest Territories', 'NWT', 'CAN'),
+('Nunavut', 'NV', 'CAN'),
+('Yukon', 'YU', 'CAN');
+ALTER TABLE members
+add column province_id MEDIUMINT references regions(region_id);

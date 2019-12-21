@@ -1,0 +1,7 @@
+<div class="tip-overlay" [style.height]="sourceTop" [style.width]="sourceLeft">
+  <div (mouseenter)="enterTooltip()" (mouseleave)="leaveTooltip()" ngClass="tip-content {{panelClass}}">
+    <ng-container [ngTemplateOutlet]="contentTemplate"
+                  [ngTemplateOutletContext]="dataContent"></ng-container>
+  </div>
+</div>
+

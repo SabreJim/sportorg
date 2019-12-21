@@ -1,0 +1,21 @@
+.mat-expansion-panel-header {
+  h1 {
+    font-size: 24px;
+    display: flex;
+    flex: 1 1 auto;
+  }
+  .info-chips {
+    display: flex;
+    margin-right: 25px;
+  }
+  org-registration-button {
+    margin-left: auto;
+    margin-top: 10px;
+  }
+
+  @media(max-width: 800px) {
+    .info-chips {
+      display: none !important;
+    }
+  }
+}

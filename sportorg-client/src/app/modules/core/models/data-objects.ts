@@ -21,33 +21,43 @@ export interface ClassDateTime {
   duration: number;
 }
 
-export interface ProgramDescription {
-  year: number;
+export interface ClassRecord {
+  colorId: number;
+  dayOfWeek: string;
+  dayId: number;
+  endDate: string;
+  endTime: string;
+  programName: string;
+  locationId: number;
+  locationName: string;
+  maxAge: number;
+  minAge: number;
+  programId: number;
+  scheduleId: number;
   seasonId: number;
-  levelId: number;
   seasonName: string;
-  levelName: string;
-  startDate: Date;
-  endDate: Date;
-  levelDescription: string;
-  registrationMethod: string;
+  startDate: string;
+  startTime: string;
+  duration: number;
+
+  year?: number;
   feeId: number;
   feeValue: number;
-  registrationLink: string;
-  duration: string;
-  daysOfWeek: string;
-  expanded?: boolean;
-  colorId: number;
-  colorValue?: string;
-  daysText?: string;
 }
 
-export interface ProgramSeason {
-  seasonId: number;
-  name: string;
-  year: number;
-  startDate: string;
-  endDate: string;
+export interface ProgramRecord {
+  programId: number;
+  programName: string;
+  locationId: number;
+  locationName: string;
+  feeId: number;
+  feeValue: number;
+  registrationMethod: string;
+  programDescription: string;
+  colorId: number;
+  isActive: 'Y' | 'N';
+  expanded?: boolean;
+  colorValue?: string;
 }
 
 export interface ProgramSchedule {
@@ -76,4 +86,50 @@ export interface FeeStructure {
   feeDescription: string;
   registrationLink: string;
   expanded?: boolean;
+}
+
+export interface AppMember {
+  memberId: number;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  name: string;
+  yearOfBirth: number;
+  competeGender: 'M' | 'F',
+  isActive: 'Y' | 'N';
+  isAthlete: 'Y' | 'N';
+  membershipStart: string;
+  streetAddress? : string;
+  city? : string;
+  provinceId?: number;
+  provinceName?: string;
+  postalCode? : string;
+  email?: string;
+  cellPhone?: string;
+  homePhone?: string;
+  license: string;
+  confirmed?: 'Y' | 'N';
+}
+export interface RegistrationConfig {
+  seasonId: number;
+  programId: number;
+  scheduleIds: number[];
+  memberId: number;
+}
+
+export interface Enrollment {
+  enrollId: number;
+  memberId: number;
+  memberName: string;
+  scheduleId: number;
+  programName: string;
+  dayName: string;
+  times: string;
+  ages: string;
+  startDate: string;
+  endDate: string;
+  seasonId: number;
+  seasonName: string;
+  programFee: number;
+  enrolledCost: number;
 }

@@ -1,0 +1,47 @@
+<table class="sportorg-table">
+  <thead>
+    <div #scrollingHeader ngClass="header-container {{vertScrollShown ? 'shorter-header' : ''}}">
+      <tr class="header-row" [style.min-width]="sharedWidth" [style.max-width]="sharedWidth">
+        <th *ngIf="isEditable || canAddRows" class="header-cell edit-header"><mat-icon (click)="addNew()">add_box</mat-icon></th>
+        <th *ngIf="!isEditable && !canAddRows && canSelect" class="header-cell edit-header">&nbsp;</th>
+        <ng-container *ngFor="let column of tableColumns"
+                      [ngTemplateOutlet]="headerCell"
+                      [ngTemplateOutletContext]="{column: column }"></ng-container>
+      </tr>
+    </div>
+    <th ngClass="header-cell scroll-spanner"></th>
+  </thead>
+
+  <cdk-virtual-scroll-viewport [itemSize]="ROW_SIZE" class="body-scroll"
+                               [minBufferPx]="SCROLL_MIN_BUFFER"
+                               [maxBufferPx]="SCROLL_MAX_BUFFER">
+    <ng-container *cdkVirtualFor="let row of gridDataRows">
+      <tr class="body-row">
+        <td *ngIf="isEditable" class="body-cell edit-cell"><mat-icon (click)="sendEdit(row)">edit</mat-icon></td>
+        <td *ngIf="canSelect" class="body-cell edit-cell"><mat-checkbox (change)="selectRow(row, $event)"
+                                                                        [ngModel]="row.isSelected"></mat-checkbox></td>
+        <ng-container *ngFor="let column of tableColumns">
+          <ng-container [ngTemplateOutlet]="dataCell"
+                        [ngTemplateOutletContext]="{row: row, column: column }"></ng-container>
+        </ng-container>
+      </tr>
+    </ng-container>
+  </cdk-virtual-scroll-viewport>
+</table>
+
+<ng-template #headerCell let-column="column">
+  <th class="header-cell {{column.displayType}}-header" [hidden]="!column.showColumn">
+    <button class="sort-button" (click)="sort(column)"
+            [ngClass]="{'sorted-on': sortColumn === column.fieldName, 'not-sorted': sortColumn !== column.fieldName}">
+      <mat-icon *ngIf="column.sortDirection === 'ASC'">arrow_upward</mat-icon>
+      <mat-icon *ngIf="column.sortDirection === 'DESC'">arrow_downward</mat-icon>
+    </button>
+    <div class="header-text">{{column.title}}</div>
+  </th>
+</ng-template>
+
+<ng-template #dataCell let-row="row" let-column="column">
+  <td class="body-cell {{column.displayType}}-cell" [hidden]="!column.showColumn">
+    <span class="content">{{row[column.displayField]}}</span>
+  </td>
+</ng-template>

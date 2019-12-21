@@ -1,9 +1,4 @@
-  <button mat-raised-button color="primary" (click)="noClose($event)" class="registration-link"
-          [matMenuTriggerFor]="optionMenuExternal">Register</button>
-  <mat-menu #optionMenuExternal>
-    <button mat-menu-item *ngIf="showOptions" routerLink="/classes/fees">{{optionText}}</button>
-    <a mat-menu-item *ngIf="isExternalRegistration" [href]="externalRegistrationLink" >Register directly with YMCA</a>
-    <button mat-menu-item *ngIf="!isExternalRegistration" (click)="openRegistrationModal()" >Register Now</button>
-  </mat-menu>
+  <button mat-raised-button color="primary" (click)="openRegistrationModal($event)" class="registration-link"
+          >Register</button>
 
 

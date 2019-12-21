@@ -9,6 +9,7 @@ export class AppUser {
   providerId?: string;
   sessionToken?: string;
   isAdmin?: boolean;
+  isActive?: boolean;
 
   constructor() {
     this.isAnonymous = true;
@@ -19,4 +20,7 @@ export class AppUser {
 export interface AppSession {
   uid: string;
   sessionToken: string;
+  isAdmin: string;
+  memberId: string;
+  isActive: string;
 }

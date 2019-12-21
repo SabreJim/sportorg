@@ -1,11 +1,12 @@
 import {RestProxyService} from "./rest-proxy.service";
-import {FeeStructure, ProgramDescription, ProgramSeason} from "../models/data-objects";
+import {FeeStructure, ClassRecord} from "../models/data-objects";
 import {Observable, of, Subject} from "rxjs";
-import {ApiResponse, IndexedCache} from "../models/rest-objects";
+import {ApiResponse, IndexedCache, LookupItem} from "../models/rest-objects";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
-import {head, filter} from 'ramda';
+import {MenuItem} from "../models/ui-objects";
+import {SnackbarService} from "./snackbar.service";
 
 
 @Injectable({providedIn: 'root'})
@@ -14,64 +15,72 @@ export class LookupProxyService extends RestProxyService {
     super(http, appRouter);
   }
   // cached results for non-volatile lookup values
-  protected seasonCache: ProgramSeason[] = [];
-  public AllFees: Subject<FeeStructure[]> = new Subject<FeeStructure[]>();
-  public AllPrograms: Subject<ProgramDescription[]> = new Subject<ProgramDescription[]>();
-  protected programsCache: IndexedCache<ProgramDescription[]> = { cache: [] };
-  protected feesCache: FeeStructure[] = [];
+  protected feeCache: LookupItem[] = [];
+  protected locationCache: LookupItem[] = [];
+  protected programCache: LookupItem[] = [];
+  protected seasonCache: LookupItem[] = [];
+  protected regionCache: LookupItem[] = [];
 
 
-  public getBestUpcomingSeason = (seasons: ProgramSeason[]) => {
-    const now = new Date();
-    now.setMonth(now.getUTCMonth() - 3);
-    const firstMatch = head(filter((season: ProgramSeason) => {
-      return season.endDate > now.toISOString();
-    }, seasons));
-
-    return (firstMatch) ? firstMatch : seasons[0];
+  public Subjects: Record<string, Subject<LookupItem[]>> = {
+    fees: new Subject<LookupItem[]>(),
+    locations: new Subject<LookupItem[]>(),
+    programs: new Subject<LookupItem[]>(),
+    seasons: new Subject<LookupItem[]>(),
+    regions: new Subject<LookupItem[]>()
   };
 
-  public getSeasons = (): Observable<ProgramSeason[]> => {
-    if (this.seasonCache.length > 0) {
-      return of(this.seasonCache);
-    } else {
-      return new Observable<ProgramSeason[]>((subscription) => {
-        this.get('seasons' ).subscribe((response: ApiResponse<ProgramSeason[]>) => {
-          if (response.hasErrors()) {
-            console.log('Error getting seasons', response.message);
-          }
-          this.seasonCache = response.data;
-          subscription.next(response.data);
-        })
-      });
-    }
-  }
-
-  public getPrograms = (seasonId: number)=> {
-    if (this.programsCache[seasonId]) {
-      this.AllPrograms.next(this.programsCache[seasonId]);
-    } else {
-        this.get(`programs/${seasonId}` ).subscribe((response: ApiResponse<ProgramDescription[]>) => {
-          if (response.hasErrors()) {
-            console.log('Error getting programs', response.message);
-          }
-          this.programsCache[seasonId] = response.data;
-          this.AllPrograms.next(this.programsCache[seasonId]);
-        });
-    }
-  }
-
-  public getFees = ()=> {
-    if (this.feesCache && this.feesCache.length > 0) {
-      this.AllFees.next(this.feesCache);
-    } else {
-      this.get(`fees/` ).subscribe((response: ApiResponse<FeeStructure[]>) => {
+  protected pushLookups = () => {
+    this.Subjects.fees.next(this.feeCache);
+    this.Subjects.locations.next(this.locationCache);
+    this.Subjects.programs.next(this.programCache);
+    this.Subjects.seasons.next(this.seasonCache);
+    this.Subjects.regions.next(this.regionCache);
+  };
+  public refreshLookups = (repull: boolean = false) => {
+    if (repull) {
+      this.get(`lookups` ).subscribe((response: ApiResponse<LookupItem[]>) => {
         if (response.hasErrors()) {
-          console.log('Error getting fees', response.message);
+          SnackbarService.error(`There was a problem getting lookup items`);;
+          // dummy response so UI doesn't error out
+          return { subject: new Subject<LookupItem[]>(), cache: [] };
+        } else {
+
+          this.feeCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'fees');
+          this.locationCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'locations');
+          this.programCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'programs');
+          this.seasonCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'seasons');
+          this.regionCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'regions');
+          this.pushLookups();
         }
-        this.feesCache = response.data;
-        this.AllFees.next(this.feesCache);
-      });
+      }, (error: any) => {});
+    } else {
+      this.pushLookups();
     }
+  };
+
+  public getLookup = (lookupName: string): Observable<LookupItem[]> => {
+      return new Observable<LookupItem[]>((subscription) => {
+        if (!this.Subjects[lookupName]) {
+          //check for static sets
+          subscription.next([]);
+        }
+        this.Subjects[lookupName].subscribe((items: LookupItem[]) => {
+          subscription.next(items);
+        });
+        this.pushLookups();
+      });
+  }
+
+  public getMenus = (): Observable<MenuItem[]> => {
+    return new Observable<MenuItem[]>((subscription) => {
+      this.get(`menus/` ).subscribe((response: ApiResponse<MenuItem[]>) => {
+        if (response.hasErrors()) {
+          SnackbarService.error('There was an error getting menus');
+          subscription.next([]);
+        }
+        subscription.next(response.data || []);
+      });
+    });
   }
 }

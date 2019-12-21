@@ -34,3 +34,30 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
     top: 16px;
   }
 }
+.mat-expansion-panel {
+  margin: 10px;
+  width: calc(100% - 20px);
+  background-color: #dddddd;
+}
+::ng-deep.mat-expansion-panel-content {
+  background-color: #eeeeee;
+}
+.panel-header {
+  background-color: mat-color($primary, 100) !important;
+  .header-description {
+    align-items: center;
+  }
+}
+.hidden {
+  display: none !important;
+}
+
+::ng-deep.mat-form-field-infix {
+  padding-right: 10px !important;
+  text-align: right;
+  border: none;
+  width: unset !important;
+}
+::ng-deep.mat-form-field-suffix {
+  align-self: center;
+}

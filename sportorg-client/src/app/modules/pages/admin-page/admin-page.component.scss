@@ -1,0 +1,12 @@
+.page-wrapper{
+  display: flex;
+  flex-flow: column nowrap;
+  h1 {
+    align-self: center;
+  }
+}
+.admin-panel {
+  display: flex;
+  flex: 1 1 auto;
+  margin: 10px;
+}

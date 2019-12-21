@@ -4,7 +4,6 @@ import {Injectable} from "@angular/core";
 import {Observable, of} from "rxjs";
 import {ApiResponse} from "../models/rest-objects";
 import {map, catchError} from "rxjs/operators";
-import {FirebaseAuthService} from "./firebase-auth.service";
 import {StaticValuesService} from "./static-values.service";
 
 
@@ -98,6 +97,17 @@ export class RestProxyService {
         composedUrl,
         body,
         { params: this.convertHttpParam(params), headers: this.authenticatedHeaders}
+      ));
+  }
+
+  public delete(url: string, headers?: object): Observable<ApiResponse<any>> {
+    const composedUrl = `${this.baseUrl}/${url}`;
+    this.setHeaders(headers);
+    // send the request and safely handle the response
+    return  this.handleRestResponse(
+      this._http.delete<ApiResponse<any>>(
+        composedUrl,
+        { headers: this.authenticatedHeaders}
       ));
   }
 }

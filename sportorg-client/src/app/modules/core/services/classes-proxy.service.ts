@@ -1,10 +1,11 @@
 import {RestProxyService} from "./rest-proxy.service";
-import {Class, ProgramSchedule} from "../models/data-objects";
-import {Observable, Subject} from "rxjs";
+import {ClassRecord } from "../models/data-objects";
+import {Observable} from "rxjs";
 import {ApiResponse, IndexedCache} from "../models/rest-objects";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
+import {SnackbarService} from "./snackbar.service";
 
 
 @Injectable({providedIn: 'root'})
@@ -12,21 +13,58 @@ export class ClassesProxyService extends RestProxyService {
   constructor(http: HttpClient, appRouter: Router) {
     super(http, appRouter);
   }
-  // Subjects that any consumer can watch
-  public AllClasses: Subject<ProgramSchedule[]> = new Subject<ProgramSchedule[]>();
-  protected classCache: IndexedCache<ProgramSchedule[]> = { cache: [] };
+  // cache any requested season of programs/classes
+  protected classCache: IndexedCache<ClassRecord[]> = { cache: [] };
 
-  public getClasses = (seasonId: number): void => {
-    if (this.classCache[seasonId]) {
-      this.AllClasses.next(this.classCache[seasonId]);
-    } else {
-      this.get('classes', {seasonId: seasonId} ).subscribe((response: ApiResponse<ProgramSchedule[]>) => {
-        if (response.hasErrors()) {
-          console.log('Error getting classes', response.message);
+  public getAllClasses = (seasonId: number = null): Observable<ClassRecord[]> => {
+    return new Observable((subscription) => {
+      if (seasonId !== -1 && this.classCache[seasonId]) {
+        subscription.next(this.classCache[seasonId]);
+      } else {
+        const url = (seasonId === null) ? 'all-classes' : `all-classes?seasonId=${seasonId}`;
+        this.get(url).subscribe((response: ApiResponse<ClassRecord[]>) => {
+          if (response.hasErrors()) {
+            SnackbarService.error(`Classes could not be retrieved at this time`);
+            subscription.next([]);
+          } else {
+            if (seasonId !== -1) {
+              this.classCache[seasonId] = response.data;
+            }
+            subscription.next(response.data || []);
+          }
+        }, (error: any) => {});
+      }
+    });
+  }
+
+  public upsertClass = (classBody: ClassRecord): Observable<boolean> => {
+    return new Observable((subscription) => {
+      this.put('classes', classBody).subscribe((response: ApiResponse<any>) => {
+        if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`Classes were not updated successfully: ${response.message}`);
+          subscription.next(false);
+        } else {
+          SnackbarService.notify(`Classes updated successfully`);
+          subscription.next(true);
         }
-        this.classCache[seasonId] = response.data;
-        this.AllClasses.next(this.classCache[seasonId]);
-      });
-    }
+      }, (error: any) => {});
+    });
+  }
+  public deleteClass = (classBody: ClassRecord): Observable<boolean> => {
+    return new Observable((subscription) => {
+      const classId = classBody.scheduleId;
+      if (!classId) { // no ID to delete on
+        subscription.next(false);
+      }
+      this.delete(`classes/${classId}`).subscribe((response: ApiResponse<any>) => {
+        if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`Class was not deleted successfully: ${response.message}`);
+          subscription.next(false);
+        } else {
+          SnackbarService.notify(`Class deleted successfully`);
+          subscription.next(true);
+        }
+      }, (error: any) => {});
+    });
   }
 }

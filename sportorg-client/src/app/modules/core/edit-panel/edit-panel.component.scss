@@ -1,0 +1,26 @@
+@import "~src/styles";
+.panel {
+  display: flex;
+  flex-flow: column nowrap;
+  flex: 1 1 auto;
+  background-color: #fafafa;
+}
+.data-grid {
+  flex: 1 1 auto;
+  width: 100%;
+}
+.mat-expansion-panel {
+  max-height: 600px;
+  .mat-expansion-panel-content {
+    display: flex;
+  }
+}
+.side-nav {
+  display: flex;
+}
+.main-content {
+  display: flex;
+  height: auto;
+  margin-left: auto !important;
+  flex: 1 1 auto;
+}

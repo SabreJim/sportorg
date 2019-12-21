@@ -51,14 +51,13 @@ const runCommand = (query, params = []) => {
             DB.query(query, safeParams, function (error, results, fields) {
                 if (error) {
                     console.log('MySQL data errors', error);
-                    reject([]);
+                    resolve([]);
                 } else {
                     if (results.length) {
                         resolve(results[0]);
                     } else {
                         resolve(results);
                     }
-
                 }
             });
         } catch (dbError) {

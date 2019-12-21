@@ -1,0 +1,153 @@
+@import "~src/styles";
+// overall layout
+.sportorg-table {
+  flex: 1 1 500px;
+  display: flex;
+  flex-flow: column nowrap;
+  overflow-x: hidden;
+  max-height: 500px;
+  margin: 5px;
+  thead {
+    display: flex;
+    flex-flow: row nowrap;
+    min-height: 50px;
+    overflow: hidden;
+    .header-container {
+      display: flex;
+      flex-flow: row nowrap;
+      min-height: 50px;
+      overflow-y: hidden;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar { height: 0 !important; }
+    }
+    tr {
+      display: flex;
+      flex: 1 1 auto;
+      flex-flow: row nowrap;
+    }
+    th {
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: center;
+      height: 40px;
+      padding: 5px;
+      border-right: 1px solid white;
+      border-bottom: 1px solid white;
+      background-color: mat-color($primary, 300) !important;
+      mat-icon {
+        background-color: white;
+      }
+    }
+  }
+  .body-scroll {
+    display: flex;
+    height: 100%;
+    overflow-y: auto;
+    ::ng-deep .cdk-virtual-scroll-content-wrapper {
+      min-width: 100%;
+      display: flex;
+      flex-flow: column nowrap;
+      flex: 1 1 auto;
+    }
+    tr {
+      display: flex;
+      flex-flow: row nowrap;
+      border-left: 1px solid black;
+      td {
+        display: flex;
+        height: 35px;
+        max-height:35px;
+        padding: 5px;
+        border-right: 1px solid black;
+        border-bottom: 1px solid black;
+        align-items: center;
+        span.content {
+          text-overflow: ellipsis;
+          max-width: 100%;
+          overflow: hidden;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+}
+// styles within the header
+.header-cell{
+  .sort-button{
+    opacity: 0;
+    transform: translateX(-8px) scaleX(0.6);
+    padding:0;
+    border: 0;
+    margin: 0;
+    background-color: transparent;
+    outline: -webkit-focus-ring-color auto 0;
+    .mat-icon {
+      background-color: transparent;
+    }
+  }
+  .sorted-on {
+    opacity: 1 !important;
+  }
+  .header-text {
+    flex: 1 1 auto;
+    transform: translateX(-10px);
+  }
+}
+.header-cell:hover {
+  .not-sorted {
+    opacity: 0.4 !important;
+  }
+}
+.scroll-spanner {
+  min-width: 5px;
+  max-width: 5px;
+  margin-left: auto;
+}
+.hide-spanner {
+  display: none !important;
+}
+.shorter-header {
+  width: calc(100% - 17px);
+}
+
+// styles for each type of column
+.select-cell, .select-header {
+  flex: 1 1 150px;
+  min-width: 150px;
+}
+.string-cell, .string-header {
+  flex: 1 1 150px;
+  min-width: 150px;
+}
+.long-string-cell, .long-string-header, .html-cell, .html-header {
+  flex: 1 1 250px;
+  min-width: 250px;
+  max-width: 250px;
+}
+.number-cell, .number-header {
+  flex: 1 1 110px;
+  min-width: 110px;
+  justify-content: center;
+}
+.date-cell, .date-header, .time-cell, .time-header, .boolean-cell, .boolean-header {
+  flex: 1 1 100px;
+  min-width: 100px;
+  justify-content: center;
+}
+.edit-cell, .edit-header {
+  flex: 1 1 50px;
+  min-width: 50px;
+  max-width: 50px;
+  width: 50px;
+  color: green;
+  justify-content: center;
+  .mat-icon {
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer; // TODO: just put this in a button
+  }
+}

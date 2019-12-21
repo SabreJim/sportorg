@@ -1,0 +1,8 @@
+<div mat-dialog-title>{{config.title}}</div>
+<mat-dialog-content>
+  <p>{{config.message}}</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button [mat-dialog-close]="false">Cancel</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="true">{{config.confirmText || 'Okay'}}</button>
+</mat-dialog-actions>

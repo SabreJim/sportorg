@@ -1,0 +1,69 @@
+<div class="edit-form">
+  <div class="title-bar">
+    <h2>Edit {{entityType}}</h2>
+    <button mat-raised-button color="warn" class="delete-button"
+            [disabled]="!entitySaved" (click)="requestDelete()"
+    >Delete</button>
+    <button mat-raised-button color="primary" class="save-button"
+            (click)="saveChanges()" [disabled]="!isDirty">Save</button>
+  </div>
+  <ng-container *ngFor="let editField of formFields">
+    <div class="field-wrapper">
+    <h3>{{editField.title}}</h3>
+    <div class="editor-field">
+        <ng-container *ngIf="editField.type ==='string'">
+          <app-string-input
+            [value]="currentRow[editField.fieldName]"
+            (stringChanged)="updateString($event, editField.fieldName)"
+          ></app-string-input>
+        </ng-container>
+        <ng-container *ngIf="editField.type ==='number'">
+          <app-number-input
+            [value]="currentRow[editField.fieldName]"
+            (numberChanged)="updateNumber($event, editField.fieldName)"
+          ></app-number-input>
+        </ng-container>
+      <ng-container *ngIf="editField.type ==='boolean'">
+        <app-boolean-input
+          [value]="currentRow[editField.fieldName]"
+          (valueChanged)="updateBoolean($event, editField.fieldName)"
+        ></app-boolean-input>
+      </ng-container>
+      <ng-container *ngIf="editField.type ==='time'">
+        <app-time-input
+          [value]="currentRow[editField.fieldName]"
+          (timeChanged)="updateTime($event, editField.fieldName)"
+        ></app-time-input>
+      </ng-container>
+        <ng-container *ngIf="editField.type ==='date'">
+          <app-date-picker
+            [dateValue]="currentRow[editField.fieldName]"
+            (dateValueChanged)="updateDate($event, editField.fieldName)"
+          ></app-date-picker>
+        </ng-container>
+        <ng-container *ngIf="editField.type ==='select'">
+          <app-select-input
+            [lookupType]="editField.lookupField"
+            [staticLookup]="editField.lookupStatic"
+            [selected]="currentRow[editField.fieldName]"
+            (selectedChanged)="updateSelection($event, editField.fieldName)"
+          ></app-select-input>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</div>
+<!--title: string;-->
+<!--type: string;-->
+<!--fieldName: string;-->
+<!--displayField?: string;-->
+
+<!--new TableColumn('season', 'Season', 'select', 'seasonName'),-->
+<!--new TableColumn('programId', 'Program', 'select', 'levelName'),-->
+<!--new TableColumn('startDate', 'Start Date', 'date'),-->
+<!--new TableColumn('endDate', 'End Date', 'date'),-->
+<!--new TableColumn('location', 'Location', 'select', 'locationName'),-->
+<!--new TableColumn('registrationMethod', 'Register', 'string'),-->
+<!--new TableColumn('color', 'Color', 'select'),-->
+<!--new TableColumn('minAge', 'Min Age', 'number'),-->
+<!--new TableColumn('maxAge', 'Max Age', 'number'),-->

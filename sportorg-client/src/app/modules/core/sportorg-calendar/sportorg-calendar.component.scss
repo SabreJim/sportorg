@@ -1,0 +1,101 @@
+.cal-card {
+  display: flex;
+  flex-flow: column nowrap;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  button {
+    height: 35px;
+    padding: 0;
+  }
+  .selector {
+    display: flex;
+    align-items: center;
+    max-width: 250px;
+    margin-left: 20px;
+    h4 { margin-right: 10px;}
+  }
+}
+.calendar {
+  display: flex;
+  flex-flow: row nowrap;
+
+  .day-column {
+    display: flex;
+    flex: 1 1 auto;
+    flex-flow: column nowrap;
+  }
+  .title-cell {
+    display: flex;
+    flex-flow: column nowrap;
+    flex: 1 1 30px;
+    max-height: 30px;
+    min-width: 100px;
+    background-color: lightblue;
+    padding: 5px;
+    align-items: center;
+    justify-content: center;
+    border-width: thin;
+    border-color: white;
+    border-style: solid;
+    .day-name {
+      flex: 1 1 auto;
+      font-weight: 700;
+    }
+    .exact-date {
+      flex: 1 1 auto;
+    }
+  }
+  .event-cell, .empty-cell {
+    display: flex;
+    flex-flow: column nowrap;
+    overflow-x: hidden;
+    border-left: thin solid lightgray;
+  }
+  .event-cell {
+    border-bottom: thin dashed lightgray;
+
+    justify-content: center;
+    align-items: center;
+    .event-name {
+      font-weight: 700;
+      margin: 0 5px;
+      white-space: normal;
+      text-align: center;
+    }
+    .start-time {
+
+    }
+  }
+  .empty-cell {
+    min-height: 10px;
+  }
+
+  .min-wide {
+    min-width: 80px;
+    max-width: 120px;
+    font-size: 13px;
+  }
+  .expanded {
+    min-width: inherit;
+    max-width: inherit;
+  }
+  .hide-column {
+    display: none !important;
+  }
+
+  .tall-1 {
+    flex: 1 1 40px !important;
+  }
+  .tall-2 {
+    flex: 2 2 80px !important;
+  }
+  .tall-3 {
+    flex: 3 3 120px !important;
+  }
+  .tall-4 {
+    flex: 4 4 160px !important;
+  }
+}

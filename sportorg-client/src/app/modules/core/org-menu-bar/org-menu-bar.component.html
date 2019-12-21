@@ -6,28 +6,26 @@
   </ng-container>
 
   <nav class="menu-stack" >
-    <a  class="mat-button" routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" tabindex="0" >Home</a>
-    <a mat-button routerLinkActive="active-link" [matMenuTriggerFor]="classMenu" tabindex="0" >
-      Classes
-    </a>
-    <mat-menu #classMenu>
-      <button mat-menu-item routerLink="/classes" fragment="schedule" >Schedule</button>
-      <button mat-menu-item routerLink="/classes" fragment="programs" >Programs</button>
-      <button mat-menu-item routerLink="/classes/fees" >Fees</button>
-    </mat-menu>
-    <a mat-button routerLink="/fencers" routerLinkActive="active-link" tabindex="0" >Fencers</a>
-    <a mat-button routerLink="/events" routerLinkActive="active-link" tabindex="0" >Events</a>
-    <a mat-button routerLink="/about-us" routerLinkActive="active-link" tabindex="0" >About Us</a>
-    <a mat-button class="optional-button" [matMenuTriggerFor]="recentMenu" tabindex="0" >
-      Recent Items
-    </a>
-    <mat-menu #recentMenu>
-      <ng-container *ngFor="let item of recentItems">
-        <button mat-menu-item (click)="exampleClick(item)">{{item.title}}</button>
-      </ng-container>
-    </mat-menu>
+    <ng-container *ngFor="let menu of appMenus">
+      <a  ngClass="mat-button {{menu.mobileOnly === 'Y' ? 'mobile-only': ''}}"
+          routerLink="{{menu.link}}" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: menu.link === '/'}" tabindex="0"
+      >{{menu.title}}</a>
+    </ng-container>
 
   </nav>
+  <div class="burger-menu">
+    <button mat-raised-button color="primary" [matMenuTriggerFor]="mobileMenu" >
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <mat-menu #mobileMenu class="burger-menu-items">
+      <ng-container *ngFor="let menu of appMenus">
+        <a ngClass="mat-button {{menu.mobileOnly === 'Y' ? 'mobile-only': ''}}"
+           routerLink="{{menu.link}}" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: menu.link === '/'}" tabindex="0"
+        >{{menu.title}}</a>
+      </ng-container>
+    </mat-menu>
+  </div>
   <div class="login">
     <a mat-button *ngIf="isAnon" [matMenuTriggerFor]="authMenu" tabindex="0" >
       Sign in
@@ -41,6 +39,7 @@
       <img src="{{currentUser.photoURL}}" title="Welcome {{currentUser.displayName}}" [matMenuTriggerFor]="profileMenu">
       <mat-menu #profileMenu>
         <button mat-menu-item  routerLink="/my-profile"><mat-icon>perm_identity</mat-icon>My Profile</button>
+        <button *ngIf="currentUser?.isAdmin" mat-menu-item  routerLink="/admin"><mat-icon>security</mat-icon>Admin</button>
         <button mat-menu-item  (click)="logout()"><mat-icon>exit_to_app</mat-icon>Logout</button>
       </mat-menu>
     </div>

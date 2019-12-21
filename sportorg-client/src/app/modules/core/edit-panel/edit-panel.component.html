@@ -1,0 +1,38 @@
+<mat-expansion-panel class="panel" (opened)="refreshData()">
+  <mat-expansion-panel-header class="panel-header">
+    <mat-panel-title>
+      <h3 class="panel-title">{{configObject.panelTitle}}</h3>
+    </mat-panel-title>
+    <mat-panel-description class="header-description">
+      <span class="">{{configObject.description}}</span>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <!--  local filter input-->
+
+
+  <mat-sidenav-container autosize>
+    <!--  side-nav for editor -->
+    <mat-sidenav #editNav [mode]="'side'" [opened]="editorOpen" class="side-nav"
+                 [fixedInViewport]="false" fixedTopGap="56">
+        <app-dynamic-form
+          [formFields]="configObject.columns"
+          [editingRow]="editingRow"
+          [entityType]="configObject.entityType"
+          (saveRecord)="runUpsert($event)"
+          (deleteRecord)="runDeletion($event)"
+        ></app-dynamic-form>
+    </mat-sidenav>
+
+    <mat-sidenav-content (click)="hideSideNav()" class="main-content">
+<!--  table content to display   -->
+      <app-table
+        class="data-grid"
+        [tableColumns]="configObject.columns"
+        [gridData]="gridData"
+        [isEditable]="true"
+        (editRow)="editRow($event)"
+      ></app-table>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+
+</mat-expansion-panel>

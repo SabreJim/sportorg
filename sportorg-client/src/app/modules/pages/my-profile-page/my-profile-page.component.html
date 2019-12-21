@@ -1,0 +1,56 @@
+<div class="page-wrapper">
+  <mat-expansion-panel [disabled]="true">
+    <mat-expansion-panel-header class="panel-header" >
+      <h1>My Profile</h1>
+      <p class="summary-description">Information about the current user</p>
+    </mat-expansion-panel-header>
+    <div class="summary-box">
+    </div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel >
+    <mat-expansion-panel-header class="panel-header">
+      <h1>My Members/Fencers</h1>
+    </mat-expansion-panel-header>
+    <div class="table-box">
+      <p class="prompt-text">
+        These are the users associated with your account. You can register new fencers on the register page,
+        or if you think you should have access to existing members, please contact the administrator.
+      </p>
+      <button mat-raised-button color="primary" class="action-button"
+              [disabled]="!selectedMember || !selectedMember.memberId"
+              (click)="editMyMember()">Edit Member</button>
+      <app-table ngClass="select-table"
+                 [tableColumns]="memberColumns"
+                 [gridData]="myMembers"
+                 [canSelect]="true"
+                 [trackById]="'memberId'"
+                 (selectedRows)="selectMembers($event)"
+                 [singleSelect]="true"
+      ></app-table>
+    </div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header class="panel-header">
+      <h1>My Enrollments</h1>
+    </mat-expansion-panel-header>
+    <div class="table-box">
+      <p class="prompt-text">
+        These are the classes and programs that your Members are currently enrolled in. You can withdraw from any
+        of these classes by selecting the class and clicking the "withdraw" button.
+      </p>
+      <button mat-raised-button color="primary" class="action-button"
+              [disabled]="!selectedEnrollment || !selectedEnrollment.enrollId"
+              (click)="withdrawFromClass()">Withdraw</button>
+      <app-table ngClass="select-table"
+                 [tableColumns]="enrollColumns"
+                 [gridData]="myEnrollments"
+                 [canSelect]="true"
+                 [trackById]="'enrollId'"
+                 (selectedRows)="selectEnrollments($event)"
+                 [singleSelect]="true"
+      ></app-table>
+    </div>
+  </mat-expansion-panel>
+</div>

@@ -1,3 +1,4 @@
+import {Subject} from "rxjs";
 
 export class ApiResponse<T> {
   success: boolean;
@@ -15,6 +16,13 @@ export class ApiResponse<T> {
   hasErrors(): boolean {
     return this.message && this.message.length > 0;
   }
+}
+export interface LookupItem {
+  id: number;
+  name: string;
+  moreInfo?: string;
+  lookup: string;
+  description?: string;
 }
 
 export interface IndexedCache<T> {

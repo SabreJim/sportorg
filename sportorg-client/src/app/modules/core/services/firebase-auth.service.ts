@@ -6,6 +6,7 @@ import {Subject} from "rxjs";
 import {RestProxyService} from "./rest-proxy.service";
 import {ApiResponse} from "../models/rest-objects";
 import {StaticValuesService} from "./static-values.service";
+import {SnackbarService} from "./snackbar.service";
 
 
 @Injectable({providedIn: 'root'})
@@ -49,7 +50,7 @@ export class FirebaseAuthService extends RestProxyService {
     if (this.currentUser.isAnonymous) {
       auth().signInWithPopup(this.GProvider).then((result) => {
       }).catch(function(error) {
-        // Handle Errors here.
+        SnackbarService.error('Sorry, there was a problem logging you in with a third party service. Please try again later.');
       });
     } else {
       this.logout();
@@ -66,6 +67,8 @@ export class FirebaseAuthService extends RestProxyService {
           }
           // update the token so subsequent requests can be authenticated
           StaticValuesService.setToken(response.data.sessionToken);
+          this.currentUser.isAdmin = response.data.isAdmin === 'Y';
+          this.currentUser.isActive = response.data.isActive === 'Y';
           this.CurrentUser.next(this.currentUser);
         });
       });
@@ -74,18 +77,23 @@ export class FirebaseAuthService extends RestProxyService {
     }
   };
 
+  public isAdmin = (): boolean => {
+    return (this.currentUser && !this.currentUser.isAnonymous && this.currentUser.isAdmin);
+  }
+
   public logout = (): void => {
     const purgeSession = () => {
       StaticValuesService.setToken(''); // clear the header token
       this.currentUser = new AppUser(); // reset the user state
       this.CurrentUser.next(this.currentUser); // notify any listeners
       auth().signOut(); // end the firebase session client-side
+      this.appRouter.navigate(['/']);
     }
     if (StaticValuesService.getToken()) {
       // send a signal to the app server to clear the session
       this.put('end-session', {token: StaticValuesService.getToken()} ).subscribe((response: ApiResponse<boolean>) => {
         if (response.hasErrors()) {
-          console.log('Error logging out user', response.message);
+          SnackbarService.error(`Error logging out user`);
           purgeSession();
         }
        purgeSession();

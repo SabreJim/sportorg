@@ -1,0 +1,121 @@
+<div class="page-wrapper">
+  <h4>Sign up for a Fencing Program</h4>
+
+  <div *ngIf="currentUser?.isAnonymous">
+    <p class="warning-message">Please login with your Gmail or Facebook account to proceed.</p>
+  </div>
+
+  <mat-expansion-panel [expanded]="seasonExpanded">
+    <mat-expansion-panel-header class="panel-header">
+      <h1>Season</h1>
+      <div class="description">{{currentSeason?.name}}</div>
+    </mat-expansion-panel-header>
+    <div class="select-box">
+      <p class="prompt-text">
+        Select the season you would like to sign up for:
+      </p>
+      <app-select-input
+        [lookupType]="'seasons'"
+        [selected]="currentRegistration.seasonId"
+        (selectionObject)="selectSeason($event)"
+      ></app-select-input>
+    </div>
+
+  </mat-expansion-panel>
+
+  <mat-expansion-panel [expanded]="programExpanded">
+    <mat-expansion-panel-header class="panel-header">
+      <h1>Program</h1>
+      <div class="description">{{currentProgram?.name}}</div>
+    </mat-expansion-panel-header>
+    <div class="select-box">
+      <p class="prompt-text">
+        Select the Program you would like to sign up for:
+      </p>
+      <app-select-input
+        [staticLookup]="allPrograms"
+        [selected]="currentRegistration.programId"
+        (selectionObject)="selectProgram($event)"
+      ></app-select-input>
+    </div>
+    <p [innerHTML]="currentProgram?.description | safePipe: 'html'"></p>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel [expanded]="classExpanded">
+    <mat-expansion-panel-header class="panel-header">
+      <h1>Classes</h1>
+      <div class="description">{{classDescription}}</div>
+    </mat-expansion-panel-header>
+    <div class="table-box">
+      <p class="prompt-text">
+        Select the Classes you would like to attend. For some programs, a discount can be applied if you are
+        not attending all available classes. Suggested age ranges help us find the classes that best fit each student.
+      </p>
+      <app-table ngClass="select-table"
+                 [tableColumns]="classColumns"
+                 [gridData]="availableClasses"
+                 [canSelect]="true"
+                 [trackById]="'scheduleId'"
+                 (selectedRows)="selectClasses($event)"
+      ></app-table>
+    </div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel [expanded]="memberExpanded">
+    <mat-expansion-panel-header class="panel-header">
+      <h1>Members/Fencers</h1>
+      <div class="description">{{currentMember?.name}}</div>
+    </mat-expansion-panel-header>
+    <div class="table-box">
+      <p class="prompt-text">
+        Select the existing member that you would like to sign up for a class. If the person you are looking for
+        does not appear here, you can add a new member with the "add member" button.
+      </p>
+      <button mat-raised-button color="primary" class="action-button" (click)="openAddMember()">Add Member</button>
+      <app-table ngClass="select-table"
+                 [tableColumns]="memberColumns"
+                 [gridData]="myMembers"
+                 [canSelect]="true"
+                 [trackById]="'memberId'"
+                 (selectedRows)="selectMembers($event)"
+                 [singleSelect]="true"
+      ></app-table>
+    </div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel [expanded]="true" [disabled]="true" [hideToggle]="true">
+    <mat-expansion-panel-header class="panel-header not-disabled">
+      <h1>Summary</h1>
+      <p class="summary-description">This is the registration that you are about to complete</p>
+    </mat-expansion-panel-header>
+    <div class="summary-box">
+
+      <div class="summary-item">
+        <h3>Program</h3>
+        <div class="description">{{currentSeason?.name}} {{currentProgram?.name}}</div>
+      </div>
+      <div class="summary-item">
+        <h3>Classes</h3>
+        <ng-container *ngFor="let classItem of currentClasses">
+          <div class="description">{{classItem.dayOfWeek}}: {{classItem.startTime}} to {{classItem.endTime}}
+          (Ages: {{classItem.minAge}} - {{classItem.maxAge}})</div>
+        </ng-container>
+      </div>
+      <div class="summary-item">
+        <h3>Member/Fencer</h3>
+        <div class="description">{{currentMember?.name}}</div>
+      </div>
+      <div class="summary-item">
+        <h3>Estimated Cost</h3>
+        <p>You may be eligible for family or other discounts</p>
+        <div class="description">{{programFeeDescription}}</div>
+      </div>
+      <div class="button-row">
+        <button class="register-button" mat-raised-button color="primary"
+                (click)="submitRegistration()"
+                [disabled]="!registrationComplete()"
+        >Register Now</button>
+      </div>
+    </div>
+  </mat-expansion-panel>
+</div>

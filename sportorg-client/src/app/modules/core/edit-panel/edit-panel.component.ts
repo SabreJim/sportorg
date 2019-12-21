@@ -46,7 +46,6 @@ export class EditPanelComponent implements OnInit {
 
   public runDeletion = (record: any) => {
     this.configObject.delete(record).subscribe((result: boolean) => {
-      console.log('deleted successfully');
       this.editorOpen = false;
       this.refreshData();
       this.detector.detectChanges();

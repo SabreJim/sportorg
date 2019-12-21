@@ -20,7 +20,6 @@ export class NumberInputComponent implements OnInit {
   }
 
   public updateValue =(event: Event) => {
-    console.log('got new time', event, (event.srcElement as HTMLInputElement).value);
     const newValue = (event.srcElement as HTMLInputElement).value || null;
     let num: number;
     if (this.numberType === 'float') {

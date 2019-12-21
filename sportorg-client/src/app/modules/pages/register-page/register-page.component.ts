@@ -146,7 +146,7 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
     if (!this.registrationComplete()) return;
 
     this.enrollmentService.enrollClass(this.currentRegistration).subscribe((result: boolean) => {
-      console.log('did register', result);
+      // TODO reset page selections
     });
 
   };

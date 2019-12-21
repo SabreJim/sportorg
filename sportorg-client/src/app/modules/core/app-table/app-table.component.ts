@@ -11,6 +11,7 @@ import {
 import {TableColumn} from "../models/ui-objects";
 import {MatCheckbox, MatCheckboxChange, MatSelectChange} from "@angular/material";
 import {CdkVirtualScrollViewport} from "@angular/cdk/scrolling";
+import {SnackbarService} from "../services/snackbar.service";
 
 export interface TableRow {
   isSelected: boolean;
@@ -152,7 +153,7 @@ export class AppTableComponent implements AfterViewInit {
           }
         }
       } catch (err) {
-         console.log('could not set width', err);
+         SnackbarService.error(`Could not set width of the table`);
       }
       this.detector.detectChanges();
     });

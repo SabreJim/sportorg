@@ -1,13 +1,22 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output
+} from '@angular/core';
 import {LookupProxyService} from "../../services/lookup-proxy.service";
 import {LookupItem} from "../../models/rest-objects";
 import {MatSelectChange} from "@angular/material";
-import {StaticValuesService} from "../../services/static-values.service";
 
 @Component({
   selector: 'app-select-input',
   templateUrl: './select-input.component.html',
-  styleUrls: ['./select-input.component.scss']
+  styleUrls: ['./select-input.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SelectInputComponent implements OnInit, AfterViewInit {
 
@@ -16,6 +25,7 @@ export class SelectInputComponent implements OnInit, AfterViewInit {
   @Input() set staticLookup (items: LookupItem[]) {
     if (items && items.length) {
       this.options = items;
+      this.detector.detectChanges();
     }
   };
 
@@ -23,6 +33,7 @@ export class SelectInputComponent implements OnInit, AfterViewInit {
     if (newValue !== null && newValue !== undefined && this.options.length) {
       setTimeout(() => {
         this.selectedValue = newValue;
+        this.detector.detectChanges();
       });
 
     }
@@ -31,7 +42,7 @@ export class SelectInputComponent implements OnInit, AfterViewInit {
   @Output() selectionObject =  new EventEmitter<LookupItem>();
   public selectedValue: number = null;
   public options: LookupItem[] = [];
-  constructor(private lookupService: LookupProxyService) { }
+  constructor(private lookupService: LookupProxyService, private detector: ChangeDetectorRef) { }
 
   ngOnInit() {
   }
@@ -48,6 +59,7 @@ export class SelectInputComponent implements OnInit, AfterViewInit {
         if (this.selectedValue) {
           this.selected = this.selectedValue; // in case of timing issue
         }
+        this.detector.detectChanges();
       });
       this.lookupService.refreshLookups();
     }

@@ -19,7 +19,6 @@ export class StringInputComponent implements OnInit {
   }
 
   public updateValue =(event: Event) => {
-    console.log('got new string', event, (event.srcElement as HTMLInputElement).value);
     const newValue = (event.srcElement as HTMLInputElement).value || null;
     // TODO: input sanitization
     this.stringChanged.emit(newValue);

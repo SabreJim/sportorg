@@ -41,7 +41,6 @@ export class DynamicFormComponent implements OnInit {
       { width: '350px', height: '250px', data: { title: `Confirm deleting ${this.entityType}`,
           message: `Are you sure you want to delete this ${this.entityType}?`}})
     dialogRef.afterClosed().subscribe((result: boolean) => {
-      console.log('got back from modal', result);
       if (result === true) {
         // send deletion request
         this.deleteRecord.emit(this.currentRow);
@@ -62,7 +61,6 @@ export class DynamicFormComponent implements OnInit {
     }
   };
   public updateBoolean = (newValue: string, fieldName: string) => {
-    console.log('got boolean', newValue);
     if (newValue !== this.currentRow[fieldName]){
       this.currentRow[fieldName] = newValue;
       this.isDirty = true;

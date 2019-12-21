@@ -84,7 +84,6 @@ export class TooltipDirective implements OnInit, OnDestroy {
       if (this.exitListener && this.exitListener.unsubscribe) this.exitListener.unsubscribe();
       if (this.enterListener && this.enterListener.unsubscribe) this.enterListener.unsubscribe();
     }catch (err) {
-      console.log('destroy error', err);
     }
   };
 

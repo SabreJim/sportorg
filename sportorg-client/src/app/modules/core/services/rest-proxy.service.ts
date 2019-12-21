@@ -4,7 +4,6 @@ import {Injectable} from "@angular/core";
 import {Observable, of} from "rxjs";
 import {ApiResponse} from "../models/rest-objects";
 import {map, catchError} from "rxjs/operators";
-import {FirebaseAuthService} from "./firebase-auth.service";
 import {StaticValuesService} from "./static-values.service";
 
 

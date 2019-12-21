@@ -5,6 +5,7 @@ import {ApiResponse, IndexedCache} from "../models/rest-objects";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
+import {SnackbarService} from "./snackbar.service";
 
 
 @Injectable({providedIn: 'root'})
@@ -23,7 +24,7 @@ export class ClassesProxyService extends RestProxyService {
         const url = (seasonId === null) ? 'all-classes' : `all-classes?seasonId=${seasonId}`;
         this.get(url).subscribe((response: ApiResponse<ClassRecord[]>) => {
           if (response.hasErrors()) {
-            console.log('Error getting programs', response.message);
+            SnackbarService.error(`Classes could not be retrieved at this time`);
             subscription.next([]);
           } else {
             if (seasonId !== -1) {
@@ -40,8 +41,10 @@ export class ClassesProxyService extends RestProxyService {
     return new Observable((subscription) => {
       this.put('classes', classBody).subscribe((response: ApiResponse<any>) => {
         if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`Classes were not updated successfully: ${response.message}`);
           subscription.next(false);
         } else {
+          SnackbarService.notify(`Classes updated successfully`);
           subscription.next(true);
         }
       }, (error: any) => {});
@@ -55,8 +58,10 @@ export class ClassesProxyService extends RestProxyService {
       }
       this.delete(`classes/${classId}`).subscribe((response: ApiResponse<any>) => {
         if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`Class was not deleted successfully: ${response.message}`);
           subscription.next(false);
         } else {
+          SnackbarService.notify(`Class deleted successfully`);
           subscription.next(true);
         }
       }, (error: any) => {});

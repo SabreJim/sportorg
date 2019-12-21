@@ -6,6 +6,7 @@ import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
 import {MenuItem} from "../models/ui-objects";
+import {SnackbarService} from "./snackbar.service";
 
 
 @Injectable({providedIn: 'root'})
@@ -37,7 +38,7 @@ export class LookupProxyService extends RestProxyService {
     if (repull) {
       this.get(`lookups` ).subscribe((response: ApiResponse<LookupItem[]>) => {
         if (response.hasErrors()) {
-          console.log('Error getting lookups', response.message);
+          SnackbarService.error(`There was a problem getting lookup items`);;
           // dummy response so UI doesn't error out
           return { subject: new Subject<LookupItem[]>(), cache: [] };
         } else {
@@ -71,7 +72,7 @@ export class LookupProxyService extends RestProxyService {
     return new Observable<MenuItem[]>((subscription) => {
       this.get(`menus/` ).subscribe((response: ApiResponse<MenuItem[]>) => {
         if (response.hasErrors()) {
-          console.log('Error getting menus', response.message);
+          SnackbarService.error('There was an error getting menus');
           subscription.next([]);
         }
         subscription.next(response.data || []);

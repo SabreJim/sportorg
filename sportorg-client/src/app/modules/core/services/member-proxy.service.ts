@@ -5,6 +5,7 @@ import {ApiResponse} from "../models/rest-objects";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
+import {SnackbarService} from "./snackbar.service";
 
 
 @Injectable({providedIn: 'root'})
@@ -19,7 +20,7 @@ export class MembersProxyService extends RestProxyService {
     return new Observable((subscription) => {
       this.get('my-members/').subscribe((response: ApiResponse<AppMember[]>) => {
         if (response.hasErrors()) {
-          console.log('Error getting my members', response.message);
+          SnackbarService.error('There was an error getting your members');
           subscription.next([]);
         } else {
           subscription.next(response.data || []);
@@ -33,7 +34,7 @@ export class MembersProxyService extends RestProxyService {
     } else {
       this.get('members/').subscribe((response: ApiResponse<AppMember[]>) => {
         if (response.hasErrors()) {
-          console.log('Error getting members', response.message);
+          SnackbarService.error(`There was an error getting all members: ${response.message}`);
           this.PublicMembers.next([]);
         } else {
           this.memberCache = response.data || [];
@@ -47,8 +48,10 @@ export class MembersProxyService extends RestProxyService {
     return new Observable((subscription) => {
       this.put('members', memberBody).subscribe((response: ApiResponse<any>) => {
         if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`There was an error updating this member: ${response.message}`);
           subscription.next(false);
         } else {
+          SnackbarService.notify('Member updated successfully');
           subscription.next(true);
         }
       }, (error: any) => {});
@@ -62,8 +65,10 @@ export class MembersProxyService extends RestProxyService {
       }
       this.delete(`members/${memberId}`).subscribe((response: ApiResponse<any>) => {
         if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`There was an error deleting this member: ${response.message}`);
           subscription.next(false);
         } else {
+          SnackbarService.notify('Member deleted successfully');
           subscription.next(true);
         }
       }, (error: any) => {});

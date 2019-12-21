@@ -1,17 +1,13 @@
 import {RestProxyService} from "./rest-proxy.service";
-import {ClassRecord, ProgramRecord} from "../models/data-objects";
+import {ProgramRecord} from "../models/data-objects";
 import {Observable, Subject} from "rxjs";
-import {ApiResponse, IndexedCache} from "../models/rest-objects";
-import {HttpClient} from "@angular/common/http";
+import {ApiResponse} from "../models/rest-objects";
 import {Injectable} from "@angular/core";
-import {Router} from "@angular/router";
+import {SnackbarService} from "./snackbar.service";
 
 
 @Injectable({providedIn: 'root'})
 export class ProgramsProxyService extends RestProxyService {
-  constructor(http: HttpClient, appRouter: Router) {
-    super(http, appRouter);
-  }
   public Programs = new Subject<ProgramRecord[]>();
   protected programCache: ProgramRecord[] = [];
 
@@ -19,7 +15,7 @@ export class ProgramsProxyService extends RestProxyService {
     return new Observable((subscription) => {
         this.get('all-programs/').subscribe((response: ApiResponse<ProgramRecord[]>) => {
           if (response.hasErrors()) {
-            console.log('Error getting programs', response.message);
+            SnackbarService.error('Programs could not be loaded at this time');
             subscription.next([]);
           } else {
             subscription.next(response.data || []);
@@ -33,7 +29,7 @@ export class ProgramsProxyService extends RestProxyService {
     } else {
       this.get('programs/').subscribe((response: ApiResponse<ProgramRecord[]>) => {
         if (response.hasErrors()) {
-          console.log('Error getting programs', response.message);
+          SnackbarService.error('Programs could not be loaded at this time');
           this.Programs.next([]);
         } else {
           this.programCache = response.data || [];
@@ -47,9 +43,11 @@ export class ProgramsProxyService extends RestProxyService {
     return new Observable((subscription) => {
       this.put('programs', classBody).subscribe((response: ApiResponse<any>) => {
         if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`Program was not updated successfully: ${response.message}`);
           subscription.next(false);
         } else {
           subscription.next(true);
+          SnackbarService.notify(`Program was updated successfully`);
         }
       }, (error: any) => {});
     });
@@ -62,9 +60,11 @@ export class ProgramsProxyService extends RestProxyService {
       }
       this.delete(`programs/${programId}`).subscribe((response: ApiResponse<any>) => {
         if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`Program was not updated successfully: ${response.message}`);
           subscription.next(false);
         } else {
           subscription.next(true);
+          SnackbarService.notify(`Program was deleted successfully`);
         }
       }, (error: any) => {});
     });

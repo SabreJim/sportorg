@@ -27,6 +27,7 @@ import {TooltipDirective} from "./tooltip/tooltip.directive";
 import { MemberModalComponent } from './modals/member-modal/member-modal.component';
 import { HtmEditorModalComponent } from './modals/htm-editor-modal/htm-editor-modal.component';
 import { FilterBarComponent } from './filter-bar/filter-bar.component';
+import { OrgSnackbarComponent } from './org-snackbar/org-snackbar.component';
 
 
 @NgModule({
@@ -52,7 +53,8 @@ import { FilterBarComponent } from './filter-bar/filter-bar.component';
     TooltipDirective,
     MemberModalComponent,
     HtmEditorModalComponent,
-    FilterBarComponent
+    FilterBarComponent,
+    OrgSnackbarComponent
   ],
   exports: [
     OrgHeaderComponent,
@@ -64,7 +66,8 @@ import { FilterBarComponent } from './filter-bar/filter-bar.component';
     SportorgCalendarComponent,
     ProgramPanelComponent,
     TooltipDirective,
-    SelectInputComponent
+    SelectInputComponent,
+    OrgSnackbarComponent
   ],
   imports: [
     MaterialModule,

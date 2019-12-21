@@ -11,6 +11,7 @@ export class NumberInputComponent implements OnInit {
     this.numberValue = newValue;
   }
   @Input() numberType: 'int' | 'float' = 'int';
+  @Input() maxWidth: string = '300px';
   @Output() numberChanged = new EventEmitter<number>();
 
   public clearNumber = () => {

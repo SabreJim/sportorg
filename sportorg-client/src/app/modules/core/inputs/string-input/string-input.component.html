@@ -1,5 +1,6 @@
 <mat-form-field>
-  <input matInput type="text" [value]="stringValue"  (input)="updateValue($event)" />
+  <input matInput type="text" [value]="stringValue"  (input)="updateValue($event)"
+         [style.min-width]="minWidth"/>
   <button mat-button *ngIf="stringValue" matSuffix mat-icon-button (click)="clearString()">
     <mat-icon>close</mat-icon>
   </button>

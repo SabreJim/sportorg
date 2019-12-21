@@ -201,3 +201,13 @@ alter table members
 add column confirmed VARCHAR(1);
 alter table members
 add column license VARCHAR(50);
+
+CREATE TABLE class_enrollments (
+    enroll_id MEDIUMINT NOT NULL auto_increment,
+    member_id MEDIUMINT NOT NULL references members(member_id),
+    schedule_id MEDIUMINT NOT NULL references program_schedules(schedule_id),
+    created_by MEDIUMINT NOT NULL references users(user_id),
+    created_date DATE NOT NULL,
+    enrollment_cost FLOAT,
+    PRIMARY KEY(enroll_id)
+);

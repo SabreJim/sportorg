@@ -61,11 +61,24 @@ export class AppTableComponent implements AfterViewInit {
   public selectRow = (row: any, event: MatCheckboxChange) => {
     if (this.trackById) {
       if (event.checked) {
-        this._selectedRows.push(row);
+        if (this.singleSelect) { // selection will only allow one item at a time
+          this._selectedRows = [row];
+          this.checkboxes.forEach((box: MatCheckbox) => {
+            box.checked = (box === event.source);
+          });
+        } else {
+          this._selectedRows.push(row); // add to existing selections
+        }
       } else {
-        this._selectedRows = this._selectedRows.filter((item: any) => {
-          return item[this.trackById] !== row[this.trackById];
-        })
+        if (this.singleSelect) { // remove the only selection
+          this.clearSelections();
+        } else {
+          // exclude the deselected row
+          this._selectedRows = this._selectedRows.filter((item: any) => {
+            return item[this.trackById] !== row[this.trackById];
+          });
+        }
+
       }
       this.selectedRows.emit(this._selectedRows);
     } else {
@@ -87,7 +100,6 @@ export class AppTableComponent implements AfterViewInit {
   // Sorting
   public sortColumn: string = '';
   public sort = (column: TableColumn) => {
-    console.log('got sort request', column);
     this.sortColumn = column.fieldName;
     column.sortDirection = (column.sortDirection === 'ASC') ? 'DESC' : 'ASC';
     const backup = Object.assign([], this.gridDataRows);
@@ -130,10 +142,14 @@ export class AppTableComponent implements AfterViewInit {
 
         // if the inner scrolling area is wider than the container, set the inner header to match
         if (innerElem.scrollWidth > outerElem.clientWidth) {
-          this.sharedWidth = `${innerElem.scrollWidth}px`;
+          this.sharedWidth = `${outerElem.clientWidth}px`;
           outerElem.onscroll = this.scrollSync;
         } else {
-          this.sharedWidth = `calc(${outerElem.clientWidth}px - 16px)`;
+          if (this.vertScrollShown) {
+            this.sharedWidth = `calc(${outerElem.clientWidth}px)`;
+          } else {
+            this.sharedWidth = `calc(${outerElem.clientWidth}px)`;
+          }
         }
       } catch (err) {
          console.log('could not set width', err);

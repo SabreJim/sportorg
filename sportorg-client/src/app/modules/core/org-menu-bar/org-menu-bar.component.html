@@ -11,14 +11,6 @@
           routerLink="{{menu.link}}" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: menu.link === '/'}" tabindex="0"
       >{{menu.title}}</a>
     </ng-container>
-    <a mat-button [matMenuTriggerFor]="recentMenu" tabindex="0" >
-      Recent Items
-    </a>
-    <mat-menu #recentMenu>
-      <ng-container *ngFor="let item of recentItems">
-        <button mat-menu-item (click)="exampleClick(item)">{{item.title}}</button>
-      </ng-container>
-    </mat-menu>
 
   </nav>
   <div class="burger-menu">

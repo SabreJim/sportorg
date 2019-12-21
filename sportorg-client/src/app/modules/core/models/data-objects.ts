@@ -106,3 +106,26 @@ export interface AppMember {
   license: string;
   confirmed?: 'Y' | 'N';
 }
+export interface RegistrationConfig {
+  seasonId: number;
+  programId: number;
+  scheduleIds: number[];
+  memberId: number;
+}
+
+export interface Enrollment {
+  enrollId: number;
+  memberId: number;
+  memberName: string;
+  scheduleId: number;
+  programName: string;
+  dayName: string;
+  times: string;
+  ages: string;
+  startDate: string;
+  endDate: string;
+  seasonId: number;
+  seasonName: string;
+  programFee: number;
+  enrolledCost: number;
+}

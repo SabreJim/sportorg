@@ -2,6 +2,7 @@ const express = require('express');
 const Classes = require('./response-handler/classes');
 const Programs = require('./response-handler/programs');
 const Members = require('./response-handler/members');
+const Enrollment = require('./response-handler/enrollments');
 const Lookups = require('./response-handler/lookups');
 const Authentication = require('./middleware/server-authentication');
 const ResponseHandler = require('./middleware/response-handler');
@@ -20,7 +21,6 @@ const createRouter = (config) => {
 
     const adminRequired = async (req, res, next) => {
         const session = await Authentication.getSessionFromHeader(req);
-        console.log('check admin', session);
         if (!session || session.isAdmin !== 'Y') {
             ResponseHandler.returnError(res, 'This request requires admin access', 403);
         } else {
@@ -28,7 +28,7 @@ const createRouter = (config) => {
         }
     };
     const addSession = async (req, res, next) => {
-        const session = await Authentication.getSessionFromHeader(req);
+        await Authentication.getSessionFromHeader(req);
         next();
     };
 
@@ -56,6 +56,9 @@ const createRouter = (config) => {
     router.put('/link-members/member/:memberId/user/:userId', adminRequired, Members.linkMembers);
     // event endpoints
 
+    // enrollment endpoints
+    router.get('/my-enrollments', addSession, Enrollment.getMyEnrollments);
+    router.put('/enroll-class', jsonBody, addSession, Enrollment.enrollInClass);
 
     // session management
     router.get('/session-token', Authentication.verifyToken);

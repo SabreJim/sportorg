@@ -43,9 +43,9 @@ export class MembersProxyService extends RestProxyService {
     }
   };
 
-  public upsertMember = (classBody: AppMember): Observable<boolean> => {
+  public upsertMember = (memberBody: AppMember): Observable<boolean> => {
     return new Observable((subscription) => {
-      this.put('members', classBody).subscribe((response: ApiResponse<any>) => {
+      this.put('members', memberBody).subscribe((response: ApiResponse<any>) => {
         if (response.hasErrors() || !response.success) {
           subscription.next(false);
         } else {

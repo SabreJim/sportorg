@@ -77,3 +77,28 @@ UNION
 SELECT p.program_id as 'id', p.program_name as 'name', null as 'more_info', 'programs' as 'lookup' FROM programs p
 UNION
 SELECT s.season_id as 'id', CONCAT(s.name, ' ', s.year) as 'name', date_format(s.start_date,'%Y-%m-%d') as 'more_info', 'seasons' as 'lookup' FROM seasons s;
+
+CREATE VIEW v_enrollments AS
+SELECT
+    ce.enroll_id,
+    ce.member_id,
+    CONCAT(m.last_name, ', ', m.first_name) as 'member_name',
+    ce.schedule_id,
+    p.program_name,
+    wd.day_name,
+    CONCAT(ps.start_time, ' - ', ps.end_time) as 'times',
+    CONCAT(ps.min_age, ' - ', ps.max_age) as 'ages',
+    DATE_FORMAT(ps.start_date, '%Y-%m-%d') as 'start_date',
+    DATE_FORMAT(ps.end_date, '%Y-%m-%d') as 'end_date',
+    ps.season_id,
+    CONCAT(s.name, ' ', s.year) as 'season_name',
+    f.fee_value as 'program_fee',
+    ce.enrollment_cost as 'enrolled_cost'
+FROM class_enrollments ce
+LEFT JOIN members m ON m.member_id = ce.member_id
+LEFT JOIN program_schedules ps ON ps.schedule_id = ce.schedule_id
+LEFT JOIN programs p ON p.program_id = ps.program_id
+LEFT JOIN fee_structures f ON f.fee_id = p.fee_id
+LEFT JOIN week_days wd ON wd.day_id = ps.day_id
+LEFT JOIN seasons s ON s.season_id = ps.season_id
+;

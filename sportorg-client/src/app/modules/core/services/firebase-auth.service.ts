@@ -86,6 +86,7 @@ export class FirebaseAuthService extends RestProxyService {
       this.currentUser = new AppUser(); // reset the user state
       this.CurrentUser.next(this.currentUser); // notify any listeners
       auth().signOut(); // end the firebase session client-side
+      this.appRouter.navigate(['/']);
     }
     if (StaticValuesService.getToken()) {
       // send a signal to the app server to clear the session

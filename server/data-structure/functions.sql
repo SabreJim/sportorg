@@ -85,3 +85,65 @@ BEGIN
     CLOSE currentMember;
 END;
 /
+CREATE PROCEDURE beaches.assign_member_to_user (p_user_id INTEGER, p_member_id INTEGER )
+BEGIN
+    DECLARE existing_link INTEGER;
+    -- if link already exists do nothing
+    SELECT COUNT(user_id) INTO existing_link
+        FROM member_users
+        WHERE member_id = p_member_id AND user_id = p_user_id;
+    IF existing_link = 0 THEN
+        INSERT INTO beaches.member_users (user_id, member_id)
+        VALUES (p_user_id, p_member_id);
+    END IF;
+END;
+/
+
+drop function enroll_in_class;
+CREATE FUNCTION enroll_in_class (
+    p_member_id INT,
+    p_schedule_id INT,
+    p_user_id INT) RETURNS VARCHAR(50)
+BEGIN
+    DECLARE message VARCHAR(50);
+    DECLARE existing_id INT;
+    DECLARE existing_program INT;
+    DECLARE class_cost INT;
+    -- check if already enrolled
+    SELECT MAX(enroll_id) INTO existing_id
+        FROM class_enrollments WHERE member_id = p_member_id
+        AND schedule_id = p_schedule_id;
+
+    IF existing_id IS NULL THEN
+        -- check if another enrollment is already covering the costs
+        SELECT MAX(e.enroll_id) INTO existing_program
+            FROM class_enrollments e
+            INNER JOIN program_schedules ps on ps.schedule_id = e.schedule_id
+            INNER JOIN programs p on ps.program_id = p.program_id
+            INNER JOIN fee_structures f on f.fee_id = p.fee_id
+            WHERE ps.program_id = (SELECT program_id from program_schedules where schedule_id = p_schedule_id)
+            AND member_id = p_member_id;
+        IF existing_program IS NOT NULL THEN
+            SET class_cost = 0;
+        ELSE
+            SELECT MAX(f.fee_value) INTO class_cost
+                FROM program_schedules ps
+                INNER JOIN programs p on ps.program_id = p.program_id
+                INNER JOIN fee_structures f on f.fee_id = p.fee_id
+                WHERE ps.schedule_id = p_schedule_id
+                GROUP BY ps.program_id;
+        END IF;
+
+        -- save the enrollment
+        INSERT INTO class_enrollments
+        (member_id, schedule_id, created_by, created_date, enrollment_cost)
+        VALUES
+        (p_member_id, p_schedule_id, p_user_id, CURDATE(), class_cost);
+        SET message = 'Enrollment completed';
+    ELSE
+        SET message = 'Already enrolled in this class';
+    END IF;
+
+    RETURN message;
+END;
+/

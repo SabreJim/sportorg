@@ -78,20 +78,44 @@
                  [canSelect]="true"
                  [trackById]="'memberId'"
                  (selectedRows)="selectMembers($event)"
+                 [singleSelect]="true"
       ></app-table>
     </div>
   </mat-expansion-panel>
 
-  <mat-expansion-panel [expanded]="true" [hideToggle]="true">
-    <mat-expansion-panel-header class="panel-header">
+  <mat-expansion-panel [expanded]="true" [disabled]="true" [hideToggle]="true">
+    <mat-expansion-panel-header class="panel-header not-disabled">
       <h1>Summary</h1>
+      <p class="summary-description">This is the registration that you are about to complete</p>
     </mat-expansion-panel-header>
-    <div class="summary-boxy">
-      <p class="prompt-text">
-        PUT SUMMARY HERE
-      </p>
-      <button mat-raised-button color="primary" (click)="submitRegistration()">Register Now</button>
+    <div class="summary-box">
 
+      <div class="summary-item">
+        <h3>Program</h3>
+        <div class="description">{{currentSeason?.name}} {{currentProgram?.name}}</div>
+      </div>
+      <div class="summary-item">
+        <h3>Classes</h3>
+        <ng-container *ngFor="let classItem of currentClasses">
+          <div class="description">{{classItem.dayOfWeek}}: {{classItem.startTime}} to {{classItem.endTime}}
+          (Ages: {{classItem.minAge}} - {{classItem.maxAge}})</div>
+        </ng-container>
+      </div>
+      <div class="summary-item">
+        <h3>Member/Fencer</h3>
+        <div class="description">{{currentMember?.name}}</div>
+      </div>
+      <div class="summary-item">
+        <h3>Estimated Cost</h3>
+        <p>You may be eligible for family or other discounts</p>
+        <div class="description">{{programFeeDescription}}</div>
+      </div>
+      <div class="button-row">
+        <button class="register-button" mat-raised-button color="primary"
+                (click)="submitRegistration()"
+                [disabled]="!registrationComplete()"
+        >Register Now</button>
+      </div>
     </div>
   </mat-expansion-panel>
 </div>

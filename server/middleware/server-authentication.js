@@ -10,7 +10,7 @@ const application = {
     applicationName: '',
     secretKey: null
 };
-const defaultSession = { isAnonymous: true };
+const defaultSession = { isAnonymous: true, user_id: -1 };
 let CurrentSession = Object.assign({}, defaultSession);
 
 const initializeFirebase = async (req, res, next) => {
@@ -51,11 +51,17 @@ const decodeToken = (token) => {
 const getSessionFromHeader = async(request) => {
     const sportorgToken = request.headers['sportorgtoken'];
     CurrentSession = await getSessionByToken(decodeToken(sportorgToken));
+
+    if (CurrentSession.length === 0) {
+        // no user found
+        CurrentSession = Object.assign({}, defaultSession);
+    }
+    request.session = CurrentSession;
     return CurrentSession;
 }
 
 const getSessionByToken = async(token) => {
-    const sessionQuery = `SELECT
+const sessionQuery = `SELECT
             s.session_token as 'sessionToken',
             u.user_id,
             u.is_admin as 'isAdmin',
@@ -142,5 +148,6 @@ module.exports = {
     verifyToken,
     endSession,
     getSession,
-    getSessionFromHeader
+    getSessionFromHeader,
+    CurrentSession
 };

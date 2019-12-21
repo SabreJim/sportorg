@@ -14,7 +14,7 @@ const mixedJoin = (source, skipHead = false) => {
         }
     });
     return arr.slice(0, arr.length -2);
-}
+};
 
 const getCleanBody = (body, schema) => {
     let isValid = true;
@@ -32,7 +32,9 @@ const getCleanBody = (body, schema) => {
                 return false; // stop checking
             }
         } else if (value === null) {
-            if (field.allowNull) {
+            if (field.fieldName === schema.primaryKey) { // implicitly an insert
+                cleanBody[field.fieldName] = null;
+            } else if (field.allowNull) {
                 cleanBody[field.fieldName] = null;
                 return false; // stop checking
             } else {
@@ -42,7 +44,7 @@ const getCleanBody = (body, schema) => {
             }
         }
         return isValid;
-    }
+    };
     const cleanNumber = (field, numberType) => {
         const value = body[field.fieldName];
         if (validate(value, field)) {
@@ -64,13 +66,37 @@ const getCleanBody = (body, schema) => {
             }
         }
     };
+    const stringMask = /[^\w\d\s-,.:;()&@]+/g;
     const cleanString = (field) => {
         const value = body[field.fieldName];
         if (validate(value, field)) {
             if (typeof value !== 'string') {
                 isValid = false;
             } else {
-                cleanBody[field.fieldName] =value.replace(/[^\w\d\s-,:;()&@]+/g, '');
+                cleanBody[field.fieldName] = value.replace(stringMask, '');
+            }
+        }
+    };
+    const cleanArray = (field, type) => {
+        const value = body[field.fieldName];
+        if (validate(value, field)) {
+            if (typeof value !== 'object' && !value.length) {
+                isValid = false; // not actually an array
+            } else {
+                const arr = [];
+                try {
+                    value.map((item) => {
+                        if (typeof item === 'string' && type === 'string') {
+                            arr.push(item);
+                        }
+                        if (typeof item === 'number' && type === 'int' && item === parseInt(item)) {
+                            arr.push(item);
+                        }
+                    });
+                } catch (err) {
+                    isValid = false;
+                }
+                cleanBody[field.fieldName] = arr;
             }
         }
     };
@@ -89,6 +115,12 @@ const getCleanBody = (body, schema) => {
                 break;
             case 'string':
                 cleanString(field);
+                break;
+            case 'int-array':
+                cleanArray(field, 'int');
+                break;
+            case 'string-array':
+                cleanArray(field, 'string');
                 break;
         }
     }
@@ -145,8 +177,42 @@ const programSchema = {
         // , {fieldName: 'programDescription', type: 'string', allowNull: true }
     ]
 };
+
+const memberSchema = {
+    primaryKey: 'memberId',
+    fields: [
+        {fieldName: 'memberId', type: 'int', allowNull: false },
+        {fieldName: 'firstName', type: 'string', allowNull: false },
+        {fieldName: 'middleName', type: 'string', allowNull: true },
+        {fieldName: 'lastName', type: 'string', allowNull: false },
+        {fieldName: 'yearOfBirth', type: 'int', allowNull: true },
+        {fieldName: 'competeGender', type: 'string', allowNull: true },
+        {fieldName: 'isActive', type: 'string', allowNull: false },
+        {fieldName: 'isAthlete', type: 'string', allowNull: false },
+        {fieldName: 'membershipStart', type: 'date', allowNull: false },
+        {fieldName: 'homeAddress', type: 'string', allowNull: true },
+        {fieldName: 'email', type: 'string', allowNull: false },
+        {fieldName: 'cellPhone', type: 'string', allowNull: true },
+        {fieldName: 'homePhone', type: 'string', allowNull: true },
+        {fieldName: 'license', type: 'string', allowNull: true },
+        {fieldName: 'confirmed', type: 'string', allowNull: true }
+    ]
+};
+
+const enrollmentSchema = {
+    primaryKey: 'enrollId',
+    fields: [
+        {fieldName: 'enrollId', type: 'int', allowNull: false },
+        {fieldName: 'memberId', type: 'int', allowNull: false },
+        {fieldName: 'scheduleIds', type: 'int-array', allowNull: false },
+        {fieldName: 'userId', type: 'int', allowNull: false },
+        {fieldName: 'feeValue', type: 'float', allowNull: true },
+    ]
+};
 module.exports = {
     getCleanBody,
     classScheduleSchema,
-    programSchema
+    programSchema,
+    memberSchema,
+    enrollmentSchema
 };

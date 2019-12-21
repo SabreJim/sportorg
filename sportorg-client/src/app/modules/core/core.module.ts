@@ -24,6 +24,9 @@ import { BooleanInputComponent } from './inputs/boolean-input/boolean-input.comp
 import { ProgramPanelComponent } from './program-panel/program-panel.component';
 import { TooltipComponent } from './tooltip/tooltip.component';
 import {TooltipDirective} from "./tooltip/tooltip.directive";
+import { MemberModalComponent } from './modals/member-modal/member-modal.component';
+import { HtmEditorModalComponent } from './modals/htm-editor-modal/htm-editor-modal.component';
+import { FilterBarComponent } from './filter-bar/filter-bar.component';
 
 
 @NgModule({
@@ -46,7 +49,10 @@ import {TooltipDirective} from "./tooltip/tooltip.directive";
     BooleanInputComponent,
     ProgramPanelComponent,
     TooltipComponent,
-    TooltipDirective
+    TooltipDirective,
+    MemberModalComponent,
+    HtmEditorModalComponent,
+    FilterBarComponent
   ],
   exports: [
     OrgHeaderComponent,
@@ -74,6 +80,7 @@ import {TooltipDirective} from "./tooltip/tooltip.directive";
   entryComponents: [
     AppTableComponent,
     ConfirmModalComponent,
+    MemberModalComponent,
     TooltipComponent
   ]
 })

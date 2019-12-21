@@ -3,7 +3,7 @@ const { returnResults, returnSingle, returnError } = require('../middleware/resp
 const { classScheduleSchema, getCleanBody } = require('../middleware/request-sanitizer');
 const currentSeasonString = `(select private_key from projects where type = 'config' and private_key_id = 'currentSeason')`;
 
-const getClass = async (ctx, req, res) => {
+const getClass = async (req, res) => {
 
 };
 const getAllClasses = async(req, res, next) => {

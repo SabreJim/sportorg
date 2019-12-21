@@ -51,3 +51,13 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
 .hidden {
   display: none !important;
 }
+
+::ng-deep.mat-form-field-infix {
+  padding-right: 10px !important;
+  text-align: right;
+  border: none;
+  width: unset !important;
+}
+::ng-deep.mat-form-field-suffix {
+  align-self: center;
+}

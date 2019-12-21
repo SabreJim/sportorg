@@ -41,6 +41,33 @@
   border: 1px solid black;
   border-radius: 5px;
   margin-right: 20px;
+  margin-left: auto;
   justify-content: center;
   align-items: center;
+  height: 30px;
+}
+.summary-item {
+  display: flex;
+  flex-flow: row nowrap;
+  margin: 10px 0;
+  h3 {
+    font-size: 24px;
+    margin-right: 20px;
+  }
+}
+.summary-description {
+  padding: 0 40px;
+  max-width: 800px;
+  flex: 1 1 auto;
+  font-style: italic;
+}
+.button-row {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.not-disabled {
+  color: black !important;
 }

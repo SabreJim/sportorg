@@ -10,10 +10,10 @@ export class StringInputComponent implements OnInit {
   @Input() set value (newValue: string) {
     this.stringValue = newValue;
   }
-  @Input() numberType: 'int' | 'float' = 'int';
+  @Input() minWidth: string = '200px';
   @Output() stringChanged = new EventEmitter<string>();
 
-  public clearNumber = () => {
+  public clearString = () => {
     this.stringValue = null;
     this.stringChanged.emit(this.stringValue);
   }

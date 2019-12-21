@@ -12,6 +12,7 @@ import {StaticValuesService} from "../../services/static-values.service";
 export class SelectInputComponent implements OnInit, AfterViewInit {
 
   @Input() lookupType: string;
+  @Input() maxWidth: string = '100%';
   @Input() set staticLookup (items: LookupItem[]) {
     if (items && items.length) {
       this.options = items;

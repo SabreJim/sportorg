@@ -8,7 +8,7 @@ export class StaticValuesService {
   public static getToken = () => StaticValuesService.SessionToken;
   public static setToken = (token: string) => {
     StaticValuesService.SessionToken = token;
-  }
+  };
 
   public static cleanDate = (dateInput: string) => {
     try {
@@ -16,7 +16,7 @@ export class StaticValuesService {
     }catch (err) {
        return (new Date()).toISOString().slice(0, 10);
     }
-  }
+  };
   public static localizeDate = (dateInput: string) => {
     if (!dateInput) return '';
     try {
@@ -26,7 +26,30 @@ export class StaticValuesService {
     }catch (err) {
       return new Date().toISOString();
     }
+  };
+
+  public static validateEmail = (email: string, required: boolean = false) => {
+    if (!email || !email.length) {
+      return !required; // handle simplest cases
+    }
+    const emailPattern =  /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return emailPattern.test(email);
+  };
+
+  public static validatePhone = (phoneNum: string, required: boolean = false) => {
+  if (!phoneNum || !phoneNum.length) {
+    return !required; // handle simplest cases
   }
+    const phonePattern = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    return phonePattern.test(phoneNum);
+  };
+  public static formatPhone = (phoneNum: string) => {
+    if (!phoneNum || !phoneNum.length) {
+      return phoneNum; // handle simplest cases
+    }
+    const cleanNumbers = phoneNum.toString().replace(/\D/g, '');
+    return `(${cleanNumbers.slice(0, 3)} )${cleanNumbers.slice(3, 6)}-${cleanNumbers.slice(6,10)}`;
+  };
 
   public static getUITime = (time: string) => {
     let hours = parseInt(time.slice(0, time.indexOf(':')));

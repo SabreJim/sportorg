@@ -24,3 +24,11 @@ export interface AppSession {
   memberId: string;
   isActive: string;
 }
+export interface UserData { // for managing other users
+  userId: number;
+  email: string;
+  isAdmin: 'Y' | 'N';
+  googleId?: string;
+  fbId?: string;
+  twitterId?: string;
+}

@@ -21,7 +21,10 @@ export class MemberModalComponent implements OnInit {
         this.member = this.data; // allow lookups to load first
       });
     } else { // a new member object
-      this.member.email = this.data.email || '';
+      setTimeout(() => {
+        this.member.email = this.data.email || '';
+        this.member.provinceId = 4;
+      });
     }
   }
 

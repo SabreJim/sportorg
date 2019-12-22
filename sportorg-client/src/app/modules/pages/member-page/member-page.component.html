@@ -3,12 +3,12 @@
     <mat-expansion-panel-header class="panel-header">
       <h1>Members/Fencers</h1>
     </mat-expansion-panel-header>
-    <div class="table-box">
+    <div class="primary-table-box">
       <p class="prompt-text">
         These are the fencers that represent our club, and the members of the community that support us. We hope to
         expand this page to include athlete profiles of the adventures and exploits of our more daring members.
       </p>
-      <app-table ngClass="select-table"
+      <app-table ngClass="primary-table"
                  [tableColumns]="memberColumns"
                  [gridData]="memberRows"
                  [trackById]="'memberId'"

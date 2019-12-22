@@ -4,6 +4,11 @@ import {LookupProxyService} from "../../core/services/lookup-proxy.service";
 import {ClassesProxyService} from "../../core/services/classes-proxy.service";
 import {StaticValuesService} from "../../core/services/static-values.service";
 import {ProgramsProxyService} from "../../core/services/programs-proxy.service";
+import {FirebaseAuthService} from "../../core/services/firebase-auth.service";
+import {MembersProxyService} from "../../core/services/member-proxy.service";
+import {AppMember, AppMemberUser} from "../../core/models/data-objects";
+import {UserData} from "../../core/models/authentication";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-admin-page',
@@ -12,8 +17,6 @@ import {ProgramsProxyService} from "../../core/services/programs-proxy.service";
 })
 export class AdminPageComponent implements OnInit {
   public classConfig: AdminConfig = {
-    panelTitle: 'Classes',
-    description: 'Edit Classes',
     entityType: 'Class',
     columns: [
       TableColumn.fromConfig({fieldName: 'programId', title: 'Program', type: 'select',
@@ -35,8 +38,6 @@ export class AdminPageComponent implements OnInit {
   };
 
   public programConfig: AdminConfig = {
-    panelTitle: 'Programs',
-    description: 'Edit Programs',
     entityType: 'Program',
     columns: [
       new TableColumn('programName', 'Name', 'string'),
@@ -54,10 +55,84 @@ export class AdminPageComponent implements OnInit {
     delete: this.programService.deletePrograms
   };
 
+  public userConfig: AdminConfig = {
+    entityType: 'User',
+    columns: [
+      new TableColumn('userId', 'Id', 'number'),
+      TableColumn.fromConfig({ fieldName: 'email', title: 'Email', type:'string', displayType: 'long-string' }),
+      new TableColumn('isAdmin', 'Admin Access', 'boolean'),
+      TableColumn.fromConfig({ fieldName: 'googleId', title: 'Google', type:'string', displayType: 'long-string' }),
+      TableColumn.fromConfig({ fieldName: 'fbId', title: 'Facebook', type:'string', displayType: 'long-string' }),
+      TableColumn.fromConfig({ fieldName: 'twitterId', title: 'Twitter', type:'string', displayType: 'long-string' })
+    ],
+    getter: this.authService.getUsers,
+    setter: this.authService.upsertUser,
+    delete: this.authService.deleteUser
+  };
+  public memberConfig: AdminConfig = {
+    entityType: 'Member',
+    getter: this.memberService.getMyMembers,
+    setter: this.memberService.upsertMember,
+    delete: this.memberService.deleteMember,
+    columns: [
+      TableColumn.fromConfig({fieldName: 'lastName', title: 'Last Name', type: 'string', }),
+      TableColumn.fromConfig({fieldName: 'middleName', title: 'Middle Name', type: 'string'}),
+      TableColumn.fromConfig({fieldName: 'firstName', title: 'First Name', type: 'string'}),
+      new TableColumn('yearOfBirth', 'Year of Birth', 'number'),
+      new TableColumn('competeGender', 'Competition Gender', 'string'),
+      new TableColumn('membershipStart', 'Joined', 'date'),
+      TableColumn.fromConfig({fieldName: 'email', title: 'Contact Email', type: 'string', displayType: 'long-string'}),
+      new TableColumn('license', 'License #', 'number'),
+      TableColumn.fromConfig({fieldName: 'streetAddress', title: 'Address', type: 'string', displayType: 'long-string' }),
+      new TableColumn('city', 'City', 'string'),
+      TableColumn.fromConfig({ fieldName: 'provinceId', title: 'Province', type: 'select', displayField: 'provinceName',
+        lookupField: 'regions' }),
+      new TableColumn('postalCode', 'Postal Code', 'string'),
+      new TableColumn('cellPhone', 'Cell #', 'string'),
+      new TableColumn('isActive', 'Active', 'boolean'),
+      new TableColumn('isAthlete', 'Athlete', 'boolean'),
+      new TableColumn('confirmed', 'Confirmed', 'boolean')
+    ]
+  };
+
+  protected memberSub: Subscription;
+  protected userSub: Subscription;
+    public memberLinkColumns: TableColumn[] = [
+      new TableColumn('userId', 'User Id', 'number'),
+      TableColumn.fromConfig({fieldName: 'email', title: 'Email', type: 'string', displayType: 'long-string'}),
+      new TableColumn('memberId', 'MemberId', 'number'),
+      TableColumn.fromConfig({fieldName: 'memberName', title: 'Member', type: 'string', displayType: 'long-string'})
+    ];
+    public memberUserRows: AppMemberUser[] = [];
+    public memberRows: AppMember[] = [];
+    public userRows: UserData[] = [];
+    public linkUserId: number;
+    public linkMemberId: number;
+    public getMemberUsers = () => {
+      this.authService.getMemberUsers().subscribe((memberUsers: AppMemberUser[]) => {
+        this.memberUserRows = memberUsers;
+      });
+      this.memberService.getMyMembers().subscribe();
+      this.authService.getUsers().subscribe();
+    };
+    public selectMemberUser = (memberUsers: AppMemberUser[]) => {
+      console.log('got selected', memberUsers);
+    };
+    public linkMembers = (memberId: number, userId: number, setLinked: boolean) => {
+      // this.authService.setMemberLink(memberId, userId, setLinked).subscribe((completed: boolean) => {});
+    };
+
   constructor(private lookupService: LookupProxyService, private classService: ClassesProxyService,
-              private programService: ProgramsProxyService) { }
+              private programService: ProgramsProxyService, private authService: FirebaseAuthService,
+              private memberService: MembersProxyService) { }
 
   ngOnInit() {
+    this.memberSub = this.memberService.PublicMembers.subscribe((members: AppMember[]) => {
+      this.memberRows = members;
+    });
+    this.userSub = this.authService.Users.subscribe((users: UserData[]) => {
+      this.userRows = users;
+    });
   }
 
 }

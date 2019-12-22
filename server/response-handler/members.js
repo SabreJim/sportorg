@@ -94,7 +94,6 @@ const upsertMember = async (req, res, next) => {
             }
         }
     } else {
-        console.log('RQ', body, cleanMember);
         returnError(res,'Member could not be updated');
     }
 };
@@ -103,7 +102,7 @@ const upsertMember = async (req, res, next) => {
 const deleteMember = async (req, res) => {
     const memberId = req.params.memberId;
     if (!memberId) {
-        return returnError(res, 'A class schedule ID is required');
+        return returnError(res, 'A member ID is required');
     }
     const statement = `DELETE FROM members WHERE member_id = ${memberId}`;
     const statementResult = await MySQL.runCommand(statement);
@@ -114,14 +113,9 @@ const deleteMember = async (req, res) => {
     }
 };
 
-const linkMembers = async(req, res) => {
-    // link a member to a user
-}
-
 module.exports = {
     getMyMembers,
     getAnonymousMembers,
     upsertMember,
-    deleteMember,
-    linkMembers
+    deleteMember
 };

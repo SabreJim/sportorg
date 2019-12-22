@@ -92,16 +92,10 @@ PRIMARY KEY(level_id)
 
 CREATE TABLE programs (
 program_id MEDIUMINT NOT NULL auto_increment,
-level_id MEDIUMINT NOT NULL REFERENCES beaches.program_levels(level_id),
-season_id MEDIUMINT NOT NULL REFERENCES beaches.seasons(season_id),
-min_age int,
-max_age int,
 location_id MEDIUMINT NOT NULL REFERENCES beaches.locations(location_id),
 registration_method VARCHAR(100),
 color_id int,
 fee_id MEDIUMINT NOT NULL REFERENCES beaches.fee_structures(fee_id),
-start_date DATE,
-end_date DATE,
 PRIMARY KEY(program_id)
 );
 CREATE TABLE program_schedules (
@@ -131,6 +125,8 @@ VALUES
 (5, 'Saturday'),
 (6, 'Sunday');
 -- update ids based on lookup before dropping column
+update program_schedules ps
+set ps.day_id = (select day_id from week_days wd where UPPER(wd.day_name) = UPPER(ps.day_of_week));
 ALTER TABLE program_schedules
 drop column day_of_week;
 
@@ -148,9 +144,6 @@ UPDATE program_schedules ps
 SET min_age = (select min_age from programs p where ps.program_id = p.program_id);
 UPDATE program_schedules ps
 SET max_age = (select max_age from programs p where ps.program_id = p.program_id);
-
-ALTER TABLE program_schedules
-drop column season_id;
 
 ALTER TABLE programs DROP COLUMN min_age;
 ALTER TABLE programs DROP COLUMN max_age;
@@ -176,7 +169,8 @@ VALUES
 ('Register', '/register', 'N', 4, 'Registre'),
 ('Members', '/members', 'N', 5, 'Membres'),
 ('Events', '/events', 'N', 6, 'Événements'),
-('About Us', '/about-us', 'N', 7, 'À Nous');
+('About Us', '/about-us', 'N', 7, 'À Nous'),
+('Recent items', '/recent', 'Y', 8, '');
 
 ALTER TABLE programs
 add column is_active VARCHAR(1) default 'Y';
@@ -203,21 +197,11 @@ alter table members
 add column confirmed VARCHAR(1);
 alter table members
 add column license VARCHAR(50);
-
-CREATE TABLE class_enrollments (
-    enroll_id MEDIUMINT NOT NULL auto_increment,
-    member_id MEDIUMINT NOT NULL references members(member_id),
-    schedule_id MEDIUMINT NOT NULL references program_schedules(schedule_id),
-    created_by MEDIUMINT NOT NULL references users(user_id),
-    created_date DATE NOT NULL,
-    enrollment_cost FLOAT,
-    PRIMARY KEY(enroll_id)
-);
-
 alter table members
 add column city VARCHAR(50);
 alter table members
 add column postal_code VARCHAR(20);
+
 
 create table regions (
     region_id MEDIUMINT NOT NULL auto_increment,
@@ -241,3 +225,13 @@ VALUES
 ('Yukon', 'YU', 'CAN');
 ALTER TABLE members
 add column province_id MEDIUMINT references regions(region_id);
+
+CREATE TABLE class_enrollments (
+    enroll_id MEDIUMINT NOT NULL auto_increment,
+    member_id MEDIUMINT NOT NULL references members(member_id),
+    schedule_id MEDIUMINT NOT NULL references program_schedules(schedule_id),
+    created_by MEDIUMINT NOT NULL references users(user_id),
+    created_date DATE NOT NULL,
+    enrollment_cost FLOAT,
+    PRIMARY KEY(enroll_id)
+);

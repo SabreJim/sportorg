@@ -70,9 +70,8 @@ export interface AdminConfig {
   getter: () => Observable<any[]>;
   setter: (entity: any) => Observable<boolean>;
   delete: (entity: any) => Observable<boolean>;
-  panelTitle: string;
-  description: string;
   entityType: string;
+  disableAdd?: boolean;
 }
 
 export interface MenuItem {

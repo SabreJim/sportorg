@@ -6,12 +6,48 @@
   <edit-panel class="admin-panel"
               [configObject]="programConfig"
   ></edit-panel>
-<!--  <edit-panel class="admin-panel"-->
-<!--    [panelTitle]="'Members'"-->
-<!--    [description]="'Manage Members'"-->
-<!--  ></edit-panel>-->
-<!--  <edit-panel class="admin-panel"-->
-<!--    [panelTitle]="'Users'"-->
-<!--    [description]="'Manage Users'"-->
-<!--  ></edit-panel>-->
+  <edit-panel class="admin-panel"
+              [configObject]="memberConfig"
+  ></edit-panel>
+  <edit-panel class="admin-panel"
+              [configObject]="userConfig"
+  ></edit-panel>
+
+  <mat-expansion-panel (afterExpand)="getMemberUsers()">
+    <mat-expansion-panel-header class="panel-header">
+      <h1>Grant Users access to Members</h1>
+    </mat-expansion-panel-header>
+    <div class="table-box">
+      <p class="prompt-text">
+        Select the existing member that you would like to sign up for a class. If the person you are looking for
+        does not appear here, you can add a new member with the "add member" button.
+      </p>
+      <div class="action-items">
+        <mat-select [(value)]="linkUserId">
+          <mat-option *ngFor="let user of userRows" [value]="user.userId">
+            {{user.email}}
+          </mat-option>
+        </mat-select>
+        <mat-select [(value)]="linkMemberId">
+          <mat-option *ngFor="let member of memberRows" [value]="member.memberId">
+            {{member.lastName}}, {{member.firstName}}
+          </mat-option>
+        </mat-select>
+
+        <button mat-raised-button color="primary" class="action-button" [disabled]="!linkMemberId || !linkUserId"
+                (click)="linkMembers(1,1, true)">Link Member</button>
+        <button mat-raised-button color="primary" class="action-button" [disabled]="!linkMemberId || !linkUserId"
+                (click)="linkMembers(1,1, true)">Unlink Member</button>
+      </div>
+
+      <app-table ngClass="select-table"
+                 [tableColumns]="memberLinkColumns"
+                 [gridData]="memberUserRows"
+                 [canSelect]="true"
+                 [trackById]="'memberUserId'"
+                 (selectedRows)="selectMemberUser($event)"
+                 [singleSelect]="true"
+      ></app-table>
+    </div>
+  </mat-expansion-panel>
 </div>

@@ -110,6 +110,12 @@ export interface AppMember {
   license: string;
   confirmed?: 'Y' | 'N';
 }
+export interface AppMemberUser {
+  userId: number;
+  email: string;
+  memberId: number;
+  memeberName: string;
+}
 export interface RegistrationConfig {
   seasonId: number;
   programId: number;

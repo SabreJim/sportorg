@@ -2,6 +2,7 @@ const express = require('express');
 const Classes = require('./response-handler/classes');
 const Programs = require('./response-handler/programs');
 const Members = require('./response-handler/members');
+const Users = require('./response-handler/users');
 const Enrollment = require('./response-handler/enrollments');
 const Lookups = require('./response-handler/lookups');
 const Authentication = require('./middleware/server-authentication');
@@ -53,7 +54,14 @@ const createRouter = (config) => {
     router.get('/members', addSession, Members.getAnonymousMembers);
     router.put('/members', jsonBody, addSession, Members.upsertMember);
     router.delete('/members/:memberId', adminRequired, Members.deleteMember);
-    router.put('/link-members/member/:memberId/user/:userId', adminRequired, Members.linkMembers);
+
+    // user endpoints
+    router.get('/users', adminRequired, Users.getUsers);
+    router.put('/members', jsonBody, adminRequired, Users.updateUser);
+    router.delete('/members/:memberId', adminRequired, Users.deleteUser);
+    router.get('/member-users', adminRequired, Users.getMemberUsers);
+    router.put('/member-users/member/:memberId/user/:userId/link/:setStatus', adminRequired, Users.linkMembers);
+
     // event endpoints
 
     // enrollment endpoints

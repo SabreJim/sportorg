@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {TableColumn} from "../../core/models/ui-objects";
 import {AppMember} from "../../core/models/data-objects";
 import {MembersProxyService} from "../../core/services/member-proxy.service";
+import {SnackbarService} from "../../core/services/snackbar.service";
 
 @Component({
   selector: 'app-member-page',

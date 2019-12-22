@@ -38,19 +38,26 @@ export class LookupProxyService extends RestProxyService {
     this.Subjects.regions.next(this.regionCache);
   };
   public refreshLookups = (repull: boolean = false) => {
+    const extractLookup = (source: LookupItem[], name: string) => {
+      const matched = source.filter((lookup: LookupItem) => lookup.lookup === name);
+      return matched.sort((a: LookupItem, b: LookupItem) => {
+        if (a.name > b.name) return 1;
+        if (a.name === b.name) return 0;
+        return -1;
+      });
+    }
     if (repull) {
       this.get(`lookups` ).subscribe((response: ApiResponse<LookupItem[]>) => {
         if (response.hasErrors()) {
-          SnackbarService.error(`There was a problem getting lookup items`);;
+          SnackbarService.error(`There was a problem getting lookup items`);
           // dummy response so UI doesn't error out
           return { subject: new Subject<LookupItem[]>(), cache: [] };
         } else {
-
-          this.feeCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'fees');
-          this.locationCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'locations');
-          this.programCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'programs');
-          this.seasonCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'seasons');
-          this.regionCache = response.data.filter((lookup: LookupItem) => lookup.lookup === 'regions');
+          this.feeCache = extractLookup(response.data, 'fees');
+          this.locationCache = extractLookup(response.data,'locations');
+          this.programCache = extractLookup(response.data, 'programs');
+          this.seasonCache = extractLookup(response.data, 'seasons');
+          this.regionCache = extractLookup(response.data, 'regions');
           this.pushLookups();
         }
       }, (error: any) => {});

@@ -58,11 +58,11 @@ export class EditPanelComponent implements OnInit {
       this.editorOpen = true;
       this.detector.detectChanges();
     });
-
   };
 
   public hideSideNav = () => {
     if (this.editorOpen) {
+      this.editingRow = null;
       this.editorOpen = false;
       this.detector.detectChanges();
     }

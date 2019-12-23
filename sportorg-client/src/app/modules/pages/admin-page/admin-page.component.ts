@@ -32,7 +32,7 @@ export class AdminPageComponent implements OnInit {
       new TableColumn('minAge', 'Min Age', 'number'),
       new TableColumn('maxAge', 'Max Age', 'number'),
     ],
-    getter: () => this.classService.getAllClasses(),
+    getter: () => this.classService.getAllClasses(true),
     setter: this.classService.upsertClass,
     delete: this.classService.deleteClass
   };

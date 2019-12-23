@@ -38,7 +38,7 @@
     flex: 1 1 30px;
     max-height: 45px;
     min-height: 45px;
-    min-width: 100px !important;
+    min-width: 80px !important;
     background-color: lightblue;
     padding: 5px;
     align-items: center;
@@ -103,11 +103,5 @@
   }
   .tall-4 {
     flex: 4 4 160px !important;
-  }
-}
-@media(max-width: 800px) {
-  .cal-card {
-    overflow-y: auto;
-    overflow-x: hidden;
   }
 }

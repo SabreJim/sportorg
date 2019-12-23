@@ -22,6 +22,7 @@ export class DynamicFormComponent implements OnInit {
     } else { // an empty row was passed in
       this.entitySaved = false;
       this.isDirty = false;
+      this.currentRow = {};
     }
   }
   @Output() saveRecord = new EventEmitter<any>();

@@ -153,6 +153,7 @@ const classScheduleSchema = {
     fields: [
         {fieldName: 'scheduleId', type: 'int', allowNull: false },
         {fieldName: 'programId', type: 'int', allowNull: false },
+        {fieldName: 'seasonId', type: 'int', allowNull: false },
         {fieldName: 'dayId', type: 'int', allowNull: false },
         {fieldName: 'duration', type: 'int', allowNull: true },
         {fieldName: 'minAge', type: 'int', allowNull: true },

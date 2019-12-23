@@ -16,9 +16,9 @@ export class ClassesProxyService extends RestProxyService {
   // cache any requested season of programs/classes
   protected classCache: ClassRecord[];
 
-  public getAllClasses = (): Observable<ClassRecord[]> => {
+  public getAllClasses = (forceRefresh: boolean = false): Observable<ClassRecord[]> => {
     return new Observable((subscription) => {
-      if (this.classCache && this.classCache.length) {
+      if (!forceRefresh && this.classCache && this.classCache.length) {
         subscription.next(this.classCache);
       } else {
         this.get('all-classes').subscribe((response: ApiResponse<ClassRecord[]>) => {

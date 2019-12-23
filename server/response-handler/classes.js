@@ -7,19 +7,7 @@ const getClass = async (req, res) => {
 
 };
 const getAllClasses = async(req, res, next) => {
-    let seasonId = req.query.seasonId;
-    let whereClause = ` WHERE season_id = ${currentSeasonString}`;
-    try {
-        seasonId = parseInt(seasonId);
-        if (seasonId === -1) {
-            whereClause = '';
-        } else if (!isNaN(seasonId)) {
-            whereClause = ` WHERE season_id = ${seasonId} `;
-        }
-    } catch (err) {
-        // not a valid id so use default
-    }
-    const query = `SELECT * from v_classes ${whereClause} ORDER BY season_id, program_id`;
+    const query = `SELECT * from v_classes ORDER BY season_id, program_id`;
     const programs = await MySQL.runQuery(query);
     returnResults(res, programs);
 };

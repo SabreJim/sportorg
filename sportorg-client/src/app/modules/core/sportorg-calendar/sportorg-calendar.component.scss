@@ -1,6 +1,7 @@
 .cal-card {
   display: flex;
   flex-flow: column nowrap;
+  overflow-y: auto;
 }
 .actions {
   display: flex;
@@ -35,8 +36,9 @@
     display: flex;
     flex-flow: column nowrap;
     flex: 1 1 30px;
-    max-height: 30px;
-    min-width: 100px;
+    max-height: 45px;
+    min-height: 45px;
+    min-width: 100px !important;
     background-color: lightblue;
     padding: 5px;
     align-items: center;

@@ -2,24 +2,4 @@
 .panel-header {
   color: black !important;
 }
-.table-box {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  padding-top: 10px;
-  .prompt-text {
-    display: flex;
-    flex: 1 1 auto;
-  }
-}
-.table-box {
-  flex-flow: column nowrap;
-  .select-table {
-    display: flex;
-    margin-left: auto;
-    width: 100%;
-    height: 100%;
-    background-color: white;
-  }
-}
 

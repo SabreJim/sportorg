@@ -1,12 +1,13 @@
 import {Injectable} from "@angular/core";
 import {auth, initializeApp, User} from "firebase";
 import GoogleAuthProvider = auth.GoogleAuthProvider;
-import {AppSession, AppUser} from "../models/authentication";
-import {Subject} from "rxjs";
+import {AppSession, AppUser, UserData} from "../models/authentication";
+import {Observable, Subject} from "rxjs";
 import {RestProxyService} from "./rest-proxy.service";
 import {ApiResponse} from "../models/rest-objects";
 import {StaticValuesService} from "./static-values.service";
 import {SnackbarService} from "./snackbar.service";
+import {AppMemberUser} from "../models/data-objects";
 
 
 @Injectable({providedIn: 'root'})
@@ -26,6 +27,7 @@ export class FirebaseAuthService extends RestProxyService {
   };
 
   public CurrentUser = new Subject<AppUser>();
+  public Users = new Subject<UserData[]>();
   public enableAuthentication = () => {
     // Initialize Firebase
     initializeApp(FirebaseAuthService.firebaseConfig);
@@ -101,5 +103,77 @@ export class FirebaseAuthService extends RestProxyService {
     } else {
       purgeSession();
     }
+  }
+
+  // users endpoints for admin access
+  public getUsers = (): Observable<UserData[]> => {
+    return new Observable((subscription) => {
+      this.get('users/').subscribe((response: ApiResponse<UserData[]>) => {
+        if (response.hasErrors()) {
+          SnackbarService.error('There was an error getting users');
+          subscription.next([]);
+        } else {
+          subscription.next(response.data || []);
+          this.Users.next(response.data || []);
+        }
+      }, (error: any) => {});
+    });
+  };
+
+  public upsertUser = (userBody: UserData): Observable<boolean> => {
+    return new Observable((subscription) => {
+      this.put('users', userBody).subscribe((response: ApiResponse<any>) => {
+        if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`There was an error updating this user: ${response.message}`);
+          subscription.next(false);
+        } else {
+          SnackbarService.notify('User updated successfully');
+          subscription.next(true);
+        }
+      }, (error: any) => {});
+    });
+  }
+  public deleteUser = (userBody: UserData): Observable<boolean> => {
+    return new Observable((subscription) => {
+      const userId = userBody.userId;
+      if (!userId) { // no ID to delete on
+        subscription.next(false);
+      }
+      this.delete(`users/${userId}`).subscribe((response: ApiResponse<any>) => {
+        if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`There was an error deleting this user: ${response.message}`);
+          subscription.next(false);
+        } else {
+          SnackbarService.notify('User deleted successfully');
+          subscription.next(true);
+        }
+      }, (error: any) => {});
+    });
+  }
+
+  public getMemberUsers = (): Observable<AppMemberUser[]> => {
+    return new Observable((subscription) => {
+      this.get('member-users/').subscribe((response: ApiResponse<AppMemberUser[]>) => {
+        if (response.hasErrors()) {
+          SnackbarService.error('There was an error getting users');
+          subscription.next([]);
+        } else {
+          subscription.next(response.data || []);
+        }
+      }, (error: any) => {});
+    });
+  };
+  public setMemberLink = (memberId: number, userId: number, setLinked: boolean): Observable<boolean> => {
+    return new Observable((subscription) => {
+      this.put(`/member-users/member/${memberId}/user/${userId}/link/${setLinked}`, {}).subscribe((response: ApiResponse<any>) => {
+        if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`There was an error updating this user: ${response.message}`);
+          subscription.next(false);
+        } else {
+          SnackbarService.notify('User updated successfully');
+          subscription.next(true);
+        }
+      }, (error: any) => {});
+    });
   }
 }

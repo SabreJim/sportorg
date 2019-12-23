@@ -14,21 +14,20 @@ export class ClassesProxyService extends RestProxyService {
     super(http, appRouter);
   }
   // cache any requested season of programs/classes
-  protected classCache: IndexedCache<ClassRecord[]> = { cache: [] };
+  protected classCache: ClassRecord[];
 
-  public getAllClasses = (seasonId: number = null): Observable<ClassRecord[]> => {
+  public getAllClasses = (): Observable<ClassRecord[]> => {
     return new Observable((subscription) => {
-      if (seasonId !== -1 && this.classCache[seasonId]) {
-        subscription.next(this.classCache[seasonId]);
+      if (this.classCache && this.classCache.length) {
+        subscription.next(this.classCache);
       } else {
-        const url = (seasonId === null) ? 'all-classes' : `all-classes?seasonId=${seasonId}`;
-        this.get(url).subscribe((response: ApiResponse<ClassRecord[]>) => {
+        this.get('all-classes').subscribe((response: ApiResponse<ClassRecord[]>) => {
           if (response.hasErrors()) {
             SnackbarService.error(`Classes could not be retrieved at this time`);
             subscription.next([]);
           } else {
-            if (seasonId !== -1) {
-              this.classCache[seasonId] = response.data;
+            if (response.data && response.data.length) {
+              this.classCache = response.data;
             }
             subscription.next(response.data || []);
           }

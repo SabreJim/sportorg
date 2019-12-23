@@ -3,16 +3,12 @@
 </ng-template>
 <div class="cal-card">
   <div class="actions">
-    <button mat-raised-button color="primary" (click)="toggleExpand()">{{isExpanded ? 'Collapse': 'Expand'}}</button>
-    <div class="selector">
-      <h4>Selected season:</h4>
-      <app-select-input
-        [lookupType]="'seasons'"
-        [selected]="currentSeasonId"
-        (selectedChanged)="updateSelection($event)"
-      ></app-select-input>
+    <button mat-raised-button color="primary" *ngIf="showExpand"
+            (click)="toggleExpand()">{{isExpanded ? 'Collapse': 'Expand'}}</button>
+      <button mat-raised-button (click)="changeWeek(-1)" class="week-button"><mat-icon>keyboard_arrow_left</mat-icon></button>
+      <div class="selector-text">Week of {{weekdays[0].specificDate}}</div>
+      <button mat-raised-button (click)="changeWeek(1)" class="week-button"><mat-icon>keyboard_arrow_right</mat-icon></button>
     </div>
-  </div>
   <div class="calendar">
     <ng-container *ngFor="let day of weekdays">
       <div ngClass="day-column {{(!isExpanded && day.isHidden) ? 'hide-column' : ''}}">
@@ -39,4 +35,8 @@
       </div>
     </ng-container>
   </div>
+  <div *ngIf="!isExpanded && allHidden" class="no-class-banner">
+    <h2>No classes this week</h2>
+  </div>
+
 </div>

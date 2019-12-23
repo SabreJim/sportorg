@@ -45,6 +45,7 @@ END;
 -- clear all sessions on logout
 --DROP PROCEDURE beaches.purge_sessions;
 CREATE PROCEDURE beaches.purge_sessions (token VARCHAR(200))
+    SQL SECURITY INVOKER
 BEGIN
 DECLARE found_id INT;
 
@@ -59,6 +60,7 @@ END;
 /
 -- DROP PROCEDURE beaches.assign_members;
 CREATE PROCEDURE beaches.assign_members (p_user_id INTEGER)
+    SQL SECURITY INVOKER
 BEGIN
     DECLARE user_email VARCHAR(100);
     DECLARE v_member_id INTEGER;
@@ -86,6 +88,7 @@ BEGIN
 END;
 /
 CREATE PROCEDURE beaches.assign_member_to_user (p_user_id INTEGER, p_member_id INTEGER )
+    SQL SECURITY INVOKER
 BEGIN
     DECLARE existing_link INTEGER;
     -- if link already exists do nothing
@@ -104,6 +107,7 @@ CREATE FUNCTION enroll_in_class (
     p_member_id INT,
     p_schedule_id INT,
     p_user_id INT) RETURNS VARCHAR(50)
+        SQL SECURITY INVOKER
 BEGIN
     DECLARE message VARCHAR(50);
     DECLARE existing_id INT;

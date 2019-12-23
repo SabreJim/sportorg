@@ -6,12 +6,48 @@
   <edit-panel class="admin-panel"
               [configObject]="programConfig"
   ></edit-panel>
-<!--  <edit-panel class="admin-panel"-->
-<!--    [panelTitle]="'Members'"-->
-<!--    [description]="'Manage Members'"-->
-<!--  ></edit-panel>-->
-<!--  <edit-panel class="admin-panel"-->
-<!--    [panelTitle]="'Users'"-->
-<!--    [description]="'Manage Users'"-->
-<!--  ></edit-panel>-->
+  <edit-panel class="admin-panel"
+              [configObject]="memberConfig"
+  ></edit-panel>
+  <edit-panel class="admin-panel"
+              [configObject]="userConfig"
+  ></edit-panel>
+
+  <mat-expansion-panel (afterExpand)="getMemberUsers()" class="expand-admin">
+    <mat-expansion-panel-header class="panel-header">
+      <h3>Grant Users access to Members</h3>
+    </mat-expansion-panel-header>
+    <div class="table-box">
+      <p class="prompt-text">
+        Users can only work with Members (fencers) that they have been linked to. Granting access will let the user
+        see private information about that Member. Unlinking the Member will prevent that user from seeing private
+        information. Administrators have access to all members.
+      </p>
+      <div class="action-items">
+        <button mat-raised-button color="primary" class="link-button" [disabled]="!linkMemberId || !linkUserId"
+                (click)="linkMembers(linkMemberId,linkUserId, true)">Grant Access</button>
+        <mat-select [(value)]="linkUserId">
+          <mat-option *ngFor="let user of userRows" [value]="user.userId">
+            {{user.email}}
+          </mat-option>
+        </mat-select>
+        <mat-select [(value)]="linkMemberId">
+          <mat-option *ngFor="let member of memberRows" [value]="member.memberId">
+            {{member.lastName}}, {{member.firstName}}
+          </mat-option>
+        </mat-select>
+        <button mat-raised-button color="warn" class="link-button" [disabled]="!unlinkMemberUser"
+                (click)="linkMembers(unlinkMemberUser?.memberId,unlinkMemberUser?.userId, false)">Unlink Member</button>
+      </div>
+
+      <app-table ngClass="select-table"
+                 [tableColumns]="memberLinkColumns"
+                 [gridData]="memberUserRows"
+                 [canSelect]="true"
+                 [trackById]="'memberUserId'"
+                 (selectedRows)="selectMemberUser($event)"
+                 [singleSelect]="true"
+      ></app-table>
+    </div>
+  </mat-expansion-panel>
 </div>

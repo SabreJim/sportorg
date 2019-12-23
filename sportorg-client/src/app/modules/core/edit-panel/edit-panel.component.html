@@ -1,10 +1,10 @@
 <mat-expansion-panel class="panel" (opened)="refreshData()">
   <mat-expansion-panel-header class="panel-header">
     <mat-panel-title>
-      <h3 class="panel-title">{{configObject.panelTitle}}</h3>
+      <h3 class="panel-title">{{configObject.entityType}}s</h3>
     </mat-panel-title>
     <mat-panel-description class="header-description">
-      <span class="">{{configObject.description}}</span>
+      <span class="">Edit {{configObject.entityType}}s</span>
     </mat-panel-description>
   </mat-expansion-panel-header>
   <!--  local filter input-->
@@ -30,6 +30,7 @@
         [tableColumns]="configObject.columns"
         [gridData]="gridData"
         [isEditable]="true"
+        [canAddRows]="!configObject.disableAdd"
         (editRow)="editRow($event)"
       ></app-table>
     </mat-sidenav-content>

@@ -21,7 +21,8 @@ export class StaticValuesService {
     if (!dateInput) return '';
     try {
       const temp = new Date(dateInput);
-      temp.setDate((new Date(dateInput)).getUTCDate());
+      const offset = temp.getTimezoneOffset() / 60;
+      temp.setHours(temp.getHours() - offset);
       return temp.toISOString();
     }catch (err) {
       return new Date().toISOString();

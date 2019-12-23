@@ -24,6 +24,7 @@ export class MembersProxyService extends RestProxyService {
           subscription.next([]);
         } else {
           subscription.next(response.data || []);
+          this.PublicMembers.next(response.data);
         }
       }, (error: any) => {});
     });

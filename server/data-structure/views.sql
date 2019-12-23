@@ -16,31 +16,6 @@ LEFT JOIN locations l ON p.location_id = l.location_id
 LEFT JOIN fee_structures f ON p.fee_id = f.fee_id
 ;
 
-CREATE VIEW v_program_schedules AS
-SELECT
-    ps.schedule_id,
-    ps.program_id,
-    l.name location_name,
-    DATE_FORMAT(s.start_date, '%Y-%m-%d') as 'start_date',
-    DATE_FORMAT(s.end_date, '%Y-%m-%d') as 'end_date',
-    wd.day_name as day_of_week,
-    ps.day_id,
-    ps.start_time,
-    ps.end_time,
-    pl.level_name,
-    p.location_id,
-    p.season_id,
-    p.color_id,
-    p.min_age,
-    p.max_age
-FROM program_schedules ps
-    LEFT OUTER JOIN programs p ON ps.program_id = p.program_id
-    LEFT OUTER JOIN seasons s ON ps.season_id = s.season_id
-    LEFT OUTER JOIN locations l ON l.location_id = p.location_id
-    LEFT OUTER JOIN week_days wd ON wd.day_id = ps.day_id
-    LEFT OUTER JOIN program_levels pl ON p.level_id = pl.level_id
-;
-
 drop view v_classes;
 CREATE VIEW v_classes AS
 SELECT

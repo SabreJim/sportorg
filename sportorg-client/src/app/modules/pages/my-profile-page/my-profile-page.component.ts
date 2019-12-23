@@ -28,6 +28,7 @@ export class MyProfilePageComponent implements OnInit {
       this.getMembers(); // get members after being authenticated
       this.getEnrollments();
     });
+    this.authService.getSession();
   }
   protected userSub: Subscription;
   protected currentUser: AppUser;
@@ -41,7 +42,7 @@ export class MyProfilePageComponent implements OnInit {
     new TableColumn('membershipStart', 'Joined', 'date'),
     TableColumn.fromConfig({fieldName: 'email', title: 'Contact Email', type: 'string', displayType: 'long-string'}),
     new TableColumn('license', 'License #', 'number'),
-    TableColumn.fromConfig({fieldName: 'homeAddress', title: 'Address', type: 'string', displayType: 'long-string'}),
+    TableColumn.fromConfig({fieldName: 'streetAddress', title: 'Address', type: 'string', displayType: 'long-string'}),
     new TableColumn('cellPhone', 'Cell #', 'string'),
     new TableColumn('homePhone', 'Home #', 'string')
   ];
@@ -50,7 +51,7 @@ export class MyProfilePageComponent implements OnInit {
       this.myMembers = myMembers;
       this.detector.detectChanges();
     });
-  }
+  };
   public selectMembers = (selectedMembers: AppMember[]) => {
     if (selectedMembers.length) {
       this.selectedMember = selectedMembers[0];

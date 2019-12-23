@@ -23,7 +23,7 @@ export class MemberPageComponent implements OnInit {
   public memberRows: AppMember[] = [];
   public memberColumns: TableColumn[] = [
     TableColumn.fromConfig({fieldName: 'name', title: 'Name', type: 'string', displayType: 'long-string'}),
-    new TableColumn('yearOfBirth', 'Year of Birth', 'number'),
+    // new TableColumn('yearOfBirth', 'Year of Birth', 'number'),
     TableColumn.fromConfig({fieldName: 'competeGender', title: 'Competition Gender', type: 'string', displayType: 'number'}),
     new TableColumn('membershipStart', 'Joined', 'date'),
     new TableColumn('license', 'License #', 'number')

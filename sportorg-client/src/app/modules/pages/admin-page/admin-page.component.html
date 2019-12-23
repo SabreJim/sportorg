@@ -13,16 +13,19 @@
               [configObject]="userConfig"
   ></edit-panel>
 
-  <mat-expansion-panel (afterExpand)="getMemberUsers()">
+  <mat-expansion-panel (afterExpand)="getMemberUsers()" class="expand-admin">
     <mat-expansion-panel-header class="panel-header">
-      <h1>Grant Users access to Members</h1>
+      <h3>Grant Users access to Members</h3>
     </mat-expansion-panel-header>
     <div class="table-box">
       <p class="prompt-text">
-        Select the existing member that you would like to sign up for a class. If the person you are looking for
-        does not appear here, you can add a new member with the "add member" button.
+        Users can only work with Members (fencers) that they have been linked to. Granting access will let the user
+        see private information about that Member. Unlinking the Member will prevent that user from seeing private
+        information. Administrators have access to all members.
       </p>
       <div class="action-items">
+        <button mat-raised-button color="primary" class="link-button" [disabled]="!linkMemberId || !linkUserId"
+                (click)="linkMembers(linkMemberId,linkUserId, true)">Grant Access</button>
         <mat-select [(value)]="linkUserId">
           <mat-option *ngFor="let user of userRows" [value]="user.userId">
             {{user.email}}
@@ -33,11 +36,8 @@
             {{member.lastName}}, {{member.firstName}}
           </mat-option>
         </mat-select>
-
-        <button mat-raised-button color="primary" class="action-button" [disabled]="!linkMemberId || !linkUserId"
-                (click)="linkMembers(1,1, true)">Link Member</button>
-        <button mat-raised-button color="primary" class="action-button" [disabled]="!linkMemberId || !linkUserId"
-                (click)="linkMembers(1,1, true)">Unlink Member</button>
+        <button mat-raised-button color="warn" class="link-button" [disabled]="!unlinkMemberUser"
+                (click)="linkMembers(unlinkMemberUser?.memberId,unlinkMemberUser?.userId, false)">Unlink Member</button>
       </div>
 
       <app-table ngClass="select-table"

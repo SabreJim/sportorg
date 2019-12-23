@@ -70,7 +70,25 @@ const linkMembers = async(req, res) => {
     const userId = req.params.userId;
     const memberId = req.params.memberId;
     const setStatus = req.params.setStatus;
-    consle.log('got params to link', userId, memberId, setStatus);
+    if (setStatus === 'false') {
+        // delete t{he relational row
+        const statement = `DELETE FROM member_users WHERE member_id = ${memberId} && user_id = ${userId}`;
+        const result = await MySQL.runCommand(statement);
+        if (result && result.affectedRows) {
+            returnSingle(res, {affectedRows: result.affectedRows});
+        } else {
+            returnError(res, 'An error occurred when deleting this record');
+        }
+    } else {
+        const command = `CALL assign_member_to_user (${userId}, ${memberId} )`;
+        const result = await MySQL.runCommand(command);
+        if (result && result.affectedRows) {
+            returnSingle(res, {affectedRows: 1});
+        } else {
+            returnError(res, 'An error occurred when linking the member');
+        }
+    }
+    console.log('got params to link', userId, memberId, setStatus, typeof setStatus);
 }
 
 module.exports = {

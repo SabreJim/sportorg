@@ -10,3 +10,26 @@
   flex: 1 1 auto;
   margin: 10px;
 }
+.expand-admin {
+  margin-left: 20px;
+  margin-right: 10px;
+  width: calc(100% - 40px);
+}
+.action-items {
+  display: flex;
+  align-items: center;
+  .mat-select {
+    background-color: white;
+    margin: 10px;
+    padding: 5px;
+    display: flex;
+    flex: 2 2 auto;
+  }
+  .link-button {
+    display: flex;
+    margin: 10px;
+    flex: 1 1 auto;
+    min-width: 150px;
+    justify-content: center;
+  }
+}

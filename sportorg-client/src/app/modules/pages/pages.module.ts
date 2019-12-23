@@ -14,6 +14,7 @@ import {CoreModule} from "../core/core.module";
 import {RegisterPageComponent} from "./register-page/register-page.component";
 import { AdminPageComponent } from './admin-page/admin-page.component';
 import { MyProfilePageComponent } from './my-profile-page/my-profile-page.component';
+import { SchedulePageComponent } from './schedule-page/schedule-page.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { MyProfilePageComponent } from './my-profile-page/my-profile-page.compon
     AboutPageComponent,
     RegisterPageComponent,
     AdminPageComponent,
-    MyProfilePageComponent
+    MyProfilePageComponent,
+    SchedulePageComponent
   ],
   exports: [
 

@@ -32,7 +32,7 @@ export class AdminPageComponent implements OnInit {
       new TableColumn('minAge', 'Min Age', 'number'),
       new TableColumn('maxAge', 'Max Age', 'number'),
     ],
-    getter: () => this.classService.getAllClasses(-1),
+    getter: () => this.classService.getAllClasses(),
     setter: this.classService.upsertClass,
     delete: this.classService.deleteClass
   };
@@ -108,6 +108,7 @@ export class AdminPageComponent implements OnInit {
     public userRows: UserData[] = [];
     public linkUserId: number;
     public linkMemberId: number;
+    public unlinkMemberUser: AppMemberUser;
     public getMemberUsers = () => {
       this.authService.getMemberUsers().subscribe((memberUsers: AppMemberUser[]) => {
         this.memberUserRows = memberUsers;
@@ -116,10 +117,18 @@ export class AdminPageComponent implements OnInit {
       this.authService.getUsers().subscribe();
     };
     public selectMemberUser = (memberUsers: AppMemberUser[]) => {
-      console.log('got selected', memberUsers);
+      if (memberUsers.length) {
+        this.unlinkMemberUser = memberUsers[0];
+      }
     };
     public linkMembers = (memberId: number, userId: number, setLinked: boolean) => {
-      // this.authService.setMemberLink(memberId, userId, setLinked).subscribe((completed: boolean) => {});
+      this.authService.setMemberLink(memberId, userId, setLinked).subscribe((completed: boolean) => {
+        // clear out the selections
+        this.unlinkMemberUser = null;
+        this.linkUserId = null;
+        this.linkMemberId = null;
+        this.getMemberUsers();
+      });
     };
 
   constructor(private lookupService: LookupProxyService, private classService: ClassesProxyService,

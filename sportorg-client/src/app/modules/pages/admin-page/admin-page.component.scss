@@ -18,18 +18,16 @@
 .action-items {
   display: flex;
   align-items: center;
-  .mat-select {
-    background-color: white;
-    margin: 10px;
-    padding: 5px;
-    display: flex;
-    flex: 2 2 auto;
-  }
   .link-button {
     display: flex;
     margin: 10px;
     flex: 1 1 auto;
     min-width: 150px;
     justify-content: center;
+  }
+  app-select-input {
+    display: flex;
+    flex: 2 2 auto;
+    margin: 0 10px;
   }
 }

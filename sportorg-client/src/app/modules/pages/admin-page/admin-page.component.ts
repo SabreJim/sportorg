@@ -9,6 +9,7 @@ import {MembersProxyService} from "../../core/services/member-proxy.service";
 import {AppMember, AppMemberUser} from "../../core/models/data-objects";
 import {UserData} from "../../core/models/authentication";
 import {Subscription} from "rxjs";
+import {LookupItem} from "../../core/models/rest-objects";
 
 @Component({
   selector: 'app-admin-page',
@@ -104,8 +105,8 @@ export class AdminPageComponent implements OnInit {
       TableColumn.fromConfig({fieldName: 'memberName', title: 'Member', type: 'string', displayType: 'long-string'})
     ];
     public memberUserRows: AppMemberUser[] = [];
-    public memberRows: AppMember[] = [];
-    public userRows: UserData[] = [];
+    public memberRows: LookupItem[] = [];
+    public userRows: LookupItem[] = [];
     public linkUserId: number;
     public linkMemberId: number;
     public unlinkMemberUser: AppMemberUser;
@@ -137,10 +138,14 @@ export class AdminPageComponent implements OnInit {
 
   ngOnInit() {
     this.memberSub = this.memberService.PublicMembers.subscribe((members: AppMember[]) => {
-      this.memberRows = members;
+      this.memberRows = members.map((item: AppMember) => {
+        return { id: item.memberId, name: `${item.lastName}, ${item.firstName}`, lookup: 'member'};
+      });
     });
     this.userSub = this.authService.Users.subscribe((users: UserData[]) => {
-      this.userRows = users;
+      this.userRows = users.map((item: UserData) => {
+        return { id: item.userId, name: item.email, lookup: 'user'};
+      });
     });
   }
 

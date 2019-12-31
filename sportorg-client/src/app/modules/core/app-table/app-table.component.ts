@@ -4,7 +4,7 @@ import {
   ChangeDetectorRef,
   Component, ElementRef,
   EventEmitter,
-  Input,
+  Input, OnDestroy,
   OnInit,
   Output, QueryList, ViewChild, ViewChildren
 } from '@angular/core';
@@ -23,7 +23,7 @@ export interface TableRow {
   styleUrls: ['./app-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppTableComponent implements AfterViewInit {
+export class AppTableComponent implements AfterViewInit, OnDestroy {
   constructor(private detector: ChangeDetectorRef) { }
 
   @Input() tableColumns: TableColumn[] = [];
@@ -160,5 +160,8 @@ export class AppTableComponent implements AfterViewInit {
   };
   ngAfterViewInit(): void {
     this.linkScrolling();
+  }
+  ngOnDestroy() {
+    this.detector.detach();
   }
 }

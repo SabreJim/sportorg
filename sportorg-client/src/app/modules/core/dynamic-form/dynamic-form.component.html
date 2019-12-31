@@ -49,6 +49,12 @@
             (selectedChanged)="updateSelection($event, editField.fieldName)"
           ></app-select-input>
         </ng-container>
+      <ng-container *ngIf="editField.type ==='html'">
+        <app-html-input
+          [htmlString]="currentRow[editField.fieldName]"
+          (updateHtml)="updateHtml($event, editField.fieldName)"
+        ></app-html-input>
+      </ng-container>
       </div>
     </div>
   </ng-container>

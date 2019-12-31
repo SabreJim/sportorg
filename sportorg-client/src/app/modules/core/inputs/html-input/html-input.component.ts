@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {HtmlEditorModalComponent} from "../../modals/htm-editor-modal/html-editor-modal.component";
+import {MatDialog} from "@angular/material";
 
 @Component({
   selector: 'app-html-input',
@@ -7,9 +9,28 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HtmlInputComponent implements OnInit {
 
-  constructor() { }
+  @Input() set htmlString (newValue: string) {
+    this.htmlValue = newValue;
+  }
+  @Input() disabled: boolean = false;
+  @Output() updateHtml = new EventEmitter<string>();
+
+  public editHtml = () => {
+    // open a modal and pass in the member
+    const dialogRef = this.dialog.open(HtmlEditorModalComponent,
+      { width: '80vw', height: '80vh', data: { htmlString: this.htmlValue } });
+    dialogRef.afterClosed().subscribe((result: string) => {
+      if (result && result.length) {
+        this.htmlValue = result;
+        this.updateHtml.emit(this.htmlValue);
+      }
+    });
+  }
+  public htmlValue: string;
+  constructor(private dialog: MatDialog) { }
 
   ngOnInit() {
   }
+
 
 }

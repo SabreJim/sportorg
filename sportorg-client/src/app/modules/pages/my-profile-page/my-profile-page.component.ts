@@ -62,7 +62,6 @@ export class MyProfilePageComponent implements OnInit {
     if (!this.selectedMember || !this.selectedMember.memberId) return;
 
     // open a modal and pass in the member
-    // open a modal to create a new member
     const dialogRef = this.dialog.open(MemberModalComponent,
       { width: '80vw', height: '80vh', data: this.selectedMember })
     dialogRef.afterClosed().subscribe((result: AppMember) => {

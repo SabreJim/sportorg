@@ -7,7 +7,7 @@ import {MaterialModule} from "./modules/material.module";
 import {PagesModule} from "./modules/pages/pages.module";
 import {CoreModule} from "./modules/core/core.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {jqxSchedulerModule} from "jqwidgets-ng/jqxscheduler";
+import {CodemirrorComponent, CodemirrorModule} from "ng2-codemirror";
 
 @NgModule({
   declarations: [
@@ -20,9 +20,11 @@ import {jqxSchedulerModule} from "jqwidgets-ng/jqxscheduler";
     MaterialModule,
     CoreModule,
     PagesModule,
-    jqxSchedulerModule
+    CodemirrorModule
   ],
-  providers: [],
+  providers: [
+    CodemirrorComponent
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

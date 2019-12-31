@@ -82,7 +82,7 @@ export class AdminPageComponent implements OnInit {
       new TableColumn('competeGender', 'Competition Gender', 'string'),
       new TableColumn('membershipStart', 'Joined', 'date'),
       TableColumn.fromConfig({fieldName: 'email', title: 'Contact Email', type: 'string', displayType: 'long-string'}),
-      new TableColumn('license', 'License #', 'number'),
+      TableColumn.fromConfig({fieldName: 'license', title: 'CFF License', type: 'string', displayType: 'number'}),
       TableColumn.fromConfig({fieldName: 'streetAddress', title: 'Address', type: 'string', displayType: 'long-string' }),
       new TableColumn('city', 'City', 'string'),
       TableColumn.fromConfig({ fieldName: 'provinceId', title: 'Province', type: 'select', displayField: 'provinceName',

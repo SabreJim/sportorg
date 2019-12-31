@@ -71,7 +71,7 @@ const upsertMember = async (req, res, next) => {
             // when creating a new member, first ensure there isn't already a duplicate
             const matchQuery = `select count(member_id) as 'matches' from members
             where (UPPER(first_name) = UPPER(?) AND UPPER(last_name) = UPPER(?))
-            OR (UPPER(license) = UPPER('?'))`;
+            OR (UPPER(license) = UPPER(?))`;
 
             const queryResult = await MySQL.runQuery(matchQuery, [cleanMember.cleanBody.firstName, cleanMember.cleanBody.lastName,
                 cleanMember.cleanBody.license]);

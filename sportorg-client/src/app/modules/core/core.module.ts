@@ -25,9 +25,10 @@ import { ProgramPanelComponent } from './program-panel/program-panel.component';
 import { TooltipComponent } from './tooltip/tooltip.component';
 import {TooltipDirective} from "./tooltip/tooltip.directive";
 import { MemberModalComponent } from './modals/member-modal/member-modal.component';
-import { HtmEditorModalComponent } from './modals/htm-editor-modal/htm-editor-modal.component';
+import { HtmlEditorModalComponent } from './modals/htm-editor-modal/html-editor-modal.component';
 import { FilterBarComponent } from './filter-bar/filter-bar.component';
 import { OrgSnackbarComponent } from './org-snackbar/org-snackbar.component';
+import {CodemirrorModule} from "ng2-codemirror";
 
 
 @NgModule({
@@ -52,7 +53,7 @@ import { OrgSnackbarComponent } from './org-snackbar/org-snackbar.component';
     TooltipComponent,
     TooltipDirective,
     MemberModalComponent,
-    HtmEditorModalComponent,
+    HtmlEditorModalComponent,
     FilterBarComponent,
     OrgSnackbarComponent
   ],
@@ -75,7 +76,8 @@ import { OrgSnackbarComponent } from './org-snackbar/org-snackbar.component';
     ReactiveFormsModule,
     RouterModule,
     HttpClientModule,
-    CommonModule
+    CommonModule,
+    CodemirrorModule
   ],
   providers: [
     RouteGuardService
@@ -84,6 +86,7 @@ import { OrgSnackbarComponent } from './org-snackbar/org-snackbar.component';
     AppTableComponent,
     ConfirmModalComponent,
     MemberModalComponent,
+    HtmlEditorModalComponent,
     TooltipComponent
   ]
 })

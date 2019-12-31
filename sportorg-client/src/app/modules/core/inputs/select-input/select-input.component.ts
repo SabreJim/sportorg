@@ -4,7 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
-  Input,
+  Input, OnDestroy,
   OnInit,
   Output
 } from '@angular/core';
@@ -18,14 +18,14 @@ import {MatSelectChange} from "@angular/material";
   styleUrls: ['./select-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SelectInputComponent implements OnInit, AfterViewInit {
+export class SelectInputComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() lookupType: string;
   @Input() maxWidth: string = '100%';
   @Input() set staticLookup (items: LookupItem[]) {
     if (items && items.length) {
       this.options = items;
-      this.detector.detectChanges();
+      if (!this.isDestroyed) this.detector.detectChanges();
     }
   };
 
@@ -33,7 +33,7 @@ export class SelectInputComponent implements OnInit, AfterViewInit {
     if (newValue !== null && newValue !== undefined && this.options.length) {
       setTimeout(() => {
         this.selectedValue = newValue;
-        this.detector.detectChanges();
+        if (!this.isDestroyed) this.detector.detectChanges();
       });
 
     }
@@ -42,6 +42,7 @@ export class SelectInputComponent implements OnInit, AfterViewInit {
   @Output() selectionObject =  new EventEmitter<LookupItem>();
   public selectedValue: number = null;
   public options: LookupItem[] = [];
+  protected isDestroyed = false;
   constructor(private lookupService: LookupProxyService, private detector: ChangeDetectorRef) { }
 
   ngOnInit() {
@@ -59,10 +60,14 @@ export class SelectInputComponent implements OnInit, AfterViewInit {
         if (this.selectedValue) {
           this.selected = this.selectedValue; // in case of timing issue
         }
-        this.detector.detectChanges();
+        if (!this.isDestroyed) this.detector.detectChanges();
       });
       this.lookupService.refreshLookups();
     }
+  }
+  ngOnDestroy() {
+    this.detector.detach();
+    this.isDestroyed = true;
   }
 
 }

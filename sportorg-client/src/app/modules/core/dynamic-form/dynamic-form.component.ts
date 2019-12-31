@@ -85,6 +85,13 @@ export class DynamicFormComponent implements OnInit {
       this.isDirty = true;
     }
   };
+  public updateHtml = (newHtml: string, fieldName: string) => {
+    if (newHtml !== this.currentRow[fieldName]){
+      // this.currentRow[fieldName] = newHtml;
+      this.isDirty = true;
+      console.log('got html', newHtml);
+    }
+  };
   constructor(public dialog: MatDialog, private lookupService: LookupProxyService) { }
 
   ngOnInit() {

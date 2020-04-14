@@ -1,0 +1,17 @@
+<mat-card class="popover-card notice-popover">
+  <mat-card-header>
+    <h1>This feature requires you to login</h1>
+  </mat-card-header>
+  <mat-card-content>
+    This site uses OAuth to know who you are through a trusted source such as Google or Facebook. When you login,
+    we do not track your username or passwords at all. Instead, the OAuth provider verifies your identity and we
+    trust that source. For some features, we need to know who is making requests so we can track what you have done
+    and what information is relevant to you. We do not use your login to publish any activity on this site, other than
+    what you explicitly choose to make public. If you have further question, please contact
+    <a href="mailto: beaches.east@gmail.com">beaches.east@gmail.com</a>.
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button mat-raised-button color="primary" (click)="login('google')"><i class="fab fa-google blue"></i> Google login</button>
+    <button mat-raised-button color="primary" (click)="login('fb')"><i class="fab fa-facebook blue"></i> Facebook login</button>
+  </mat-card-actions>
+</mat-card>

@@ -29,6 +29,7 @@ import { HtmlEditorModalComponent } from './modals/htm-editor-modal/html-editor-
 import { FilterBarComponent } from './filter-bar/filter-bar.component';
 import { OrgSnackbarComponent } from './org-snackbar/org-snackbar.component';
 import {CodemirrorModule} from "ng2-codemirror";
+import { LoginRequiredComponent } from './login-required/login-required.component';
 
 
 @NgModule({
@@ -55,7 +56,8 @@ import {CodemirrorModule} from "ng2-codemirror";
     MemberModalComponent,
     HtmlEditorModalComponent,
     FilterBarComponent,
-    OrgSnackbarComponent
+    OrgSnackbarComponent,
+    LoginRequiredComponent
   ],
   exports: [
     OrgHeaderComponent,
@@ -68,7 +70,8 @@ import {CodemirrorModule} from "ng2-codemirror";
     ProgramPanelComponent,
     TooltipDirective,
     SelectInputComponent,
-    OrgSnackbarComponent
+    OrgSnackbarComponent,
+    LoginRequiredComponent
   ],
   imports: [
     MaterialModule,

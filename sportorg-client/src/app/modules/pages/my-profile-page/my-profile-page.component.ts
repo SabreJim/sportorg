@@ -34,7 +34,7 @@ export class MyProfilePageComponent implements OnInit {
   protected currentUser: AppUser;
 
   public myMembers: AppMember[] = [];
-  protected selectedMember: AppMember;
+  public selectedMember: AppMember;
   public memberColumns: TableColumn[] = [
     TableColumn.fromConfig({fieldName: 'name', title: 'Name', type: 'string', displayType: 'long-string'}),
     new TableColumn('yearOfBirth', 'Year of Birth', 'number'),
@@ -75,7 +75,7 @@ export class MyProfilePageComponent implements OnInit {
 
   // Enrollments configuration
   public myEnrollments: Enrollment[] = [];
-  protected selectedEnrollment: Enrollment;
+  public selectedEnrollment: Enrollment;
   public enrollColumns: TableColumn[] = [
     TableColumn.fromConfig({fieldName: 'memberName', title: 'Member', type: 'string', displayType: 'long-string'}),
     TableColumn.fromConfig({fieldName: 'programName', title: 'Program', type: 'string', displayType: 'long-string'}),

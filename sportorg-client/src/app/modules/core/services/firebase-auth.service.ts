@@ -53,7 +53,6 @@ export class FirebaseAuthService extends RestProxyService {
   };
 
   protected authErrorHandler = (error) => {
-    console.log('AUTH ERROR', error);
     if (!error || !error.code) return; // can't parse error type
     if (error.code.indexOf('account-exists-with-different-credential') !== -1) {
       // Firebase only allows one login per email, regardless of platform
@@ -68,9 +67,7 @@ export class FirebaseAuthService extends RestProxyService {
     if (this.currentUser.isAnonymous) {
       switch (authName) {
         case 'fb':
-          console.log('doing FB', this.FProvider);
           Firebase.auth().signInWithPopup(this.FProvider).then((result) => {
-            console.log('SIGNED IN?', result);
           }).catch(this.authErrorHandler);
           break;
         case 'twitter':

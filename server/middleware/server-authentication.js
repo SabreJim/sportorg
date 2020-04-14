@@ -98,7 +98,6 @@ const getSession = async(userId) => {
 
 const verifyToken = async(req, res, next) => {
     const token = req.query.token || false ;
-    console.log('got token', token);
     if (!token) {
         return returnSingle(res);
     }
@@ -122,7 +121,6 @@ const verifyToken = async(req, res, next) => {
             // get or create a user
             const userQuery = `select beaches.get_or_create_user(?, ?, ?) as 'userId';`;
             const userResponse = await MySQL.runCommand(userQuery, [appSession.userId, authSource, userEmail]);
-            console.log('FOUND OR CREATED USER', userResponse, userEmail, authSource);
             // get a sessionToken if a session already exists
             let existingSession = await getSession(userResponse.userId);
             let orgToken; // saving the decoded value in the DB, but passing the encoded version to the client

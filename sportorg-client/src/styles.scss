@@ -61,3 +61,28 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
 ::ng-deep.mat-form-field-suffix {
   align-self: center;
 }
+
+// list items
+.mat-list {
+  flex: 1 1 auto;
+  padding: 0 40px;
+  max-width: 800px;
+  width: 100%;
+  display: flex !important;
+  flex-flow: column;
+
+  .mat-subheader {
+    font-size: 18px;
+    color: black;
+    flex: 1 1 auto;
+    padding: 0 40px;
+    max-width: 800px;
+  }
+  .mat-list-item {
+    flex: 1 1 auto;
+    max-width: 800px;
+  }
+  .info-line {
+    font-size: 12px;
+  }
+}

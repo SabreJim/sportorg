@@ -106,9 +106,21 @@ const verifyToken = async(req, res, next) => {
     await firebase.auth().verifyIdToken(token)
         .then(async (decodedToken) => {
             appSession.userId = decodedToken.uid;
+            // if an email is not returned by firebase, assign a string value
+            let userEmail = decodedToken.email;
+            if (!userEmail) {
+                userEmail = appSession.userId + '@' + decodedToken.firebase.sign_in_provider;
+            }
+
+            // determine the authenticator type
+            let authSource = 'google';
+            if (decodedToken.firebase.sign_in_provider === 'facebook.com') {
+                authSource = 'facebook';
+            } // should also decode for twitter
+
             // get or create a user
-            const userQuery = `select beaches.get_or_create_user(?, 'google', ?) as 'userId';`;
-            const userResponse = await MySQL.runCommand(userQuery, [appSession.userId, decodedToken.email]);
+            const userQuery = `select beaches.get_or_create_user(?, ?, ?) as 'userId';`;
+            const userResponse = await MySQL.runCommand(userQuery, [appSession.userId, authSource, userEmail]);
             // get a sessionToken if a session already exists
             let existingSession = await getSession(userResponse.userId);
             let orgToken; // saving the decoded value in the DB, but passing the encoded version to the client
@@ -118,7 +130,7 @@ const verifyToken = async(req, res, next) => {
                 const newToken = uuid();
                 orgToken = uuid();
                 // insert the new session
-                const sessionInsert = `INSERT INTO sessions (user_id, session_token) VALUES (?, ?)`;
+                const sessionInsert = `INSERT INTO beaches.sessions (user_id, session_token) VALUES (?, ?)`;
                 await MySQL.runQuery(sessionInsert, [userResponse.userId, orgToken]);
                 existingSession = await getSession(userResponse.userId);
             }

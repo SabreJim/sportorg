@@ -1,6 +1,7 @@
 CREATE FUNCTION beaches.get_or_create_user (external_id VARCHAR(50),
     external_type VARCHAR(20),
     user_email VARCHAR(100)) RETURNS INT
+SQL SECURITY INVOKER
 BEGIN
     DECLARE found_id INT;
     -- update by a matching oAuth login
@@ -34,9 +35,20 @@ BEGIN
 
     IF found_id IS NULL THEN -- still not matching user found
         -- create a new user that is not associated with a member
-        INSERT INTO beaches.users (google_id, email) VALUES (external_id, user_email);
-        SELECT u.user_id INTO found_id
-            FROM beaches.users u WHERE LOWER(external_id) = LOWER(u.google_id);
+        IF external_type <=> 'google' THEN
+            INSERT INTO beaches.users (google_id, email) VALUES (external_id, user_email);
+            SELECT MIN(u.user_id) INTO found_id
+                FROM beaches.users u WHERE LOWER(external_id) = LOWER(u.google_id);
+        ELSEIF external_type <=> 'facebook' THEN
+            INSERT INTO beaches.users (fb_id, email) VALUES (external_id, user_email);
+            SELECT MIN(u.user_id) INTO found_id
+                FROM beaches.users u WHERE LOWER(external_id) = LOWER(u.fb_id);
+        ELSEIF external_type <=> 'twitter' THEN
+            INSERT INTO beaches.users (twitter_id, email) VALUES (external_id, user_email);
+            SELECT MIN (u.user_id) INTO found_id
+                FROM beaches.users u WHERE LOWER(external_id) = LOWER(u.twitter_id);
+        END IF;
+
     END IF;
     CALL beaches.assign_members(found_id);
     RETURN found_id;

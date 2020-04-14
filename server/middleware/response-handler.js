@@ -24,7 +24,7 @@ const returnSuccess = (response, success) => {
 
 const returnError = (response, errorMessage, errorCode = 500) => {
     response.status = errorCode;
-    response.json({data: null, errorMessage: errorMessage});
+    response.json({data: null, message: errorMessage});
 };
 
 module.exports = {

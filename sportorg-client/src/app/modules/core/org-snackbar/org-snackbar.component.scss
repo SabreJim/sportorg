@@ -1,6 +1,12 @@
 ::ng-deep snack-bar-container.error-panel {
-  background-color: #ec224cfa;
+  background-color: #ffd0d9fa;
+  border: 3px solid #ec224cfa;
+  border-radius: 10px;
   color: black;
+  .mat-button {
+    color: black;
+    background-color: white;
+  }
 }
 
 ::ng-deep .mat-simple-snackbar {

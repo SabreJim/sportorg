@@ -6,13 +6,6 @@ const path = require('path');
 const mysqlDB = require('./server/middleware/mysql-service');
 const firebase = require('./server/middleware/server-authentication');
 
-
-// process.argv.forEach((val) => {
-//     // read the environment in from the command parameters
-//     if (val.indexOf('env=') === 0){
-//         environment = val.slice(4);
-//     }
-// });
 const config = require('./config.js');
 let useSsl = process.env.USE_SSL || false;
 

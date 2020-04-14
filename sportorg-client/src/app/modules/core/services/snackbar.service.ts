@@ -22,4 +22,7 @@ export class SnackbarService {
   public static error = (message: string, duration: number = SnackbarService.DEFAULT_ERROR_DURATION) => {
     SnackbarService.Notifications.next({message, duration, action: '', type: 'error'});
   };
+  public static errorWithAction = (message: string, actionText: string) => {
+    SnackbarService.Notifications.next({message, duration: 0, action: actionText, type: 'error'});
+  };
 }

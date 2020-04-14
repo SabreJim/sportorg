@@ -1,6 +1,8 @@
 import {Injectable} from "@angular/core";
-import {auth, initializeApp, User} from "firebase";
-import GoogleAuthProvider = auth.GoogleAuthProvider;
+import * as Firebase from "firebase/app";
+import 'firebase/auth';
+import GoogleAuthProvider = Firebase.auth.GoogleAuthProvider;
+import FacebookAuthProvider = Firebase.auth.FacebookAuthProvider;
 import {AppSession, AppUser, UserData} from "../models/authentication";
 import {Observable, Subject} from "rxjs";
 import {RestProxyService} from "./rest-proxy.service";
@@ -13,6 +15,7 @@ import {AppMemberUser} from "../models/data-objects";
 @Injectable({providedIn: 'root'})
 export class FirebaseAuthService extends RestProxyService {
   protected GProvider: GoogleAuthProvider;
+  protected FProvider: FacebookAuthProvider;
   protected currentUser = new AppUser();
 
   protected static firebaseConfig = {
@@ -30,10 +33,11 @@ export class FirebaseAuthService extends RestProxyService {
   public Users = new Subject<UserData[]>();
   public enableAuthentication = () => {
     // Initialize Firebase
-    initializeApp(FirebaseAuthService.firebaseConfig);
+    Firebase.initializeApp(FirebaseAuthService.firebaseConfig);
     // analytics();
-    this.GProvider = new auth.GoogleAuthProvider();
-    auth().onAuthStateChanged((user: User) => {
+    this.GProvider = new Firebase.auth.GoogleAuthProvider();
+    this.FProvider = new Firebase.auth.FacebookAuthProvider();
+    Firebase.auth().onAuthStateChanged((user: Firebase.User) => {
       if (user) { // User is signed in.
        this.currentUser.displayName = user.displayName;
         this.currentUser.email = user.email;
@@ -48,12 +52,37 @@ export class FirebaseAuthService extends RestProxyService {
     });
   };
 
+  protected authErrorHandler = (error) => {
+    console.log('AUTH ERROR', error);
+    if (!error || !error.code) return; // can't parse error type
+    if (error.code.indexOf('account-exists-with-different-credential') !== -1) {
+      // Firebase only allows one login per email, regardless of platform
+      SnackbarService.errorWithAction(`${error.message} Email: ${error.email}`, 'Okay');
+    } else {
+      SnackbarService.error('Sorry, there was a problem logging you in with Facebook\'s authentication service. Please try again later.');
+    }
+    this.logout(); // clean up session
+  }
+
   public toggleLogin = (authName: string) => {
     if (this.currentUser.isAnonymous) {
-      auth().signInWithPopup(this.GProvider).then((result) => {
-      }).catch(function(error) {
-        SnackbarService.error('Sorry, there was a problem logging you in with a third party service. Please try again later.');
-      });
+      switch (authName) {
+        case 'fb':
+          console.log('doing FB', this.FProvider);
+          Firebase.auth().signInWithPopup(this.FProvider).then((result) => {
+            console.log('SIGNED IN?', result);
+          }).catch(this.authErrorHandler);
+          break;
+        case 'twitter':
+          this.logout();
+          break;
+        case 'google': // default to google
+        default:
+          Firebase.auth().signInWithPopup(this.GProvider).then((result) => {
+          }).catch(this.authErrorHandler);
+          break;
+      }
+
     } else {
       this.logout();
     }
@@ -61,11 +90,12 @@ export class FirebaseAuthService extends RestProxyService {
 
   public getSession = (): void => {
     if (this.currentUser && !this.currentUser.isAnonymous) {
-      auth().currentUser.getIdToken().then((actualToken) => {
+      Firebase.auth().currentUser.getIdToken().then((actualToken) => {
         this.get('session-token', {token: actualToken} ).subscribe((response: ApiResponse<AppSession>) => {
           if (response.hasErrors()) {
             this.currentUser = new AppUser();
             this.CurrentUser.next(this.currentUser);
+            return;
           }
           // update the token so subsequent requests can be authenticated
           StaticValuesService.setToken(response.data.sessionToken);
@@ -88,7 +118,7 @@ export class FirebaseAuthService extends RestProxyService {
       StaticValuesService.setToken(''); // clear the header token
       this.currentUser = new AppUser(); // reset the user state
       this.CurrentUser.next(this.currentUser); // notify any listeners
-      auth().signOut(); // end the firebase session client-side
+      Firebase.auth().signOut(); // end the firebase session client-side
       this.appRouter.navigate(['/']);
     }
     if (StaticValuesService.getToken()) {

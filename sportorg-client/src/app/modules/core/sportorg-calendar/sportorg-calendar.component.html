@@ -25,8 +25,8 @@
                  [style.backgroundColor]="event.bgColor"
                  [style.color]="event.textColor"
             >
-              <a class="event-name" appTooltip [tooltipData]="getProgram(event.programId)"
-                 [tooltipTemplate]="programTemplate" [tooltipPanelClass]="'w1000'"
+              <a class="event-name"
+                 [tooltipTemplate]="programTemplate" appTooltip [tooltipData]="getProgram(event.programId)" [tooltipPanelClass]="'w1000'"
               >{{event.eventName}}</a>
               <span class="start-time">{{event.startTime}}</span>
             </div>

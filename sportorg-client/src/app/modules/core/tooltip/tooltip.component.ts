@@ -14,6 +14,7 @@ export class TooltipComponent implements AfterViewInit {
   @Input() panelClass: string = '400w';
   @Output() userEntered = new EventEmitter<boolean>();
   @Output() userLeft = new EventEmitter<boolean>();
+  @Output() tipCreated = new EventEmitter<boolean>();
 
   public stealthRender = true;
   public enterTooltip = () => {
@@ -26,6 +27,7 @@ export class TooltipComponent implements AfterViewInit {
   constructor() { }
 
   ngAfterViewInit(): void {
+    this.tipCreated.next(true);
   }
 
 }

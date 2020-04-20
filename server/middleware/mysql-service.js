@@ -6,9 +6,6 @@ const fs = require('fs');
 let DB = null;
 
 const buildDBConnections = function (config) {
-    // config.ssl = {
-    //     ca : fs.readFileSync(__dirname + '/../../rsa/selfsigned.crt')
-    // };
     DB = MYSQL.createPool(config.mysql);
     console.log(`new MySQL connection created on ${config.mysql.host} STATUS: ${DB !== null}`);
 };
@@ -67,9 +64,12 @@ const runCommand = (query, params = []) => {
     });
 };
 
+const escapeString = MYSQL.escape;
+
 
 module.exports = {
     buildDBConnections,
     runQuery,
-    runCommand
+    runCommand,
+    escapeString
 };

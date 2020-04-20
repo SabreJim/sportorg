@@ -1,0 +1,18 @@
+<div class="page-wrapper">
+  <h1>Fitness Tracker</h1>
+  <p>This app is intended to help you track the cross-training you are completing outside of regular sport-specific
+  training. To begin, create an athlete profile or select one you already created.</p>
+
+  <div ngClass="profile-container {{profileStyle}}">
+    <ng-container *ngFor="let profile of myProfiles">
+      <app-profile-icon
+        [displayStyle]="'tall'"
+        [profile]="profile"
+        (sendCreate)="openDialog($event)"
+        (sendNew)="newProfileRequested($event)"
+      >
+      </app-profile-icon>
+    </ng-container>
+
+  </div>
+</div>

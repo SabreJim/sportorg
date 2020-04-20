@@ -5,7 +5,7 @@ import {
   EventEmitter,
   Input,
   OnInit,
-  Output
+  Output, ViewRef
 } from '@angular/core';
 import {LookupItem} from "../models/rest-objects";
 import {LookupProxyService} from "../services/lookup-proxy.service";
@@ -158,7 +158,9 @@ export class SportorgCalendarComponent implements OnInit {
         this.timeSlotGrid.push(currentColumn);
         day.isHidden = (!currentColumn.some((event: TimeSlot) => event.type === 'class'));
       }
-      this.detector.detectChanges();
+        if (this.detector && !(this.detector as ViewRef).destroyed) {
+          this.detector.detectChanges();
+        }
     });
   }
 

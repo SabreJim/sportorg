@@ -1,8 +1,7 @@
 <div class="menu-wrapper">
-  <ng-container *ngIf="isStuck" >
-    <div class="info-section" >
-      512 George Street
-    </div>
+  <ng-container *ngIf="!isAnon">
+    <a ngClass="fitness-icon mat-button" routerLink="/fitness-tracker" routerLinkActive="active-link">
+      <mat-icon>fitness_center</mat-icon></a>
   </ng-container>
 
   <nav class="menu-stack" >

@@ -1,0 +1,38 @@
+<mat-card class="page-wrapper widget-card">
+  <mat-card-title>
+    <h1>{{profile?.firstName}} {{profile?.lastName}}</h1>
+  </mat-card-title>
+  <mat-card-content class="exercise-list">
+    <ng-container *ngFor="let exercise of exercises">
+      <mat-card class="exercise-item">
+        <div class="icon">
+          <ng-container *ngIf="exercise.iconType === 'fa'">
+            <span class="icon-wrapper"><i ngClass="mat-icon {{exercise.iconName}}" ></i></span>
+          </ng-container>
+          <ng-container *ngIf="exercise.iconType === 'mat'">
+            <span class="icon-wrapper">
+              <mat-icon>{{exercise.iconName}}</mat-icon>
+            </span>
+          </ng-container>
+        </div>
+        <div class="info">
+          <div class="exercise-name">{{exercise.name}}</div>
+          <div class="exercise-desc"><p>{{exercise.description}}</p></div>
+          <div class="exercise-nums">
+            <span class="value-icons">
+              <ng-container *ngFor="let stat of exercise.statValues">
+              <div class="icon-wrapper"><i ngClass="mat-icon {{stat.icon}}" title="{{stat.name}}"></i>: {{stat.value}}</div>
+                </ng-container>
+            </span>
+            <div>Enter one for each: {{exercise.measurementUnitQuantity}} {{exercise.measurementUnit}}</div>
+          </div>
+        </div>
+        <div class="actions">
+          <app-number-input [value]="exercise.quantityDone" (numberChanged)="updateQuantity($event, exercise)"></app-number-input>
+          <button mat-raised-button color="primary" [disabled]="!(exercise.quantityDone > 0)"
+                  (click)="logExercise(exercise.exerciseId, exercise)">Enter</button>
+        </div>
+      </mat-card>
+    </ng-container>
+  </mat-card-content>
+</mat-card>

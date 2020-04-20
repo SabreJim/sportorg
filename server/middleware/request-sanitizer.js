@@ -213,10 +213,38 @@ const enrollmentSchema = {
         {fieldName: 'feeValue', type: 'float', allowNull: true },
     ]
 };
+
+const fitnessProfileSchema = {
+    primaryKey: 'athleteId',
+    fields: [
+        {fieldName: 'athleteId', type: 'int', allowNull: false },
+        {fieldName: 'firstName', type: 'string', allowNull: false },
+        {fieldName: 'lastName', type: 'string', allowNull: false },
+        {fieldName: 'memberId', type: 'int', allowNull: true },
+        {fieldName: 'yearOfBirth', type: 'int', allowNull: false },
+        {fieldName: 'competeGender', type: 'string', allowNull: false },
+        {fieldName: 'isEpee', type: 'string', allowNull: false },
+        {fieldName: 'isFoil', type: 'string', allowNull: false },
+        {fieldName: 'isSabre', type: 'string', allowNull: false },
+    ]
+};
+const exerciseLogSchema = {
+    primaryKey: 'exerciseEventId',
+    fields: [
+        {fieldName: 'exerciseEventId', type: 'int', allowNull: false },
+        {fieldName: 'exerciseId', type: 'int', allowNull: false },
+        {fieldName: 'athleteId', type: 'int', allowNull: false},
+        {fieldName: 'userLoggedId', type: 'int', allowNull: false},
+        {fieldName: 'exerciseQuantity', type: 'int', allowNull: false }
+        ]
+};
+
 module.exports = {
     getCleanBody,
     classScheduleSchema,
     programSchema,
     memberSchema,
-    enrollmentSchema
+    enrollmentSchema,
+    fitnessProfileSchema,
+    exerciseLogSchema
 };

@@ -1,0 +1,88 @@
+.widget-card {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex: 1 1 auto;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  background-color: #dddddd96;
+  .mat-card-content {
+    flex: 1 1 auto;
+    display: flex;
+    width: 100%;
+    flex-flow: column nowrap;
+    align-items: center;
+
+    .exercise-item {
+      width: 80%;
+      flex: 1 1 auto;
+      display: flex;
+      flex-flow: row nowrap;
+      margin-bottom: 10px;
+      //background-color: #cbf3cb;
+      .icon {
+        display: flex;
+        flex: 1 1 60px;
+        max-width: 60px;
+        align-items: center;
+        margin-right: 10px;
+        .mat-icon {
+          font-size: 36px;
+          height: 40px;
+          width: 40px;
+        }
+      }
+      .info {
+        flex: 1 1 auto;
+        display: flex;
+        flex-flow: column nowrap;
+        padding: 10px;
+        .exercise-name {
+          font-weight: 600;
+          font-size: 24px;
+        }
+        .exercise-nums {
+          font-weight: 600;
+          display: flex;
+          text-align: right;
+          align-items: center;
+          justify-content: flex-end;
+          .value-icons {
+            text-align: left;
+            flex: 1 1 auto;
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: center;
+            .icon-wrapper {
+              padding-right: 10px;
+            }
+          }
+
+        }
+      }
+      .actions {
+        flex: 1 1 100px;
+        max-width: 100px;
+        min-width: 100px;
+        justify-content: center;
+        display: flex;
+        flex-flow: column;
+        app-number-input {
+          max-height: 36px;
+          margin-bottom: 10px;
+          font-size: 20px;
+          background-color: #dddddd;
+        }
+      }
+    }
+  }
+}
+
+// font-awesome fonts that aren't rendering well
+.fa-hand-sparkles:before {
+  content: "\f95d";
+}
+.fa-lungs:before {
+  content: "\f967";
+}

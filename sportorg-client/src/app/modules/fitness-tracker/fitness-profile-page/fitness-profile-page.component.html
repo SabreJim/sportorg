@@ -1,0 +1,36 @@
+<div class="page-wrapper">
+  <h1>Fitness Tracker</h1>
+
+  <mat-tab-group class="widget-container" mat-align-tabs="center" dynamicHeight
+    (selectedIndexChange)="notifyTabs($event)">
+    <mat-tab label="status" >
+      <ng-template matTabContent>
+        <app-fitness-widget [profile]="currentProfile" [isActive]="activeTabId">
+        </app-fitness-widget>
+      </ng-template>
+    </mat-tab>
+
+
+    <mat-tab label="exercises">
+      <ng-template matTabContent>
+        <app-exercises-widget [profile]="currentProfile" [isActive]="activeTabId">
+        </app-exercises-widget>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="compare">
+      <ng-template matTabContent>
+        <app-fitness-compare>
+        </app-fitness-compare>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="history">
+      <ng-template matTabContent>
+        <app-fitness-log>
+        </app-fitness-log>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+
+</div>

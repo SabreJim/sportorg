@@ -1,22 +1,27 @@
 <div class="app-wrapper">
   <org-menu-bar></org-menu-bar>
-  <mat-card class="page-header">
-    <org-header></org-header>
-  </mat-card>
-  <div class="page-body">
-    <div class="main-content">
-      <router-outlet></router-outlet>
+  <ng-container *ngIf="appInUse === SPORT_ORG">
+    <mat-card class="page-header">
+      <org-header></org-header>
+    </mat-card>
+  </ng-container>
+
+    <div class="page-body">
+      <div ngClass="main-content {{appInUse === SPORT_ORG ? '' : 'wide-content'}}">
+        <router-outlet></router-outlet>
+      </div>
     </div>
 
-  </div>
+  <ng-container *ngIf="appInUse === SPORT_ORG">
+    <mat-card ngClass="side-bar-content {{sidebarExpanded ? 'expanded' : 'normal'}}">
+      <sportorg-calendar
+        class="side-card"
+        [isExpanded]="false"
+        (doExpand)="toggleExpand($event)"
+      ></sportorg-calendar>
+    </mat-card>
+  </ng-container>
 
-  <mat-card ngClass="side-bar-content {{sidebarExpanded ? 'expanded' : 'normal'}}">
-    <sportorg-calendar
-      class="side-card"
-      [isExpanded]="false"
-      (doExpand)="toggleExpand($event)"
-    ></sportorg-calendar>
-  </mat-card>
 </div>
 <app-org-snackbar></app-org-snackbar>
 

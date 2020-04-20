@@ -223,15 +223,101 @@ VALUES
 ('Northwest Territories', 'NWT', 'CAN'),
 ('Nunavut', 'NV', 'CAN'),
 ('Yukon', 'YU', 'CAN');
-ALTER TABLE members
+ALTER TABLE beaches.members
 add column province_id MEDIUMINT references regions(region_id);
 
-CREATE TABLE class_enrollments (
+CREATE TABLE beaches.class_enrollments (
     enroll_id MEDIUMINT NOT NULL auto_increment,
     member_id MEDIUMINT NOT NULL references members(member_id),
-    schedule_id MEDIUMINT NOT NULL references program_schedules(schedule_id),
-    created_by MEDIUMINT NOT NULL references users(user_id),
+    schedule_id MEDIUMINT NOT NULL references beaches.program_schedules(schedule_id),
+    created_by MEDIUMINT NOT NULL references beaches.users(user_id),
     created_date DATE NOT NULL,
     enrollment_cost FLOAT,
     PRIMARY KEY(enroll_id)
 );
+
+// FITNESS TRACKER
+CREATE TABLE beaches.images (
+    image_id MEDIUMINT NOT NULL auto_increment,
+    type VARCHAR(30),
+    value BLOB,
+    PRIMARY KEY(image_id)
+);
+
+CREATE TABLE beaches.exercises (
+    exercise_id MEDIUMINT NOT NULL auto_increment,
+    name VARCHAR(100) NOT NULL,
+    description VARCHAR(1000),
+    measurement_unit VARCHAR(50) NOT NULL,
+    measurement_unit_quantity INT NOT NULL,
+    image_id MEDIUMINT references beaches.images(image_id),
+    icon_type VARCHAR(20) NOT NULL,
+    icon_name VARCHAR(50) NOT NULL,
+    balance_value INT DEFAULT 0,
+    flexibility_value INT DEFAULT 0,
+    power_value INT DEFAULT 0,
+    endurance_value INT DEFAULT 0,
+    foot_speed_value INT DEFAULT 0,
+    hand_speed_value INT DEFAULT 0,
+    PRIMARY KEY(exercise_id)
+);
+
+CREATE TABLE beaches.athlete_types(
+    athlete_type_id MEDIUMINT NOT NULL auto_increment,
+    type_name VARCHAR(50) NOT NULL,
+     PRIMARY KEY(athlete_type_id)
+    );
+INSERT INTO beaches.athlete_types (type_name)
+    VALUES
+    ('epee'), ('foil'), ('sabre');
+
+CREATE TABLE beaches.athlete_profiles (
+    athlete_id MEDIUMINT NOT NULL auto_increment,
+    member_id MEDIUM NULL REFERENCES beaches.members(member_id),
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    year_of_birth INT NOT NULL,
+    compete_gender VARCHAR(1) NOT NULL,
+    balance INT DEFAULT 1,
+    flexibility INT DEFAULT 1,
+    power INT DEFAULT 1,
+    endurance INT DEFAULT 1,
+    foot_speed INT DEFAULT 1,
+    hand_speed INT DEFAULT 1,
+    fitness_level INT DEFAULT 1,
+    PRIMARY KEY(athlete_id)
+);
+
+CREATE TABLE beaches.athlete_users(
+    user_id MEDIUMINT NOT NULL REFERENCES beaches.users(user_id),
+    athlete_id MEDIUMINT NOT NULL REFERENCES beaches.athlete_profiles(athlete_id),
+    is_primary CHAR(1) DEFAULT 'N'
+    );
+CREATE TABLE beaches.athlete_profile_types (
+    athlete_id MEDIUMINT NOT NULL REFERENCES beaches.athlete_profiles(athlete_id),
+    athlete_type_id MEDIUMINT NOT NULL REFERENCES beaches.athlete_types(athlete_type_id),
+    is_primary CHAR(1) DEFAULT 'N'
+    );
+
+CREATE TABLE beaches.exercise_event (
+    exercise_event_id MEDIUMINT NOT NULL auto_increment,
+    athlete_id MEDIUMINT NOT NULL REFERENCES beaches.athlete_profiles(athlete_id),
+    exercise_id MEDIUMINT NOT NULL REFERENCES beaches.exercises(exercise_id),
+    user_logged_id MEDIUMINT REFERENCES beaches.users(user_id),
+    event_date DATE NOT NULL,
+    exercise_quantity INT NOT NULL,
+    PRIMARY KEY(exercise_event_id)
+    );
+
+CREATE TABLE beaches.level_up_logs (
+    level_up_id MEDIUMINT NOT NULL auto_increment,
+    athlete_id MEDIUMINT NOT NULL REFERENCES beaches.athlete_profiles(athlete_id),
+    stat_name VARCHAR(50) NOT NULL,
+    level_up_date DATE NOT NULL,
+    PRIMARY KEY(level_up_id)
+    );
+
+INSERT INTO beaches.exercises
+(name, description, measurement_unit, measurement_unit_quantity, icon_type, icon_name,balance_value, flexibility_value, power_value, endurance_value, foot_speed_value, hand_speed_value)
+VALUES
+('Up, up, down, down', '', 'seconds', 60, 'fa', 'shoe-prints',0, 0, 0, 0, 1, 0);

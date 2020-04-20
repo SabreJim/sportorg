@@ -71,7 +71,17 @@ import { LoginRequiredComponent } from './login-required/login-required.componen
     TooltipDirective,
     SelectInputComponent,
     OrgSnackbarComponent,
-    LoginRequiredComponent
+    LoginRequiredComponent,
+    SelectInputComponent,
+    DatePickerComponent,
+    StringInputComponent,
+    HtmlInputComponent,
+    NumberInputComponent,
+    TimeInputComponent,
+    BooleanInputComponent,
+    TooltipComponent,
+    TooltipDirective,
+    HtmlEditorModalComponent
   ],
   imports: [
     MaterialModule,
@@ -90,7 +100,8 @@ import { LoginRequiredComponent } from './login-required/login-required.componen
     ConfirmModalComponent,
     MemberModalComponent,
     HtmlEditorModalComponent,
-    TooltipComponent
+    TooltipComponent,
+    StringInputComponent
   ]
 })
 export class CoreModule { }

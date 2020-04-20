@@ -88,7 +88,6 @@ const linkMembers = async(req, res) => {
             returnError(res, 'An error occurred when linking the member');
         }
     }
-    console.log('got params to link', userId, memberId, setStatus, typeof setStatus);
 }
 
 module.exports = {

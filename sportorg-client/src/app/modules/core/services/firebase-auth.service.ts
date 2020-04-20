@@ -10,6 +10,7 @@ import {ApiResponse} from "../models/rest-objects";
 import {StaticValuesService} from "./static-values.service";
 import {SnackbarService} from "./snackbar.service";
 import {AppMemberUser} from "../models/data-objects";
+import {skip} from "rxjs/operators";
 
 
 @Injectable({providedIn: 'root'})
@@ -47,7 +48,7 @@ export class FirebaseAuthService extends RestProxyService {
         this.currentUser.providerId = 'google.com';
         this.getSession();
       } else {
-        this.logout();
+        this.logout(true);
       }
     });
   };
@@ -110,13 +111,15 @@ export class FirebaseAuthService extends RestProxyService {
     return (this.currentUser && !this.currentUser.isAnonymous && this.currentUser.isAdmin);
   }
 
-  public logout = (): void => {
+  public logout = (skipRedirect: boolean = false): void => {
     const purgeSession = () => {
       StaticValuesService.setToken(''); // clear the header token
       this.currentUser = new AppUser(); // reset the user state
       this.CurrentUser.next(this.currentUser); // notify any listeners
       Firebase.auth().signOut(); // end the firebase session client-side
-      this.appRouter.navigate(['/']);
+      if (!skipRedirect) {
+        this.appRouter.navigate(['/']);
+      }
     }
     if (StaticValuesService.getToken()) {
       // send a signal to the app server to clear the session

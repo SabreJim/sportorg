@@ -5,6 +5,7 @@ const Members = require('./response-handler/members');
 const Users = require('./response-handler/users');
 const Enrollment = require('./response-handler/enrollments');
 const Lookups = require('./response-handler/lookups');
+const Fitness = require('./response-handler/fitness');
 const Authentication = require('./middleware/server-authentication');
 const ResponseHandler = require('./middleware/response-handler');
 
@@ -16,8 +17,8 @@ const createRouter = (config) => {
 
 // middleware that is specific to this router
 //     router.use(function timeLog (req, res, next) {
-//         console.log('Time: ', Date.now())
-//         next()
+//         console.log('Time: ', Date.now(), req.originalUrl);
+//         next();
 //     });
 
     const adminRequired = async (req, res, next) => {
@@ -71,6 +72,17 @@ const createRouter = (config) => {
     // session management
     router.get('/session-token', Authentication.verifyToken);
     router.put('/end-session', jsonBody, Authentication.endSession);
+
+    // fitness-tracker app
+    router.get('/my-fitness-profiles', addSession, Fitness.getMyProfiles);
+    router.get('/fitness-profile/:athleteId', addSession, Fitness.getAthleteProfile);
+    router.put('/fitness-profile', jsonBody, addSession, Fitness.createProfile);
+    router.get('/fitness-logs/:athleteId', addSession, Fitness.getLogs);
+    router.put('/exercise-event', jsonBody, addSession, Fitness.recordExercise);
+    router.delete('/exercise-event/:eventId', addSession, Fitness.deleteExerciseEvent);
+    router.get('/exercises', Fitness.getExercises);
+    router.get('/compare-fitness', addSession, Fitness.compareFitness);
+    router.put('/exercise', jsonBody, adminRequired, Fitness.upsertExercise);
 
     return router;
 };

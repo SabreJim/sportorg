@@ -1,8 +1,7 @@
 <div class="menu-wrapper">
-  <ng-container *ngIf="isStuck" >
-    <div class="info-section" >
-      512 George Street
-    </div>
+  <ng-container *ngIf="!isAnon">
+    <a ngClass="fitness-icon mat-button" routerLink="/fitness-tracker" routerLinkActive="active-link">
+      <mat-icon>fitness_center</mat-icon></a>
   </ng-container>
 
   <nav class="menu-stack" >
@@ -33,7 +32,7 @@
     <mat-menu #authMenu>
       <button mat-menu-item (click)="login('google')"><i class="fab fa-google blue"></i>Google</button>
       <button mat-menu-item (click)="login('fb')"><i class="fab fa-facebook blue"></i>Facebook</button>
-      <button mat-menu-item (click)="login('twitter')"><i class="fab fa-twitter blue"></i>Twitter</button>
+      <button mat-menu-item style="display:none" (click)="login('twitter')"><i class="fab fa-twitter blue"></i>Twitter</button>
     </mat-menu>
     <div class="welcome-splash" *ngIf="!isAnon">
       <img src="{{currentUser.photoURL}}" title="Welcome {{currentUser.displayName}}" [matMenuTriggerFor]="profileMenu">

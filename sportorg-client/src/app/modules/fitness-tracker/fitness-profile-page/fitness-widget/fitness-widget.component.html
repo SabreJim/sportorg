@@ -1,0 +1,45 @@
+<mat-card class="page-wrapper widget-card">
+  <mat-card-title>
+    <h1>{{profile?.firstName}} {{profile?.lastName}}</h1>
+  </mat-card-title>
+  <mat-card-content>
+    <div class="progress-wrapper">
+      <mat-progress-spinner
+        ngClass="background-spinner"
+        [mode]="'determinate'"
+        [value]="100"
+        [strokeWidth]="25"
+        [diameter]="300"
+      >
+      </mat-progress-spinner>
+
+      <mat-progress-spinner title="progress to next level: {{profile?.fitnessLevelProgress}}"
+        ngClass="level-progress spinner-{{levelColor}}"
+        [mode]="'determinate'"
+        [value]="profile?.fitnessLevelProgress"
+        [strokeWidth]="25"
+        [diameter]="300"
+      >
+      </mat-progress-spinner>
+      <div class="level-text">
+        <div>Level:</div>
+        <div ngClass="level-num {{levelColor}}">{{profile?.fitnessLevel}}</div>
+      </div>
+    </div>
+    <div class="stat-progress">
+      <div class="stat-row row" *ngFor="let stat of profile?.stats">
+        <div class="stat-title">{{stat.name}}</div>
+        <div class="main-row">
+          <span class="icon-wrapper"><i ngClass="mat-icon {{stat.icon}}" title="{{stat.name}}"></i></span>
+          <mat-progress-bar class="main-stat" mode="determinate" [value]="(100 * stat.value)/maxStatValue" title="{{stat.name}} level: {{stat.value}}"></mat-progress-bar>
+          <span class="stat-value">{{stat.value}}</span>
+        </div>
+        <div class="sub-row">
+          <span class="icon-wrapper"><i class="mat-icon"></i></span>
+          <mat-progress-bar class="progress-stat" mode="determinate" [value]="stat.progress" title="Progress to next stat level: {{stat.progress}}"></mat-progress-bar>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+
+</mat-card>

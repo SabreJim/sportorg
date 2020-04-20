@@ -1,11 +1,11 @@
 <div class="page-wrapper">
   <h4>Sign up for a Fencing Program</h4>
 
-  <div *ngIf="currentUser?.isAnonymous">
-    <p class="warning-message">Please login with your Gmail or Facebook account to proceed.</p>
-  </div>
+  <ng-container *ngIf="currentUser?.isAnonymous">
+    <login-required></login-required>
+  </ng-container>
 
-  <mat-expansion-panel [expanded]="seasonExpanded">
+  <mat-expansion-panel [expanded]="seasonExpanded" [disabled]="currentUser?.isAnonymous">
     <mat-expansion-panel-header class="panel-header">
       <h1>Season</h1>
       <div class="description">{{currentSeason?.name}}</div>
@@ -23,7 +23,7 @@
 
   </mat-expansion-panel>
 
-  <mat-expansion-panel [expanded]="programExpanded">
+  <mat-expansion-panel [expanded]="programExpanded" [disabled]="currentUser?.isAnonymous">
     <mat-expansion-panel-header class="panel-header">
       <h1>Program</h1>
       <div class="description">{{currentProgram?.name}}</div>
@@ -41,7 +41,7 @@
     <p [innerHTML]="currentProgram?.description | safePipe: 'html'"></p>
   </mat-expansion-panel>
 
-  <mat-expansion-panel [expanded]="classExpanded">
+  <mat-expansion-panel [expanded]="classExpanded" [disabled]="currentUser?.isAnonymous">
     <mat-expansion-panel-header class="panel-header">
       <h1>Classes</h1>
       <div class="description">{{classDescription}}</div>
@@ -61,7 +61,7 @@
     </div>
   </mat-expansion-panel>
 
-  <mat-expansion-panel [expanded]="memberExpanded">
+  <mat-expansion-panel [expanded]="memberExpanded" [disabled]="currentUser?.isAnonymous">
     <mat-expansion-panel-header class="panel-header">
       <h1>Members/Fencers</h1>
       <div class="description">{{currentMember?.name}}</div>

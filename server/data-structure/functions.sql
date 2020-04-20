@@ -163,3 +163,79 @@ BEGIN
     RETURN message;
 END;
 /
+
+CREATE FUNCTION beaches.upsert_fitness_profile(creating_user_id INTEGER, request_body JSON) RETURNS INTEGER
+    SQL SECURITY INVOKER
+BEGIN
+    DECLARE v_athlete_id INT default null;
+    DECLARE v_first VARCHAR(200) default null;
+    DECLARE v_last VARCHAR(200) default null;
+    DECLARE v_yob INT default null;
+    DECLARE v_gender VARCHAR(1) default null;
+    DECLARE v_member INT default null;
+
+    DECLARE existing_id INT default null;
+
+    -- get the values from the JSON request
+    set v_athlete_id = JSON_EXTRACT(request_body,'$.athleteId');
+    set v_first = JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.firstName'));
+    set v_last = JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.lastName'));
+    set v_yob = JSON_EXTRACT(request_body,'$.yearOfBirth');
+    set v_gender = JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.competeGender'));
+    set v_member = JSON_EXTRACT(request_body,'$.memberId');
+
+    SELECT athlete_id INTO existing_id
+    from beaches.athlete_profiles ap WHERE ap.athlete_id = v_athlete_id;
+
+    IF existing_id IS NOT NULL THEN -- update it
+        UPDATE beaches.athlete_profiles SET
+            first_name = v_first,
+            last_name = v_last,
+            year_of_birth = v_yob,
+            compete_gender = v_gender,
+            member_id = v_member
+        WHERE athlete_id = v_athlete_id;
+    ELSE -- insert it
+        INSERT INTO beaches.athlete_profiles
+            (first_name, last_name, year_of_birth, compete_gender, member_id)
+            VALUES
+            (v_first, v_last, v_yob, v_gender, v_member);
+            SET existing_id = LAST_INSERT_ID();
+    END IF;
+
+    -- grant the user access to this profile
+    DELETE FROM beaches.athlete_users where user_id = creating_user_id AND athlete_id = existing_id;
+    INSERT INTO beaches.athlete_users (user_id, athlete_id) VALUES (creating_user_id, existing_id);
+
+    -- update the athlete types as well
+    DELETE FROM beaches.athlete_profile_types where athlete_id = existing_id;
+    IF JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.isEpee')) <=> 'Y' THEN
+        INSERT INTO beaches.athlete_profile_types (athlete_id, athlete_type_id) VALUES (existing_id, 1);
+    END IF;
+    IF JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.isFoil')) <=> 'Y' THEN
+        INSERT INTO beaches.athlete_profile_types (athlete_id, athlete_type_id) VALUES (existing_id, 2);
+    END IF;
+    IF JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.isSabre')) <=> 'Y' THEN
+        INSERT INTO beaches.athlete_profile_types (athlete_id, athlete_type_id) VALUES (existing_id, 3);
+    END IF;
+
+    RETURN existing_id;
+END;
+/
+
+CREATE FUNCTION beaches.record_exercise(athlete_id INTEGER, exercise_id INTEGER, user_id INTEGER, quantity INTEGER) RETURNS INT
+    SQL SECURITY INVOKER
+
+BEGIN
+    DECLARE existing_id INT default -1;
+
+    -- insert it
+    INSERT INTO beaches.exercise_event
+        (exercise_id, athlete_id, user_logged_id, exercise_quantity, event_date)
+        VALUES
+        (exercise_id, athlete_id, user_id, quantity, CURDATE());
+        SET existing_id = LAST_INSERT_ID();
+
+    RETURN existing_id;
+END;
+/

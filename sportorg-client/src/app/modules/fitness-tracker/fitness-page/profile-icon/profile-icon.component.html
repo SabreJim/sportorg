@@ -1,0 +1,32 @@
+<mat-card ngClass="profile-wrapper {{displayStyle}}">
+  <mat-card-content>
+    <div class="profile-name row">{{profile.firstName}} {{profile.lastName}}</div>
+<!--  Show stats for actual fitness profile  -->
+    <ng-container *ngIf="profile.athleteId > 0" >
+      <div class="mat-button" (click)="useThisProfile()">
+        <div class="stat-row row" *ngFor="let stat of profile.stats">
+          <span class="icon-wrapper"><i ngClass="mat-icon {{stat.icon}}" title="{{stat.name}}"></i></span>
+          <mat-progress-bar mode="determinate" [value]="(100 * stat.value)/maxStatValue" title="{{stat.name}}"></mat-progress-bar>
+          <span class="stat-value">{{stat.value}}</span>
+        </div>
+      </div>
+      <div class="last-updated row">
+        <div class="mat-raised-button mat-primary edit-button"  (click)="createProfile(profile)">
+          <mat-icon>edit</mat-icon>
+        </div>
+        <span>Last workout: {{profile.lastWorkout | date:'mediumDate'}}</span>
+      </div>
+    </ng-container>
+<!--  Show option to import from a member  -->
+    <ng-container *ngIf="profile.generatedFromMember && profile.athleteId < 1">
+      <button mat-raised-button color="primary" (click)="createProfile(profile)">Add me</button>
+    </ng-container>
+<!-- Show option to generate a new profile -->
+    <ng-container *ngIf="profile.createNewPlaceholder && profile.athleteId < 1">
+      <div class="big-plus mat-button">
+        <mat-icon (click)="openNewProfile()">add_circle_outline</mat-icon>
+      </div>
+      <button mat-raised-button color="primary" (click)="openNewProfile()">Create a new profile</button>
+    </ng-container>
+  </mat-card-content>
+</mat-card>

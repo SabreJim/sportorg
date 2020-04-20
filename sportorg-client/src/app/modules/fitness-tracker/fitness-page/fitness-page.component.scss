@@ -1,0 +1,25 @@
+.profile-container {
+  display: flex;
+  border: 1px solid black;
+  background-color: #e2c6b4;
+  border-radius: 20px;
+  flex: 1 1 auto;
+  flex-flow: row wrap;
+  padding: 10px;
+  min-width: 555px;
+  max-width: 1110px;
+  margin: 0 200px;
+  justify-content: flex-start;
+}
+
+.tall-profile .profile-icon {
+  min-height: 400px;
+  max-height: 400px;
+  min-width: 250px;
+  max-width: 250px;
+  margin: 10px;
+  flex: 1 1 auto;
+  display: flex;
+  border: 1px solid red;
+  background-color: white;
+}

@@ -1,0 +1,76 @@
+<div class="modal-wrapper-sm">
+  <div class="form-scroller">
+    <form autocomplete="off" novalidate class="form-wrapper">
+
+      <mat-card class="field-card">
+        <div class="form-header">
+          <h2>Create a fitness profile</h2>
+        </div>
+
+          <div class="form-field">
+            <h3>First Name*</h3>
+            <div ngClass="input-item {{invalid.firstName ? 'invalid' : ''}}">
+              <app-string-input [value]="newProfile.firstName" (stringChanged)="updateName($event, 'firstName', true)"></app-string-input>
+              <mat-error *ngIf="invalid.firstName">First name is required</mat-error>
+            </div>
+          </div>
+          <div class="form-field">
+            <h3>Last Name*</h3>
+            <div ngClass="input-item {{invalid.lastName ? 'invalid' : ''}}">
+              <app-string-input [value]="newProfile.lastName" (stringChanged)="updateName($event, 'lastName', true)"></app-string-input>
+              <mat-error *ngIf="invalid.lastName">Last name is required</mat-error>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <h3>Year of Birth</h3>
+            <div class="input-item">
+              <app-number-input [value]="newProfile.yearOfBirth" (numberChanged)="newProfile.yearOfBirth = $event"></app-number-input>
+            </div>
+          </div>
+
+
+          <div class="form-field">
+            <h3>Gender (for competition)</h3>
+            <div ngClass="input-item select-item {{invalid.competeGender ? 'invalid' : ''}}">
+              <app-select-input
+                [staticLookup]="genderLookup"
+                [selected]="decodeLookup(newProfile.competeGender, genderLookup)"
+                (selectionObject)="selectGender($event)"
+              ></app-select-input>
+              <mat-error *ngIf="invalid.competeGender">Please select a competition category</mat-error>
+            </div>
+          </div>
+
+        <div class="multi-field">
+          <div class="form-field">
+            <h3>Epee</h3>
+            <div class="input-item select-item">
+              <app-boolean-input (valueChanged)="updateWeapon($event, 'isEpee')" [value]="newProfile.isEpee" ></app-boolean-input>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <h3>Foil</h3>
+            <div class="input-item select-item">
+              <app-boolean-input (valueChanged)="updateWeapon($event, 'isFoil')" [value]="newProfile.isFoil" ></app-boolean-input>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <h3>Sabre</h3>
+            <div class="input-item select-item">
+              <app-boolean-input (valueChanged)="updateWeapon($event, 'isSabre')" [value]="newProfile.isSabre" ></app-boolean-input>
+            </div>
+          </div>
+        </div>
+
+      </mat-card>
+    </form>
+  </div>
+  <div class="action-bar">
+    <button mat-raised-button [mat-dialog-close]>Cancel</button>
+    <button mat-raised-button color="primary" (click)="saveForm()">Save</button>
+  </div>
+</div>
+

@@ -14,7 +14,6 @@ import {LookupProxyService} from "../services/lookup-proxy.service";
 export class OrgMenuBarComponent implements OnInit {
   constructor(private authService: FirebaseAuthService, private lookupService: LookupProxyService) { }
   protected userSub: Subscription;
-  public isStuck: false;
   public isAnon = true;
   public currentUser: AppUser;
   public appMenus: MenuItem[] = [];

@@ -58,6 +58,18 @@
 }
 .mobile-only { display: none !important; }
 
+.fitness-icon {
+  flex: 1 1 36px;
+  display: flex;
+  min-height: 36px;
+  max-height: 36px;
+  max-width: 36px;
+  min-width: 36px;
+  align-self: center;
+  padding: 5px;
+  margin-left: 10px;
+  border: 1px solid white;
+}
 @media(max-width: 1000px) {
   .optional-button { display: none !important; }
   .mobile-only { display: block !important; }

@@ -9,7 +9,10 @@ import {LookupProxyService} from "./modules/core/services/lookup-proxy.service";
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy {
-
+  // app names
+  public readonly SPORT_ORG = 'sportOrg';
+  public readonly FITNESS = 'fitnessTracker';
+  public appInUse: string = this.SPORT_ORG;
   ngOnDestroy(): void {
   }
 
@@ -23,6 +26,11 @@ export class AppComponent implements OnInit, OnDestroy {
     appRouter.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
         // if not logged in and required to be, redirect to login
+        if (event.url && event.url.toLowerCase && (event.url.toLowerCase()).includes('fitness-tracker')){
+          this.appInUse = this.FITNESS;
+        } else {
+          this.appInUse = this.SPORT_ORG;
+        }
       }
     });
     this.lookupService.refreshLookups(true); // populate lookups initially
@@ -31,4 +39,6 @@ export class AppComponent implements OnInit, OnDestroy {
   public toggleExpand = (doExpand: boolean) => {
     this.sidebarExpanded = doExpand;
   }
+
+
 }

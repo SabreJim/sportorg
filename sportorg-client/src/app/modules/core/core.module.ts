@@ -29,6 +29,7 @@ import { HtmlEditorModalComponent } from './modals/htm-editor-modal/html-editor-
 import { FilterBarComponent } from './filter-bar/filter-bar.component';
 import { OrgSnackbarComponent } from './org-snackbar/org-snackbar.component';
 import {CodemirrorModule} from "ng2-codemirror";
+import { LoginRequiredComponent } from './login-required/login-required.component';
 
 
 @NgModule({
@@ -55,7 +56,8 @@ import {CodemirrorModule} from "ng2-codemirror";
     MemberModalComponent,
     HtmlEditorModalComponent,
     FilterBarComponent,
-    OrgSnackbarComponent
+    OrgSnackbarComponent,
+    LoginRequiredComponent
   ],
   exports: [
     OrgHeaderComponent,
@@ -68,7 +70,18 @@ import {CodemirrorModule} from "ng2-codemirror";
     ProgramPanelComponent,
     TooltipDirective,
     SelectInputComponent,
-    OrgSnackbarComponent
+    OrgSnackbarComponent,
+    LoginRequiredComponent,
+    SelectInputComponent,
+    DatePickerComponent,
+    StringInputComponent,
+    HtmlInputComponent,
+    NumberInputComponent,
+    TimeInputComponent,
+    BooleanInputComponent,
+    TooltipComponent,
+    TooltipDirective,
+    HtmlEditorModalComponent
   ],
   imports: [
     MaterialModule,
@@ -87,7 +100,8 @@ import {CodemirrorModule} from "ng2-codemirror";
     ConfirmModalComponent,
     MemberModalComponent,
     HtmlEditorModalComponent,
-    TooltipComponent
+    TooltipComponent,
+    StringInputComponent
   ]
 })
 export class CoreModule { }

@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {EventColor} from "calendar-utils";
 import {LookupItem} from "../models/rest-objects";
+import {Subscription} from "rxjs";
 
 @Injectable({providedIn: 'root'})
 export class StaticValuesService {
@@ -10,6 +11,13 @@ export class StaticValuesService {
     StaticValuesService.SessionToken = token;
   };
 
+  public static cleanSubs = (subs: Subscription[]) => {
+    if (subs && subs.length){
+      subs.map((sub: Subscription) => {
+        if (sub && sub.unsubscribe) sub.unsubscribe();
+      });
+    }
+  }
   public static cleanDate = (dateInput: string) => {
     try {
       return (new Date(dateInput)).toISOString().slice(0, 10);
@@ -72,6 +80,15 @@ export class StaticValuesService {
     }
     return `${hours}:${minuteString}AM`;
   }
+
+  public static ICON_MAP: any = {
+    balance: 'fas fa-balance-scale',
+    flexibility: 'fas fa-bacon',
+    power: 'fas fa-dumbbell',
+    endurance: 'fas fa-lungs',
+    footSpeed: 'fas fa-bolt',
+    handSpeed: 'fas fa-hand-sparkles'
+  };
 
   public static MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"

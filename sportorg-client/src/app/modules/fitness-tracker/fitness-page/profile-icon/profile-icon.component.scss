@@ -1,0 +1,70 @@
+mat-card.tall {
+  min-height: 350px;
+  max-height: 350px;
+  min-width: 220px;
+  max-width: 220px;
+  margin: 10px;
+  flex: 1 1 auto;
+  display: flex;
+  border: 2px solid #106d10;
+  background-color: white;
+}
+.mat-card-content {
+  display: flex;
+  flex-flow: column nowrap;
+  width: 100%;
+}
+.row {
+  display: flex;
+  flex: 1 1 auto;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+}
+.profile-name {
+  font-size: 1.4em;
+  font-weight: 600;
+}
+.big-plus {
+  align-self: center;
+  display: flex;
+  flex: 1 1 auto;
+  width: 40px;
+  height: 40px;
+  .mat-icon {
+    font-size: 40px;
+  }
+}
+.stat-row {
+  .mat-progress-bar {
+    height: 16px;
+  }
+  .icon-wrapper {
+    font-size: 20px;
+    text-align: center;
+    margin-right: 8px;
+    margin-top: 5px;
+  }
+  .stat-value {
+    color: black;
+    position: absolute;
+  }
+}
+
+.edit-button {
+  min-width: 36px;
+  max-width: 36px;
+  padding: 0;
+  margin-right: 10px;
+}
+.last-updated {
+  font-size: 0.9em;
+}
+
+// font-awesome fonts that aren't rendering well
+.fa-hand-sparkles:before {
+  content: "\f95d";
+}
+.fa-lungs:before {
+  content: "\f967";
+}

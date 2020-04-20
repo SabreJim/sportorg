@@ -1,0 +1,111 @@
+.widget-card {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex: 1 1 auto;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  .mat-card-content {
+    flex: 1 1 auto;
+    display: flex;
+    width: 100%;
+    flex-flow: column nowrap;
+    align-items: center;
+  }
+}
+.progress-wrapper{
+  .background-spinner {
+    position:absolute;
+  }
+  .level-progress {
+    z-index: 100;
+  }
+  .level-text {
+    margin: 0 auto;
+    font-size: 24px;
+    position: absolute;
+    max-width: 60px;
+    top: 230px;
+    left: calc(50% - 30px);
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    .blue { color: #1565c0; }
+    .green { color: #319c1e; }
+    .gold { color: #e2d321; }
+
+    .level-num {
+      font-size: 60px;
+    }
+  }
+  ::ng-deep .spinner-blue circle{
+    stroke: #1565c0;
+  }
+  ::ng-deep .spinner-green circle{
+    stroke: #319c1e;
+  }
+  ::ng-deep .spinner-gold circle{
+    stroke: #e2d321;
+  }
+  ::ng-deep .background-spinner circle{
+    stroke: #aaaaaa;
+  }
+}
+
+.stat-progress {
+  margin-top: 30px;
+  width: 80%;
+  flex: 1 1 auto;
+  display: flex;
+  flex-flow: column nowrap;
+  .row {
+    display: flex;
+    flex: 1 1 auto;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  .stat-row {
+    .stat-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .main-row, .sub-row {
+      display: flex;
+      flex-flow: row nowrap;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      .mat-progress-bar {
+        height: 24px;
+      }
+    }
+    .main-row .mat-progress-bar { height: 24px; }
+    .sub-row .mat-progress-bar {
+      height: 14px;}
+    ::ng-deep .sub-row .mat-progress-bar-fill::after {
+      background-color: #319c1e;
+    }
+
+    .icon-wrapper {
+      font-size: 20px;
+      text-align: center;
+      margin-right: 8px;
+      margin-top: 5px;
+    }
+    .stat-value {
+      color: black;
+      position: absolute;
+    }
+    // font-awesome fonts that aren't rendering well
+    .fa-hand-sparkles:before {
+      content: "\f95d";
+    }
+    .fa-lungs:before {
+      content: "\f967";
+    }
+  }
+}
+

@@ -36,7 +36,7 @@ export class FitnessPageComponent implements OnInit, OnDestroy {
   }
   public openDialog = (profile: FitnessProfile) => {
     const dialogRef = this.dialog.open(FitnessProfileModalComponent,
-      { width: '600px', data: profile });
+      { maxHeight: '80vh', maxWidth: '800px', data: profile });
     dialogRef.afterClosed().subscribe((result: FitnessProfile) => {
       if (result && result.firstName && result.lastName) {
 

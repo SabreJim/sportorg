@@ -58,7 +58,7 @@ const createRouter = (config) => {
 
     // user endpoints
     router.get('/users', adminRequired, Users.getUsers);
-    router.put('/members', jsonBody, adminRequired, Users.updateUser);
+    router.put('/user', jsonBody, adminRequired, Users.updateUser);
     router.delete('/members/:memberId', adminRequired, Users.deleteUser);
     router.get('/member-users', adminRequired, Users.getMemberUsers);
     router.put('/member-users/member/:memberId/user/:userId/link/:setStatus', adminRequired, Users.linkMembers);

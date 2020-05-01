@@ -22,7 +22,7 @@ export class LoginRequiredDirective implements OnInit, OnDestroy {
       event.preventDefault();
       event.stopImmediatePropagation();
 
-      const dialogRef = this.dialog.open(LoginRequiredComponent, { width: '40vw' })
+      const dialogRef = this.dialog.open(LoginRequiredComponent, { maxHeight: '80vh', maxWidth: '800px' });
       dialogRef.afterClosed().subscribe((result: AppMember) => {
       });
     }

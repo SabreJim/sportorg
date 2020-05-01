@@ -17,13 +17,7 @@
       display: flex;
       margin-left: 50px;
     }
-    .tip-icon {
-      position: absolute;
-      left: 20px;
-      font-size: 30px;
-      height: 40px;
-      background-color: orange;
-    }
+
   }
 
   .mat-card-content {
@@ -46,7 +40,7 @@
     font-size: 24px;
     position: absolute;
     max-width: 60px;
-    top: 230px;
+    top: calc(30% - 80px);
     left: calc(50% - 30px);
     display: flex;
     flex-flow: column nowrap;

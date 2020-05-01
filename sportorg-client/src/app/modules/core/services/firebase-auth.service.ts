@@ -153,7 +153,7 @@ export class FirebaseAuthService extends RestProxyService {
 
   public upsertUser = (userBody: UserData): Observable<boolean> => {
     return new Observable((subscription) => {
-      this.put('users', userBody).subscribe((response: ApiResponse<any>) => {
+      this.put('user', userBody).subscribe((response: ApiResponse<any>) => {
         if (response.hasErrors() || !response.success) {
           SnackbarService.error(`There was an error updating this user: ${response.message}`);
           subscription.next(false);

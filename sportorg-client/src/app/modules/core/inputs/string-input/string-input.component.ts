@@ -11,6 +11,7 @@ export class StringInputComponent implements OnInit {
     this.stringValue = newValue;
   }
   @Input() minWidth: string = '200px';
+  @Input() useTextArea: boolean = false;
   @Output() stringChanged = new EventEmitter<string>();
 
   public clearString = () => {

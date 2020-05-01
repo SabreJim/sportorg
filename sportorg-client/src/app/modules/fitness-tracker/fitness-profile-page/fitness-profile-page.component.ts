@@ -21,13 +21,14 @@ export class FitnessProfilePageComponent implements OnInit, OnDestroy {
   protected userId: string;
 
   public currentProfile: FitnessProfile;
+  public currentUser: AppUser;
   public activeTabId: number = 0;
   constructor(protected activatedRoute: ActivatedRoute, protected router: Router,
               protected fitnessProxy: FitnessProxyService, protected authService: FirebaseAuthService) { }
 
 
   protected refreshProfile = () => {
-    if (this.userId && this.paramAthleteId) {
+    if (this.currentUser.userId && this.paramAthleteId) {
       this.fitnessProxy.getFitnessProfile(this.paramAthleteId);
     }
   }
@@ -49,7 +50,7 @@ export class FitnessProfilePageComponent implements OnInit, OnDestroy {
     this.userSub = this.authService.CurrentUser.subscribe((user: AppUser) => {
       // if not logged in, kick back to landing page
       if (user && !user.isAnonymous) {
-        this.userId = user.userId;
+        this.currentUser = user;
         this.refreshProfile();
       }
     });

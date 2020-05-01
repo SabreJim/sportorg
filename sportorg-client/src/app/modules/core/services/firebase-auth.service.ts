@@ -98,6 +98,7 @@ export class FirebaseAuthService extends RestProxyService {
           // update the token so subsequent requests can be authenticated
           StaticValuesService.setToken(response.data.sessionToken);
           this.currentUser.isAdmin = response.data.isAdmin === 'Y';
+          this.currentUser.isFitnessAdmin = response.data.isFitnessAdmin === 'Y';
           this.currentUser.isActive = response.data.isActive === 'Y';
           this.CurrentUser.next(this.currentUser);
         });

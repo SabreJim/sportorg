@@ -1,7 +1,19 @@
 <mat-form-field>
-  <input matInput type="text" [value]="stringValue"  (input)="updateValue($event)"
-         [style.min-width]="minWidth"/>
-  <button mat-button *ngIf="stringValue" matSuffix mat-icon-button (click)="clearString()">
-    <mat-icon>close</mat-icon>
-  </button>
+  <ng-container *ngIf="!useTextArea ">
+    <input matInput type="text" [value]="stringValue"  (input)="updateValue($event)"
+           [style.min-width]="minWidth"/>
+    <button mat-button *ngIf="stringValue" matSuffix mat-icon-button (click)="clearString()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </ng-container>
+  <ng-container *ngIf="useTextArea === true">
+    <textarea matInput
+              [value]="stringValue"
+              (input)="updateValue($event)"
+              cdkTextareaAutosize
+              #autosize="cdkTextareaAutosize"
+              cdkAutosizeMinRows="1"
+              [style.min-width]="minWidth"
+              cdkAutosizeMaxRows="8"></textarea>
+  </ng-container>
 </mat-form-field>

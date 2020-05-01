@@ -1,9 +1,11 @@
 const MySQL = require('../middleware/mysql-service');
 const { returnResults, returnSingle, returnError } = require('../middleware/response-handler');
-const { fitnessProfileSchema ,exerciseLogSchema, getCleanBody } = require('../middleware/request-sanitizer');
+const { fitnessProfileSchema ,exerciseLogSchema, exerciseSchema, getCleanBody } = require('../middleware/request-sanitizer');
 const getUserId = (req) => (req.session && req.session.user_id) ? req.session.user_id : -1;
 
+const BASE_YEAR = 2019;
 const  LEVEL_MULTIPLIER = 2;
+
 const getMyProfiles = async(req, res, next) => {
     const myUserId = getUserId(req);
     if (myUserId === -1) { // not logged in
@@ -37,7 +39,7 @@ const calculateProgress = (currentLevel, points, levelsGained) => {
     let alreadySpent = (levelsGained * (levelsGained - 1));
     if (alreadySpent < 0) alreadySpent = 0;
     const unusedPoints = points - alreadySpent;
-    return 100 * unusedPoints / (currentLevel * LEVEL_MULTIPLIER);
+    return Math.floor(100 * unusedPoints / (currentLevel * LEVEL_MULTIPLIER));
 }
 const getAthleteProfile = async(req, res, next) => {
     const myUserId = getUserId(req);
@@ -61,22 +63,41 @@ const getAthleteProfile = async(req, res, next) => {
                  return returnSingle(res, profile);
             }
             prog = prog[0];
+            profile.weeklyFitness =  prog.weeklyFitness;
             profile.fitnessLevelProgress = calculateProgress(prog.userFitnessLevel, prog.weeklyFitness, prog.weeklyFitnessLevelsGained);
              profile.stats = profile.stats.map((stat) => {
                  const findProgress = statNames.find((item) => item.jsField === stat.name);
+                 stat.weeklyProgress = prog[`weekly${findProgress.text}`];
                  stat.progress = calculateProgress(prog[`user${findProgress.text}Level`],
                      prog[`weekly${findProgress.text}`], prog[`weekly${findProgress.text}LevelsGained`]);
                  return stat;
              });
             return returnSingle(res, profile);
         } catch (err) {
-            console.log('error getting progress', err);
             return returnSingle(res, profile);
         }
     } else {
         return returnSingle(res, {});
     }
 };
+
+const resetProfile = async(req, res, next) => {
+    const myUserId = getUserId(req);
+    if (myUserId === -1) { // not logged in
+        return returnSingle(res, {});
+    }
+    if (!req.session && req.session.isFitnessAdmin !== 'Y') { // not a fitness admin
+        return returnSingle(res, {});
+    }
+    const resetAthlete = req.params.athleteId;
+    let statement = 'SELECT beaches.reset_fitness_profile( ? ) as affectedRows';
+    const statementResult = await MySQL.runCommand(statement, [resetAthlete ]);
+    if (statementResult && statementResult.affectedRows) {
+        returnSingle(res, {affectedRows: statementResult.affectedRows});
+    } else {
+        returnError(res, 'An error occurred when resetting this profile');
+    }
+}
 
 const createProfile = async(req, res, next) => {
     const myUserId = getUserId(req);
@@ -109,8 +130,68 @@ const getExercises = async(req, res, next) => {
     }
 };
 
+const makeCompareString = (statName) => {
+    const compatibleName = (statName === 'fitness_level') ? 'fitness' : statName;
+    const jsName = (compatibleName === 'foot_speed') ? 'footSpeed' :
+        (compatibleName === 'hand_speed') ? 'handSpeed' : compatibleName;
+    return `JSON_OBJECT(
+        'name', '${jsName}',
+        'averageLevel', AVG(ex.user_${compatibleName}_level),
+        'maxLevel', MAX(ex.user_${compatibleName}_level),
+        'averageGains', AVG(ex.weekly_${compatibleName}),
+        'maxGains', MAX(ex.weekly_${compatibleName})
+        ),`;
+}
+
 const compareFitness = async(req, res, next) => {
-    returnResults(res, []);
+    const myUserId = getUserId(req);
+    const requestAthlete = (req.params.athleteId) ? req.params.athleteId : -1;
+    const ageCategory = req.query.ageCategory;
+    const athleteTypes = req.query.athleteTypes;
+    if (myUserId === -1 || requestAthlete === -1) { // not logged in
+        return returnSingle(res, {});
+    }
+
+    const getFitnessProfile = `SELECT * FROM beaches.athlete_profiles where athlete_id = ${requestAthlete}`;
+    let profile = await MySQL.runQuery(getFitnessProfile);
+    if (profile && profile.length > 0) {
+        // get the compared values for the chosen comparison
+        profile = profile[0];
+        let compareQuery = 'SELECT JSON_ARRAY(';
+        statNames.map((stat) => {
+            compareQuery = compareQuery + makeCompareString(stat.field);
+        });
+        compareQuery = compareQuery.slice(0, compareQuery.length -1); // trim the comma
+        compareQuery = compareQuery + `) as 'compareStats',
+                        COUNT(distinct ap.athlete_id) as 'participants'
+                        FROM beaches.v_exercise_delta ex
+                        INNER JOIN beaches.athlete_profiles ap ON ap.athlete_id = ex.athlete_id`;
+
+        // restrict to athlete types
+        if (athleteTypes && athleteTypes.length) {
+            compareQuery = compareQuery + ` INNER JOIN beaches.athlete_profile_types apt 
+            ON apt.athlete_id = ex.athlete_id AND apt.athlete_type_id IN ( ${athleteTypes} ) `;
+        }
+
+        // restrict to the requested age category
+        if (ageCategory && ageCategory.length) {
+            // restrict to a set of age categories
+            const AGE_CATEGORIES = await MySQL.runQuery('SELECT * FROM beaches.age_categories ORDER BY age_id');
+            const foundAge = AGE_CATEGORIES.find((age) => age.ageId == ageCategory);
+            if (foundAge) {
+                compareQuery = compareQuery + ` WHERE (${BASE_YEAR} - ap.year_of_birth) >= ${foundAge.min} 
+                                            AND (${BASE_YEAR} - ap.year_of_birth) <= ${foundAge.max} `;
+            }
+        }
+        const compareResponse = await MySQL.runQuery(compareQuery);
+        if (compareResponse && compareResponse.length) {
+            res.status = 200;
+            res.json({data: `{"compareStats": ${compareResponse[0].compareStats}, "participants": ${compareResponse[0].participants} }` });
+            return;
+        }
+    }
+    // something went wrong
+    returnSingle(res, {});
 };
 
 // helper function to calculate any new levels that have been earned
@@ -119,7 +200,7 @@ const updateLevels = (points, levelsGained, level) => {
     let nextTarget = currentLevel * LEVEL_MULTIPLIER;
     let newLevels = 0;
     let alreadySpent = (levelsGained * (levelsGained - 1));
-    if (alreadySpent < 0) alreadySpent = 0;
+    if (alreadySpent <= 0) alreadySpent = 0;
     let pointsRemaining = points - alreadySpent;
     while (pointsRemaining >= nextTarget) {
         newLevels = newLevels + 1;
@@ -195,7 +276,31 @@ const recordExercise = async(req, res, next) => {
 };
 
 const upsertExercise = async(req, res, next) => {
-    returnSingle(res, {});
+    const myUserId = getUserId(req);
+    if (myUserId === -1) { // not logged in
+        return returnSingle(res, {message: 'not logged int'});
+    }
+    if (req.session.isFitnessAdmin !== 'Y') {
+        return returnSingle(res, {message: 'not permitted to edit exercises'});
+    }
+
+    const cleanExercise = getCleanBody(req.body, exerciseSchema);
+    if (cleanExercise.isValid) {
+        let statement;
+        if (cleanExercise.isEdit){
+            statement = `UPDATE beaches.exercises SET ${cleanExercise.setters.join(', ')} WHERE exercise_id = ${cleanExercise.cleanBody.exerciseId}`;
+        } else {
+            statement = `INSERT INTO beaches.exercises ${cleanExercise.insertValues}`;
+        }
+        const statementResult = await MySQL.runCommand(statement);
+        if (statementResult && statementResult.affectedRows) {
+            return returnSingle(res, {affectedRows: statementResult.affectedRows});
+        } else {
+            return returnError(res, 'An error occurred when updating this record');
+        }
+    } else {
+        returnError(res,'Class could not be updated');
+    }
 };
 const deleteExerciseEvent = async (req, res) => {
     // const scheduleId = req.params.scheduleId;
@@ -215,6 +320,7 @@ const deleteExerciseEvent = async (req, res) => {
 module.exports = {
     getMyProfiles,
     getAthleteProfile,
+    resetProfile,
     createProfile,
     getLogs,
     recordExercise,

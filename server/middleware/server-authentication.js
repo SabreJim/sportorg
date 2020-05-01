@@ -65,6 +65,7 @@ const sessionQuery = `SELECT
             s.session_token as 'sessionToken',
             u.user_id,
             u.is_admin as 'isAdmin',
+            u.is_fitness_admin as 'isFitnessAdmin',
             m.member_id as 'memberId',
             m.is_active as 'isActive',
             u.email,
@@ -83,6 +84,7 @@ const getSession = async(userId) => {
             s.session_token as 'sessionToken',
             u.user_id,
             u.is_admin as 'isAdmin',
+            u.is_fitness_admin as 'isFitnessAdmin',
             m.member_id as 'memberId',
             m.is_active as 'isActive',
             u.email,
@@ -135,6 +137,7 @@ const verifyToken = async(req, res, next) => {
                 existingSession = await getSession(userResponse.userId);
             }
             appSession.isAdmin = existingSession.isAdmin;
+            appSession.isFitnessAdmin = existingSession.isFitnessAdmin;
             appSession.isActive = existingSession.isActive;
             appSession.memberId = existingSession.memberId;
             appSession.sessionToken = crypto.AES.encrypt(orgToken, application.secretKey).toString();

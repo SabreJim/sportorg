@@ -1,1 +1,63 @@
-<p>fitness-compare works!</p>
+<mat-card class="page-wrapper widget-card">
+  <mat-card-title>
+    <h1>{{profile?.firstName}} {{profile?.lastName}}</h1>
+  </mat-card-title>
+  <mat-card-content>
+    <div class="compare-selector">
+      <div class="athlete-type-select select-container">
+        <label >Compare by Weapon:</label>
+        <mat-checkbox class="multi-select" *ngFor="let athleteType of typeOptions" (change)="selectAthleteType($event, athleteType)">
+          {{athleteType.name}}
+        </mat-checkbox>
+      </div>
+      <div class="select-container age-categories">
+        <label >Compare by Age Category:</label>
+        <mat-radio-group class="age-radio-group" [(ngModel)]="ageCategory" (change)="runCompare()">
+          <mat-radio-button *ngFor="let age of ageOptions" [value]="age.id">
+            {{age.name}}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
+    <div class="compare-table">
+      <div class="summary-row" >
+        <h3>Participants: {{numParticipants}}</h3>
+      </div>
+        <div class="stat-row row" *ngFor="let stat of compareStats">
+          <div class="stat-title">{{stat.name}}</div>
+          <div class="my-row">
+            <span class="icon-wrapper"><i ngClass="mat-icon {{stat.icon}}" title="{{stat.name}}"></i></span>
+            <mat-progress-bar class="main-stat" mode="determinate" [value]="(100* stat.myLevel) / stat.maxLevel"></mat-progress-bar>
+            <span class="stat-value">My level:{{stat.myLevel}}</span>
+          </div>
+          <div class="sub-row">
+            <span class="icon-wrapper"><i class="mat-icon"></i></span>
+            <mat-progress-bar class="progress-stat" mode="determinate" [value]="(stat.maxLevel > 0 )? 100: 0"></mat-progress-bar>
+            <span class="stat-value">Highest level: {{stat.maxLevel}}</span>
+          </div>
+          <div class="sub-row">
+            <span class="icon-wrapper"><i class="mat-icon"></i></span>
+            <mat-progress-bar class="progress-stat" mode="determinate" [value]="(100 * stat.averageLevel) / stat.maxLevel"></mat-progress-bar>
+            <span class="stat-value">Average level: {{stat.averageLevel}}</span>
+          </div>
+          <div class="my-row">
+            <span class="icon-wrapper"><i ngClass="mat-icon {{stat.icon}}" title="{{stat.name}}"></i></span>
+            <mat-progress-bar class="main-stat" mode="determinate" [value]="(100* stat.myGains) / stat.maxGains"></mat-progress-bar>
+            <span class="stat-value">My progress this week:{{stat.myGains}}</span>
+          </div>
+          <div class="sub-row">
+            <span class="icon-wrapper"><i class="mat-icon"></i></span>
+            <mat-progress-bar class="progress-stat" mode="determinate" [value]="(stat.maxGains > 0 )? 100: 0"></mat-progress-bar>
+            <span class="stat-value">Most this week: {{stat.maxGains}}</span>
+          </div>
+          <div class="sub-row">
+            <span class="icon-wrapper"><i class="mat-icon"></i></span>
+            <mat-progress-bar class="progress-stat" mode="determinate" [value]="(100 * stat.averageGains) / stat.maxGains"></mat-progress-bar>
+            <span class="stat-value">Average this week: {{stat.averageGains}}</span>
+          </div>
+        </div>
+
+    </div>
+  </mat-card-content>
+
+</mat-card>

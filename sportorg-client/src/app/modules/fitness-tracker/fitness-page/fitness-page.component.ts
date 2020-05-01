@@ -1,12 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FitnessProxyService} from "../../core/services/fitness-proxy.service";
 import {Subscription} from "rxjs";
-import {FitnessProfile, FitnessProfileStat} from "../../core/models/fitness-objects";
+import {FitnessProfile} from "../../core/models/fitness-objects";
 import {AppUser} from "../../core/models/authentication";
 import {FirebaseAuthService} from "../../core/services/firebase-auth.service";
-import {MemberModalComponent} from "../../core/modals/member-modal/member-modal.component";
 import {AppMember} from "../../core/models/data-objects";
-import {StaticValuesService} from "../../core/services/static-values.service";
 import {MatDialog} from "@angular/material";
 import {FitnessProfileModalComponent} from "./fitness-profile-modal/fitness-profile-modal.component";
 
@@ -27,8 +25,10 @@ export class FitnessPageComponent implements OnInit, OnDestroy {
 
   public profileStyle: string = 'tall-profile';
   public myProfiles: FitnessProfile[] = [];
+  public currentUser: AppUser;
 
   public newProfileRequested = (isNew: boolean) => {
+    if (!this.currentUser || this.currentUser.isAnonymous) return; // do nothing as a login prompt will come up
     if (isNew) {
       // open a modal to create a new profile
       this.openDialog(null);
@@ -67,7 +67,8 @@ export class FitnessPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.userSub = this.authService.CurrentUser.subscribe((user: AppUser) => {
-      // TODO: if not logged in, put up modal
+      // check if there is a session already
+      this.currentUser = user;
 
       if (!this.alreadyCheckedProfiles) {
         this.getProfiles();

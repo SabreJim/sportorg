@@ -6,6 +6,26 @@
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
+
+  .mat-card-title {
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    h1 { display: flex }
+    .reset-button{
+      display: flex;
+      margin-left: 50px;
+    }
+    .tip-icon {
+      position: absolute;
+      left: 20px;
+      font-size: 30px;
+      height: 40px;
+      background-color: orange;
+    }
+  }
+
   .mat-card-content {
     flex: 1 1 auto;
     display: flex;

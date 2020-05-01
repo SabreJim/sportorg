@@ -9,7 +9,12 @@ import {
 import {FitnessProxyService} from "../../../core/services/fitness-proxy.service";
 import {StaticValuesService} from "../../../core/services/static-values.service";
 import {Subscription} from "rxjs";
-import {log} from "util";
+import {SnackbarService} from "../../../core/services/snackbar.service";
+import {ConfirmModalComponent} from "../../../core/modals/confirm-modal/confirm-modal.component";
+import {MatDialog} from "@angular/material";
+import {AppUser} from "../../../core/models/authentication";
+import {FitnessProfileModalComponent} from "../../fitness-page/fitness-profile-modal/fitness-profile-modal.component";
+import {ExerciseEditModalComponent} from "../exercise-edit-modal/exercise-edit-modal.component";
 
 @Component({
   selector: 'app-exercises-widget',
@@ -26,7 +31,7 @@ export class ExercisesWidgetComponent implements OnInit, OnDestroy {
     }
     this._profile = newProfile;
   }
-
+  @Input() appUser: AppUser;
   @Input() set isActive(active: number) {
     if (active === 1) {
       if (!this.exerciseSub || !this.exerciseSub.unsubscribe) {
@@ -47,40 +52,41 @@ export class ExercisesWidgetComponent implements OnInit, OnDestroy {
   }
   private _profile: FitnessProfile;
   protected exerciseSub: Subscription;
-  protected userEvents: FitnessLogItem[] = [];
 
   public exercises: Exercise[] = [];
 
-  public updateQuantity = (q: number, exercise: Exercise) => {
-    exercise.quantityDone = q;
+  public logExercise = (quantity: number, exerciseId: number, uiExercise: Exercise) => {
+    const logItem: FitnessLogItem = { athleteId: this.profile.athleteId, exerciseId: exerciseId, exerciseQuantity: quantity};
 
-    const foundLog = this.userEvents.find((item: FitnessLogItem) => item.exerciseId === exercise.exerciseId);
-    if (!foundLog) {
-       this.userEvents.push({ athleteId: this.profile.athleteId, exerciseId: exercise.exerciseId, exerciseQuantity: q});
-    } else {
-      this.userEvents = this.userEvents.map((item: FitnessLogItem) => {
-        if (item.exerciseId === exercise.exerciseId) {
-          item.exerciseQuantity = q;
+    // confirm deletion
+      const dialogRef = this.dialog.open(ConfirmModalComponent,
+        { width: '350px', height: '200px', data: { title: `Log ${quantity} sets?`,
+            message: `Yes, I completed ${quantity} sets of ${uiExercise.measurementUnitQuantity} ${uiExercise.measurementUnit}`}});
+      dialogRef.afterClosed().subscribe((result: boolean) => {
+        if (result === true) {
+          // send the request to log exercises
+          this.fitnessProxy.recordExerciseEvent(logItem).subscribe((logResult: ExerciseLogResults) => {
+            if (logResult && logResult.levelUps && logResult.levelUps.length) {
+              SnackbarService.notify(logResult.levelUps.join(' '));
+            }
+          });
         }
-        return item;
       });
-    }
-  }
-  public logExercise = (exerciseId: number, uiExercise: Exercise) => {
-    uiExercise.quantityDone = 0;
-    const foundLog = this.userEvents.find((item: FitnessLogItem) => item.exerciseId === exerciseId);
-    this.fitnessProxy.recordExerciseEvent(foundLog).subscribe((logResult: ExerciseLogResults) => {
-      this.userEvents = this.userEvents.map((item: FitnessLogItem) => {
-        if (item.exerciseId === exerciseId) {
-          item.exerciseQuantity = 0;
-          uiExercise.quantityDone = 0;
-        }
-        return item;
-      });
-    })
   }
 
-  constructor(protected fitnessProxy: FitnessProxyService) { }
+  public editExercise = (exercise: Exercise) => {
+      const dialogRef = this.dialog.open(ExerciseEditModalComponent,
+        { width: '600px', data: exercise });
+      dialogRef.afterClosed().subscribe((result: Exercise) => {
+        if (result && result.exerciseId) {
+          this.fitnessProxy.upsertExercise(result).subscribe((saveResult: boolean) => {
+            this.fitnessProxy.getExercises();// refresh
+          });
+        }
+      });
+  }
+
+  constructor(protected fitnessProxy: FitnessProxyService, protected dialog: MatDialog) { }
 
   ngOnInit() {
 

@@ -5,6 +5,7 @@ CREATE TABLE beaches.users (
     twitter_id VARCHAR(50),
     email VARCHAR(100) NOT NULL,
     is_admin CHAR(1) NOT NULL DEFAULT 'N',
+    is_fitness_admin CHAR(1) NOT NULL DEFAULT 'N',
     PRIMARY KEY(user_id)
 );
 
@@ -273,7 +274,7 @@ INSERT INTO beaches.athlete_types (type_name)
 
 CREATE TABLE beaches.athlete_profiles (
     athlete_id MEDIUMINT NOT NULL auto_increment,
-    member_id MEDIUM NULL REFERENCES beaches.members(member_id),
+    member_id MEDIUMINT NULL REFERENCES beaches.members(member_id),
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     year_of_birth INT NOT NULL,
@@ -321,3 +322,23 @@ INSERT INTO beaches.exercises
 (name, description, measurement_unit, measurement_unit_quantity, icon_type, icon_name,balance_value, flexibility_value, power_value, endurance_value, foot_speed_value, hand_speed_value)
 VALUES
 ('Up, up, down, down', '', 'seconds', 60, 'fa', 'shoe-prints',0, 0, 0, 0, 1, 0);
+
+
+CREATE TABLE beaches.age_categories (
+    age_id MEDIUMINT NOT NULL auto_increment,
+    name VARCHAR(30) NOT NULL,
+    label VARCHAR(50) NOT NULL,
+    min INT NOT NULL,
+    max INT NOT NULL,
+    PRIMARY KEY(age_id)
+    );
+INSERT INTO beaches.age_categories (name, label, min, max)
+VALUES
+('under11', 'Under 11', 6, 10),
+('under13', 'Under 13', 11, 12),
+('under15', 'Under 15', 13, 14),
+('under17', 'Cadet', 15, 16),
+('under20', 'Junior', 17, 19),
+('open', 'Open', 20, 100),
+('veteran40', 'Veteran(40)', 40, 100),
+('all', 'All', 1, 100);

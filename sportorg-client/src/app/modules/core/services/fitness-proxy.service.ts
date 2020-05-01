@@ -4,7 +4,7 @@ import {
   FitnessLogItem,
   Exercise,
   ExerciseLogResults,
-  FitnessProfileStat
+  FitnessProfileStat, FitnessCompareStat, FitnessCompareResponse
 } from "../models/fitness-objects";
 import {Observable, Subject} from "rxjs";
 import { ApiResponse } from "../models/rest-objects";
@@ -23,6 +23,8 @@ export class FitnessProxyService extends RestProxyService {
 
   public FitnessProfile: Subject<FitnessProfile> = new Subject<FitnessProfile>();
   public Exercises: Subject<Exercise[]> = new Subject<Exercise[]>();
+  public ProfileCompare: Subject<FitnessCompareResponse> = new Subject<FitnessCompareResponse>();
+
   protected exerciseCache: Exercise[] = [];
 
   // get any profiles that this user can see
@@ -107,7 +109,7 @@ export class FitnessProxyService extends RestProxyService {
       this.put('exercise-event', newEvent).subscribe((response: ApiResponse<ExerciseLogResults>) => {
         if (response.hasErrors() || !response.success) {
           SnackbarService.error(`We couldn't record that exercise: ${response.message}`);
-          subscription.next({athleteId: -1, changes: []});
+          subscription.next({athleteId: -1, levelUps: []});
         } else {
           subscription.next(response.data);
         }
@@ -121,9 +123,22 @@ export class FitnessProxyService extends RestProxyService {
       this.delete(`exercise-event/${eventId}`).subscribe((response: ApiResponse<ExerciseLogResults>) => {
         if (response.hasErrors() || !response.success) {
           SnackbarService.error(`Exercise was not deleted successfully: ${response.message}`);
-          subscription.next({athleteId: -1, changes: []});
+          subscription.next({athleteId: -1, levelUps: []});
         } else {
           subscription.next(response.data);
+        }
+      }, (error: any) => {});
+    });
+  }
+
+  public resetProfile = (athleteId: number): Observable<boolean> => {
+    return new Observable((subscription) => {
+      this.put(`fitness-profile/reset/${athleteId}`, null).subscribe((response: ApiResponse<boolean>) => {
+        if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`Athlete could not be reset: ${response.message}`);
+          subscription.next(false);
+        } else {
+          subscription.next(true);
         }
       }, (error: any) => {});
     });
@@ -147,7 +162,33 @@ export class FitnessProxyService extends RestProxyService {
   }
 
   // compareMyFitness
+  public runCompare = (athleteId: number, athleteTypes: number[], ageCategory: number) => {
+    this.get(`compare-fitness/${athleteId}`, {athleteTypes: athleteTypes, ageCategory: ageCategory})
+      .subscribe((response: ApiResponse<string>) => {
+      if (response.hasErrors()) {
+        SnackbarService.error(`Comparisons could not be retrieved at this time`);
+        this.ProfileCompare.next({participants: 0, stats: []});
+      } else {
+        try {
+          let parsed = (JSON.parse(response.data));
+          this.ProfileCompare.next({stats: parsed.compareStats, participants: parsed.participants});
+        } catch (parseErr) {
+          this.ProfileCompare.next({participants: 0, stats: []});
+        }
+      }
+    }, (error: any) => {});
+  }
 
-  // admin features
-  // upsert exercise
+  public upsertExercise = (exercise: Exercise): Observable<boolean> => {
+    return new Observable((subscription) => {
+      this.put(`exercise`, exercise).subscribe((response: ApiResponse<boolean>) => {
+        if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`Exercise could not be updated: ${response.message}`);
+          subscription.next(false);
+        } else {
+          subscription.next(true);
+        }
+      }, (error: any) => {});
+    });
+  }
 }

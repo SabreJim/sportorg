@@ -225,7 +225,6 @@ END;
 
 CREATE FUNCTION beaches.record_exercise(athlete_id INTEGER, exercise_id INTEGER, user_id INTEGER, quantity INTEGER) RETURNS INT
     SQL SECURITY INVOKER
-
 BEGIN
     DECLARE existing_id INT default -1;
 
@@ -237,5 +236,30 @@ BEGIN
         SET existing_id = LAST_INSERT_ID();
 
     RETURN existing_id;
+END;
+/
+
+CREATE FUNCTION beaches.reset_fitness_profile(p_athlete_id INTEGER) RETURNS INT
+    SQL SECURITY INVOKER
+BEGIN
+    DECLARE rows_updated INT default 0;
+
+    -- zero out any exercises
+    UPDATE beaches.exercise_event
+        SET exercise_quantity = 0 WHERE athlete_id = p_athlete_id;
+    SET rows_updated = rows_updated + ROW_COUNT();
+    UPDATE beaches.athlete_profiles SET
+        fitness_level = 1,
+        balance = 1,
+        flexibility = 1,
+        power = 1,
+        endurance = 1,
+        foot_speed = 1,
+        hand_speed = 1
+        WHERE athlete_id = p_athlete_id;
+    SET rows_updated = rows_updated + ROW_COUNT();
+    DELETE FROM beaches.level_up_logs where athlete_id = p_athlete_id;
+
+    RETURN rows_updated;
 END;
 /

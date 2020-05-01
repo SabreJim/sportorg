@@ -1,0 +1,98 @@
+<div class="modal-wrapper-sm">
+  <div class="form-scroller">
+    <form autocomplete="off" novalidate class="form-wrapper">
+
+      <mat-card class="field-card">
+        <div class="form-header">
+          <h2>Edit an Exercise</h2>
+        </div>
+
+        <div class="form-field">
+          <h3>Exercise name*</h3>
+          <div ngClass="input-item {{invalid?.name ? 'invalid' : ''}}">
+            <app-string-input [value]="updatedExercise.name" (stringChanged)="updateString($event, 'name')"></app-string-input>
+            <mat-error *ngIf="invalid.name">Exercise name is required</mat-error>
+          </div>
+        </div>
+        <div class="form-field">
+          <h3>Description*</h3>
+          <div ngClass="input-item input-grows {{invalid?.description ? 'invalid' : ''}}">
+            <app-string-input [value]="updatedExercise.description" [useTextArea]="true" (stringChanged)="updateString($event, 'description')"></app-string-input>
+            <mat-error *ngIf="invalid.description">Description is required</mat-error>
+          </div>
+        </div>
+        <div class="form-field">
+          <h3>Icon type ('fa' or 'mat-icon')</h3>
+          <div ngClass="input-item {{invalid?.iconType ? 'invalid' : ''}}">
+            <app-string-input [value]="updatedExercise.iconType" (stringChanged)="updateString($event, 'iconType')"></app-string-input>
+            <mat-error *ngIf="invalid.iconType">Icon type is required</mat-error>
+          </div>
+        </div>
+        <div class="form-field">
+          <h3>Icon Name</h3>
+          <div ngClass="input-item {{invalid?.iconName ? 'invalid' : ''}}">
+            <app-string-input [value]="updatedExercise.iconName" (stringChanged)="updateString($event, 'iconName')"></app-string-input>
+            <mat-error *ngIf="invalid.iconName">Icon name is required</mat-error>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <h3>Measurement units ('reps', 'seconds', 'minutes')</h3>
+          <div ngClass="input-item {{invalid?.measurementUnit ? 'invalid' : ''}}">
+            <app-string-input [value]="updatedExercise.measurementUnit" (stringChanged)="updateString($event, 'measurementUnit')"></app-string-input>
+            <mat-error *ngIf="invalid.measurementUnit">Measurement unit is required</mat-error>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <h3>Measurement unit quantity (how many per set)</h3>
+          <div class="input-item">
+            <app-number-input [value]="updatedExercise.measurementUnitQuantity" (numberChanged)="updatedExercise.measurementUnitQuantity = $event"></app-number-input>
+          </div>
+        </div>
+        <div class="form-field">
+          <h3>Balance value</h3>
+          <div class="input-item">
+            <app-number-input [value]="updatedExercise.balanceValue" (numberChanged)="updatedExercise.balanceValue = $event"></app-number-input>
+          </div>
+        </div>
+        <div class="form-field">
+          <h3>Flexibility value</h3>
+          <div class="input-item">
+            <app-number-input [value]="updatedExercise.flexibilityValue" (numberChanged)="updatedExercise.flexibilityValue = $event"></app-number-input>
+          </div>
+        </div>
+        <div class="form-field">
+          <h3>Power value</h3>
+          <div class="input-item">
+            <app-number-input [value]="updatedExercise.powerValue" (numberChanged)="updatedExercise.powerValue = $event"></app-number-input>
+          </div>
+        </div>
+        <div class="form-field">
+          <h3>Endurance value</h3>
+          <div class="input-item">
+            <app-number-input [value]="updatedExercise.enduranceValue" (numberChanged)="updatedExercise.enduranceValue = $event"></app-number-input>
+          </div>
+        </div>
+        <div class="form-field">
+          <h3>Foot Speed value</h3>
+          <div class="input-item">
+            <app-number-input [value]="updatedExercise.footSpeedValue" (numberChanged)="updatedExercise.footSpeedValue = $event"></app-number-input>
+          </div>
+        </div>
+        <div class="form-field">
+          <h3>Hand Speed value</h3>
+          <div class="input-item">
+            <app-number-input [value]="updatedExercise.handSpeedValue" (numberChanged)="updatedExercise.handSpeedValue = $event"></app-number-input>
+          </div>
+        </div>
+
+      </mat-card>
+    </form>
+  </div>
+  <div class="action-bar">
+    <button mat-raised-button [mat-dialog-close]>Cancel</button>
+    <button mat-raised-button color="primary" (click)="saveForm()">Save</button>
+  </div>
+</div>
+

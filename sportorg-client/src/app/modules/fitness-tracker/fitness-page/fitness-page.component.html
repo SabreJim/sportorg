@@ -5,7 +5,7 @@
 
   <div ngClass="profile-container {{profileStyle}}">
     <ng-container *ngFor="let profile of myProfiles">
-      <app-profile-icon
+      <app-profile-icon appLoginRequired [forceLogin]="currentUser?.isAnonymous"
         [displayStyle]="'tall'"
         [profile]="profile"
         (sendCreate)="openDialog($event)"

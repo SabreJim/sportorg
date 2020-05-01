@@ -5,6 +5,7 @@ export interface ConfirmationData {
   title: string;
   message: string;
   confirmText?: string;
+  showCancel?: boolean;
 }
 
 @Component({

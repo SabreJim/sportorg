@@ -239,6 +239,28 @@ const exerciseLogSchema = {
         ]
 };
 
+const exerciseSchema = {
+    primaryKey: 'exerciseId',
+    fields: [
+        {fieldName: 'exerciseId', type: 'int', allowNull: false },
+        {fieldName: 'name', type: 'string', allowNull: false },
+        {fieldName: 'description', type: 'string', allowNull: false},
+        {fieldName: 'imageId', type: 'string', allowNull: true},
+        {fieldName: 'measurementUnit', type: 'string', allowNull: false },
+        {fieldName: 'measurementUnitQuantity', type: 'int', allowNull: false },
+        {fieldName: 'iconType', type: 'string', allowNull: false },
+        {fieldName: 'iconName', type: 'string', allowNull: false },
+        {fieldName: 'balanceValue', type: 'int', allowNull: false },
+        {fieldName: 'flexibilityValue', type: 'int', allowNull: false },
+        {fieldName: 'powerValue', type: 'int', allowNull: false },
+        {fieldName: 'enduranceValue', type: 'int', allowNull: false },
+        {fieldName: 'footSpeedValue', type: 'int', allowNull: false },
+        {fieldName: 'handSpeedValue', type: 'int', allowNull: false },
+
+
+    ]
+}
+
 module.exports = {
     getCleanBody,
     classScheduleSchema,
@@ -246,5 +268,6 @@ module.exports = {
     memberSchema,
     enrollmentSchema,
     fitnessProfileSchema,
-    exerciseLogSchema
+    exerciseLogSchema,
+    exerciseSchema
 };

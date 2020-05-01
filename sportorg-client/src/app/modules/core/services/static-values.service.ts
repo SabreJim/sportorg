@@ -81,6 +81,7 @@ export class StaticValuesService {
     return `${hours}:${minuteString}AM`;
   }
 
+  public static COMPETITION_YEAR = 2019;
   public static ICON_MAP: any = {
     balance: 'fas fa-balance-scale',
     flexibility: 'fas fa-bacon',

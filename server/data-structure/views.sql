@@ -57,6 +57,8 @@ UNION
 SELECT  r.region_id as 'id', r.region_name as 'name', r.region_code as 'more_info', 'regions' as 'lookup' FROM beaches.regions r
 UNION
 SELECT  at.athlete_type_id as 'id', at.type_name as 'name', '' as 'more_info', 'athleteTypes' as 'lookup' FROM beaches.athlete_types at
+UNION
+SELECT age.age_id as 'id', age.label as 'name', JSON_OBJECT('min', age.min, 'max', age.max) as 'more_info', 'ageCategories' as 'lookup' FROM beaches.age_categories age
 ;
 
 CREATE VIEW v_enrollments AS
@@ -208,8 +210,8 @@ SELECT distinct
     log_agg.hand_speed_gains  weekly_hand_speed_levels_gained,
     el.user_hand_speed_level
 
-FROM beaches.v_exercise_logs el,
-beaches.v_level_delta log_agg
+FROM beaches.v_exercise_logs el
+    LEFT JOIN beaches.v_level_delta log_agg ON el.athlete_id = log_agg.athlete_id
 WHERE DATE(el.event_date) > (NOW() - INTERVAL 7 DAY)
 GROUP BY el.athlete_id, log_agg.fitness_gains, log_agg.balance_gains, log_agg.flexibility_gains, log_agg.power_gains,
 log_agg.endurance_gains, log_agg.foot_speed_gains, log_agg.hand_speed_gains

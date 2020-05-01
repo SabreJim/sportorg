@@ -20,6 +20,8 @@ export class LookupProxyService extends RestProxyService {
   protected programCache: LookupItem[] = [];
   protected seasonCache: LookupItem[] = [];
   protected regionCache: LookupItem[] = [];
+  protected ageCategoryCache: LookupItem[] = [];
+  protected athleteTypeCache: LookupItem[] = [];
 
 
   public Subjects: Record<string, Subject<LookupItem[]>> = {
@@ -27,7 +29,9 @@ export class LookupProxyService extends RestProxyService {
     locations: new Subject<LookupItem[]>(),
     programs: new Subject<LookupItem[]>(),
     seasons: new Subject<LookupItem[]>(),
-    regions: new Subject<LookupItem[]>()
+    regions: new Subject<LookupItem[]>(),
+    ageCategories: new Subject<LookupItem[]>(),
+    athleteTypes: new Subject<LookupItem[]>(),
   };
 
   protected pushLookups = () => {
@@ -36,11 +40,18 @@ export class LookupProxyService extends RestProxyService {
     this.Subjects.programs.next(this.programCache);
     this.Subjects.seasons.next(this.seasonCache);
     this.Subjects.regions.next(this.regionCache);
+    this.Subjects.ageCategories.next(this.ageCategoryCache);
+    this.Subjects.athleteTypes.next(this.athleteTypeCache);
   };
   public refreshLookups = (repull: boolean = false) => {
-    const extractLookup = (source: LookupItem[], name: string) => {
+    const extractLookup = (source: LookupItem[], name: string, byId: boolean = false) => {
       const matched = source.filter((lookup: LookupItem) => lookup.lookup === name);
       return matched.sort((a: LookupItem, b: LookupItem) => {
+        if (byId) {
+          if (a.id > b.id) return 1;
+          if (a.id === b.id) return 0;
+          return -1;
+        }
         if (a.name > b.name) return 1;
         if (a.name === b.name) return 0;
         return -1;
@@ -58,6 +69,8 @@ export class LookupProxyService extends RestProxyService {
           this.programCache = extractLookup(response.data, 'programs');
           this.seasonCache = extractLookup(response.data, 'seasons');
           this.regionCache = extractLookup(response.data, 'regions');
+          this.ageCategoryCache = extractLookup(response.data, 'ageCategories', true);
+          this.athleteTypeCache = extractLookup(response.data, 'athleteTypes');
           this.pushLookups();
         }
       }, (error: any) => {});

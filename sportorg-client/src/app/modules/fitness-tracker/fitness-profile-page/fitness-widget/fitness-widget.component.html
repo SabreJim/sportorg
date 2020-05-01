@@ -1,9 +1,5 @@
 <mat-card class="page-wrapper widget-card">
   <mat-card-title>
-    <button mat-raised-button color="accent" class="tip-icon" (click)="showHint()">
-      <i class="far fa-question-circle" title="show me a hint!"></i>
-    </button>
-
     <h1>{{profile?.firstName}} {{profile?.lastName}}</h1>
     <button mat-raised-button color="warn" class="reset-button" (click)="resetProfile()" *ngIf="appUser?.isFitnessAdmin">
       Reset

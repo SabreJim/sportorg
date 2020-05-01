@@ -1,6 +1,6 @@
 const MySQL = require('../middleware/mysql-service');
 const { returnResults, returnSingle, returnError } = require('../middleware/response-handler');
-const { memberSchema, getCleanBody } = require('../middleware/request-sanitizer');
+const { userSchema, getCleanBody } = require('../middleware/request-sanitizer');
 
 const getUsers = async(req, res, next) => {
     const myUserId = (req.session && req.session.user_id) ? req.session.user_id : -1;
@@ -8,6 +8,7 @@ const getUsers = async(req, res, next) => {
                     user_id,
                     email,
                     is_admin,
+                    is_fitness_admin,
                     google_id,
                     fb_id, 
                     twitter_id
@@ -19,11 +20,11 @@ const getUsers = async(req, res, next) => {
 
 const updateUser = async (req, res, next) => {
     let body = req.body;
-    const cleanMember = getCleanBody(body, memberSchema);
-    if (cleanMember.isValid) {
-        if (cleanMember.isEdit) {
+    const cleanUser = getCleanBody(body, userSchema);
+    if (cleanUser.isValid) {
+        if (cleanUser.isEdit) {
             // only edit users, creation is handled by oAuth
-            const statement = `UPDATE users SET ${cleanMember.setters.join(', ')} WHERE user_id = ${cleanMember.cleanBody.userId}`;
+            const statement = `UPDATE users SET ${cleanUser.setters.join(', ')} WHERE user_id = ${cleanUser.cleanBody.userId}`;
             const statementResult = await MySQL.runCommand(statement);
             if (statementResult && statementResult.affectedRows) {
                 returnSingle(res, {affectedRows: statementResult.affectedRows});

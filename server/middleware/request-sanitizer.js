@@ -190,6 +190,7 @@ const memberSchema = {
         {fieldName: 'competeGender', type: 'string', allowNull: true },
         {fieldName: 'isActive', type: 'string', allowNull: false },
         {fieldName: 'isAthlete', type: 'string', allowNull: false },
+        {fieldName: 'isFitnessAdmin', type: 'string', allowNull: true },
         {fieldName: 'membershipStart', type: 'date', allowNull: false },
         {fieldName: 'streetAddress', type: 'string', allowNull: true },
         {fieldName: 'city', type: 'string', allowNull: true },
@@ -202,6 +203,19 @@ const memberSchema = {
         {fieldName: 'confirmed', type: 'string', allowNull: true }
     ]
 };
+const userSchema = {
+    primaryKey: 'userId',
+    fields: [
+        {fieldName: 'userId', type: 'int', allowNull: false },
+        {fieldName: 'email', type: 'string', allowNull: false },
+        {fieldName: 'isAdmin', type: 'string', allowNull: false },
+        {fieldName: 'isFitnessAdmin', type: 'string', allowNull: true },
+        {fieldName: 'googleId', type: 'string', allowNull: true },
+        {fieldName: 'fbId', type: 'string', allowNull: true },
+        {fieldName: 'twitterId', type: 'string', allowNull: true }
+    ]
+};
+
 
 const enrollmentSchema = {
     primaryKey: 'enrollId',
@@ -266,6 +280,7 @@ module.exports = {
     classScheduleSchema,
     programSchema,
     memberSchema,
+    userSchema,
     enrollmentSchema,
     fitnessProfileSchema,
     exerciseLogSchema,

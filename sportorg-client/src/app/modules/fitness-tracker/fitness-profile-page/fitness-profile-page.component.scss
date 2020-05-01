@@ -1,0 +1,15 @@
+.header-bar {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-evenly;
+  h1 {
+    display: flex;
+  }
+  .tip-icon {
+    display: flex;
+    font-size: 30px;
+    height: 40px;
+    background-color: orange;
+  }
+}

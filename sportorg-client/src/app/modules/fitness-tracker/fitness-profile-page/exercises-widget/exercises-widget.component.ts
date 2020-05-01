@@ -60,7 +60,7 @@ export class ExercisesWidgetComponent implements OnInit, OnDestroy {
 
     // confirm deletion
       const dialogRef = this.dialog.open(ConfirmModalComponent,
-        { width: '350px', height: '200px', data: { title: `Log ${quantity} sets?`,
+        { width: '350px', height: '240px', data: { title: `Log ${quantity} sets?`,
             message: `Yes, I completed ${quantity} sets of ${uiExercise.measurementUnitQuantity} ${uiExercise.measurementUnit}`}});
       dialogRef.afterClosed().subscribe((result: boolean) => {
         if (result === true) {
@@ -76,7 +76,7 @@ export class ExercisesWidgetComponent implements OnInit, OnDestroy {
 
   public editExercise = (exercise: Exercise) => {
       const dialogRef = this.dialog.open(ExerciseEditModalComponent,
-        { width: '600px', data: exercise });
+        { maxHeight: '80vh', maxWidth: '800px', data: exercise });
       dialogRef.afterClosed().subscribe((result: Exercise) => {
         if (result && result.exerciseId) {
           this.fitnessProxy.upsertExercise(result).subscribe((saveResult: boolean) => {

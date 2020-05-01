@@ -75,14 +75,15 @@ const createRouter = (config) => {
 
     // fitness-tracker app
     router.get('/my-fitness-profiles', addSession, Fitness.getMyProfiles);
+    router.put('/fitness-profile/reset/:athleteId', addSession, Fitness.resetProfile);
     router.get('/fitness-profile/:athleteId', addSession, Fitness.getAthleteProfile);
     router.put('/fitness-profile', jsonBody, addSession, Fitness.createProfile);
     router.get('/fitness-logs/:athleteId', addSession, Fitness.getLogs);
     router.put('/exercise-event', jsonBody, addSession, Fitness.recordExercise);
     router.delete('/exercise-event/:eventId', addSession, Fitness.deleteExerciseEvent);
     router.get('/exercises', Fitness.getExercises);
-    router.get('/compare-fitness', addSession, Fitness.compareFitness);
-    router.put('/exercise', jsonBody, adminRequired, Fitness.upsertExercise);
+    router.get('/compare-fitness/:athleteId', addSession, Fitness.compareFitness);
+    router.put('/exercise', jsonBody, addSession, Fitness.upsertExercise);
 
     return router;
 };

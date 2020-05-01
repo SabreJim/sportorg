@@ -14,6 +14,7 @@ export interface FitnessProfile {
   createNewPlaceholder?: boolean;
   fitnessLevel?: number;
   fitnessLevelProgress?: number;
+  weeklyFitness?: number;
 
 }
 export interface FitnessProfileStat {
@@ -21,11 +22,28 @@ export interface FitnessProfileStat {
   value: number;
   icon?: string;
   progress?: number;
+  weeklyProgress?: number;
+}
+
+export interface FitnessCompareResponse {
+  participants: number;
+  stats: FitnessCompareStat[];
+}
+export interface FitnessCompareStat {
+  name: string;
+  maxGains: number;
+  maxLevel: number;
+  averageGains: number;
+  averageLevel: number;
+  myLevel?: number;
+  myGains?: number;
+  icon?: string;
 }
 
 export interface ExerciseLogResults {
   athleteId: number;
-  changes: FitnessProfileStat[];
+  changes?: FitnessProfileStat[];
+  levelUps: string[];
 }
 
 export interface FitnessLogItem {

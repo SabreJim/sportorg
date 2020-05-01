@@ -5,7 +5,7 @@
     (selectedIndexChange)="notifyTabs($event)">
     <mat-tab label="status" >
       <ng-template matTabContent>
-        <app-fitness-widget [profile]="currentProfile" [isActive]="activeTabId">
+        <app-fitness-widget [profile]="currentProfile" [isActive]="activeTabId" [appUser]="currentUser">
         </app-fitness-widget>
       </ng-template>
     </mat-tab>
@@ -13,14 +13,14 @@
 
     <mat-tab label="exercises">
       <ng-template matTabContent>
-        <app-exercises-widget [profile]="currentProfile" [isActive]="activeTabId">
+        <app-exercises-widget [profile]="currentProfile" [isActive]="activeTabId" [appUser]="currentUser">
         </app-exercises-widget>
       </ng-template>
     </mat-tab>
 
     <mat-tab label="compare">
       <ng-template matTabContent>
-        <app-fitness-compare>
+        <app-fitness-compare [profile]="currentProfile" [isActive]="activeTabId">
         </app-fitness-compare>
       </ng-template>
     </mat-tab>

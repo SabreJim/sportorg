@@ -1,11 +1,7 @@
 <div class="page-wrapper">
   <h4>Sign up for a Fencing Program</h4>
 
-  <ng-container *ngIf="currentUser?.isAnonymous">
-    <login-required></login-required>
-  </ng-container>
-
-  <mat-expansion-panel [expanded]="seasonExpanded" [disabled]="currentUser?.isAnonymous">
+  <mat-expansion-panel [expanded]="seasonExpanded" >
     <mat-expansion-panel-header class="panel-header">
       <h1>Season</h1>
       <div class="description">{{currentSeason?.name}}</div>
@@ -23,7 +19,7 @@
 
   </mat-expansion-panel>
 
-  <mat-expansion-panel [expanded]="programExpanded" [disabled]="currentUser?.isAnonymous">
+  <mat-expansion-panel [expanded]="programExpanded">
     <mat-expansion-panel-header class="panel-header">
       <h1>Program</h1>
       <div class="description">{{currentProgram?.name}}</div>
@@ -41,7 +37,7 @@
     <p [innerHTML]="currentProgram?.description | safePipe: 'html'"></p>
   </mat-expansion-panel>
 
-  <mat-expansion-panel [expanded]="classExpanded" [disabled]="currentUser?.isAnonymous">
+  <mat-expansion-panel [expanded]="classExpanded" >
     <mat-expansion-panel-header class="panel-header">
       <h1>Classes</h1>
       <div class="description">{{classDescription}}</div>
@@ -61,7 +57,7 @@
     </div>
   </mat-expansion-panel>
 
-  <mat-expansion-panel [expanded]="memberExpanded" [disabled]="currentUser?.isAnonymous">
+  <mat-expansion-panel [expanded]="memberExpanded" appLoginRequired [forceLogin]="currentUser?.isAnonymous">
     <mat-expansion-panel-header class="panel-header">
       <h1>Members/Fencers</h1>
       <div class="description">{{currentMember?.name}}</div>
@@ -83,7 +79,7 @@
     </div>
   </mat-expansion-panel>
 
-  <mat-expansion-panel [expanded]="true" [disabled]="true" [hideToggle]="true">
+  <mat-expansion-panel [expanded]="true" [disabled]="true" [hideToggle]="true" appLoginRequired [forceLogin]="currentUser?.isAnonymous">
     <mat-expansion-panel-header class="panel-header not-disabled">
       <h1>Summary</h1>
       <p class="summary-description">This is the registration that you are about to complete</p>
@@ -114,6 +110,7 @@
         <button class="register-button" mat-raised-button color="primary"
                 (click)="submitRegistration()"
                 [disabled]="!registrationComplete()"
+                appLoginRequired [forceLogin]="currentUser?.isAnonymous"
         >Register Now</button>
       </div>
     </div>

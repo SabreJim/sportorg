@@ -29,7 +29,8 @@ import { HtmlEditorModalComponent } from './modals/htm-editor-modal/html-editor-
 import { FilterBarComponent } from './filter-bar/filter-bar.component';
 import { OrgSnackbarComponent } from './org-snackbar/org-snackbar.component';
 import {CodemirrorModule} from "ng2-codemirror";
-import { LoginRequiredComponent } from './login-required/login-required.component';
+import { LoginRequiredComponent } from './modals/login-required/login-required.component';
+import { LoginRequiredDirective } from './modals/login-required/login-required.directive';
 
 
 @NgModule({
@@ -57,7 +58,8 @@ import { LoginRequiredComponent } from './login-required/login-required.componen
     HtmlEditorModalComponent,
     FilterBarComponent,
     OrgSnackbarComponent,
-    LoginRequiredComponent
+    LoginRequiredComponent,
+    LoginRequiredDirective
   ],
   exports: [
     OrgHeaderComponent,
@@ -81,7 +83,8 @@ import { LoginRequiredComponent } from './login-required/login-required.componen
     BooleanInputComponent,
     TooltipComponent,
     TooltipDirective,
-    HtmlEditorModalComponent
+    HtmlEditorModalComponent,
+    LoginRequiredDirective
   ],
   imports: [
     MaterialModule,
@@ -101,7 +104,8 @@ import { LoginRequiredComponent } from './login-required/login-required.componen
     MemberModalComponent,
     HtmlEditorModalComponent,
     TooltipComponent,
-    StringInputComponent
+    StringInputComponent,
+    LoginRequiredComponent
   ]
 })
 export class CoreModule { }

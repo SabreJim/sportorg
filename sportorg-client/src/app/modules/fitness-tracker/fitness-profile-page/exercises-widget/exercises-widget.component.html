@@ -6,6 +6,9 @@
     <ng-container *ngFor="let exercise of exercises">
       <mat-card class="exercise-item">
         <div class="icon">
+          <div class="mat-raised-button mat-warn edit-button" *ngIf="appUser?.isFitnessAdmin" (click)="editExercise(exercise)">
+            <mat-icon>edit</mat-icon>
+          </div>
           <ng-container *ngIf="exercise.iconType === 'fa'">
             <span class="icon-wrapper"><i ngClass="mat-icon {{exercise.iconName}}" ></i></span>
           </ng-container>
@@ -24,13 +27,13 @@
               <div class="icon-wrapper"><i ngClass="mat-icon {{stat.icon}}" title="{{stat.name}}"></i>: {{stat.value}}</div>
                 </ng-container>
             </span>
-            <div>Enter one for each: {{exercise.measurementUnitQuantity}} {{exercise.measurementUnit}}</div>
           </div>
         </div>
         <div class="actions">
-          <app-number-input [value]="exercise.quantityDone" (numberChanged)="updateQuantity($event, exercise)"></app-number-input>
-          <button mat-raised-button color="primary" [disabled]="!(exercise.quantityDone > 0)"
-                  (click)="logExercise(exercise.exerciseId, exercise)">Enter</button>
+          <div class="set-desc"><span>One set is:</span><span>{{exercise.measurementUnitQuantity}} {{exercise.measurementUnit}}</span></div>
+          <button mat-raised-button color="primary" (click)="logExercise(1, exercise.exerciseId, exercise)">1 Set</button>
+          <button mat-raised-button color="primary" (click)="logExercise(2, exercise.exerciseId, exercise)">2 Sets</button>
+          <button mat-raised-button color="primary" (click)="logExercise(3, exercise.exerciseId, exercise)">3 Sets</button>
         </div>
       </mat-card>
     </ng-container>

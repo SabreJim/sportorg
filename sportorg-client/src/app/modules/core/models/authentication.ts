@@ -9,11 +9,14 @@ export class AppUser {
   providerId?: string;
   sessionToken?: string;
   isAdmin?: boolean;
+  isFitnessAdmin?: boolean;
   isActive?: boolean;
 
   constructor() {
     this.isAnonymous = true;
     this.displayName = "Anonymous";
+    this.isAdmin = false;
+    this.isFitnessAdmin = false;
   }
 }
 
@@ -21,6 +24,7 @@ export interface AppSession {
   uid: string;
   sessionToken: string;
   isAdmin: string;
+  isFitnessAdmin?: string;
   memberId: string;
   isActive: string;
 }

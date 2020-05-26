@@ -72,3 +72,35 @@ export interface Exercise {
   quantityDone?: number; // tracking value from user
   statValues?: FitnessProfileStat[]; // UI for icons
 }
+
+export interface FitnessGroup {
+  groupId: number;
+  name: string;
+  description: string;
+  isClosed: boolean;
+  isAdmin?: boolean;
+  groupMembers?: number;
+  athleteTypeIds?: number[];
+  ageCategoryIds?: number[];
+  athleteIds?: number[];
+}
+export interface FitnessGroupType {
+  athleteTypeId: number;
+  typeName: string;
+  isSelected?: boolean;
+}
+export interface FitnessAgeCategory {
+  ageId: number;
+  label: string;
+  min: number;
+  max: number;
+  isSelected?: boolean;
+}
+export interface FitnessGroupAthletes {
+  athleteId: number;
+  athleteName: string;
+  yearOfBirth: number;
+  competeGender: string;
+  fitnessLevel: number;
+  isSelected?: boolean;
+}

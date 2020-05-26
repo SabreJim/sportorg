@@ -1,0 +1,45 @@
+mat-card {
+  min-height: 150px;
+  max-height: 250px;
+  min-width: 220px;
+  max-width: 220px;
+  margin: 10px;
+  flex: 1 1 auto;
+  display: flex;
+  border: 2px solid #106d10;
+  background-color: white;
+}
+.mat-card-content {
+  display: flex;
+  flex-flow: column nowrap;
+  width: 100%;
+}
+.row {
+  display: flex;
+  flex: 1 1 auto;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+}
+.profile-name {
+  font-size: 1.4em;
+  font-weight: 600;
+}
+.big-plus {
+  align-self: center;
+  display: flex;
+  flex: 1 1 auto;
+  width: 40px;
+  height: 40px;
+  .mat-icon {
+    font-size: 40px;
+  }
+}
+
+// font-awesome fonts that aren't rendering well
+.fa-hand-sparkles:before {
+  content: "\f95d";
+}
+.fa-lungs:before {
+  content: "\f967";
+}

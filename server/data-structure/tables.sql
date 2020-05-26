@@ -5,7 +5,6 @@ CREATE TABLE beaches.users (
     twitter_id VARCHAR(50),
     email VARCHAR(100) NOT NULL,
     is_admin CHAR(1) NOT NULL DEFAULT 'N',
-    is_fitness_admin CHAR(1) NOT NULL DEFAULT 'N',
     PRIMARY KEY(user_id)
 );
 
@@ -342,3 +341,50 @@ VALUES
 ('open', 'Open', 20, 100),
 ('veteran40', 'Veteran(40)', 40, 100),
 ('all', 'All', 1, 100);
+
+-- changes to use groups
+alter table beaches.users drop column is_fitness_admin;
+
+CREATE TABLE beaches.fitness_groups (
+    group_id MEDIUMINT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    description VARCHAR(500) NULL,
+    is_closed CHAR(1) DEFAULT 'N',
+    PRIMARY KEY(group_id)
+    );
+
+
+CREATE TABLE beaches.athlete_groups (
+    athlete_id MEDIUMINT NOT NULL REFERENCES beaches.athlete_profiles(athlete_id),
+    group_id MEDIUMINT NOT NULL REFERENCES beaches.fitness_groups(group_id)
+    );
+CREATE TABLE beaches.user_group_admins (
+    user_id MEDIUMINT NOT NULL REFERENCES beaches.users(user_id),
+    group_id MEDIUMINT NOT NULL REFERENCES beaches.fitness_groups(group_id)
+    );
+CREATE TABLE beaches.age_category_groups (
+    age_id MEDIUMINT NOT NULL REFERENCES beaches.age_categories(age_id),
+    group_id MEDIUMINT NOT NULL REFERENCES beaches.fitness_groups(group_id)
+    );
+CREATE TABLE beaches.exercise_groups (
+    exercise_id MEDIUMINT NOT NULL REFERENCES beaches.exercises(exercise_id),
+    group_id MEDIUMINT NOT NULL REFERENCES beaches.fitness_groups(group_id)
+    );
+CREATE TABLE beaches.athlete_type_groups (
+    athlete_type_id MEDIUMINT NOT NULL REFERENCES beaches.athlete_types(athlete_type_id),
+    group_id MEDIUMINT NOT NULL REFERENCES beaches.fitness_groups(group_id)
+    );
+
+-- initial data
+INSERT INTO beaches.fitness_groups
+(name, is_closed)
+VALUES
+('Beaches Sabre', 'N'),
+('NB Provincial Team', 'Y');
+INSERT INTO beaches.athlete_groups
+(athlete_id, group_id)
+(SELECT athlete_id, 1 FROM beaches.athlete_profiles);
+ALTER TABLE beaches.exercises
+add column is_deleted CHAR(1) default 'N';
+ALTER TABLE beaches.exercises
+add column owner_group_id MEDIUMINT references beaches.fitness_groups(group_id);

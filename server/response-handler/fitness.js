@@ -121,6 +121,7 @@ const getLogs = async(req, res, next) => {
     returnResults(res, []);
 };
 const getExercises = async(req, res, next) => {
+    // TODO: get exercises in any groups I am part of
     const query = `SELECT * from beaches.exercises`;
     const exerciseResponse = await MySQL.runQuery(query);
     if (exerciseResponse && exerciseResponse.length) {
@@ -286,6 +287,7 @@ const upsertExercise = async(req, res, next) => {
 
     const cleanExercise = getCleanBody(req.body, exerciseSchema);
     if (cleanExercise.isValid) {
+        console.log('clean exercise', cleanExercise);
         let statement;
         if (cleanExercise.isEdit){
             statement = `UPDATE beaches.exercises SET ${cleanExercise.setters.join(', ')} WHERE exercise_id = ${cleanExercise.cleanBody.exerciseId}`;
@@ -316,6 +318,27 @@ const deleteExerciseEvent = async (req, res) => {
     // }
     returnSingle(res, {});
 };
+const deleteExercise = async (req, res) => {
+    const myUserId = getUserId(req);
+    const exerciseId = req.params.exerciseId || -1;
+    console.log('session', myUserId, exerciseId);
+    // fitness admin required to add group
+    if (req.session.isFitnessAdmin !== 'Y') {
+        return returnSingle(res, {message: 'not permitted to add or edit groups'});
+    }
+    let statement = `DELETE FROM beaches.exercise_groups eg 
+        WHERE  EXISTS (SELECT 1 from beaches.user_group_admins uga WHERE uga.user_id = ${myUserId})
+            AND (SELECT owner_group_id FROM beaches.exercises WHERE exercise_id = ${exerciseId}) = eg.group_id
+            AND eg.exericse_id = ${exerciseId}  `;
+    let statementResult = await MySQL.runCommand(statement);
+    if (statementResult && statementResult.affectedRows) {
+        statement = `UPDATE  beaches.exercise e SET delete_date = 'Y' WHERE e.exercise_id = ${exerciseId}`;
+        statementResult = await MySQL.runCommand(statement);
+        returnSingle(res, {affectedRows: statementResult.affectedRows});
+    } else {
+        returnSingle(res, 'Not able to delete this exercise');
+    }
+};
 
 module.exports = {
     getMyProfiles,
@@ -327,5 +350,6 @@ module.exports = {
     deleteExerciseEvent,
     getExercises,
     compareFitness,
-    upsertExercise
+    upsertExercise,
+    deleteExercise
 };

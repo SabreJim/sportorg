@@ -7,7 +7,6 @@ import {MaterialModule} from "./modules/material.module";
 import {PagesModule} from "./modules/pages/pages.module";
 import {CoreModule} from "./modules/core/core.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {CodemirrorComponent, CodemirrorModule} from "ng2-codemirror";
 import {FitnessTrackerModule} from "./modules/fitness-tracker/fitness-tracker.module";
 
 @NgModule({
@@ -21,11 +20,9 @@ import {FitnessTrackerModule} from "./modules/fitness-tracker/fitness-tracker.mo
     MaterialModule,
     CoreModule,
     PagesModule,
-    FitnessTrackerModule,
-    CodemirrorModule
+    FitnessTrackerModule
   ],
   providers: [
-    CodemirrorComponent
   ],
   bootstrap: [AppComponent]
 })

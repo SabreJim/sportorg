@@ -58,9 +58,7 @@ export class FitnessProfileModalComponent implements OnInit {
     this.newProfile[position] = newValue;
   };
   public updateWeapon = (newValue: string, field: string) => {
-    // setTimeout(() => {
       this.newProfile[field] = (newValue === 'Y') ? 'Y' : 'N';
-    // });
   };
 
   // validate the input and send the data to be saved

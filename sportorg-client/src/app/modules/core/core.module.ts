@@ -28,7 +28,7 @@ import { MemberModalComponent } from './modals/member-modal/member-modal.compone
 import { HtmlEditorModalComponent } from './modals/htm-editor-modal/html-editor-modal.component';
 import { FilterBarComponent } from './filter-bar/filter-bar.component';
 import { OrgSnackbarComponent } from './org-snackbar/org-snackbar.component';
-import {CodemirrorModule} from "ng2-codemirror";
+import { AngularEditorModule } from '@kolkov/angular-editor';
 import { LoginRequiredComponent } from './modals/login-required/login-required.component';
 import { LoginRequiredDirective } from './modals/login-required/login-required.directive';
 
@@ -93,7 +93,7 @@ import { LoginRequiredDirective } from './modals/login-required/login-required.d
     RouterModule,
     HttpClientModule,
     CommonModule,
-    CodemirrorModule
+    AngularEditorModule
   ],
   providers: [
     RouteGuardService

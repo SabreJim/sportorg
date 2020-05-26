@@ -1,0 +1,20 @@
+<mat-card ngClass="profile-wrapper">
+  <mat-card-content>
+    <!--  Show stats for actual fitness profile  -->
+    <ng-container *ngIf="group?.groupId > 0" >
+      <div class="mat-button" (click)="editGroup()">
+        <div class="profile-name row">{{group.name}}</div>
+        <div class="profile-description row">{{group.description}}</div>
+        <div class="num-participants row">Current athletes: {{group.groupMembers}}</div>
+      </div>
+    </ng-container>
+
+    <!-- Show option to generate a new profile -->
+    <ng-container *ngIf="group?.groupId === -1">
+      <div class="big-plus mat-button">
+        <mat-icon (click)="createNewGroup()">add_circle_outline</mat-icon>
+      </div>
+      <button mat-raised-button color="primary" (click)="createNewGroup()">Create a new group</button>
+    </ng-container>
+  </mat-card-content>
+</mat-card>

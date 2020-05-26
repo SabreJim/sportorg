@@ -14,6 +14,8 @@ import { FitnessProfileModalComponent } from './fitness-page/fitness-profile-mod
 import { FitnessProfilePageComponent } from './fitness-profile-page/fitness-profile-page.component';
 import { ExercisesWidgetComponent } from './fitness-profile-page/exercises-widget/exercises-widget.component';
 import { ExerciseEditModalComponent } from './fitness-profile-page/exercise-edit-modal/exercise-edit-modal.component';
+import { GroupIconComponent } from './fitness-page/group-icon/group-icon.component';
+import { GroupProfileModalComponent } from './fitness-page/group-profile-modal/group-profile-modal.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,9 @@ import { ExerciseEditModalComponent } from './fitness-profile-page/exercise-edit
   FitnessProfileModalComponent,
   FitnessProfilePageComponent,
   ExercisesWidgetComponent,
-  ExerciseEditModalComponent],
+  ExerciseEditModalComponent,
+  GroupIconComponent,
+  GroupProfileModalComponent],
   exports: [
     FitnessPageComponent
   ],
@@ -43,7 +47,8 @@ import { ExerciseEditModalComponent } from './fitness-profile-page/exercise-edit
   ],
   entryComponents: [
     FitnessProfileModalComponent,
-    ExerciseEditModalComponent
+    ExerciseEditModalComponent,
+    GroupProfileModalComponent
   ]
 })
 export class FitnessTrackerModule { }

@@ -1,7 +1,15 @@
-
-<div>
-<codemirror
-  [(ngModel)]="htmlValue"
-  [config]="config"
-></codemirror>
-</div>
+<mat-card class="popover-card">
+  <mat-card-header>
+    <h1>Editing HTML <span *ngIf="title">for: {{title}}</span></h1>
+  </mat-card-header>
+  <mat-card-content>
+    <angular-editor
+      [(ngModel)]="htmlValue"
+      [config]="editorConfig"
+    ></angular-editor>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button mat-raised-button [mat-dialog-close]="false">Cancel</button>
+    <button mat-raised-button color="primary" (click)="saveHtml()">{{'Save'}}</button>
+  </mat-card-actions>
+</mat-card>

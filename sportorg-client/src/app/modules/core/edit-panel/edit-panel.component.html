@@ -1,5 +1,6 @@
-<mat-expansion-panel class="panel" (opened)="refreshData()">
-  <mat-expansion-panel-header class="panel-header">
+<mat-expansion-panel class="panel" (opened)="refreshData()"
+                     [expanded]="alwaysOpen" [disabled]="alwaysOpen" [hideToggle]="alwaysOpen"  >
+  <mat-expansion-panel-header ngClass="panel-header {{(alwaysOpen) ? 'not-disabled' : ''}}">
     <mat-panel-title>
       <h3 class="panel-title">{{configObject.entityType}}s</h3>
     </mat-panel-title>
@@ -32,6 +33,10 @@
         [isEditable]="true"
         [canAddRows]="!configObject.disableAdd"
         (editRow)="editRow($event)"
+        [canSelect]="configObject.allowSelect === true"
+        (selectedRow)="notifySelectionState($event, true)"
+        (deselectedRow)="notifySelectionState($event, false)"
+        [altClass]="tableAltClass"
       ></app-table>
     </mat-sidenav-content>
   </mat-sidenav-container>

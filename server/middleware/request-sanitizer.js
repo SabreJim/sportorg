@@ -1,4 +1,5 @@
 const decamelize = require('decamelize');
+const sanitizeHtml = require('sanitize-html');
 const mixedJoin = (source, skipHead = false) => {
     let arr = '';
     if (!source.length) return arr;
@@ -77,6 +78,29 @@ const getCleanBody = (body, schema) => {
             }
         }
     };
+
+    const cleanHtml = (field) => {
+        const value = body[field.fieldName];
+        if (validate(value, field)) {
+            if (typeof value !== 'string') {
+                isValid = false;
+            } else {
+                cleanBody[field.fieldName] = sanitizeHtml(value); // html sanitize
+            }
+        }
+    };
+
+    const cleanBoolean = (field) => {
+        const value = body[field.fieldName];
+        if (validate(value, field)) {
+            if (value === true || (value.toUpper && value.toUpper() === 'Y') || (value.toUpper && value.toUpper() === 'TRUE')) {
+                cleanBody[field.fieldName] = 'Y';
+            } else {
+                cleanBody[field.fieldName] = 'N';
+            }
+        }
+    };
+
     const cleanArray = (field, type) => {
         const value = body[field.fieldName];
         if (validate(value, field)) {
@@ -115,6 +139,12 @@ const getCleanBody = (body, schema) => {
                 break;
             case 'string':
                 cleanString(field);
+                break;
+            case 'html':
+                cleanHtml(field);
+                break;
+            case 'boolean':
+                cleanBoolean(field);
                 break;
             case 'int-array':
                 cleanArray(field, 'int');
@@ -174,8 +204,8 @@ const programSchema = {
         {fieldName: 'registrationMethod', type: 'string', allowNull: true },
         {fieldName: 'colorId', type: 'int', allowNull: true },
         {fieldName: 'feeId', type: 'int', allowNull: false },
-        {fieldName: 'isActive', type: 'string', allowNull: true }
-        // , {fieldName: 'programDescription', type: 'string', allowNull: true }
+        {fieldName: 'isActive', type: 'string', allowNull: true },
+        {fieldName: 'programDescription', type: 'html', allowNull: true }
     ]
 };
 
@@ -258,7 +288,7 @@ const exerciseSchema = {
     fields: [
         {fieldName: 'exerciseId', type: 'int', allowNull: false },
         {fieldName: 'name', type: 'string', allowNull: false },
-        {fieldName: 'description', type: 'string', allowNull: false},
+        {fieldName: 'description', type: 'html', allowNull: false},
         {fieldName: 'imageId', type: 'string', allowNull: true},
         {fieldName: 'measurementUnit', type: 'string', allowNull: false },
         {fieldName: 'measurementUnitQuantity', type: 'int', allowNull: false },
@@ -270,10 +300,20 @@ const exerciseSchema = {
         {fieldName: 'enduranceValue', type: 'int', allowNull: false },
         {fieldName: 'footSpeedValue', type: 'int', allowNull: false },
         {fieldName: 'handSpeedValue', type: 'int', allowNull: false },
-
-
     ]
-}
+};
+const fitnessGroupSchema = {
+    primaryKey: 'groupId',
+    fields: [
+        {fieldName: 'groupId', type: 'int', allowNull: false },
+        {fieldName: 'name', type: 'string', allowNull: false },
+        {fieldName: 'description', type: 'string', allowNull: true },
+        {fieldName: 'isClosed', type: 'boolean', allowNull: true },
+        {fieldName: 'athleteTypeIds', type: 'int-array', allowNull: true },
+        {fieldName: 'ageCategoryIds', type: 'int-array', allowNull: true }
+        // {fieldName: 'athleteIds', type: 'int-array', allowNull: false }
+    ]
+};
 
 module.exports = {
     getCleanBody,
@@ -284,5 +324,6 @@ module.exports = {
     enrollmentSchema,
     fitnessProfileSchema,
     exerciseLogSchema,
-    exerciseSchema
+    exerciseSchema,
+    fitnessGroupSchema
 };

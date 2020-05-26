@@ -4,7 +4,7 @@ import {
   FitnessLogItem,
   Exercise,
   ExerciseLogResults,
-  FitnessProfileStat, FitnessCompareStat, FitnessCompareResponse
+  FitnessProfileStat, FitnessCompareResponse
 } from "../models/fitness-objects";
 import {Observable, Subject} from "rxjs";
 import { ApiResponse } from "../models/rest-objects";
@@ -161,6 +161,24 @@ export class FitnessProxyService extends RestProxyService {
     }, (error: any) => {});
   }
 
+  public getGroupExercises = (groupId: number) => {
+    return new Observable<Exercise[]>((subscription) => {
+      if (!(groupId > 0)) {
+        subscription.next([]);
+        return;
+      }
+      this.get(`fitness/group/exercises/${groupId}`).subscribe((response: ApiResponse<Exercise[]>) => {
+        if (response.hasErrors()) {
+          SnackbarService.error(`Exercises could not be retrieved at this time`);
+          subscription.next([]);
+        } else {
+          subscription.next(response.data);
+        }
+      }, (error: any) => {
+      });
+    });
+  }
+
   // compareMyFitness
   public runCompare = (athleteId: number, athleteTypes: number[], ageCategory: number) => {
     this.get(`compare-fitness/${athleteId}`, {athleteTypes: athleteTypes, ageCategory: ageCategory})
@@ -184,6 +202,20 @@ export class FitnessProxyService extends RestProxyService {
       this.put(`exercise`, exercise).subscribe((response: ApiResponse<boolean>) => {
         if (response.hasErrors() || !response.success) {
           SnackbarService.error(`Exercise could not be updated: ${response.message}`);
+          subscription.next(false);
+        } else {
+          subscription.next(true);
+        }
+      }, (error: any) => {});
+    });
+  }
+
+  // remove an exerciseEvent that was recorded in error
+  public deleteExercise = (exerciseId: number): Observable<boolean> => {
+    return new Observable((subscription) => {
+      this.delete(`exercise/${exerciseId}`).subscribe((response: ApiResponse<boolean>) => {
+        if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`Exercise was not deleted successfully: ${response.message}`);
           subscription.next(false);
         } else {
           subscription.next(true);

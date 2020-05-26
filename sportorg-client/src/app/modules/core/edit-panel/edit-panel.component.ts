@@ -21,6 +21,14 @@ export class EditPanelComponent implements OnInit {
   constructor(private detector: ChangeDetectorRef) { }
 
   @Input() configObject: AdminConfig;
+  @Input() set refreshNow(doIt: boolean) {
+    if (doIt) {
+      this.gridData = [];
+      setTimeout(this.refreshData);
+    }
+  }
+  @Input() alwaysOpen: boolean = false;
+  @Input() tableAltClass: string = '';
   ngOnInit() {
   }
 
@@ -32,6 +40,7 @@ export class EditPanelComponent implements OnInit {
     if (this.configObject.columns && this.configObject.columns.length && this.configObject.getter) {
       this.configObject.getter().subscribe((rows: any) => {
         this.gridData = rows;
+        this.detector.detectChanges();
       })
     }
   };
@@ -40,7 +49,6 @@ export class EditPanelComponent implements OnInit {
     this.configObject.setter(body).subscribe((result: boolean) => {
       this.editorOpen = false;
       this.refreshData();
-      this.detector.detectChanges();
     });
   };
 
@@ -48,7 +56,6 @@ export class EditPanelComponent implements OnInit {
     this.configObject.delete(record).subscribe((result: boolean) => {
       this.editorOpen = false;
       this.refreshData();
-      this.detector.detectChanges();
     });
   };
 
@@ -59,6 +66,13 @@ export class EditPanelComponent implements OnInit {
       this.detector.detectChanges();
     });
   };
+
+  public notifySelectionState = (event: any, state: boolean) => {
+    if (this.configObject.notifySelection) {
+      this.configObject.notifySelection(event, state).subscribe((completed: boolean) => {
+      });
+    }
+  }
 
   public hideSideNav = () => {
     if (this.editorOpen) {

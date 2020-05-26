@@ -65,7 +65,8 @@ const sessionQuery = `SELECT
             s.session_token as 'sessionToken',
             u.user_id,
             u.is_admin as 'isAdmin',
-            u.is_fitness_admin as 'isFitnessAdmin',
+            (CASE WHEN uga.group_ids IS NULL THEN 'N' ELSE 'Y' END) as 'isFitnessAdmin',
+            uga.group_ids 'fitnessGroupAdmins',
             m.member_id as 'memberId',
             m.is_active as 'isActive',
             u.email,
@@ -74,6 +75,8 @@ const sessionQuery = `SELECT
         LEFT JOIN beaches.sessions s ON u.user_id = s.user_id
         LEFT JOIN beaches.member_users mu ON mu.user_id = u.user_id AND mu.is_primary = 'Y'
         LEFT JOIN beaches.members m ON m.member_id = mu.member_id
+        LEFT JOIN (SELECT CONCAT('[', GROUP_CONCAT(group_id), ']') group_ids,
+            user_id from beaches.user_group_admins GROUP BY user_id) uga ON uga.user_id = u.user_id
         WHERE s.session_token = ?; `;
     return await MySQL.runCommand(sessionQuery, [token]);
 }
@@ -84,7 +87,8 @@ const getSession = async(userId) => {
             s.session_token as 'sessionToken',
             u.user_id,
             u.is_admin as 'isAdmin',
-            u.is_fitness_admin as 'isFitnessAdmin',
+            (CASE WHEN uga.group_ids IS NULL THEN 'N' ELSE 'Y' END) as 'isFitnessAdmin',
+            uga.group_ids 'fitnessGroupAdmins',
             m.member_id as 'memberId',
             m.is_active as 'isActive',
             u.email,
@@ -93,6 +97,8 @@ const getSession = async(userId) => {
         LEFT JOIN beaches.sessions s ON u.user_id = s.user_id
         LEFT JOIN beaches.member_users mu ON mu.user_id = u.user_id AND mu.is_primary = 'Y'
         LEFT JOIN beaches.members m ON m.member_id = mu.member_id
+        LEFT JOIN (SELECT CONCAT('[', GROUP_CONCAT(group_id), ']') group_ids,
+            user_id from beaches.user_group_admins GROUP BY user_id) uga ON uga.user_id = u.user_id
         WHERE s.user_id = ?; `;
     return await MySQL.runCommand(sessionQuery, [userId]);
 };
@@ -138,6 +144,7 @@ const verifyToken = async(req, res, next) => {
             }
             appSession.isAdmin = existingSession.isAdmin;
             appSession.isFitnessAdmin = existingSession.isFitnessAdmin;
+            appSession.fitnessGroupAdmins = existingSession.fitnessGroupAdmins;
             appSession.isActive = existingSession.isActive;
             appSession.memberId = existingSession.memberId;
             appSession.sessionToken = crypto.AES.encrypt(orgToken, application.secretKey).toString();

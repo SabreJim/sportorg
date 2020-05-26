@@ -29,7 +29,24 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
   @Input() tableColumns: TableColumn[] = [];
   @Input() set gridData(rows: any[]) {
     this.gridDataRows = rows;
-    this.clearSelections();
+    if (rows && rows.length && rows[0].hasOwnProperty('isSelected')) {
+      this._selectedRows = this.gridDataRows.filter(row => row.isSelected === true );
+      setTimeout(() => {
+        // fix the UI elements to match the data
+        if (this.checkboxes) {
+          this.checkboxes.forEach((box: MatCheckbox, rowIndex: number) => {
+            try {
+              box.checked = this.gridDataRows[rowIndex].isSelected;
+            } catch (err) {
+              box.checked = false;
+            }
+          });
+        }
+      })
+    } else {
+      this.clearSelections();
+    }
+
     this.linkScrolling();
     this.detector.detectChanges();
   } get gridData () { return this.gridDataRows; }
@@ -40,6 +57,7 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
   @Input() canSelect = false;
   @Input() singleSelect = false;
   @Input() trackById: string;
+  @Input() altClass: string = '';
   @Output() editRow = new EventEmitter<any>();
   @Output() selectedRows = new EventEmitter<any[]>();
   @Output() selectedRow = new EventEmitter<any>();
@@ -48,6 +66,7 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
   // Selection events
   @ViewChildren(MatCheckbox) checkboxes: QueryList<MatCheckbox>;
   protected _selectedRows: TableRow[] = [];
+  protected preserveSelections: boolean = false;
   protected clearSelections = () => {
     // clear the selection box UI so old states don't persist
     if (this.checkboxes) {
@@ -61,6 +80,12 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
   // when a row is selected or deselected, update the state of the selections
   public selectRow = (row: any, event: MatCheckboxChange) => {
     if (this.trackById) {
+      this.gridDataRows = this.gridDataRows.map((gridRow) => {
+        if (gridRow[this.trackById] === row[this.trackById]) {
+          gridRow.isSelected = event.checked;
+        }
+        return gridRow;
+      });
       if (event.checked) {
         if (this.singleSelect) { // selection will only allow one item at a time
           this._selectedRows = [row];
@@ -104,6 +129,9 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
     this.sortColumn = column.fieldName;
     column.sortDirection = (column.sortDirection === 'ASC') ? 'DESC' : 'ASC';
     const backup = Object.assign([], this.gridDataRows);
+    if (this.canSelect) { // otherwise selections will be cleared out
+      this.preserveSelections = true;
+    }
     setTimeout(() => {
       this.gridData = backup.sort(this.sortByField(this.sortColumn, column.sortDirection));
       this.detector.detectChanges();

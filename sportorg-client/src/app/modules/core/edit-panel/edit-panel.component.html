@@ -32,6 +32,7 @@
         [gridData]="gridData"
         [isEditable]="true"
         [canAddRows]="!configObject.disableAdd"
+        [defaultObject]="configObject.defaultObject"
         (editRow)="editRow($event)"
         [canSelect]="configObject.allowSelect === true"
         (selectedRow)="notifySelectionState($event, true)"

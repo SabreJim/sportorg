@@ -13,7 +13,6 @@ import { FitnessCompareComponent } from './fitness-profile-page/fitness-compare/
 import { FitnessProfileModalComponent } from './fitness-page/fitness-profile-modal/fitness-profile-modal.component';
 import { FitnessProfilePageComponent } from './fitness-profile-page/fitness-profile-page.component';
 import { ExercisesWidgetComponent } from './fitness-profile-page/exercises-widget/exercises-widget.component';
-import { ExerciseEditModalComponent } from './fitness-profile-page/exercise-edit-modal/exercise-edit-modal.component';
 import { GroupIconComponent } from './fitness-page/group-icon/group-icon.component';
 import { GroupProfileModalComponent } from './fitness-page/group-profile-modal/group-profile-modal.component';
 
@@ -27,7 +26,6 @@ import { GroupProfileModalComponent } from './fitness-page/group-profile-modal/g
   FitnessProfileModalComponent,
   FitnessProfilePageComponent,
   ExercisesWidgetComponent,
-  ExerciseEditModalComponent,
   GroupIconComponent,
   GroupProfileModalComponent],
   exports: [
@@ -47,7 +45,6 @@ import { GroupProfileModalComponent } from './fitness-page/group-profile-modal/g
   ],
   entryComponents: [
     FitnessProfileModalComponent,
-    ExerciseEditModalComponent,
     GroupProfileModalComponent
   ]
 })

@@ -172,9 +172,10 @@ BEGIN
     DECLARE v_last VARCHAR(200) default null;
     DECLARE v_yob INT default null;
     DECLARE v_gender VARCHAR(1) default null;
-    DECLARE v_member INT default null;
 
     DECLARE existing_id INT default null;
+    DECLARE type_index INT DEFAULT 0;
+    DECLARE type_id INT DEFAULT null;
 
     -- get the values from the JSON request
     set v_athlete_id = JSON_EXTRACT(request_body,'$.athleteId');
@@ -182,7 +183,6 @@ BEGIN
     set v_last = JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.lastName'));
     set v_yob = JSON_EXTRACT(request_body,'$.yearOfBirth');
     set v_gender = JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.competeGender'));
-    set v_member = JSON_EXTRACT(request_body,'$.memberId');
 
     SELECT athlete_id INTO existing_id
     from beaches.athlete_profiles ap WHERE ap.athlete_id = v_athlete_id;
@@ -192,14 +192,13 @@ BEGIN
             first_name = v_first,
             last_name = v_last,
             year_of_birth = v_yob,
-            compete_gender = v_gender,
-            member_id = v_member
+            compete_gender = v_gender
         WHERE athlete_id = v_athlete_id;
     ELSE -- insert it
         INSERT INTO beaches.athlete_profiles
-            (first_name, last_name, year_of_birth, compete_gender, member_id)
+            (first_name, last_name, year_of_birth, compete_gender)
             VALUES
-            (v_first, v_last, v_yob, v_gender, v_member);
+            (v_first, v_last, v_yob, v_gender);
             SET existing_id = LAST_INSERT_ID();
     END IF;
 
@@ -209,15 +208,12 @@ BEGIN
 
     -- update the athlete types as well
     DELETE FROM beaches.athlete_profile_types where athlete_id = existing_id;
-    IF JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.isEpee')) <=> 'Y' THEN
-        INSERT INTO beaches.athlete_profile_types (athlete_id, athlete_type_id) VALUES (existing_id, 1);
-    END IF;
-    IF JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.isFoil')) <=> 'Y' THEN
-        INSERT INTO beaches.athlete_profile_types (athlete_id, athlete_type_id) VALUES (existing_id, 2);
-    END IF;
-    IF JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.isSabre')) <=> 'Y' THEN
-        INSERT INTO beaches.athlete_profile_types (athlete_id, athlete_type_id) VALUES (existing_id, 3);
-    END IF;
+
+    WHILE type_index < JSON_LENGTH(JSON_EXTRACT(request_body, '$.typeIds')) DO
+        SET type_id = JSON_EXTRACT(request_body, CONCAT('$.typeIds[', type_index, ']'));
+        INSERT INTO beaches.athlete_profile_types (athlete_id, athlete_type_id) VALUES (existing_id, type_id);
+    SET type_index = type_index + 1;
+    END WHILE;
 
     RETURN existing_id;
 END;

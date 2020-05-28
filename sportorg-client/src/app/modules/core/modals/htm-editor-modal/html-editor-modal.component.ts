@@ -35,7 +35,6 @@ export class HtmlEditorModalComponent implements AfterViewInit {
       try {
         let cleanValue = dirtyValue.replace(/<b>/g, '<strong>').replace(/<\/b>/, '</strong>');
         cleanValue = cleanValue.replace(/<i>/g, '<em>').replace(/<\/i>/, '</em>');
-        console.log('saw html', dirtyValue, cleanValue);
 
         this.isValidHtml = true;
         return cleanValue;

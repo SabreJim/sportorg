@@ -1,7 +1,16 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
-import {FitnessProfile} from "../../../core/models/fitness-objects";
+import {
+  FitnessGroup,
+  FitnessGroupAthlete,
+  FitnessGroupType,
+  FitnessProfile
+} from "../../../core/models/fitness-objects";
 import {LookupItem} from "../../../core/models/rest-objects";
+import {FitnessProxyService} from "../../../core/services/fitness-proxy.service";
+import {Subscription} from "rxjs";
+import {TableColumn} from "../../../core/models/ui-objects";
+import {SnackbarService} from "../../../core/services/snackbar.service";
 
 @Component({
   selector: 'app-fitness-profile-modal',
@@ -10,19 +19,24 @@ import {LookupItem} from "../../../core/models/rest-objects";
 })
 export class FitnessProfileModalComponent implements OnInit {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: FitnessProfile,
+  constructor(@Inject(MAT_DIALOG_DATA) public data: FitnessProfile, public fitnessProxy: FitnessProxyService,
               public matDialogRef: MatDialogRef<FitnessProfileModalComponent>) {
   }
   ngOnInit() {
     if (this.data && this.data.firstName) {
-      setTimeout(()=> {
         this.newProfile = this.data; // allow lookups to load first
-      });
     } else { // a new member object
       this.newProfile = Object.assign({}, this.defaultProfile);
     }
+    this.typeSub = this.fitnessProxy.getMyAthleteTypes(this.data.athleteId).subscribe((types: FitnessGroupType[]) => {
+      this.typeOptions = types;
+    });
+    this.groupSub = this.fitnessProxy.getMyGroups(this.data.athleteId).subscribe((groups: FitnessGroup[]) => {
+      this.groupOptions = groups;
+    });
   }
-
+  protected typeSub: Subscription;
+  protected groupSub: Subscription;
   protected defaultProfile: FitnessProfile = {
     athleteId: -1,
     firstName: null,
@@ -30,6 +44,7 @@ export class FitnessProfileModalComponent implements OnInit {
     yearOfBirth: 2000,
     competeGender: null,
     stats: [],
+    typeIds: [],
     isEpee: 'N',
     isFoil: 'N',
     isSabre: 'N'
@@ -57,9 +72,36 @@ export class FitnessProfileModalComponent implements OnInit {
     this.invalid[position] = isRequired && !newValue;
     this.newProfile[position] = newValue;
   };
-  public updateWeapon = (newValue: string, field: string) => {
-      this.newProfile[field] = (newValue === 'Y') ? 'Y' : 'N';
-  };
+
+  public athleteTypeColumns: TableColumn[] = [
+    new TableColumn('typeName', 'Name', 'string')
+  ];
+  public typeOptions: FitnessGroupType[] = [];
+
+  public updateSelectedTypes = (types: FitnessGroupType[]) => {
+    this.newProfile.typeIds = types.filter(item => item.isSelected).map(item => item.athleteTypeId);
+  }
+
+  public groupColumns: TableColumn[] = [
+    new TableColumn('name', 'Name', 'string'),
+    new TableColumn('isInvited', 'Invite Pending', 'string')
+  ];
+  public groupOptions: FitnessGroup[] = [];
+
+  public joinGroup = (group: FitnessGroup) => {
+    this.fitnessProxy.joinGroup(group.groupId, this.newProfile.athleteId).subscribe((success: boolean) => {
+      if (success) {
+        SnackbarService.notify(`Joined group: ${group.name}`);
+      }
+    });
+  }
+  public leaveGroup = (group: FitnessGroup) => {
+    this.fitnessProxy.leaveGroup(group.groupId, this.newProfile.athleteId).subscribe((success: boolean) => {
+      if (success) {
+        SnackbarService.notify(`Left group: ${group.name}`);
+      }
+    });
+  }
 
   // validate the input and send the data to be saved
   public saveForm = () => {

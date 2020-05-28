@@ -58,6 +58,7 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
   @Input() singleSelect = false;
   @Input() trackById: string;
   @Input() altClass: string = '';
+  @Input() defaultObject: any = {};
   @Output() editRow = new EventEmitter<any>();
   @Output() selectedRows = new EventEmitter<any[]>();
   @Output() selectedRow = new EventEmitter<any>();
@@ -107,10 +108,9 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
 
       }
       this.selectedRows.emit(this._selectedRows);
-    } else {
-      // just emit the row and let the parent handle the effective state
-      (event.checked) ? this.selectedRow.emit(row) : this.deselectedRow.emit(row);
     }
+    // just emit the row and let the parent handle the effective state
+    (event.checked) ? this.selectedRow.emit(row) : this.deselectedRow.emit(row);
   };
 
   public sendEdit = (row: any) => {
@@ -120,7 +120,7 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
   };
   public addNew = () => {
     if (this.isEditable) {
-      this.editRow.emit({});
+      this.editRow.emit(this.defaultObject);
     }
   };
   // Sorting

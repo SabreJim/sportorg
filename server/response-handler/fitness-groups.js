@@ -6,6 +6,7 @@ const cleanSelected = (queryResult) => {
     if (queryResult && queryResult.length) {
         return queryResult.map((type) => {
             type.isSelected = (type.isSelected === 'Y');
+            if (type.hasOwnProperty('rowEdit')) type.rowEdit = (type.rowEdit === 'Y');
             return type;
         });
     } else {
@@ -13,9 +14,45 @@ const cleanSelected = (queryResult) => {
     }
 }
 
+const confirmGroupAccess = (groupId, session) => {
+    try {
+        const groupsToAdmin = JSON.parse(session.fitnessGroupAdmins);
+        if (!groupsToAdmin.includes(groupId)){
+            return false;
+        }
+        return true;
+    } catch (err) {
+        return false;
+    }
+}
+
 const getMyGroups = async (req, res) => {
     const myUserId = getUserId(req);
-    // get groups that the user is allowed to see and/or administer
+    const athleteId = parseInt(req.params.athleteId);
+    // get groups that an athlete can join
+    let statement = `SELECT distinct
+                        fg.group_id,
+                        fg.name,
+                        fg.description,
+                        fg.is_closed,
+                        (CASE WHEN ai.invitee_id IS NOT NULL THEN 'Y' ELSE 'N' END) is_invited,
+                        (CASE WHEN ag.athlete_id IS NOT NULL THEN 'Y' ELSE 'N' END) is_selected
+                    FROM beaches.fitness_groups fg
+                        LEFT JOIN beaches.athlete_groups ag ON ag.group_id = fg.group_id AND ag.athlete_id = ${athleteId}
+                        LEFT JOIN beaches.access_invites ai ON ai.invite_offer_type = 'fitness_group' 
+                            AND ai.invite_offered_id = fg.group_id AND ai.invitee_id = ${athleteId} AND ai.expire_date >= CURDATE()
+                    WHERE fg.is_closed = 'N' 
+                        OR (fg.is_closed = 'Y' AND (ag.athlete_id IS NOT NULL OR ai.invitee_id IS NOT NULL))`;
+    let queryResult = await MySQL.runQuery(statement, [myUserId]);
+    if (queryResult && queryResult.length) {
+        returnResults(res, cleanSelected(queryResult));
+    } else {
+        returnResults(res, []);
+    }
+}
+const getGroupsAdmin = async (req, res) => {
+    const myUserId = getUserId(req);
+    // get groups that the user is allowed to see and administer
     let statement = `SELECT distinct
                         fg.group_id,
                         fg.name,
@@ -24,10 +61,9 @@ const getMyGroups = async (req, res) => {
                         (CASE WHEN uga.user_id IS NULL THEN 'N' ELSE 'Y' END) is_admin,
                         ag.group_members
                     FROM beaches.fitness_groups fg
-                        LEFT JOIN (SELECT user_id, group_id FROM beaches.user_group_admins WHERE user_id = ?) uga ON uga.group_id = fg.group_id 
-                        LEFT JOIN (SELECT count(ag.athlete_id) group_members, ag.group_id from beaches.athlete_groups ag GROUP BY ag.group_id) ag ON ag.group_id = fg.group_id
-                        WHERE fg.is_closed = 'N' 
-                            OR (fg.is_closed = 'Y' AND uga.user_id IS NOT NULL)`;
+                        INNER JOIN beaches.user_group_admins uga ON uga.group_id = fg.group_id AND uga.user_id = ?
+                        LEFT JOIN (SELECT count(ag.athlete_id) group_members, ag.group_id from beaches.athlete_groups ag 
+                            GROUP BY ag.group_id) ag ON ag.group_id = fg.group_id`;
     let queryResult = await MySQL.runQuery(statement, [myUserId]);
     if (queryResult && queryResult.length) {
         queryResult = queryResult.map((group) => {
@@ -40,10 +76,7 @@ const getMyGroups = async (req, res) => {
         returnResults(res, []);
     }
 }
-const getMyAgeCategories = async (req, res) => { returnResults(res, []); }
-const getMyAthleteTypes = async (req, res) => {
-    returnResults(res, []);
-}
+
 const getGroupExercises = async (req, res) => {
     const myUserId = getUserId(req);
     const groupId = parseInt(req.params.groupId);
@@ -51,12 +84,12 @@ const getGroupExercises = async (req, res) => {
     // get exercises and their selected state for a group
     const statement = `SELECT distinct
             e.*,
-            (CASE WHEN eg.exercise_id IS NULL THEN 'N' ELSE 'Y' END) is_selected
+            (CASE WHEN eg.exercise_id IS NULL THEN 'N' ELSE 'Y' END) is_selected,
+            (CASE WHEN e.owner_group_id = ${groupId} THEN 'Y' ELSE 'N' END) row_edit
             FROM beaches.exercises e
-            LEFT JOIN (SELECT exercise_id FROM beaches.exercise_groups where group_id = ${groupId}) eg on eg.exercise_id = e.exercise_id
-            INNER JOIN beaches.user_group_admins uga ON (${groupId} = -1 OR uga.group_id = ${groupId}) AND uga.user_id = ${myUserId}
-        WHERE e.is_deleted = 'N'
-`;
+            LEFT JOIN beaches.exercise_groups eg on eg.exercise_id = e.exercise_id  AND group_id = ${groupId} 
+            INNER JOIN beaches.user_group_admins uga ON uga.group_id = ${groupId} AND uga.user_id = ${myUserId}
+        WHERE e.is_deleted = 'N' `;
     let queryResult = await MySQL.runQuery(statement);
     returnResults(res, cleanSelected(queryResult));
 }
@@ -67,11 +100,11 @@ const getGroupTypes = async (req, res) => {
     // get athlete types and their selected state for a group
     const statement = `SELECT distinct
             at.athlete_type_id,
-                at.type_name,
-                (CASE WHEN atg.athlete_type_id IS NULL THEN 'N' ELSE 'Y' END) is_selected
+            at.type_name,
+            (CASE WHEN atg.athlete_type_id IS NULL THEN 'N' ELSE 'Y' END) is_selected
             FROM beaches.athlete_types at
-            LEFT JOIN (SELECT athlete_type_id FROM beaches.athlete_type_groups where group_id = ${groupId}) atg on atg.athlete_type_id = at.athlete_type_id
-            INNER JOIN beaches.user_group_admins uga ON (${groupId} = -1 OR uga.group_id = ${groupId}) AND uga.user_id = ${myUserId}
+            LEFT JOIN beaches.athlete_type_groups atg on atg.athlete_type_id = at.athlete_type_id AND group_id = ${groupId}
+            INNER JOIN beaches.user_group_admins uga ON uga.group_id = ${groupId} AND uga.user_id = ${myUserId}
 `;
     let queryResult = await MySQL.runQuery(statement);
     returnResults(res, cleanSelected(queryResult));
@@ -88,7 +121,7 @@ const getGroupAges = async (req, res) => {
             ag.max,
             (CASE WHEN acg.age_id IS NULL THEN 'N' ELSE 'Y' END) is_selected
         FROM beaches.age_categories ag
-            LEFT JOIN (SELECT age_id FROM beaches.age_category_groups where group_id = ${groupId}) acg on acg.age_id = ag.age_id
+            LEFT JOIN beaches.age_category_groups acg on acg.age_id = ag.age_id AND group_id = ${groupId}
             INNER JOIN beaches.user_group_admins uga ON (${groupId} = -1 OR uga.group_id = ${groupId}) AND uga.user_id = ${myUserId}
     `;
     let queryResult = await MySQL.runQuery(statement);
@@ -105,17 +138,22 @@ const getGroupAthletes = async (req, res) => {
             ap.year_of_birth,
             ap.compete_gender,
             ap.fitness_level,
-            (CASE WHEN ag.athlete_id IS NULL THEN 'N' ELSE 'Y' END) is_selected
+            (CASE WHEN COALESCE(ag.athlete_id, ai.invitee_id) IS NULL THEN 'N' ELSE 'Y' END) is_selected
         FROM beaches.athlete_profiles ap
-            INNER JOIN (SELECT athlete_id FROM beaches.athlete_groups where group_id = ${groupId}) ag on ag.athlete_id = ag.athlete_id
-            INNER JOIN beaches.user_group_admins uga ON (${groupId} = -1 OR uga.group_id = ${groupId}) AND uga.user_id = ${myUserId}
+            LEFT JOIN beaches.athlete_groups ag ON ag.athlete_id = ap.athlete_id AND group_id = ${groupId}
+            LEFT JOIN beaches.access_invites ai ON ai.invite_offer_type = 'fitness_group' 
+                AND ai.invite_offered_id = ${groupId} AND invitee_type = 'athlete' AND invitee_id = ap.athlete_id
+                AND ai.expire_date >= CURDATE()
+            INNER JOIN beaches.user_group_admins uga ON uga.group_id = ${groupId} AND uga.user_id = ${myUserId}
     `;
-    // TODO: to see non-selected athletes, switch first join from INNER to LEFT
     let queryResult = await MySQL.runQuery(statement);
     returnResults(res, cleanSelected(queryResult));
 }
 
-const assignProfileGroups = async (req, res) => { returnResults(res, []); }
+const assignProfileGroups = async (req, res) => {
+    // TODO: user joins a group. Remove any pending invites
+    returnResults(res, []);
+}
 const setGroupAdmins = async (req, res) => { returnResults(res, []); }
 const upsertGroup = async (req, res) => {
     const myUserId = getUserId(req);
@@ -124,13 +162,8 @@ const upsertGroup = async (req, res) => {
         return returnSingle(res, {message: 'not permitted to add or edit groups'});
     }
     if (req.body.groupId > 0) {
-        try {
-            const groupsToAdmin = JSON.parse(req.session.fitnessGroupAdmins);
-            if (!groupsToAdmin.contains(req.body.groupId)){
-                return returnSingle(res, {message: 'not permitted to edit this group'});
-            }
-        } catch (err) {
-            console.log('error reading groups to admin', err);
+        if (!confirmGroupAccess(req.body.groupId, req.session)){
+            return returnSingle(res, {message: 'not permitted to edit this group'});
         }
     }
 
@@ -183,11 +216,9 @@ const upsertGroup = async (req, res) => {
 }
 
 const selectExerciseGroup = async (req, res) => {
-    const myUserId = getUserId(req);
     const groupId = req.body.groupId || -1;
     const exerciseId = req.body.exerciseId || -1;
     const state = (req.body.state === true);
-    console.log('GOT state request', groupId, exerciseId, state);
     if (groupId < 0 || exerciseId < 0) return returnResults(res, []);
     // remove all links for that exercise, group pair
     let statement = `DELETE FROM beaches.exercise_groups WHERE group_id = ${groupId} AND exercise_id = ${exerciseId}`;
@@ -200,11 +231,73 @@ const selectExerciseGroup = async (req, res) => {
     returnResults(res, true);
 }
 
+const inviteToGroup = async (req, res) => {
+    const groupId = req.body.groupId || -1;
+    const athleteId = req.body.athleteId || -1;
+    if (!confirmGroupAccess(groupId, req.session)){
+        return returnSingle(res, {message: 'not permitted to edit this group'});
+    }
+    // delete any existing invites
+    let statement = `DELETE FROM beaches.access_invites 
+        WHERE invite_offer_type = 'fitness_group' AND invite_offered_id = ${groupId}
+        AND invitee_type = 'athlete' AND invitee_id = ${athleteId}
+    `;
+    await MySQL.runCommand(statement);
+    // add a new invite that expires in 7 days
+    statement = `INSERT INTO beaches.access_invites
+        (invite_offer_type, invite_offered_id, invitee_type, invitee_id, offer_date, expire_date)
+        VALUES
+        ('fitness_group', ${groupId}, 'athlete', ${athleteId}, CURDATE(), CURDATE() + interval 7 day);
+    `;
+    let statementResult = await MySQL.runCommand(statement);
+    if (statementResult && statementResult.affectedRows) {
+        return returnSingle(res, true);
+    } else {
+        return returnSingle(res, false);
+    }
+}
+const removeFromGroup = async (req, res) => {
+    const groupId = req.body.groupId || -1;
+    const athleteId = req.body.athleteId || -1;
+    // delete any existing invites
+    let statement = `DELETE FROM beaches.access_invites 
+        WHERE invite_offer_type = 'fitness_group' AND invite_offered_id = ${groupId}
+        AND invitee_type = 'athlete' AND invitee_id = ${athleteId}
+    `;
+    await MySQL.runCommand(statement);
+    // also delete any athlete_group records
+    statement = `DELETE FROM beaches.athlete_groups 
+        WHERE group_id = ${groupId} AND athlete_id = ${athleteId}
+    `;
+    await MySQL.runCommand(statement);
+    returnSingle(res, true);
+}
+
+const joinGroup = async (req, res) => {
+    const groupId = req.body.groupId || -1;
+    const athleteId = req.body.athleteId || -1;
+    // delete any existing invites
+    let statement = `DELETE FROM beaches.access_invites 
+        WHERE invite_offer_type = 'fitness_group' AND invite_offered_id = ${groupId}
+        AND invitee_type = 'athlete' AND invitee_id = ${athleteId}
+    `;
+    await MySQL.runCommand(statement);
+    // add the athleteGroup record if one doesn't exist
+    statement = `INSERT INTO beaches.athlete_groups (athlete_id, group_id) 
+        (SELECT ${athleteId}, ${groupId} where 
+            (SELECT count(*) FROM beaches.athlete_groups 
+                WHERE athlete_id = ${athleteId} AND group_id = ${groupId}) = 0)`;
+    let statementResult = await MySQL.runCommand(statement);
+    if (statementResult && statementResult.affectedRows) {
+        return returnSingle(res, true);
+    } else {
+        return returnSingle(res, false);
+    }
+}
 
 module.exports = {
     getMyGroups,
-    getMyAgeCategories,
-    getMyAthleteTypes,
+    getGroupsAdmin,
     getGroupExercises,
     getGroupTypes,
     getGroupAges,
@@ -212,5 +305,8 @@ module.exports = {
     assignProfileGroups,
     setGroupAdmins,
     upsertGroup,
-    selectExerciseGroup
+    selectExerciseGroup,
+    inviteToGroup,
+    removeFromGroup,
+    joinGroup
 };

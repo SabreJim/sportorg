@@ -90,18 +90,20 @@ const createRouter = (config) => {
     router.get('/my-fitness-profiles', addSession, Fitness.getMyProfiles);
     router.put('/fitness-profile/reset/:athleteId', addSession, Fitness.resetProfile);
     router.get('/fitness-profile/:athleteId', addSession, Fitness.getAthleteProfile);
-    router.put('/fitness-profile', jsonBody, addSession, Fitness.createProfile);
+    router.put('/fitness-profile', jsonBody, addSession, Fitness.upsertProfile);
     router.get('/fitness-logs/:athleteId', addSession, Fitness.getLogs);
     router.put('/exercise-event', jsonBody, addSession, Fitness.recordExercise);
     router.delete('/exercise-event/:eventId', addSession, Fitness.deleteExerciseEvent);
-    router.get('/exercises', Fitness.getExercises);
+    router.get('/fitness/my-exercises/:athleteId', Fitness.getMyExercises);
+    router.get('/fitness/my-age-categories/:athleteId', requireSession, Fitness.getMyAgeCategories);
+    router.get('/fitness/my-athlete-types/:athleteId', requireSession, Fitness.getMyAthleteTypes);
     router.get('/compare-fitness/:athleteId', addSession, Fitness.compareFitness);
     router.put('/exercise', jsonBody, addSession, Fitness.upsertExercise);
     router.delete('/exercise/:exerciseId', requireSession, Fitness.deleteExercise);
 
-    router.get('/my-groups', requireSession, FitnessGroups.getMyGroups);
-    router.get('/my-age-categories', requireSession, FitnessGroups.getMyAgeCategories);
-    router.get('/my-athlete-types', requireSession, FitnessGroups.getMyAthleteTypes);
+
+    router.get('/my-groups/:athleteId', requireSession, FitnessGroups.getMyGroups);
+    router.get('/fitness/groups/admin', requireSession, FitnessGroups.getGroupsAdmin);
     router.get('/fitness/group/exercises/:groupId', requireSession, FitnessGroups.getGroupExercises);
     router.get('/fitness/groups/athlete-types/:groupId', requireSession, FitnessGroups.getGroupTypes);
     router.get('/fitness/groups/age-categories/:groupId', requireSession, FitnessGroups.getGroupAges);
@@ -110,6 +112,10 @@ const createRouter = (config) => {
     router.put('/fitness-profile/groups', requireSession, FitnessGroups.assignProfileGroups);
     router.put('/fitness/groups/admins', requireSession, FitnessGroups.setGroupAdmins);
     router.put('/fitness/groups', jsonBody, requireSession, FitnessGroups.upsertGroup);
+    router.put('/fitness/groups/invite', jsonBody, requireSession, FitnessGroups.inviteToGroup);
+    router.put('/fitness/groups/remove', jsonBody, requireSession, FitnessGroups.removeFromGroup);
+    router.put('/fitness/groups/join', jsonBody, requireSession, FitnessGroups.joinGroup);
+    router.put('/fitness/groups/leave', jsonBody, requireSession, FitnessGroups.removeFromGroup);
     router.put('/fitness/exercise-group', jsonBody, requireSession, FitnessGroups.selectExerciseGroup);
 
 

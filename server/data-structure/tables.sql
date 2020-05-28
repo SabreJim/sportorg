@@ -388,3 +388,15 @@ ALTER TABLE beaches.exercises
 add column is_deleted CHAR(1) default 'N';
 ALTER TABLE beaches.exercises
 add column owner_group_id MEDIUMINT references beaches.fitness_groups(group_id);
+
+CREATE TABLE beaches.access_invites (
+    invite_id MEDIUMINT NOT NULL auto_increment,
+    invite_offer_type VARCHAR(50) NOT NULL,
+    invite_offered_id MEDIUMINT NOT NULL,
+    invitee_type VARCHAR(50) NOT NULL,
+    invitee_id MEDIUMINT NOT NULL,
+    offer_date DATE NOT NULL,
+    expire_date DATE NOT NULL,
+    more_info VARCHAR(200),
+    PRIMARY KEY(invite_id)
+    );

@@ -89,7 +89,7 @@ export class FitnessPageComponent implements OnInit, OnDestroy {
   }
 
   protected getGroups = () => {
-    this.groupSubscription = this.fitnessGroupProxy.getMyGroups().subscribe((groups: FitnessGroup[]) => {
+    this.groupSubscription = this.fitnessGroupProxy.getGroupsAdmin().subscribe((groups: FitnessGroup[]) => {
       if (groups && groups.length) {
         this.myGroups = groups.map((group: FitnessGroup) => {
           return {
@@ -125,7 +125,7 @@ export class FitnessPageComponent implements OnInit, OnDestroy {
     columns: [
       new TableColumn('name', 'Name', 'string'),
       new TableColumn('description', 'Description', 'html'),
-      new TableColumn('imageId', 'Image Id', 'string'),
+      new TableColumn('imageId', 'Image Id', 'number'),
       new TableColumn('iconType', 'Icon Type', 'string'),
       new TableColumn('iconName', 'Icon Name', 'string'),
       new TableColumn('balanceValue', 'Balance', 'number'),
@@ -138,11 +138,27 @@ export class FitnessPageComponent implements OnInit, OnDestroy {
       new TableColumn('measurementUnitQuantity', 'Quantity (per set)', 'number')
     ],
     allowSelect: true,
+    defaultObject: {
+      name: 'Exercise',
+      measurementUnit : 'reps',
+      measurementUnitQuantity: 10,
+      imageId: null,
+      iconType: 'fas',
+      iconName: 'fas fa-wind',
+      balanceValue: 0,
+      flexibilityValue: 0,
+      powerValue: 0,
+      enduranceValue: 0,
+      footSpeedValue: 0,
+      handSpeedValue: 0
+    },
     getter: () => {
       setTimeout(() => this.refreshExercises = false);
-      return this.fitnessProxy.getGroupExercises(this.currentExerciseGroupId);
+      return this.fitnessGroupProxy.getGroupExercises(this.currentExerciseGroupId);
     },
-    setter: this.fitnessProxy.upsertExercise,
+    setter: (exercise: any) => {
+      return this.fitnessProxy.upsertExercise(exercise, this.currentExerciseGroupId);
+    },
     delete: this.fitnessProxy.deleteExercise,
     notifySelection: (row: Exercise, state: boolean) => {
       return this.fitnessGroupProxy.setSelectedExercise(this.currentExerciseGroupId, row.exerciseId, state);

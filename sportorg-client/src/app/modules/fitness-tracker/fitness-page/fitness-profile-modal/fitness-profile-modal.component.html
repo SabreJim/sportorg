@@ -41,29 +41,37 @@
               <mat-error *ngIf="invalid.competeGender">Please select a competition category</mat-error>
             </div>
           </div>
-
-        <div class="multi-field">
+        <ng-container *ngIf="typeOptions?.length > 0">
+          <h4 class="field-pretitle">Roles or sub-groups within your sport</h4>
           <div class="form-field">
-            <h3>Epee</h3>
-            <div class="input-item select-item">
-              <app-boolean-input (valueChanged)="updateWeapon($event, 'isEpee')" [value]="newProfile.isEpee" ></app-boolean-input>
+            <div class="input-item input-grows">
+              <app-table ngClass="select-table"
+                         [tableColumns]="athleteTypeColumns"
+                         [gridData]="typeOptions"
+                         [canSelect]="true"
+                         [trackById]="'athleteTypeId'"
+                         (selectedRows)="updateSelectedTypes($event)"
+                         [altClass]="'small-input-table'"
+              ></app-table>
             </div>
           </div>
-
+        </ng-container>
+        <ng-container *ngIf="newProfile?.athleteId > 0">
+          <h4 class="field-pretitle">Join or Leave sport groups</h4>
           <div class="form-field">
-            <h3>Foil</h3>
-            <div class="input-item select-item">
-              <app-boolean-input (valueChanged)="updateWeapon($event, 'isFoil')" [value]="newProfile.isFoil" ></app-boolean-input>
+            <div class="input-item input-grows">
+              <app-table ngClass="select-table"
+                         [tableColumns]="groupColumns"
+                         [gridData]="groupOptions"
+                         [canSelect]="true"
+                         [trackById]="'groupId'"
+                         (selectedRow)="joinGroup($event)"
+                         (deselectedRow)="leaveGroup($event)"
+                         [altClass]="'small-input-table'"
+              ></app-table>
             </div>
           </div>
-
-          <div class="form-field">
-            <h3>Sabre</h3>
-            <div class="input-item select-item">
-              <app-boolean-input (valueChanged)="updateWeapon($event, 'isSabre')" [value]="newProfile.isSabre" ></app-boolean-input>
-            </div>
-          </div>
-        </div>
+        </ng-container>
 
       </mat-card>
     </form>

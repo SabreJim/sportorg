@@ -4,7 +4,7 @@ import {
   FitnessLogItem,
   Exercise,
   ExerciseLogResults,
-  FitnessProfileStat, FitnessCompareResponse
+  FitnessProfileStat, FitnessCompareResponse, FitnessAgeCategory, FitnessGroupType, FitnessGroup
 } from "../models/fitness-objects";
 import {Observable, Subject} from "rxjs";
 import { ApiResponse } from "../models/rest-objects";
@@ -26,6 +26,7 @@ export class FitnessProxyService extends RestProxyService {
   public ProfileCompare: Subject<FitnessCompareResponse> = new Subject<FitnessCompareResponse>();
 
   protected exerciseCache: Exercise[] = [];
+  protected lastAthleteExerciseId: number;
 
   // get any profiles that this user can see
   public getMyFitnessProfiles = (): Observable<FitnessProfile[]> => {
@@ -73,6 +74,44 @@ export class FitnessProxyService extends RestProxyService {
       }
     }, (error: any) => {});
   }
+  public getMyGroups = (athleteId: number): Observable<FitnessGroup[]> => {
+    return new Observable((subscription) => {
+      this.get(`my-groups/${athleteId}`).subscribe((response: ApiResponse<FitnessGroup[]>) => {
+        if (response.hasErrors()) {
+          SnackbarService.error(`Athlete Groups could not be retrieved at this time`);
+          subscription.next([]);
+        } else {
+          subscription.next(response.data || []);
+        }
+      }, (error: any) => {});
+    });
+  }
+
+  public getMyAgeCategories = (athleteId: number) => {
+    return new Observable<FitnessAgeCategory[]>((subscription) => {
+      this.get(`fitness/my-age-categories/${athleteId}`).subscribe((response: ApiResponse<FitnessAgeCategory[]>) => {
+        if (response.hasErrors()) {
+          subscription.next([]);
+        } else {
+          subscription.next(response.data);
+        }
+      }, (error: any) => {
+      });
+    });
+  }
+
+  public getMyAthleteTypes = (athleteId: number) => {
+    return new Observable<FitnessGroupType[]>((subscription) => {
+      this.get(`fitness/my-athlete-types/${athleteId}`).subscribe((response: ApiResponse<FitnessGroupType[]>) => {
+        if (response.hasErrors()) {
+          subscription.next([]);
+        } else {
+          subscription.next(response.data);
+        }
+      }, (error: any) => {
+      });
+    });
+  }
 
   // add a fitness profile
   public createFitnessProfile = (newProfile: FitnessProfile): Observable<boolean> => {
@@ -82,7 +121,11 @@ export class FitnessProxyService extends RestProxyService {
           SnackbarService.error(`Profile could not be created successfully: ${response.message}`);
           subscription.next(false);
         } else {
-          SnackbarService.notify(`Profile created for : ${newProfile.firstName} ${newProfile.lastName}`);
+          if (newProfile.athleteId > 0) {
+            SnackbarService.notify(`Profile updated for : ${newProfile.firstName} ${newProfile.lastName}`);
+          } else {
+            SnackbarService.notify(`Profile created for : ${newProfile.firstName} ${newProfile.lastName}`);
+          }
           subscription.next(true);
         }
       }, (error: any) => {});
@@ -144,44 +187,27 @@ export class FitnessProxyService extends RestProxyService {
     });
   }
 
-  // getAllExercises
-  public getExercises = () => {
-    if (this.exerciseCache && this.exerciseCache.length > 0){
+  // getAllExercises that are part of a group the athlete is in
+  public getExercises = (athleteId: number) => {
+    if (this.exerciseCache && this.exerciseCache.length && (athleteId === this.lastAthleteExerciseId )){
       this.Exercises.next(this.exerciseCache);
       return;
     }
-    this.get(`exercises/`).subscribe((response: ApiResponse<Exercise[]>) => {
+    this.get(`fitness/my-exercises/${athleteId}`).subscribe((response: ApiResponse<Exercise[]>) => {
       if (response.hasErrors()) {
         SnackbarService.error(`Exercises could not be retrieved at this time`);
         this.Exercises.next([]);
       } else {
         this.exerciseCache = response.data;
+        this.lastAthleteExerciseId = athleteId;
         this.Exercises.next(this.exerciseCache);
       }
     }, (error: any) => {});
   }
 
-  public getGroupExercises = (groupId: number) => {
-    return new Observable<Exercise[]>((subscription) => {
-      if (!(groupId > 0)) {
-        subscription.next([]);
-        return;
-      }
-      this.get(`fitness/group/exercises/${groupId}`).subscribe((response: ApiResponse<Exercise[]>) => {
-        if (response.hasErrors()) {
-          SnackbarService.error(`Exercises could not be retrieved at this time`);
-          subscription.next([]);
-        } else {
-          subscription.next(response.data);
-        }
-      }, (error: any) => {
-      });
-    });
-  }
-
   // compareMyFitness
-  public runCompare = (athleteId: number, athleteTypes: number[], ageCategory: number) => {
-    this.get(`compare-fitness/${athleteId}`, {athleteTypes: athleteTypes, ageCategory: ageCategory})
+  public runCompare = (athleteId: number, athleteTypes: number[], ageCategory: number, groupId: number) => {
+    this.get(`compare-fitness/${athleteId}`, {athleteTypes: athleteTypes, ageCategory: ageCategory, groupId})
       .subscribe((response: ApiResponse<string>) => {
       if (response.hasErrors()) {
         SnackbarService.error(`Comparisons could not be retrieved at this time`);
@@ -197,8 +223,9 @@ export class FitnessProxyService extends RestProxyService {
     }, (error: any) => {});
   }
 
-  public upsertExercise = (exercise: Exercise): Observable<boolean> => {
+  public upsertExercise = (exercise: Exercise, groupId: number): Observable<boolean> => {
     return new Observable((subscription) => {
+      exercise.ownerGroupId = exercise.ownerGroupId || groupId;
       this.put(`exercise`, exercise).subscribe((response: ApiResponse<boolean>) => {
         if (response.hasErrors() || !response.success) {
           SnackbarService.error(`Exercise could not be updated: ${response.message}`);
@@ -211,9 +238,10 @@ export class FitnessProxyService extends RestProxyService {
   }
 
   // remove an exerciseEvent that was recorded in error
-  public deleteExercise = (exerciseId: number): Observable<boolean> => {
+  public deleteExercise = (exercise: Exercise): Observable<boolean> => {
     return new Observable((subscription) => {
-      this.delete(`exercise/${exerciseId}`).subscribe((response: ApiResponse<boolean>) => {
+      console.log('sending delete', exercise);
+      this.delete(`exercise/${exercise.exerciseId}`).subscribe((response: ApiResponse<boolean>) => {
         if (response.hasErrors() || !response.success) {
           SnackbarService.error(`Exercise was not deleted successfully: ${response.message}`);
           subscription.next(false);
@@ -221,6 +249,32 @@ export class FitnessProxyService extends RestProxyService {
           subscription.next(true);
         }
       }, (error: any) => {});
+    });
+  }
+
+
+  public joinGroup = (groupId: number, athleteId: number): Observable<boolean> => {
+    return new Observable((subscription) => {
+      this.put(`fitness/groups/join`, {groupId, athleteId}).subscribe((response: ApiResponse<any>) => {
+        if (response.hasErrors()) {
+          subscription.next(false);
+        } else {
+          subscription.next(true);
+        }
+      }, (error: any) => {
+      });
+    });
+  }
+  public leaveGroup = (groupId: number, athleteId: number): Observable<boolean> => {
+    return new Observable((subscription) => {
+      this.put(`fitness/groups/leave`, {groupId, athleteId}).subscribe((response: ApiResponse<any>) => {
+        if (response.hasErrors()) {
+          subscription.next(false);
+        } else {
+          subscription.next(true);
+        }
+      }, (error: any) => {
+      });
     });
   }
 }

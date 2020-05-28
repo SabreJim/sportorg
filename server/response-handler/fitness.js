@@ -11,9 +11,12 @@ const getMyProfiles = async(req, res, next) => {
     if (myUserId === -1) { // not logged in
         return returnResults(res, []);
     }
-    const query = `SELECT * FROM beaches.v_athlete_profiles
-        WHERE allowed_user_id = ${myUserId} OR 
-    (allowed_user_id != ${myUserId} AND (SELECT u.is_admin FROM beaches.users u where u.user_id = ${myUserId}) = 'Y')`;
+    const query = `SELECT distinct ap.* from beaches.v_athlete_profiles ap
+            LEFT JOIN beaches.athlete_users au ON au.athlete_id = ap.athlete_id
+            LEFT JOIN beaches.athlete_groups ag ON ag.athlete_id = ap.athlete_id
+            WHERE  (au.user_id = ${myUserId} OR 
+                (SELECT u.is_admin FROM beaches.users u where u.user_id = ${myUserId}) = 'Y' OR
+                ag.group_id IN (SELECT uga.group_id FROM beaches.user_group_admins uga WHERE uga.user_id = ${myUserId}) )`;
 
     const profilesResponse = await MySQL.runQuery(query);
 
@@ -23,14 +26,16 @@ const getMyProfiles = async(req, res, next) => {
 };
 
 const cleanAthleteProfile = (profile) => {
-    let { athleteId, memberId, firstName, lastName, yearOfBirth, competeGender, lastWorkout, fitnessLevel } = profile;
-    const cleanedProfile = { athleteId, memberId, firstName, lastName, yearOfBirth, competeGender, lastWorkout, fitnessLevel };
+    let { athleteId, memberId, firstName, lastName, yearOfBirth, competeGender, lastWorkout, fitnessLevel, typeIds } = profile;
+    const cleanedProfile = { athleteId, memberId, firstName, lastName, yearOfBirth, competeGender, lastWorkout, fitnessLevel, typeIds };
 
     cleanedProfile.stats = JSON.parse(profile.stats);
-    cleanedProfile.isEpee = (profile.isEpee > 0) ? 'Y' : 'N';
-    cleanedProfile.isFoil = (profile.isFoil > 0) ? 'Y' : 'N';
-    cleanedProfile.isSabre = (profile.isSabre > 0) ? 'Y' : 'N';
-    cleanedProfile.generatedFromMember = profile.generatedFromMember === 1;
+    if (profile.typeIds) {
+        cleanedProfile.typeIds = JSON.parse(profile.typeIds);
+    } else {
+        cleanedProfile.typeIds = [];
+    }
+    cleanedProfile.typeIds = JSON.parse(profile.typeIds);
     return cleanedProfile;
 }
 
@@ -47,10 +52,13 @@ const getAthleteProfile = async(req, res, next) => {
         return returnResults(res, []);
     }
     const athleteId = req.params.athleteId;
-
-    const query = `SELECT * from beaches.v_athlete_profiles WHERE athlete_id = ${athleteId} 
-                    AND (allowed_user_id = ${myUserId} OR 
-                    (allowed_user_id != ${myUserId} AND (SELECT u.is_admin FROM beaches.users u where u.user_id = ${myUserId}) = 'Y') )`;
+    const query = `SELECT distinct ap.* from beaches.v_athlete_profiles ap
+            LEFT JOIN beaches.athlete_users au ON au.athlete_id = ap.athlete_id
+            LEFT JOIN beaches.athlete_groups ag ON ag.athlete_id = ap.athlete_id
+            WHERE ap.athlete_id = ${athleteId}  AND
+             (au.user_id = ${myUserId} OR 
+             (SELECT u.is_admin FROM beaches.users u where u.user_id = ${myUserId}) = 'Y' OR
+             ag.group_id IN (SELECT uga.group_id FROM beaches.user_group_admins uga WHERE uga.user_id = ${myUserId}) )`;
 
     const profileResponse = await MySQL.runQuery(query);
     if (profileResponse && profileResponse.length) {
@@ -99,13 +107,14 @@ const resetProfile = async(req, res, next) => {
     }
 }
 
-const createProfile = async(req, res, next) => {
+const upsertProfile = async(req, res, next) => {
     const myUserId = getUserId(req);
     if (myUserId === -1) { // not logged in
         return returnSingle(res, {});
     }
     let body = getCleanBody(req.body, fitnessProfileSchema);
     if (!body.cleanBody.memberId) body.cleanBody.memberId = -1;
+    if (!body.cleanBody.typeIds) body.cleanBody.typeIds = [];
 
     let statement = 'SELECT beaches.upsert_fitness_profile( ? , ? ) as new_id';
     const statementResult = await MySQL.runCommand(statement,
@@ -120,9 +129,14 @@ const createProfile = async(req, res, next) => {
 const getLogs = async(req, res, next) => {
     returnResults(res, []);
 };
-const getExercises = async(req, res, next) => {
-    // TODO: get exercises in any groups I am part of
-    const query = `SELECT * from beaches.exercises`;
+const getMyExercises = async(req, res, next) => {
+    // get exercises in any groups I am part of
+    const athleteId = req.params.athleteId || -1;
+    if (athleteId === -1) return returnSingle(res, []);
+
+    const query = `SELECT e.* FROM beaches.exercises e
+        LEFT JOIN beaches.exercise_groups eg ON eg.exercise_id = e.exercise_id
+        WHERE eg.group_id IN (SELECT ag.group_id FROM beaches.athlete_groups ag WHERE ag.athlete_id = ${athleteId})`;
     const exerciseResponse = await MySQL.runQuery(query);
     if (exerciseResponse && exerciseResponse.length) {
         returnResults(res, exerciseResponse);
@@ -130,6 +144,42 @@ const getExercises = async(req, res, next) => {
         returnResults(res, []);
     }
 };
+
+const getMyAgeCategories = async (req, res) => {
+    const athleteId = req.params.athleteId || -1;
+    if (athleteId === -1) return returnSingle(res, []);
+    const query = `SELECT distinct
+        ac.age_id,
+        ac.name,
+        ac.label,
+        ac.min,
+        ac.max
+    FROM beaches.age_categories ac
+    LEFT JOIN beaches.age_category_groups acg ON acg.age_id = ac.age_id
+    WHERE acg.group_id IN (SELECT ag.group_id FROM beaches.athlete_groups ag WHERE ag.athlete_id = ${athleteId})`;
+    const queryResponse = await MySQL.runQuery(query);
+    if (queryResponse && queryResponse.length) {
+        returnResults(res, queryResponse);
+    } else {
+        returnResults(res, []);
+    }
+}
+const getMyAthleteTypes = async (req, res) => {
+    const athleteId = req.params.athleteId || -1;
+    if (athleteId === -1) return returnSingle(res, []);
+    const query = `SELECT distinct
+        at.athlete_type_id,
+        at.type_name
+    FROM beaches.athlete_types at
+    LEFT JOIN beaches.athlete_type_groups atg ON atg.athlete_type_id = at.athlete_type_id
+    WHERE atg.group_id IN (SELECT ag.group_id FROM beaches.athlete_groups ag WHERE ag.athlete_id = ${athleteId})`;
+    const queryResponse = await MySQL.runQuery(query);
+    if (queryResponse && queryResponse.length) {
+        returnResults(res, queryResponse);
+    } else {
+        returnResults(res, []);
+    }
+}
 
 const makeCompareString = (statName) => {
     const compatibleName = (statName === 'fitness_level') ? 'fitness' : statName;
@@ -149,6 +199,7 @@ const compareFitness = async(req, res, next) => {
     const requestAthlete = (req.params.athleteId) ? req.params.athleteId : -1;
     const ageCategory = req.query.ageCategory;
     const athleteTypes = req.query.athleteTypes;
+    const groupId = req.query.groupId || -1;
     if (myUserId === -1 || requestAthlete === -1) { // not logged in
         return returnSingle(res, {});
     }
@@ -174,7 +225,12 @@ const compareFitness = async(req, res, next) => {
             ON apt.athlete_id = ex.athlete_id AND apt.athlete_type_id IN ( ${athleteTypes} ) `;
         }
 
-        // restrict to the requested age category
+        if (groupId > 0) {
+            compareQuery = compareQuery + ` INNER JOIN beaches.athlete_groups ag 
+            ON ag.athlete_id = ex.athlete_id AND ag.group_id =  ${groupId} `;
+        }
+
+        // restrict to the requested age category: WHERE CLAUSE has to be added last
         if (ageCategory && ageCategory.length) {
             // restrict to a set of age categories
             const AGE_CATEGORIES = await MySQL.runQuery('SELECT * FROM beaches.age_categories ORDER BY age_id');
@@ -287,21 +343,29 @@ const upsertExercise = async(req, res, next) => {
 
     const cleanExercise = getCleanBody(req.body, exerciseSchema);
     if (cleanExercise.isValid) {
-        console.log('clean exercise', cleanExercise);
         let statement;
+        let statementResult;
         if (cleanExercise.isEdit){
             statement = `UPDATE beaches.exercises SET ${cleanExercise.setters.join(', ')} WHERE exercise_id = ${cleanExercise.cleanBody.exerciseId}`;
+            statementResult = await MySQL.runCommand(statement);
+            if (statementResult && statementResult.affectedRows) {
+                return returnSingle(res, {affectedRows: statementResult.affectedRows});
+            }
         } else {
             statement = `INSERT INTO beaches.exercises ${cleanExercise.insertValues}`;
+            statementResult = await MySQL.runCommand(statement);
+            if (statementResult && statementResult.insertId) {
+                statement = `INSERT INTO beaches.exercise_groups (exercise_id, group_id) 
+                VALUES (${statementResult.insertId}, ${cleanExercise.cleanBody.ownerGroupId})`;
+                await MySQL.runCommand(statement);
+                if (statementResult && statementResult.affectedRows) {
+                    return returnSingle(res, {affectedRows: statementResult.affectedRows});
+                }
+            }
         }
-        const statementResult = await MySQL.runCommand(statement);
-        if (statementResult && statementResult.affectedRows) {
-            return returnSingle(res, {affectedRows: statementResult.affectedRows});
-        } else {
-            return returnError(res, 'An error occurred when updating this record');
-        }
+        return returnError(res, 'An error occurred when updating this record');
     } else {
-        returnError(res,'Class could not be updated');
+        returnError(res,'Exercise could not be updated');
     }
 };
 const deleteExerciseEvent = async (req, res) => {
@@ -321,19 +385,16 @@ const deleteExerciseEvent = async (req, res) => {
 const deleteExercise = async (req, res) => {
     const myUserId = getUserId(req);
     const exerciseId = req.params.exerciseId || -1;
-    console.log('session', myUserId, exerciseId);
-    // fitness admin required to add group
-    if (req.session.isFitnessAdmin !== 'Y') {
-        return returnSingle(res, {message: 'not permitted to add or edit groups'});
-    }
-    let statement = `DELETE FROM beaches.exercise_groups eg 
-        WHERE  EXISTS (SELECT 1 from beaches.user_group_admins uga WHERE uga.user_id = ${myUserId})
-            AND (SELECT owner_group_id FROM beaches.exercises WHERE exercise_id = ${exerciseId}) = eg.group_id
-            AND eg.exericse_id = ${exerciseId}  `;
+
+    let statement = `DELETE FROM beaches.exercise_groups 
+        WHERE  EXISTS (SELECT 1 from beaches.user_group_admins uga WHERE uga.user_id = ${myUserId} AND uga.group_id = group_id)
+            AND (SELECT e.owner_group_id FROM beaches.exercises e WHERE e.exercise_id = ${exerciseId}) = group_id
+            AND exercise_id = ${exerciseId}  `;
     let statementResult = await MySQL.runCommand(statement);
+
+    statement = `UPDATE  beaches.exercises SET is_deleted = 'Y' WHERE exercise_id = ${exerciseId}`;
+    statementResult = await MySQL.runCommand(statement);
     if (statementResult && statementResult.affectedRows) {
-        statement = `UPDATE  beaches.exercise e SET delete_date = 'Y' WHERE e.exercise_id = ${exerciseId}`;
-        statementResult = await MySQL.runCommand(statement);
         returnSingle(res, {affectedRows: statementResult.affectedRows});
     } else {
         returnSingle(res, 'Not able to delete this exercise');
@@ -343,12 +404,14 @@ const deleteExercise = async (req, res) => {
 module.exports = {
     getMyProfiles,
     getAthleteProfile,
+    getMyAgeCategories,
+    getMyAthleteTypes,
     resetProfile,
-    createProfile,
+    upsertProfile,
     getLogs,
     recordExercise,
     deleteExerciseEvent,
-    getExercises,
+    getMyExercises,
     compareFitness,
     upsertExercise,
     deleteExercise

@@ -5,6 +5,7 @@ export interface FitnessProfile {
   yearOfBirth: number;
   competeGender: 'M' | 'F';
   stats: FitnessProfileStat[];
+  typeIds?: number[];
   isEpee?: string;
   isFoil?: string;
   isSabre?: string;
@@ -56,6 +57,7 @@ export interface FitnessLogItem {
 
 export interface Exercise {
   exerciseId: number;
+  ownerGroupId?: number; // group that created the exercise
   name: string;
   description: string;
   iconType: string;
@@ -80,6 +82,8 @@ export interface FitnessGroup {
   isClosed: boolean;
   isAdmin?: boolean;
   groupMembers?: number;
+  invitePending?: boolean;
+  isSelected?: boolean;
   athleteTypeIds?: number[];
   ageCategoryIds?: number[];
   athleteIds?: number[];
@@ -96,7 +100,7 @@ export interface FitnessAgeCategory {
   max: number;
   isSelected?: boolean;
 }
-export interface FitnessGroupAthletes {
+export interface FitnessGroupAthlete {
   athleteId: number;
   athleteName: string;
   yearOfBirth: number;

@@ -67,6 +67,7 @@ export class TableColumn {
 }
 export interface AdminConfig {
   columns: TableColumn[];
+  defaultObject?: any; // to default for new records
   getter: () => Observable<any[]>;
   setter: (entity: any) => Observable<boolean>;
   delete: (entity: any) => Observable<boolean>;

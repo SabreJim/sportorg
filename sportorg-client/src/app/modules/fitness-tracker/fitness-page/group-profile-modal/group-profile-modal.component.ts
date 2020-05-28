@@ -3,13 +3,14 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 import {
   FitnessAgeCategory,
   FitnessGroup,
-  FitnessGroupAthletes,
+  FitnessGroupAthlete,
   FitnessGroupType
 } from "../../../core/models/fitness-objects";
 import {TableColumn} from "../../../core/models/ui-objects";
 import {FitnessGroupProxyService} from "../../../core/services/fitness-group-proxy.service";
 import {Subscription} from "rxjs";
 import {StaticValuesService} from "../../../core/services/static-values.service";
+import {SnackbarService} from "../../../core/services/snackbar.service";
 
 @Component({
   selector: 'app-group-profile-modal',
@@ -49,7 +50,7 @@ export class GroupProfileModalComponent implements OnInit, OnDestroy {
       this.ageOptions = ages;
       this.updateSelectedAges(ages);
     });
-    this.fitnessGroupProxy.getGroupAthletes(this.newGroup.groupId).subscribe((athletes: FitnessGroupAthletes[]) => {
+    this.fitnessGroupProxy.getGroupAthletes(this.newGroup.groupId).subscribe((athletes: FitnessGroupAthlete[]) => {
       this.athleteOptions = athletes;
     });
   }
@@ -112,7 +113,7 @@ export class GroupProfileModalComponent implements OnInit, OnDestroy {
     new TableColumn('competeGender', 'Gender', 'string'),
     new TableColumn('fitnessLevel', 'Level', 'number')
   ];
-  public athleteOptions: FitnessGroupAthletes[] = [];
+  public athleteOptions: FitnessGroupAthlete[] = [];
 
   public updateSelectedTypes = (types: FitnessGroupType[]) => {
     this.newGroup.athleteTypeIds = types.filter(item => item.isSelected).map(item => item.athleteTypeId);
@@ -120,6 +121,21 @@ export class GroupProfileModalComponent implements OnInit, OnDestroy {
   public updateSelectedAges = (ages: FitnessAgeCategory[]) => {
       this.newGroup.ageCategoryIds = ages.filter(item => item.isSelected).map(item => item.ageId);
   }
+  public inviteAthlete = (athlete: FitnessGroupAthlete) => {
+    this.fitnessGroupProxy.inviteToGroup(this.newGroup.groupId, athlete.athleteId).subscribe((success: boolean) => {
+      if (success) {
+        SnackbarService.notify(`Athlete: ${athlete.athleteName} has been invited.`);
+      }
+    });
+  }
+  public removeAthlete = (athlete: FitnessGroupAthlete) => {
+    this.fitnessGroupProxy.removeFromGroup(this.newGroup.groupId, athlete.athleteId).subscribe((success: boolean) => {
+      if (success) {
+        SnackbarService.notify(`Athlete: ${athlete.athleteName} has been removed from the group.`);
+      }
+    });
+  }
+
 
   ngOnDestroy(): void {
     StaticValuesService.cleanSubs([this.typeSub, this.ageSub, this.athleteSub]);

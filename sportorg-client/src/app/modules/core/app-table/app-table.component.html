@@ -17,7 +17,7 @@
                                [maxBufferPx]="SCROLL_MAX_BUFFER">
     <ng-container *cdkVirtualFor="let row of gridDataRows; let index = index">
       <tr class="body-row">
-        <td *ngIf="isEditable" class="body-cell edit-cell"><mat-icon (click)="sendEdit(row)">edit</mat-icon></td>
+        <td *ngIf="isEditable" class="body-cell edit-cell"><mat-icon *ngIf="row.rowEdit !== false" (click)="sendEdit(row)">edit</mat-icon></td>
         <td *ngIf="canSelect" class="body-cell edit-cell"><mat-checkbox (change)="selectRow(row, $event)" [name]="'row' + index"
                                                                         [ngModel]="row.isSelected"></mat-checkbox></td>
         <ng-container *ngFor="let column of tableColumns">

@@ -4,7 +4,6 @@ import {
   ExerciseLogResults,
   FitnessLogItem,
   FitnessProfile,
-  FitnessProfileStat
 } from "../../../core/models/fitness-objects";
 import {FitnessProxyService} from "../../../core/services/fitness-proxy.service";
 import {StaticValuesService} from "../../../core/services/static-values.service";
@@ -13,8 +12,6 @@ import {SnackbarService} from "../../../core/services/snackbar.service";
 import {ConfirmModalComponent} from "../../../core/modals/confirm-modal/confirm-modal.component";
 import {MatDialog} from "@angular/material";
 import {AppUser} from "../../../core/models/authentication";
-import {FitnessProfileModalComponent} from "../../fitness-page/fitness-profile-modal/fitness-profile-modal.component";
-import {ExerciseEditModalComponent} from "../exercise-edit-modal/exercise-edit-modal.component";
 
 @Component({
   selector: 'app-exercises-widget',
@@ -47,7 +44,7 @@ export class ExercisesWidgetComponent implements OnInit, OnDestroy {
           });
         });
       }
-      this.fitnessProxy.getExercises();
+      this.fitnessProxy.getExercises(this.profile.athleteId);
     }
   }
   private _profile: FitnessProfile;
@@ -69,18 +66,6 @@ export class ExercisesWidgetComponent implements OnInit, OnDestroy {
             if (logResult && logResult.levelUps && logResult.levelUps.length) {
               SnackbarService.notify(logResult.levelUps.join(' '));
             }
-          });
-        }
-      });
-  }
-
-  public editExercise = (exercise: Exercise) => {
-      const dialogRef = this.dialog.open(ExerciseEditModalComponent,
-        { maxHeight: '80vh', maxWidth: '800px', data: exercise });
-      dialogRef.afterClosed().subscribe((result: Exercise) => {
-        if (result && result.exerciseId) {
-          this.fitnessProxy.upsertExercise(result).subscribe((saveResult: boolean) => {
-            this.fitnessProxy.getExercises();// refresh
           });
         }
       });

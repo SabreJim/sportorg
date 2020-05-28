@@ -1,8 +1,9 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {AppUser} from "../../../core/models/authentication";
 import {
+  FitnessAgeCategory,
   FitnessCompareResponse,
-  FitnessCompareStat,
+  FitnessCompareStat, FitnessGroup, FitnessGroupType,
   FitnessProfile,
   FitnessProfileStat
 } from "../../../core/models/fitness-objects";
@@ -34,11 +35,54 @@ export class FitnessCompareComponent implements OnInit, OnDestroy {
     }
     this._profile = newProfile;
 
+    this.typeSub = this.fitnessProxy.getMyAthleteTypes(this.profile.athleteId).subscribe((types: FitnessGroupType[]) => {
+      this.typeOptions = types.map((item: FitnessGroupType) => {
+        return {
+          id: item.athleteTypeId,
+          name: item.typeName,
+          lookup: 'athleteType'
+        }
+      });
+    });
+    this.fitnessProxy.getMyAgeCategories(this.profile.athleteId).subscribe((categories: FitnessAgeCategory[])=> {
+      if (!categories || !categories.length) return; // not able to process
+      // mark the profile's age category as selected by default
+      const profileAge = StaticValuesService.COMPETITION_YEAR - this.profile.yearOfBirth;
+      let selectedAgeGroup = null;
+      this.ageOptions = categories.map((item: FitnessAgeCategory) => {
+        if (!selectedAgeGroup && profileAge >= item.min && profileAge <= item.max) {
+          selectedAgeGroup = item;
+        }
+        return {
+          id: item.ageId,
+          name: item.label,
+          lookup: 'ageCategory',
+          moreInfo: `${item.min} to ${item.max}`
+        }
+      });
+      this.ageCategory = selectedAgeGroup.ageId;
+    });
+    this.groupSub = this.fitnessProxy.getMyGroups(this.profile.athleteId).subscribe((groups: FitnessGroup[]) => {
+      this.groupOptions = groups.filter(item => item.isSelected).map((item: FitnessGroup) => {
+        return {
+          id: item.groupId,
+          name: item.name,
+          lookup: 'fitnessGroup'
+        }
+      });
+    });
   }
+  protected typeSub: Subscription;
+  protected ageSub: Subscription;
+  protected groupSub: Subscription;
+  protected compareSub: Subscription;
+
   public athleteTypes: number[] = [];
   public ageCategory: number = -1;
+  public selectedGroupId: number = -1;
   public ageOptions: LookupItem[] = [];
   public typeOptions: LookupItem[] = [];
+  public groupOptions: LookupItem[] = [];
   public compareStats: FitnessCompareStat[] = [];
   public numParticipants: number = 0;
 
@@ -51,11 +95,10 @@ export class FitnessCompareComponent implements OnInit, OnDestroy {
     }
     this.runCompare();
   };
-  protected compareSub: Subscription;
 
   public runCompare = () => {
     if (this.profile && this.profile.athleteId) {
-      this.fitnessProxy.runCompare(this.profile.athleteId, this.athleteTypes, this.ageCategory);
+      this.fitnessProxy.runCompare(this.profile.athleteId, this.athleteTypes, this.ageCategory, this.selectedGroupId);
     }
   }
 
@@ -63,27 +106,6 @@ export class FitnessCompareComponent implements OnInit, OnDestroy {
   constructor(protected fitnessProxy: FitnessProxyService, protected lookupProxy: LookupProxyService) { }
 
   ngOnInit() {
-    this.lookupProxy.getLookup('ageCategories').subscribe((categories: LookupItem[])=> {
-      if (!categories || !categories.length) return; // not able to process
-      // mark the profile's age category as selected by default
-      const profileAge = StaticValuesService.COMPETITION_YEAR - this.profile.yearOfBirth;
-      let selectedAgeGroup = null;
-      this.ageOptions = categories.map((item: LookupItem) => {
-        try {
-          item.moreInfo = JSON.parse(item.moreInfo);
-        } catch (parseErr) {
-          // nothing to do; JSON already parsed
-        }
-        if (!selectedAgeGroup && profileAge >= (item.moreInfo as any).min && profileAge <= (item.moreInfo as any).max) {
-          selectedAgeGroup = item;
-        }
-        return item;
-      });
-      this.ageCategory = selectedAgeGroup.id;
-    });
-    this.lookupProxy.getLookup('athleteTypes').subscribe((types: LookupItem[])=> {
-      this.typeOptions = types;
-    });
     this.compareSub = this.fitnessProxy.ProfileCompare.subscribe((response: FitnessCompareResponse) => {
       this.compareStats = response.stats.map((item: FitnessCompareStat) => {
 
@@ -110,9 +132,7 @@ export class FitnessCompareComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.compareSub && this.compareSub.unsubscribe) {
-      this.compareSub.unsubscribe();
-    }
+    StaticValuesService.cleanSubs([this.compareSub, this.ageSub, this.typeSub, this.groupSub]);
   }
 
 }

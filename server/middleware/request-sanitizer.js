@@ -81,6 +81,10 @@ const getCleanBody = (body, schema) => {
 
     const cleanHtml = (field) => {
         const value = body[field.fieldName];
+        if (value == null) {
+            cleanBody[field.fieldName] = '';
+            return true;
+        }
         if (validate(value, field)) {
             if (typeof value !== 'string') {
                 isValid = false;
@@ -267,9 +271,7 @@ const fitnessProfileSchema = {
         {fieldName: 'memberId', type: 'int', allowNull: true },
         {fieldName: 'yearOfBirth', type: 'int', allowNull: false },
         {fieldName: 'competeGender', type: 'string', allowNull: false },
-        {fieldName: 'isEpee', type: 'string', allowNull: false },
-        {fieldName: 'isFoil', type: 'string', allowNull: false },
-        {fieldName: 'isSabre', type: 'string', allowNull: false },
+        {fieldName: 'typeIds', type: 'int-array', allowNull: false }
     ]
 };
 const exerciseLogSchema = {
@@ -287,8 +289,9 @@ const exerciseSchema = {
     primaryKey: 'exerciseId',
     fields: [
         {fieldName: 'exerciseId', type: 'int', allowNull: false },
+        {fieldName: 'ownerGroupId', type: 'int', allowNull: false },
         {fieldName: 'name', type: 'string', allowNull: false },
-        {fieldName: 'description', type: 'html', allowNull: false},
+        {fieldName: 'description', type: 'html', allowNull: true},
         {fieldName: 'imageId', type: 'string', allowNull: true},
         {fieldName: 'measurementUnit', type: 'string', allowNull: false },
         {fieldName: 'measurementUnitQuantity', type: 'int', allowNull: false },
@@ -311,7 +314,6 @@ const fitnessGroupSchema = {
         {fieldName: 'isClosed', type: 'boolean', allowNull: true },
         {fieldName: 'athleteTypeIds', type: 'int-array', allowNull: true },
         {fieldName: 'ageCategoryIds', type: 'int-array', allowNull: true }
-        // {fieldName: 'athleteIds', type: 'int-array', allowNull: false }
     ]
 };
 

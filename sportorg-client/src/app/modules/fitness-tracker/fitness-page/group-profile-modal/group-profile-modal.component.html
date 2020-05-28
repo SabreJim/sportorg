@@ -63,8 +63,10 @@
           <app-table ngClass="select-table"
                      [tableColumns]="athleteColumns"
                      [gridData]="athleteOptions"
-                     [canSelect]="false"
+                     [canSelect]="true"
                      [trackById]="'athleteId'"
+                     (selectedRow)="inviteAthlete($event)"
+                     (deselectedRow)="removeAthlete($event)"
                      [altClass]="'small-input-table'"
           ></app-table>
         </div>

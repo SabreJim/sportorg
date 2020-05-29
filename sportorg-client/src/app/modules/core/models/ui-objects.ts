@@ -67,11 +67,14 @@ export class TableColumn {
 }
 export interface AdminConfig {
   columns: TableColumn[];
+  defaultObject?: any; // to default for new records
   getter: () => Observable<any[]>;
   setter: (entity: any) => Observable<boolean>;
   delete: (entity: any) => Observable<boolean>;
+  notifySelection?: (row: any, state: boolean) => Observable<any>;
   entityType: string;
   disableAdd?: boolean;
+  allowSelect?: boolean;
 }
 
 export interface MenuItem {

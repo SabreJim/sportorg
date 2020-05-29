@@ -3,16 +3,70 @@
   <p>This app is intended to help you track the cross-training you are completing outside of regular sport-specific
   training. To begin, create an athlete profile or select one you already created.</p>
 
-  <div ngClass="profile-container {{profileStyle}}">
-    <ng-container *ngFor="let profile of myProfiles">
-      <app-profile-icon appLoginRequired [forceLogin]="currentUser?.isAnonymous"
-        [displayStyle]="'tall'"
-        [profile]="profile"
-        (sendCreate)="openDialog($event)"
-        (sendNew)="newProfileRequested($event)"
-      >
-      </app-profile-icon>
-    </ng-container>
+  <ng-container *ngIf="currentUser?.isFitnessAdmin">
+    <mat-tab-group class="widget-container" mat-align-tabs="center" dynamicHeight
+                   (selectedIndexChange)="notifyTabs($event)">
+      <mat-tab label="Profiles" >
+          <div ngClass="profile-container {{profileStyle}}">
+            <ng-container *ngFor="let profile of myProfiles">
+              <app-profile-icon appLoginRequired [forceLogin]="currentUser?.isAnonymous"
+                                [displayStyle]="'tall'"
+                                [profile]="profile"
+                                (sendCreate)="openAthleteDialog($event)"
+                                (sendNew)="newProfileRequested($event)"
+              >
+              </app-profile-icon>
+            </ng-container>
+          </div>
+      </mat-tab>
+      <mat-tab label="Groups" >
+        <div ngClass="group-container {{profileStyle}}">
+          <ng-container *ngFor="let group of myAdminGroups">
+            <app-group-icon appLoginRequired [forceLogin]="currentUser?.isAnonymous"
+                              [group]="group"
+                            (sendCreate)="openGroupDialog($event)"
+                            (sendNew)="newGroupRequested($event)"
+            >
+            </app-group-icon>
+          </ng-container>
+        </div>
+      </mat-tab>
+      <mat-tab label="Exercises" >
+        <div ngClass="exercise-container {{profileStyle}}">
+          <div class="select-box">
+            <h5 class="prompt-text">Select a Group to add, remove, or modify exercises for:</h5>
+            <app-select-input
+              [staticLookup]="myGroups"
+              [selected]="currentExerciseGroupId"
+              (selectionObject)="selectGroupForExercises($event)"
+            ></app-select-input>
+          </div>
+          <div class="exercise-admin-panel">
+            <edit-panel class="admin-panel"
+                        [configObject]="exerciseConfig"
+                        [refreshNow]="refreshExercises"
+                        [alwaysOpen]="true"
+                        [tableAltClass]="'tall-input-table'"
+            ></edit-panel>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </ng-container>
 
-  </div>
+  <ng-container *ngIf="!currentUser?.isFitnessAdmin">
+    <div ngClass="profile-container {{profileStyle}}">
+      <ng-container *ngFor="let profile of myProfiles">
+        <app-profile-icon appLoginRequired [forceLogin]="currentUser?.isAnonymous"
+                          [displayStyle]="'tall'"
+                          [profile]="profile"
+                          (sendCreate)="openAthleteDialog($event)"
+                          (sendNew)="newProfileRequested($event)"
+        >
+        </app-profile-icon>
+      </ng-container>
+    </div>
+  </ng-container>
+
+
 </div>

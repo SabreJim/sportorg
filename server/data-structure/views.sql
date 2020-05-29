@@ -55,10 +55,6 @@ UNION
 SELECT s.season_id as 'id', CONCAT(s.name, ' ', s.year) as 'name', date_format(s.start_date,'%Y-%m-%d') as 'more_info', 'seasons' as 'lookup' FROM beaches.seasons s
 UNION
 SELECT  r.region_id as 'id', r.region_name as 'name', r.region_code as 'more_info', 'regions' as 'lookup' FROM beaches.regions r
-UNION
-SELECT  at.athlete_type_id as 'id', at.type_name as 'name', '' as 'more_info', 'athleteTypes' as 'lookup' FROM beaches.athlete_types at
-UNION
-SELECT age.age_id as 'id', age.label as 'name', JSON_OBJECT('min', age.min, 'max', age.max) as 'more_info', 'ageCategories' as 'lookup' FROM beaches.age_categories age
 ;
 
 CREATE VIEW v_enrollments AS
@@ -96,7 +92,8 @@ SELECT
     ap.year_of_birth,
     ap.compete_gender,
     ap.fitness_level,
-    JSON_ARRAY(
+    (SELECT CONCAT('[',GROUP_CONCAT(athlete_type_id), ']') type_ids FROM beaches.athlete_profile_types WHERE athlete_id = ap.athlete_id GROUP BY athlete_id) type_ids,
+        JSON_ARRAY(
         JSON_OBJECT('name', 'balance', 'value', ap.balance),
         JSON_OBJECT('name', 'flexibility', 'value', ap.flexibility),
         JSON_OBJECT('name', 'power', 'value', ap.power),
@@ -104,41 +101,9 @@ SELECT
         JSON_OBJECT('name', 'footSpeed', 'value', ap.foot_speed),
         JSON_OBJECT('name', 'handSpeed', 'value', ap.hand_speed)
     ) as stats,
-    (SELECT COUNT(1) FROM beaches.athlete_profile_types apt where apt.athlete_id = ap.athlete_id AND apt.athlete_type_id = 1) > 0 as is_epee,
-    (SELECT COUNT(1) FROM beaches.athlete_profile_types apt where apt.athlete_id = ap.athlete_id AND apt.athlete_type_id = 2) > 0 as is_foil,
-    (SELECT COUNT(1) FROM beaches.athlete_profile_types apt where apt.athlete_id = ap.athlete_id AND apt.athlete_type_id = 3) > 0 as is_sabre,
-    false as 'generated_from_member',
-    (SELECT MAX(event_date) FROM beaches.exercise_event ee WHERE ee.athlete_id = ap.athlete_id) as last_workout,
-    au.user_id as allowed_user_id
-FROM beaches.athlete_profiles ap
-    LEFT JOIN beaches.athlete_users au ON au.athlete_id = ap.athlete_id
-UNION
-SELECT
-    -1 as athlete_id,
-    m.member_id,
-    m.first_name,
-    m.last_name,
-    m.year_of_birth,
-    m.compete_gender,
-    1 as fitness_level,
-    JSON_ARRAY(
-        JSON_OBJECT('name', 'balance', 'value', 0),
-        JSON_OBJECT('name', 'flexibility', 'value', 0),
-        JSON_OBJECT('name', 'power', 'value', 0),
-        JSON_OBJECT('name', 'endurance', 'value', 0),
-        JSON_OBJECT('name', 'footSpeed', 'value', 0),
-        JSON_OBJECT('name', 'handSpeed', 'value', 0)
-    ) as stats,
-    0 as is_epee,
-    0 as is_foil,
-    0 as is_sabre,
-    true as 'generated_from_member',
-    null as last_workout,
-    mu.user_id as allowed_user_id
-from beaches.members m
-LEFT JOIN beaches.member_users mu ON mu.member_id = m.member_id
-WHERE m.is_active = 'Y'
-    AND NOT EXISTS (SELECT ap.athlete_id FROM beaches.athlete_profiles ap WHERE ap.member_id = m.member_id);
+    (SELECT MAX(event_date) FROM beaches.exercise_event ee WHERE ee.athlete_id = ap.athlete_id) as last_workout
+FROM beaches.athlete_profiles ap;
+;
 
 CREATE SQL SECURITY INVOKER VIEW beaches.v_exercise_logs
 AS

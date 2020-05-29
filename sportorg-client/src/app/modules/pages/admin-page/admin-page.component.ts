@@ -62,7 +62,6 @@ export class AdminPageComponent implements OnInit {
       new TableColumn('userId', 'Id', 'number'),
       TableColumn.fromConfig({ fieldName: 'email', title: 'Email', type:'string', displayType: 'long-string' }),
       new TableColumn('isAdmin', 'Admin Access', 'boolean'),
-      new TableColumn('isFitnessAdmin', 'Fitness Admin', 'boolean'),
       TableColumn.fromConfig({ fieldName: 'googleId', title: 'Google', type:'string', displayType: 'long-string' }),
       TableColumn.fromConfig({ fieldName: 'fbId', title: 'Facebook', type:'string', displayType: 'long-string' }),
       TableColumn.fromConfig({ fieldName: 'twitterId', title: 'Twitter', type:'string', displayType: 'long-string' })

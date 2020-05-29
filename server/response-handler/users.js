@@ -5,15 +5,16 @@ const { userSchema, getCleanBody } = require('../middleware/request-sanitizer');
 const getUsers = async(req, res, next) => {
     const myUserId = (req.session && req.session.user_id) ? req.session.user_id : -1;
     const query = `SELECT 
-                    user_id,
-                    email,
-                    is_admin,
-                    is_fitness_admin,
-                    google_id,
-                    fb_id, 
-                    twitter_id
-                    from users
-        WHERE (SELECT u.is_admin FROM users u where u.user_id = ${myUserId}) = 'Y'`;
+                    u.user_id,
+                    u.email,
+                    u.is_admin,
+                    (CASE WHEN uga.group_ids IS NULL THEN 'N' ELSE 'Y' END) as 'is_fitness_admin',
+                    u.google_id,
+                    u.fb_id, 
+                    u.twitter_id
+                    from users u
+                    LEFT JOIN (SELECT CONCAT('[', GROUP_CONCAT(group_id), ']') group_ids, user_id from beaches.user_group_admins GROUP BY user_id) uga ON uga.user_id = u.user_id
+        WHERE (SELECT u2.is_admin FROM users u2 where u2.user_id = ${myUserId}) = 'Y'`;
     const users = await MySQL.runQuery(query);
     returnResults(res, users);
 };

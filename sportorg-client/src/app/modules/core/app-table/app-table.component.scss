@@ -152,3 +152,15 @@
     cursor: pointer; // TODO: just put this in a button
   }
 }
+.small-input-table {
+  min-height: 200px !important;
+  ::ng-deep .cdk-virtual-scroll-viewport {
+    min-height: 200px !important;
+  }
+}
+.tall-input-table {
+  min-height: 600px !important;
+  ::ng-deep .cdk-virtual-scroll-viewport {
+    min-height: 600px !important;
+  }
+}

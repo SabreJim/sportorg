@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ExerciseEditModalComponent } from './exercise-edit-modal.component';
+import { GroupProfileModalComponent } from './group-profile-modal.component';
 
-describe('ExerciseEditModalComponent', () => {
-  let component: ExerciseEditModalComponent;
-  let fixture: ComponentFixture<ExerciseEditModalComponent>;
+describe('GroupProfileModalComponent', () => {
+  let component: GroupProfileModalComponent;
+  let fixture: ComponentFixture<GroupProfileModalComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExerciseEditModalComponent ]
+      declarations: [ GroupProfileModalComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ExerciseEditModalComponent);
+    fixture = TestBed.createComponent(GroupProfileModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

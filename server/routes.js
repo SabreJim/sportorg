@@ -6,6 +6,7 @@ const Users = require('./response-handler/users');
 const Enrollment = require('./response-handler/enrollments');
 const Lookups = require('./response-handler/lookups');
 const Fitness = require('./response-handler/fitness');
+const FitnessGroups = require('./response-handler/fitness-groups');
 const Authentication = require('./middleware/server-authentication');
 const ResponseHandler = require('./middleware/response-handler');
 
@@ -29,9 +30,21 @@ const createRouter = (config) => {
             next();
         }
     };
+
     const addSession = async (req, res, next) => {
         await Authentication.getSessionFromHeader(req);
         next();
+    };
+
+    const requireSession = async (req, res, next) => {
+        const getUserId = (req) => (req.session && req.session.user_id) ? req.session.user_id : -1;
+        await Authentication.getSessionFromHeader(req);
+        const myUserId = getUserId(req);
+        if (myUserId === -1) { // not logged in
+            return ResponseHandler.returnSingle(res, {});
+        } else {
+            next();
+        }
     };
 
     // lookup item getters
@@ -59,7 +72,7 @@ const createRouter = (config) => {
     // user endpoints
     router.get('/users', adminRequired, Users.getUsers);
     router.put('/user', jsonBody, adminRequired, Users.updateUser);
-    router.delete('/members/:memberId', adminRequired, Users.deleteUser);
+    router.delete('/members/:userId', adminRequired, Users.deleteUser);
     router.get('/member-users', adminRequired, Users.getMemberUsers);
     router.put('/member-users/member/:memberId/user/:userId/link/:setStatus', adminRequired, Users.linkMembers);
 
@@ -77,13 +90,34 @@ const createRouter = (config) => {
     router.get('/my-fitness-profiles', addSession, Fitness.getMyProfiles);
     router.put('/fitness-profile/reset/:athleteId', addSession, Fitness.resetProfile);
     router.get('/fitness-profile/:athleteId', addSession, Fitness.getAthleteProfile);
-    router.put('/fitness-profile', jsonBody, addSession, Fitness.createProfile);
+    router.put('/fitness-profile', jsonBody, addSession, Fitness.upsertProfile);
     router.get('/fitness-logs/:athleteId', addSession, Fitness.getLogs);
     router.put('/exercise-event', jsonBody, addSession, Fitness.recordExercise);
     router.delete('/exercise-event/:eventId', addSession, Fitness.deleteExerciseEvent);
-    router.get('/exercises', Fitness.getExercises);
+    router.get('/fitness/my-exercises/:athleteId', Fitness.getMyExercises);
+    router.get('/fitness/my-age-categories/:athleteId', requireSession, Fitness.getMyAgeCategories);
+    router.get('/fitness/my-athlete-types/:athleteId', requireSession, Fitness.getMyAthleteTypes);
     router.get('/compare-fitness/:athleteId', addSession, Fitness.compareFitness);
     router.put('/exercise', jsonBody, addSession, Fitness.upsertExercise);
+    router.delete('/exercise/:exerciseId', requireSession, Fitness.deleteExercise);
+
+
+    router.get('/my-groups/:athleteId', requireSession, FitnessGroups.getMyGroups);
+    router.get('/fitness/groups/admin', requireSession, FitnessGroups.getGroupsAdmin);
+    router.get('/fitness/group/exercises/:groupId', requireSession, FitnessGroups.getGroupExercises);
+    router.get('/fitness/groups/athlete-types/:groupId', requireSession, FitnessGroups.getGroupTypes);
+    router.get('/fitness/groups/age-categories/:groupId', requireSession, FitnessGroups.getGroupAges);
+    router.get('/fitness/groups/athletes/:groupId', requireSession, FitnessGroups.getGroupAthletes);
+
+    router.put('/fitness-profile/groups', requireSession, FitnessGroups.assignProfileGroups);
+    router.put('/fitness/groups/admins', requireSession, FitnessGroups.setGroupAdmins);
+    router.put('/fitness/groups', jsonBody, requireSession, FitnessGroups.upsertGroup);
+    router.put('/fitness/groups/invite', jsonBody, requireSession, FitnessGroups.inviteToGroup);
+    router.put('/fitness/groups/remove', jsonBody, requireSession, FitnessGroups.removeFromGroup);
+    router.put('/fitness/groups/join', jsonBody, requireSession, FitnessGroups.joinGroup);
+    router.put('/fitness/groups/leave', jsonBody, requireSession, FitnessGroups.removeFromGroup);
+    router.put('/fitness/exercise-group', jsonBody, requireSession, FitnessGroups.selectExerciseGroup);
+
 
     return router;
 };

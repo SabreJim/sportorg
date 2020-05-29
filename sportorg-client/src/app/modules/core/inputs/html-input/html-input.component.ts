@@ -18,7 +18,7 @@ export class HtmlInputComponent implements OnInit {
   public editHtml = () => {
     // open a modal and pass in the member
     const dialogRef = this.dialog.open(HtmlEditorModalComponent,
-      { width: '80vw', height: '80vh', data: { htmlString: this.htmlValue } });
+      { minWidth: '400px', maxWidth: '80vw', minHeight: '600px',  maxHeight: '80vh', data: { htmlString: this.htmlValue } });
     dialogRef.afterClosed().subscribe((result: string) => {
       if (result && result.length) {
         this.htmlValue = result;

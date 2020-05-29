@@ -1,0 +1,82 @@
+<div class="modal-wrapper-sm">
+  <div class="form-scroller">
+    <form autocomplete="off" novalidate class="form-wrapper">
+
+      <mat-card class="field-card">
+        <div class="form-header">
+          <h2>Edit an Athlete Group</h2>
+        </div>
+
+        <div class="form-field">
+          <h3>Group Name*</h3>
+          <div ngClass="input-item {{invalid.name ? 'invalid' : ''}}">
+            <app-string-input [value]="newGroup.name" (stringChanged)="newGroup.name = $event" ></app-string-input>
+            <mat-error *ngIf="invalid.name">Group name is required</mat-error>
+          </div>
+        </div>
+        <div class="form-field">
+          <h3>Description</h3>
+          <div ngClass="input-item input-grows ">
+            <app-string-input [value]="newGroup.description" [useTextArea]="true" (stringChanged)="newGroup.description = $event"></app-string-input>
+          </div>
+        </div>
+        <div class="form-field">
+          <h3>Closed Group</h3>
+          <p class="field-description">A "closed" group cannot be joined without being invited. An administrator will have to add each member.</p>
+          <div class="input-item select-item">
+            <app-boolean-input (valueChanged)="setIsClosed($event)" [value]="isClosedValue" ></app-boolean-input>
+          </div>
+        </div>
+
+
+        <h4 class="field-pretitle">Add or remove ways to sub divide your athletes</h4>
+        <div class="form-field">
+          <h3>Athlete Types</h3>
+          <div class="input-item input-grows">
+            <app-table ngClass="select-table"
+                       [tableColumns]="athleteTypeColumns"
+                       [gridData]="athleteTypeOptions"
+                       [canSelect]="true"
+                       [trackById]="'athleteTypeId'"
+                       (selectedRows)="updateSelectedTypes($event)"
+                       [altClass]="'small-input-table'"
+            ></app-table>
+          </div>
+        </div>
+
+        <h4 class="field-pretitle">Add or remove age divisions</h4>
+        <div class="form-field">
+          <h3>Age Divisions</h3>
+          <app-table ngClass="select-table"
+                     [tableColumns]="ageColumns"
+                     [gridData]="ageOptions"
+                     [canSelect]="true"
+                     [trackById]="'ageId'"
+                     (selectedRows)="updateSelectedAges($event)"
+                     [altClass]="'small-input-table'"
+          ></app-table>
+        </div>
+
+        <h4 class="field-pretitle">View athletes in the group (adding and removing disabled for privacy reasons)</h4>
+        <div class="form-field">
+          <h3>Athletes</h3>
+          <app-table ngClass="select-table"
+                     [tableColumns]="athleteColumns"
+                     [gridData]="athleteOptions"
+                     [canSelect]="true"
+                     [trackById]="'athleteId'"
+                     (selectedRow)="inviteAthlete($event)"
+                     (deselectedRow)="removeAthlete($event)"
+                     [altClass]="'small-input-table'"
+          ></app-table>
+        </div>
+
+      </mat-card>
+    </form>
+  </div>
+  <div class="action-bar">
+    <button mat-raised-button [mat-dialog-close]>Cancel</button>
+    <button mat-raised-button color="primary" (click)="saveForm()">Save</button>
+  </div>
+</div>
+

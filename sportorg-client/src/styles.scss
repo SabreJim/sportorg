@@ -112,6 +112,7 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
 
 // input modals
 .mat-dialog-container{
+  overflow-y: hidden !important;
   .modal-wrapper {
     display: flex;
     flex-flow: column nowrap;
@@ -133,6 +134,10 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
     button {
       margin: 0 20px;
     }
+  }
+
+  .field-pretitle {
+    margin-bottom: 0;
   }
 
   .form-wrapper {
@@ -198,6 +203,14 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
       align-items: center;
       justify-content: center;
     }
+    .select-table {
+      flex: 1 1 auto;
+    }
+    .field-description{
+      display: flex;
+      max-width: 50%;
+      font-size: 12px;
+    }
   }
   .multi-field {
     display: flex;
@@ -226,4 +239,6 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
   }
 
 }
-
+.not-disabled {
+  color: black !important;
+}

@@ -6,9 +6,6 @@
     <ng-container *ngFor="let exercise of exercises">
       <mat-card class="exercise-item">
         <div class="icon">
-          <div class="mat-raised-button mat-warn edit-button" *ngIf="appUser?.isFitnessAdmin" (click)="editExercise(exercise)">
-            <mat-icon>edit</mat-icon>
-          </div>
           <ng-container *ngIf="exercise.iconType === 'fa'">
             <span class="icon-wrapper"><i ngClass="mat-icon {{exercise.iconName}}" ></i></span>
           </ng-container>
@@ -20,7 +17,7 @@
         </div>
         <div class="info">
           <div class="exercise-name">{{exercise.name}}</div>
-          <div class="exercise-desc"><p>{{exercise.description}}</p></div>
+          <div class="exercise-desc"><p [innerHtml]="exercise.description | safePipe: 'html'"></p></div>
           <div class="exercise-nums">
             <span class="value-icons">
               <ng-container *ngFor="let stat of exercise.statValues">

@@ -1,5 +1,13 @@
 const decamelize = require('decamelize');
-const sanitizeHtml = require('sanitize-html');
+const baseSanitizeHtml = require('sanitize-html');
+const sanitizeHtml = (text) => {
+    return baseSanitizeHtml(text, {
+        allowedTags: baseSanitizeHtml.defaults.allowedTags.concat(['font']),
+        allowedAttributes: { a: [ 'href', 'name', 'target' ], font: ['color'] }
+    })
+}
+
+
 const mixedJoin = (source, skipHead = false) => {
     let arr = '';
     if (!source.length) return arr;
@@ -74,7 +82,9 @@ const getCleanBody = (body, schema) => {
             if (typeof value !== 'string') {
                 isValid = false;
             } else {
-                cleanBody[field.fieldName] = value.replace(stringMask, '');
+                let noBadChars = value.replace(stringMask, '');
+                // also prepare quote marks for mySQL storage
+                cleanBody[field.fieldName] = noBadChars.replace(/"/g, '\\"');
             }
         }
     };
@@ -89,7 +99,8 @@ const getCleanBody = (body, schema) => {
             if (typeof value !== 'string') {
                 isValid = false;
             } else {
-                cleanBody[field.fieldName] = sanitizeHtml(value); // html sanitize
+                // strip out unsafe HTML tags, then replace quotes with html codes to save to MySQL
+                cleanBody[field.fieldName] = sanitizeHtml(value).replace(/"/g, '&quot;');
             }
         }
     };

@@ -27,9 +27,26 @@ const returnError = (response, errorMessage, errorCode = 500) => {
     response.json({data: null, message: errorMessage});
 };
 
+const parseHtmlFields = (data, fieldNames) => {
+    if (data.map) { // presumably an array
+        return data.map((row) => {
+            fieldNames.map((fieldName) => { // update each html field
+                row[fieldName] = row[fieldName].replace(/&quot;/g, '"');
+            });
+            return row;
+        })
+    } else { // presumably a singleObject
+        fieldNames.map((fieldName) => {
+            data[fieldName] = data[fieldName].replace(/&quot;/g, '"');
+        });
+        return data;
+    }
+}
+
 module.exports = {
     returnResults,
     returnSingle,
     returnSuccess,
-    returnError
+    returnError,
+    parseHtmlFields
 }

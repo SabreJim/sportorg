@@ -1,5 +1,5 @@
 const MySQL = require('../middleware/mysql-service');
-const { returnResults, returnSingle, returnError } = require('../middleware/response-handler');
+const { returnResults, returnSingle, returnError, parseHtmlFields } = require('../middleware/response-handler');
 const { fitnessGroupSchema, getCleanBody } = require('../middleware/request-sanitizer');
 const getUserId = (req) =>  req.session.user_id;
 const cleanSelected = (queryResult) => {
@@ -91,6 +91,7 @@ const getGroupExercises = async (req, res) => {
             INNER JOIN beaches.user_group_admins uga ON uga.group_id = ${groupId} AND uga.user_id = ${myUserId}
         WHERE e.is_deleted = 'N' `;
     let queryResult = await MySQL.runQuery(statement);
+    queryResult = parseHtmlFields(queryResult, ['description']);
     returnResults(res, cleanSelected(queryResult));
 }
 const getGroupTypes = async (req, res) => {

@@ -1,5 +1,5 @@
 const MySQL = require('../middleware/mysql-service');
-const { returnResults, returnSingle, returnError } = require('../middleware/response-handler');
+const { returnResults, returnSingle, returnError, parseHtmlFields } = require('../middleware/response-handler');
 const { fitnessProfileSchema ,exerciseLogSchema, exerciseSchema, getCleanBody } = require('../middleware/request-sanitizer');
 const getUserId = (req) => (req.session && req.session.user_id) ? req.session.user_id : -1;
 
@@ -137,8 +137,9 @@ const getMyExercises = async(req, res, next) => {
     const query = `SELECT e.* FROM beaches.exercises e
         LEFT JOIN beaches.exercise_groups eg ON eg.exercise_id = e.exercise_id
         WHERE eg.group_id IN (SELECT ag.group_id FROM beaches.athlete_groups ag WHERE ag.athlete_id = ${athleteId})`;
-    const exerciseResponse = await MySQL.runQuery(query);
+    let exerciseResponse = await MySQL.runQuery(query);
     if (exerciseResponse && exerciseResponse.length) {
+        exerciseResponse = parseHtmlFields(exerciseResponse, ['description']);
         returnResults(res, exerciseResponse);
     } else {
         returnResults(res, []);

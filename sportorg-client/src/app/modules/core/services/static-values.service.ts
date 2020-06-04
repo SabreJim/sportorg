@@ -81,6 +81,9 @@ export class StaticValuesService {
     return `${hours}:${minuteString}AM`;
   }
 
+  public static MAX_MOBILE_WIDTH = 425;
+  public static MAX_MOBILE_WIDTH_WIDE = 800;
+  public static MAX_TABLET_WIDTH = 1024;
   public static COMPETITION_YEAR = 2019;
   public static ICON_MAP: any = {
     balance: 'fas fa-balance-scale',

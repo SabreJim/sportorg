@@ -27,7 +27,7 @@
       <div class="big-plus mat-button">
         <mat-icon (click)="openNewProfile()">add_circle_outline</mat-icon>
       </div>
-      <button mat-raised-button color="primary" (click)="openNewProfile()">Create a new profile</button>
+      <button mat-raised-button color="primary" appTooltip [tooltipDataFn]="getTip('editProfile')" (click)="openNewProfile()">Create a new profile</button>
     </ng-container>
   </mat-card-content>
 </mat-card>

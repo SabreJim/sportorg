@@ -78,7 +78,7 @@ const upsertMember = async (req, res, next) => {
             if (queryResult.length && queryResult[0].matches > 0) {
                 return returnError(res, 'This member has already been created. Please contact the administrator to access this member.');
             }
-            statement = `INSERT INTO members ${cleanMember.insertValues}`;
+            statement = `INSERT INTO beaches.members ${cleanMember.insertValues}`;
             const statementResult = await MySQL.runCommand(statement);
 
             // and also link this user to the new member

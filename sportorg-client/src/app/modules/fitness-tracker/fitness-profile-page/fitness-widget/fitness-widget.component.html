@@ -24,27 +24,34 @@
         [diameter]="300"
       >
       </mat-progress-spinner>
-      <div class="level-text" appTooltip [tooltipDataFn]="getTip('fitnessLevel')">
+      <div class="level-text" >
         <div>Level:</div>
-        <div ngClass="level-num {{levelColor}}">{{profile?.fitnessLevel}}</div>
+        <div ngClass="level-num {{levelColor}}"  appTooltip [tooltipDataFn]="getTip('fitnessLevel')">{{profile?.fitnessLevel}}</div>
       </div>
     </div>
     <div class="stat-progress">
       <div class="stat-row row" *ngFor="let stat of profile?.stats">
         <div class="stat-title">{{stat.name}}</div>
-        <div class="main-row">
-          <span class="icon-wrapper" appTooltip [tooltipDataFn]="getTip(stat.name)">
-            <i ngClass="mat-icon {{stat.icon}}"></i>
-          </span>
-          <mat-progress-bar class="main-stat" mode="determinate" [value]="(100 * stat.value)/maxStatValue" title="{{stat.name}} level: {{stat.value}}"></mat-progress-bar>
-          <span class="stat-value">{{stat.value}}</span>
+        <div class="stat-columns">
+          <div class="icon-wrapper" >
+            <i ngClass="mat-icon {{stat.icon}}" appTooltip [tooltipDataFn]="getTip(stat.name)"></i>
+          </div>
+          <div class="stat-row-wrapper">
+            <div class="main-row">
+              <mat-progress-bar class="main-stat" mode="determinate" [value]="(100 * stat.value)/maxStatValue"
+                                appTooltip [hangRight]="true"
+                                [tooltipData]="stat.name + ' level: ' + stat.value"></mat-progress-bar>
+              <span class="stat-value">{{stat.value}}</span>
+            </div>
+            <div class="sub-row">
+              <mat-progress-bar class="progress-stat" mode="determinate" [value]="stat.progress" appTooltip [hangRight]="true"
+                                [tooltipData]="'Progress to next stat level: ' + stat.progress"></mat-progress-bar>
+              <span class="stat-value">{{stat.progress}}%</span>
+            </div>
+          </div>
+
         </div>
-        <div class="sub-row">
-          <span class="icon-wrapper"><i class="mat-icon"></i></span>
-          <mat-progress-bar class="progress-stat" mode="determinate" [value]="stat.progress" appTooltip [hangRight]="true"
-                            [tooltipData]="'Progress to next stat level: ' + stat.progress"></mat-progress-bar>
-          <span class="stat-value">{{stat.progress}}%</span>
-        </div>
+
       </div>
     </div>
   </mat-card-content>

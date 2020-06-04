@@ -19,6 +19,7 @@
           [formFields]="configObject.columns"
           [editingRow]="editingRow"
           [entityType]="configObject.entityType"
+          [identityField]="configObject.identityField"
           (saveRecord)="runUpsert($event)"
           (deleteRecord)="runDeletion($event)"
         ></app-dynamic-form>

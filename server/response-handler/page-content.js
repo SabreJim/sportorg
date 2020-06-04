@@ -73,7 +73,6 @@ const getMenuAdmin = async (req, res) => {
 }
 
 const upsertMenu = async(req, res, next) => {
-    console.log('link before clean', req.body.link);
     req.body.link = req.body.link.trim();
     if (req.body.link.indexOf('/') !== 0) {
         req.body.link = `/${req.body.link}`;

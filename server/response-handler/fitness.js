@@ -134,7 +134,7 @@ const getMyExercises = async(req, res, next) => {
     const athleteId = req.params.athleteId || -1;
     if (athleteId === -1) return returnSingle(res, []);
 
-    const query = `SELECT e.* FROM beaches.exercises e
+    const query = `SELECT distinct e.* FROM beaches.exercises e
         LEFT JOIN beaches.exercise_groups eg ON eg.exercise_id = e.exercise_id
         WHERE eg.group_id IN (SELECT ag.group_id FROM beaches.athlete_groups ag WHERE ag.athlete_id = ${athleteId})`;
     let exerciseResponse = await MySQL.runQuery(query);

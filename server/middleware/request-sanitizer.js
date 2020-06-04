@@ -235,7 +235,6 @@ const memberSchema = {
         {fieldName: 'competeGender', type: 'string', allowNull: true },
         {fieldName: 'isActive', type: 'string', allowNull: false },
         {fieldName: 'isAthlete', type: 'string', allowNull: false },
-        {fieldName: 'isFitnessAdmin', type: 'string', allowNull: true },
         {fieldName: 'membershipStart', type: 'date', allowNull: false },
         {fieldName: 'streetAddress', type: 'string', allowNull: true },
         {fieldName: 'city', type: 'string', allowNull: true },
@@ -254,10 +253,12 @@ const userSchema = {
         {fieldName: 'userId', type: 'int', allowNull: false },
         {fieldName: 'email', type: 'string', allowNull: false },
         {fieldName: 'isAdmin', type: 'string', allowNull: false },
-        {fieldName: 'isFitnessAdmin', type: 'string', allowNull: true },
         {fieldName: 'googleId', type: 'string', allowNull: true },
         {fieldName: 'fbId', type: 'string', allowNull: true },
-        {fieldName: 'twitterId', type: 'string', allowNull: true }
+        {fieldName: 'twitterId', type: 'string', allowNull: true },
+        {fieldName: 'fileAdmin', type: 'string', allowNull: true },
+        {fieldName: 'eventAdmin', type: 'string', allowNull: true },
+        {fieldName: 'displayName', type: 'string', allowNull: true }
     ]
 };
 

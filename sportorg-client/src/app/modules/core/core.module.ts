@@ -32,6 +32,7 @@ import { AngularEditorModule } from '@kolkov/angular-editor';
 import { LoginRequiredComponent } from './modals/login-required/login-required.component';
 import { LoginRequiredDirective } from './modals/login-required/login-required.directive';
 import { TabRoutingDirective } from './directives/tab-routing.directive';
+import { TooltipIconComponent } from './tooltip/tooltip-icon/tooltip-icon.component';
 
 
 @NgModule({
@@ -61,7 +62,8 @@ import { TabRoutingDirective } from './directives/tab-routing.directive';
     OrgSnackbarComponent,
     LoginRequiredComponent,
     LoginRequiredDirective,
-    TabRoutingDirective
+    TabRoutingDirective,
+    TooltipIconComponent
   ],
   exports: [
     OrgHeaderComponent,
@@ -107,6 +109,7 @@ import { TabRoutingDirective } from './directives/tab-routing.directive';
     MemberModalComponent,
     HtmlEditorModalComponent,
     TooltipComponent,
+    TooltipIconComponent,
     StringInputComponent,
     LoginRequiredComponent
   ]

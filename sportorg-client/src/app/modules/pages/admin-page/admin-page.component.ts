@@ -21,6 +21,7 @@ import {TipsProxyService} from "../../core/services/tips-proxy.service";
 export class AdminPageComponent implements OnInit {
   public classConfig: AdminConfig = {
     entityType: 'Class',
+    identityField: 'scheduleId',
     columns: [
       TableColumn.fromConfig({fieldName: 'programId', title: 'Program', type: 'select',
         displayField: 'programName', lookupField: 'programs', displayType: 'long-string'}),
@@ -42,6 +43,7 @@ export class AdminPageComponent implements OnInit {
 
   public programConfig: AdminConfig = {
     entityType: 'Program',
+    identityField: 'programId',
     columns: [
       new TableColumn('programName', 'Name', 'string'),
       TableColumn.fromConfig({ fieldName: 'feeId', title: 'Fees', type: 'select', displayField: 'feeValue',
@@ -60,6 +62,7 @@ export class AdminPageComponent implements OnInit {
 
   public userConfig: AdminConfig = {
     entityType: 'User',
+    identityField: 'userId',
     columns: [
       new TableColumn('userId', 'Id', 'number'),
       TableColumn.fromConfig({ fieldName: 'email', title: 'Email', type:'string', displayType: 'long-string' }),
@@ -77,6 +80,7 @@ export class AdminPageComponent implements OnInit {
   };
   public memberConfig: AdminConfig = {
     entityType: 'Member',
+    identityField: 'memberId',
     getter: this.memberService.getMyMembers,
     setter: this.memberService.upsertMember,
     delete: this.memberService.deleteMember,
@@ -141,6 +145,7 @@ export class AdminPageComponent implements OnInit {
     // page content admins
   public pageConfig: AdminConfig = {
     entityType: 'Page',
+    identityField: 'pageId',
     columns: [
       new TableColumn('pageName', 'Name', 'string'),
       new TableColumn('title', 'Title', 'string'),
@@ -153,6 +158,7 @@ export class AdminPageComponent implements OnInit {
   // TODO: convert references like parentMenuId and link to selections from the actual value lookups
   public menuConfig: AdminConfig = {
     entityType: 'Menu',
+    identityField: 'menuId',
     columns: [
       new TableColumn('menuId', 'Id', 'number'),
       new TableColumn('title', 'Title', 'string'),
@@ -168,6 +174,7 @@ export class AdminPageComponent implements OnInit {
 
   public bannerConfig: AdminConfig = {
     entityType: 'Banner',
+    identityField: 'statusId',
     columns: [
       new TableColumn('statusId', 'Id', 'number'),
       new TableColumn('appName', 'App to use', 'string'),
@@ -182,6 +189,7 @@ export class AdminPageComponent implements OnInit {
 
   public toolTipConfig: AdminConfig = {
     entityType: 'Tool Tip',
+    identityField: 'tipId',
     columns: [
       new TableColumn('tipName', 'Name (search)', 'string'),
       new TableColumn('enTitle', 'Title (EN)', 'string'),

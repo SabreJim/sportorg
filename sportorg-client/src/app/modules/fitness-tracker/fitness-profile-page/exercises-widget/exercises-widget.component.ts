@@ -10,8 +10,11 @@ import {StaticValuesService} from "../../../core/services/static-values.service"
 import {Subscription} from "rxjs";
 import {SnackbarService} from "../../../core/services/snackbar.service";
 import {ConfirmModalComponent} from "../../../core/modals/confirm-modal/confirm-modal.component";
-import {MatDialog} from "@angular/material";
+import {MatCheckboxChange, MatDialog} from "@angular/material";
 import {AppUser} from "../../../core/models/authentication";
+import {LookupItem} from "../../../core/models/rest-objects";
+import {FormControl} from "@angular/forms";
+import {distinctUntilChanged, debounceTime} from "rxjs/operators";
 
 @Component({
   selector: 'app-exercises-widget',
@@ -42,6 +45,7 @@ export class ExercisesWidgetComponent implements OnInit, OnDestroy {
             exercise.statValues = icons;
             return exercise;
           });
+          this.filterExercises();
         });
       }
       this.fitnessProxy.getExercises(this.profile.athleteId);
@@ -49,8 +53,62 @@ export class ExercisesWidgetComponent implements OnInit, OnDestroy {
   }
   private _profile: FitnessProfile;
   protected exerciseSub: Subscription;
+  public statOptions: LookupItem[] = [
+    { id: 0, name: 'balance', lookup: 'statValues', moreInfo: 'balanceValue' },
+    { id: 1, name: 'flexibility', lookup: 'statValues' , moreInfo: 'flexibilityValue' },
+    { id: 2, name: 'power', lookup: 'statValues', moreInfo: 'powerValue' },
+    { id: 3, name: 'endurance', lookup: 'statValues', moreInfo: 'enduranceValue' },
+    { id: 4, name: 'foot speed', lookup: 'statValues', moreInfo: 'footSpeedValue' },
+    { id: 5, name: 'hand speed', lookup: 'statValues', moreInfo: 'handSpeedValue' },
+  ];
+  protected selectedStats: string[] = [];
+
+  public selectStat = (change: MatCheckboxChange, source: LookupItem) => {
+    if (change.checked) {
+      // add to selected
+      this.selectedStats.push(source.moreInfo);
+    } else {
+      this.selectedStats = this.selectedStats.filter((id) => id !== source.moreInfo);
+    }
+    this.filterExercises();
+  };
+
+  public searchText: string = '';
+  public textInput = new FormControl();
+  public clearString = () => {
+    this.searchText = '';
+    this.textInput.setValue(null);
+    this.filterExercises();
+  }
+  // run the join of typeahead filtering and selection filtering
+  public filterExercises = () => {
+    if (!this.exercises || !this.exercises.length) {
+      this.filteredExercises = [];
+      return; // no source to filter on
+    }
+    this.filteredExercises = this.exercises.filter((row: Exercise) => {
+      let searchMatch = true;
+      if (this.searchText && !((row.name.toUpperCase()).includes(this.searchText))) {
+        searchMatch = false;
+      }
+      let statMatch = true;
+      // all selected and none selected both return everything
+      if (this.selectedStats.length > 0 && this.selectedStats.length < this.statOptions.length) {
+        // check if the row has the requested values
+        let anyMatch = false;
+        this.selectedStats.forEach((stat: string, index: number) => {
+          if (row[stat] && row[stat] > 0) {
+            anyMatch = true;
+          }
+        });
+        statMatch = anyMatch;
+      }
+      return searchMatch && statMatch;
+    });
+  }
 
   public exercises: Exercise[] = [];
+  public filteredExercises: Exercise[] = [];
 
   public logExercise = (quantity: number, exerciseId: number, uiExercise: Exercise) => {
     const logItem: FitnessLogItem = { athleteId: this.profile.athleteId, exerciseId: exerciseId, exerciseQuantity: quantity};
@@ -74,7 +132,16 @@ export class ExercisesWidgetComponent implements OnInit, OnDestroy {
   constructor(protected fitnessProxy: FitnessProxyService, protected dialog: MatDialog) { }
 
   ngOnInit() {
-
+    this.textInput.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((newText) => {
+        if (newText && newText.length) {
+          this.searchText = newText.toUpperCase();
+        } else {
+          this.searchText = '';
+        }
+        this.filterExercises();
+      });
   }
 
   ngOnDestroy(): void {

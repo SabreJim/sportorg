@@ -7,12 +7,15 @@ import {
   HostListener,
   Input,
   OnDestroy,
-  OnInit,
+  OnInit, Renderer2,
   TemplateRef, ViewContainerRef
 } from "@angular/core";
 import {TooltipComponent} from "./tooltip.component";
 import Timer = NodeJS.Timer;
 import {Observable, Subscription} from "rxjs";
+import {SnackbarService} from "../services/snackbar.service";
+import {StaticValuesService} from "../services/static-values.service";
+import {TooltipIconComponent} from "./tooltip-icon/tooltip-icon.component";
 
 
 @Directive({selector: '[appTooltip]'})
@@ -32,10 +35,14 @@ export class TooltipDirective implements OnInit, OnDestroy {
   protected stillInSource = false;
   protected static tipCreated = false;
   protected static tooltipComponent: ComponentRef<TooltipComponent>;
+  protected tipIconComponent: ComponentRef<TooltipIconComponent>;
   protected enterListener: Subscription;
   protected exitListener: Subscription;
   protected createdListener: Subscription;
+  protected iconClickListener: Subscription;
+  protected tipClickListener: Subscription;
   protected revertCursor: string;
+  protected mobileMode: boolean = false;
 
   constructor (private elementRef: ElementRef,
                private componentFactoryResolver: ComponentFactoryResolver,
@@ -70,6 +77,9 @@ export class TooltipDirective implements OnInit, OnDestroy {
       // Create a component reference from the component
       const factory: ComponentFactory<TooltipComponent> = this.componentFactoryResolver.resolveComponentFactory(TooltipComponent);
 
+      if (TooltipDirective.tipCreated) {
+        this.destroyAndDetach();
+      }
       // Attach component to the appRef so that it's inside the ng component tree
       TooltipDirective.tooltipComponent = this.viewContainer.createComponent(factory);
 
@@ -109,6 +119,11 @@ export class TooltipDirective implements OnInit, OnDestroy {
       TooltipDirective.tooltipComponent.instance.panelClass = this.tooltipPanelClass;
       TooltipDirective.tooltipComponent.instance.contentTemplate = this.tooltipTemplate;
       this.exitListener = TooltipDirective.tooltipComponent.instance.userLeft.subscribe(this.destroyAndDetach);
+      this.tipClickListener = TooltipDirective.tooltipComponent.instance.userClicked.subscribe((status: boolean) => {
+        if (this.mobileMode) {
+          this.destroyAndDetach();
+        }
+      });
       this.enterListener = TooltipDirective.tooltipComponent.instance.userEntered.subscribe((status: boolean) => {
         if (this.timeoutRef) {
           clearTimeout(this.timeoutRef);
@@ -128,7 +143,7 @@ export class TooltipDirective implements OnInit, OnDestroy {
   // to closing the tooltip. This gives the user some time to enter the tooltip or stay open forever if they
   // stay in the source component
   protected beginClosing = () => {
-    if (!this.stillInSource && TooltipDirective.tipCreated) {
+    if (!this.stillInSource && TooltipDirective.tipCreated && !this.mobileMode) {
       this.timeoutRef = setTimeout(() => {
         if (!this.ignoreClose) {
           this.destroyAndDetach();
@@ -139,13 +154,17 @@ export class TooltipDirective implements OnInit, OnDestroy {
 
   protected destroyAndDetach = () => {
     try {
-      this.viewContainer.clear();
+      if (!this.mobileMode) {
+        this.viewContainer.clear();
+      }
       this.stillInSource = false;
       if (TooltipDirective.tooltipComponent) TooltipDirective.tooltipComponent.destroy();
+
       TooltipDirective.tipCreated = false;
       if (this.revertCursor) this.elementRef.nativeElement.style.curor = this.revertCursor;
       if (this.exitListener && this.exitListener.unsubscribe) this.exitListener.unsubscribe();
       if (this.enterListener && this.enterListener.unsubscribe) this.enterListener.unsubscribe();
+      if (this.tipClickListener && this.tipClickListener.unsubscribe) this.tipClickListener.unsubscribe();
     }catch (err) {
       TooltipDirective.tipCreated = false;
     }
@@ -153,11 +172,29 @@ export class TooltipDirective implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroyAndDetach();
+    // destroy the icon if one was created dynamically
+    if (this.tipIconComponent) this.tipIconComponent.destroy();
+    if (this.iconClickListener && this.iconClickListener.unsubscribe) this.iconClickListener.unsubscribe();
   }
 
   ngOnInit(): void {
     // check if the view is mobile and append a (?) link
+    // if (window.hasOwnProperty('ontouchstart') || navigator.maxTouchPoints > 0) {
+      if (window.innerWidth <= StaticValuesService.MAX_MOBILE_WIDTH_WIDE) {
+        this.mobileMode = true;
+        // Create a component reference from the component
+        const iconFactory: ComponentFactory<TooltipIconComponent> = this.componentFactoryResolver.resolveComponentFactory(TooltipIconComponent);
 
+        // Attach component to the appRef so that it's inside the ng component tree
+        this.tipIconComponent = this.viewContainer.createComponent(iconFactory);
+        this.iconClickListener = this.tipIconComponent.instance.clicked.subscribe((ev: MouseEvent) => {
+          if (TooltipDirective.tipCreated) {
+            this.destroyAndDetach();
+          } else {
+            this.createTipComponent(ev);
+          }
+        });
+    }
   }
 
 }

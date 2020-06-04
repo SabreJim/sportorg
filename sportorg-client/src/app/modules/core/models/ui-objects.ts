@@ -71,6 +71,7 @@ export interface AdminConfig {
   getter: () => Observable<any[]>;
   setter: (entity: any) => Observable<boolean>;
   delete: (entity: any) => Observable<boolean>;
+  identityField: string;
   notifySelection?: (row: any, state: boolean) => Observable<any>;
   entityType: string;
   disableAdd?: boolean;

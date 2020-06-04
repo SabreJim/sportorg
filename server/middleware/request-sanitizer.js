@@ -328,6 +328,51 @@ const fitnessGroupSchema = {
     ]
 };
 
+const pageSchema = {
+    primaryKey: 'pageId',
+    fields: [
+        {fieldName: 'pageId', type: 'int', allowNull: false },
+        {fieldName: 'pageName', type: 'string', allowNull: false },
+        {fieldName: 'title', type: 'string', allowNull: false },
+        {fieldName: 'htmlContent', type: 'html', allowNull: false }
+    ]
+};
+
+const menuSchema = {
+    primaryKey: 'menuId',
+    fields: [
+        {fieldName: 'menuId', type: 'int', allowNull: false },
+        {fieldName: 'title', type: 'string', allowNull: false },
+        {fieldName: 'altTitle', type: 'string', allowNull: true },
+        {fieldName: 'link', type: 'html', allowNull: false },
+        {fieldName: 'parentMenuId', type: 'int', allowNull: false },
+        {fieldName: 'orderNumber', type: 'int', allowNull: false }
+    ]
+};
+
+const bannerSchema = {
+    primaryKey: 'statusId',
+    fields: [
+        {fieldName: 'statusId', type: 'int', allowNull: false },
+        {fieldName: 'appName', type: 'string', allowNull: false },
+        {fieldName: 'bannerText', type: 'string', allowNull: false },
+        {fieldName: 'bannerLink', type: 'html', allowNull: false },
+        {fieldName: 'bannerActive', type: 'string', allowNull: false }
+    ]
+};
+
+const tipSchema = {
+    primaryKey: 'tipId',
+    fields: [
+        {fieldName: 'tipId', type: 'int', allowNull: false },
+        {fieldName: 'tipName', type: 'string', allowNull: false },
+        {fieldName: 'enTitle', type: 'string', allowNull: false },
+        {fieldName: 'frTitle', type: 'string', allowNull: true },
+        {fieldName: 'enText', type: 'html', allowNull: false },
+        {fieldName: 'frText', type: 'html', allowNull: true }
+    ]
+};
+
 module.exports = {
     getCleanBody,
     classScheduleSchema,
@@ -338,5 +383,9 @@ module.exports = {
     fitnessProfileSchema,
     exerciseLogSchema,
     exerciseSchema,
-    fitnessGroupSchema
+    fitnessGroupSchema,
+    pageSchema,
+    menuSchema,
+    bannerSchema,
+    tipSchema
 };

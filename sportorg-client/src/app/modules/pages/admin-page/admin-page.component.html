@@ -1,54 +1,84 @@
 <div class="page-wrapper">
-  <h1>Administrative Features</h1>
-  <edit-panel class="admin-panel"
-              [configObject]="classConfig"
-  ></edit-panel>
-  <edit-panel class="admin-panel"
-              [configObject]="programConfig"
-  ></edit-panel>
-  <edit-panel class="admin-panel"
-              [configObject]="memberConfig"
-  ></edit-panel>
-  <edit-panel class="admin-panel"
-              [configObject]="userConfig"
-  ></edit-panel>
+  <mat-tab-group class="widget-container" mat-align-tabs="center" dynamicHeight >
+    <mat-tab label="Classes/Members" >
+        <edit-panel class="admin-panel"
+                    [configObject]="classConfig"
+                    [tableAltClass]="'tall-input-table'"
+        ></edit-panel>
+        <edit-panel class="admin-panel"
+                    [configObject]="programConfig"
+                    [tableAltClass]="'tall-input-table'"
+        ></edit-panel>
+        <edit-panel class="admin-panel"
+                    [configObject]="memberConfig"
+                    [tableAltClass]="'tall-input-table'"
+        ></edit-panel>
+    </mat-tab>
+    <mat-tab label="Users" >
+        <edit-panel class="admin-panel"
+                    [configObject]="userConfig"
+                    [tableAltClass]="'tall-input-table'"
+        ></edit-panel>
 
-  <mat-expansion-panel (afterExpand)="getMemberUsers()" class="expand-admin">
-    <mat-expansion-panel-header class="panel-header">
-      <h3>Grant Users access to Members</h3>
-    </mat-expansion-panel-header>
-    <div class="table-box">
-      <p class="prompt-text">
-        Users can only work with Members (fencers) that they have been linked to. Granting access will let the user
-        see private information about that Member. Unlinking the Member will prevent that user from seeing private
-        information. Administrators have access to all members.
-      </p>
-      <div class="action-items">
-        <button mat-raised-button color="primary" class="link-button" [disabled]="!linkMemberId || !linkUserId"
-                (click)="linkMembers(linkMemberId,linkUserId, true)">Grant Access</button>
+        <mat-expansion-panel (afterExpand)="getMemberUsers()" class="expand-admin">
+          <mat-expansion-panel-header class="panel-header">
+            <h3>Grant Users access to Members</h3>
+          </mat-expansion-panel-header>
+          <div class="table-box">
+            <p class="prompt-text">
+              Users can only work with Members (fencers) that they have been linked to. Granting access will let the user
+              see private information about that Member. Unlinking the Member will prevent that user from seeing private
+              information. Administrators have access to all members.
+            </p>
+            <div class="action-items">
+              <button mat-raised-button color="primary" class="link-button" [disabled]="!linkMemberId || !linkUserId"
+                      (click)="linkMembers(linkMemberId,linkUserId, true)">Grant Access</button>
 
-        <app-select-input
-          [staticLookup]="userRows"
-          (selectedChanged)="linkUserId = $event"
-        ></app-select-input>
+              <app-select-input
+                [staticLookup]="userRows"
+                (selectedChanged)="linkUserId = $event"
+              ></app-select-input>
 
-        <app-select-input
-          [staticLookup]="memberRows"
-          (selectedChanged)="linkMemberId = $event"
-        ></app-select-input>
+              <app-select-input
+                [staticLookup]="memberRows"
+                (selectedChanged)="linkMemberId = $event"
+              ></app-select-input>
 
-        <button mat-raised-button color="warn" class="link-button" [disabled]="!unlinkMemberUser"
-                (click)="linkMembers(unlinkMemberUser?.memberId,unlinkMemberUser?.userId, false)">Unlink Member</button>
-      </div>
+              <button mat-raised-button color="warn" class="link-button" [disabled]="!unlinkMemberUser"
+                      (click)="linkMembers(unlinkMemberUser?.memberId,unlinkMemberUser?.userId, false)">Unlink Member</button>
+            </div>
 
-      <app-table ngClass="select-table"
-                 [tableColumns]="memberLinkColumns"
-                 [gridData]="memberUserRows"
-                 [canSelect]="true"
-                 [trackById]="'memberUserId'"
-                 (selectedRows)="selectMemberUser($event)"
-                 [singleSelect]="true"
-      ></app-table>
-    </div>
-  </mat-expansion-panel>
+            <app-table ngClass="select-table"
+                       [tableColumns]="memberLinkColumns"
+                       [gridData]="memberUserRows"
+                       [canSelect]="true"
+                       [trackById]="'memberUserId'"
+                       (selectedRows)="selectMemberUser($event)"
+                       [singleSelect]="true"
+            ></app-table>
+          </div>
+        </mat-expansion-panel>
+    </mat-tab>
+    <mat-tab label="Pages/Menus" >
+        <edit-panel class="admin-panel"
+                    [configObject]="pageConfig"
+                    [tableAltClass]="'tall-input-table'"
+        ></edit-panel>
+
+      <edit-panel class="admin-panel"
+                  [configObject]="menuConfig"
+                  [tableAltClass]="'tall-input-table'"
+      ></edit-panel>
+
+      <edit-panel class="admin-panel"
+                  [configObject]="bannerConfig"
+                  [tableAltClass]="'tall-input-table'"
+      ></edit-panel>
+
+      <edit-panel class="admin-panel"
+                  [configObject]="toolTipConfig"
+                  [tableAltClass]="'tall-input-table'"
+      ></edit-panel>
+    </mat-tab>
+  </mat-tab-group>
 </div>

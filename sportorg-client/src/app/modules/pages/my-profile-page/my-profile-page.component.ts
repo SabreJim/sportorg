@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {TableColumn} from "../../core/models/ui-objects";
 import {AppMember, Enrollment} from "../../core/models/data-objects";
 import {MemberModalComponent} from "../../core/modals/member-modal/member-modal.component";
@@ -8,6 +8,7 @@ import {FirebaseAuthService} from "../../core/services/firebase-auth.service";
 import {AppUser} from "../../core/models/authentication";
 import {Subscription} from "rxjs";
 import {EnrollmentProxyService} from "../../core/services/enrollment-proxy.service";
+import {StaticValuesService} from "../../core/services/static-values.service";
 
 @Component({
   selector: 'app-my-profile-page',
@@ -16,7 +17,10 @@ import {EnrollmentProxyService} from "../../core/services/enrollment-proxy.servi
     './my-profile-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MyProfilePageComponent implements OnInit {
+export class MyProfilePageComponent implements OnInit, OnDestroy {
+    ngOnDestroy(): void {
+        StaticValuesService.cleanSubs([this.enrollSub, this.memberSub, this.userSub]);
+    }
 
   constructor(public dialog: MatDialog, private memberService: MembersProxyService,
               private authService: FirebaseAuthService, private enrollService: EnrollmentProxyService,
@@ -31,6 +35,8 @@ export class MyProfilePageComponent implements OnInit {
     this.authService.getSession();
   }
   protected userSub: Subscription;
+  protected memberSub: Subscription;
+  protected enrollSub: Subscription;
   protected currentUser: AppUser;
 
   public myMembers: AppMember[] = [];
@@ -47,7 +53,7 @@ export class MyProfilePageComponent implements OnInit {
     new TableColumn('homePhone', 'Home #', 'string')
   ];
   public getMembers = () => {
-    this.memberService.getMyMembers().subscribe((myMembers: AppMember[]) => {
+    this.memberSub = this.memberService.getMyMembers().subscribe((myMembers: AppMember[]) => {
       this.myMembers = myMembers;
       this.detector.detectChanges();
     });
@@ -90,7 +96,7 @@ export class MyProfilePageComponent implements OnInit {
   ];
 
   public getEnrollments = () => {
-    this.enrollService.getMyEnrollments().subscribe((myEnrollments: Enrollment[]) => {
+    this.enrollSub = this.enrollService.getMyEnrollments().subscribe((myEnrollments: Enrollment[]) => {
       this.myEnrollments = myEnrollments;
       this.detector.detectChanges();
     });

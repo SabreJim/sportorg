@@ -259,6 +259,8 @@ CREATE TABLE beaches.exercises (
     endurance_value INT DEFAULT 0,
     foot_speed_value INT DEFAULT 0,
     hand_speed_value INT DEFAULT 0,
+    owner_group_id MEDIUMINT references beaches.fitness_groups(group_id),
+    is_deleted CHAR(1) default 'N',
     PRIMARY KEY(exercise_id)
 );
 
@@ -343,7 +345,6 @@ VALUES
 ('all', 'All', 1, 100);
 
 -- changes to use groups
-alter table beaches.users drop column is_fitness_admin;
 
 CREATE TABLE beaches.fitness_groups (
     group_id MEDIUMINT NOT NULL AUTO_INCREMENT,
@@ -384,10 +385,8 @@ VALUES
 INSERT INTO beaches.athlete_groups
 (athlete_id, group_id)
 (SELECT athlete_id, 1 FROM beaches.athlete_profiles);
-ALTER TABLE beaches.exercises
-add column is_deleted CHAR(1) default 'N';
-ALTER TABLE beaches.exercises
-add column owner_group_id MEDIUMINT references beaches.fitness_groups(group_id);
+
+
 
 CREATE TABLE beaches.access_invites (
     invite_id MEDIUMINT NOT NULL auto_increment,
@@ -400,3 +399,45 @@ CREATE TABLE beaches.access_invites (
     more_info VARCHAR(200),
     PRIMARY KEY(invite_id)
     );
+
+-- start banner and images upload work
+CREATE TABLE beaches.app_status (
+    status_id MEDIUMINT NOT NULL auto_increment,
+    app_name VARCHAR(100) NOT NULL,
+    banner_active CHAR(1) NOT NULL DEFAULT 'N',
+    banner_text VARCHAR (500),
+    banner_link VARCHAR(100),
+    PRIMARY KEY(status_id)
+    );
+
+CREATE TABLE beaches.page_content (
+    page_id MEDIUMINT NOT NULL auto_increment,
+    page_name VARCHAR(100) NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    html_content MEDIUMTEXT NOT NULL,
+    PRIMARY KEY(page_id),
+    UNIQUE KEY(page_name)
+);
+insert into beaches.menus (title, link, mobile_only, parent_menu_id, order_number)
+VALUES ('About Us', '/about-us', 'N', 7, 701),
+ ('Policies', '/policies', 'N', 7, 702);
+
+ALTER TABLE beaches.users
+ADD display_name VARCHAR(250);
+
+ALTER TABLE beaches.users
+ADD file_admin VARCHAR(1) DEFAULT 'N' NOT NULL;
+
+ALTER TABLE beaches.users
+ADD event_admin VARCHAR(1) DEFAULT 'N' NOT NULL;
+
+CREATE TABLE beaches.tool_tips (
+    tip_id MEDIUMINT NOT NULL auto_increment,
+    tip_name VARCHAR(100) NOT NULL,
+    en_title VARCHAR(100) NOT NULL,
+    fr_title VARCHAR(100) NULL,
+    en_text TEXT NOT NULL,
+    fr_text TEXT NULL,
+    PRIMARY KEY(tip_id),
+    UNIQUE KEY(tip_name)
+);

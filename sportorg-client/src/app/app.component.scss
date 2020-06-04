@@ -69,6 +69,23 @@ org-menu-bar {
   }
 }
 
+::ng-deep.cdk-overlay-pane {
+  justify-content: center;
+  .banner-panel {
+    background-color: white;
+    border: 3px solid black;
+    border-radius: 10px;
+    color: black;
+    position: absolute;
+    margin: 0;
+    top: 60px;
+    .mat-button {
+      color: blue;
+      background-color: white;
+    }
+  }
+}
+
 @media (max-width: 1000px) {
   .side-bar-content {
     display: none !important;

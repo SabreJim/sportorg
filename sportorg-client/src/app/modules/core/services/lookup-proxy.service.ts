@@ -1,11 +1,10 @@
 import {RestProxyService} from "./rest-proxy.service";
-import {FeeStructure, ClassRecord} from "../models/data-objects";
 import {Observable, of, Subject} from "rxjs";
 import {ApiResponse, IndexedCache, LookupItem} from "../models/rest-objects";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
-import {MenuItem} from "../models/ui-objects";
+import {MenuItem, AppStatus} from "../models/ui-objects";
 import {SnackbarService} from "./snackbar.service";
 
 
@@ -100,6 +99,17 @@ export class LookupProxyService extends RestProxyService {
           subscription.next([]);
         }
         subscription.next(response.data || []);
+      });
+    });
+  }
+
+  public getAppStatus = (): Observable<AppStatus[]> => {
+    return new Observable<AppStatus[]>((subscription) => {
+      this.get(`app-status/` ).subscribe((response: ApiResponse<AppStatus[]>) => {
+        if (response.hasErrors()) {
+          subscription.next([]);
+        }
+        subscription.next(response.data);
       });
     });
   }

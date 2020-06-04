@@ -10,6 +10,8 @@ import {AppMember, AppMemberUser} from "../../core/models/data-objects";
 import {UserData} from "../../core/models/authentication";
 import {Subscription} from "rxjs";
 import {LookupItem} from "../../core/models/rest-objects";
+import {PageProxyService} from "../../core/services/page-proxy.service";
+import {TipsProxyService} from "../../core/services/tips-proxy.service";
 
 @Component({
   selector: 'app-admin-page',
@@ -62,6 +64,9 @@ export class AdminPageComponent implements OnInit {
       new TableColumn('userId', 'Id', 'number'),
       TableColumn.fromConfig({ fieldName: 'email', title: 'Email', type:'string', displayType: 'long-string' }),
       new TableColumn('isAdmin', 'Admin Access', 'boolean'),
+      new TableColumn('fileAdmin', 'File Upload Access', 'boolean'),
+      new TableColumn('eventAdmin', 'Admin Events', 'boolean'),
+      new TableColumn('displayName', 'Display Name', 'long-string'),
       TableColumn.fromConfig({ fieldName: 'googleId', title: 'Google', type:'string', displayType: 'long-string' }),
       TableColumn.fromConfig({ fieldName: 'fbId', title: 'Facebook', type:'string', displayType: 'long-string' }),
       TableColumn.fromConfig({ fieldName: 'twitterId', title: 'Twitter', type:'string', displayType: 'long-string' })
@@ -132,9 +137,67 @@ export class AdminPageComponent implements OnInit {
       });
     };
 
+
+    // page content admins
+  public pageConfig: AdminConfig = {
+    entityType: 'Page',
+    columns: [
+      new TableColumn('pageName', 'Name', 'string'),
+      new TableColumn('title', 'Title', 'string'),
+      new TableColumn('htmlContent', 'Content', 'html')
+    ],
+    getter: this.pageService.getAllPages,
+    setter: this.pageService.upsertPageContent,
+    delete: this.pageService.deletePageContent
+  };
+  // TODO: convert references like parentMenuId and link to selections from the actual value lookups
+  public menuConfig: AdminConfig = {
+    entityType: 'Menu',
+    columns: [
+      new TableColumn('menuId', 'Id', 'number'),
+      new TableColumn('title', 'Title', 'string'),
+      new TableColumn('altTitle', 'French Title', 'string'),
+      new TableColumn('link', 'Internal Url', 'string'),
+      new TableColumn('parentMenuId', 'Parent Menu', 'number'),
+      new TableColumn('orderNumber', 'Ordering', 'number')
+    ],
+    getter: this.pageService.getMenuList,
+    setter: this.pageService.upsertMenu,
+    delete: this.pageService.deleteMenu
+  };
+
+  public bannerConfig: AdminConfig = {
+    entityType: 'Banner',
+    columns: [
+      new TableColumn('statusId', 'Id', 'number'),
+      new TableColumn('appName', 'App to use', 'string'),
+      new TableColumn('bannerText', 'Content', 'string'),
+      new TableColumn('bannerLink', 'More Info Link', 'string'),
+      new TableColumn('bannerActive', 'Active', 'string')
+    ],
+    getter: this.pageService.getBanners,
+    setter: this.pageService.upsertBanner,
+    delete: this.pageService.deleteBanner
+  };
+
+  public toolTipConfig: AdminConfig = {
+    entityType: 'Tool Tip',
+    columns: [
+      new TableColumn('tipName', 'Name (search)', 'string'),
+      new TableColumn('enTitle', 'Title (EN)', 'string'),
+      new TableColumn('enText', 'Text (EN)', 'html'),
+      new TableColumn('frTitle', 'Title (FR)', 'string'),
+      new TableColumn('frText', 'Text (FR)', 'html')
+    ],
+    getter: this.tipService.getAllToolTips,
+    setter: this.tipService.upsertToolTip,
+    delete: this.tipService.deleteToolTip
+  };
+
   constructor(private lookupService: LookupProxyService, private classService: ClassesProxyService,
               private programService: ProgramsProxyService, private authService: FirebaseAuthService,
-              private memberService: MembersProxyService) { }
+              private memberService: MembersProxyService, private pageService: PageProxyService,
+              private tipService: TipsProxyService) { }
 
   ngOnInit() {
     this.memberSub = this.memberService.PublicMembers.subscribe((members: AppMember[]) => {

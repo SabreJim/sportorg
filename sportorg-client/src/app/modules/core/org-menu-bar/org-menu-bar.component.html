@@ -6,9 +6,26 @@
 
   <nav class="menu-stack" >
     <ng-container *ngFor="let menu of appMenus">
-      <a  ngClass="mat-button {{menu.mobileOnly === 'Y' ? 'mobile-only': ''}}"
-          routerLink="{{menu.link}}" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: menu.link === '/'}" tabindex="0"
-      >{{menu.title}}</a>
+      <ng-container *ngIf="!menu.childMenus?.length"> <!-- direct menu link -->
+        <a  ngClass="mat-button {{menu.mobileOnly === 'Y' ? 'mobile-only': ''}}"
+            routerLink="{{menu.link}}" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: menu.link === '/'}" tabindex="0"
+        >{{menu.title}}</a>
+      </ng-container>
+
+      <ng-container *ngIf="menu.childMenus?.length"> <!-- menu of child links -->
+        <a [matMenuTriggerFor]="belowMenu" ngClass="mat-button"
+           routerLinkActive="active-link" tabindex="0" [routerLinkActiveOptions]="{exact: false}"
+        >{{menu.title}}</a>
+        <mat-menu #belowMenu="matMenu" yPosition="below">
+          <ng-container *ngFor="let childMenu of menu.childMenus">
+            <a  ngClass="mat-button"
+                routerLink="{{menu.link}}{{childMenu.link}}" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" tabindex="0"
+            >{{childMenu.title}}</a>
+          </ng-container>
+        </mat-menu>
+      </ng-container>
+
+
     </ng-container>
 
   </nav>
@@ -19,9 +36,24 @@
 
     <mat-menu #mobileMenu class="burger-menu-items">
       <ng-container *ngFor="let menu of appMenus">
-        <a ngClass="mat-button {{menu.mobileOnly === 'Y' ? 'mobile-only': ''}}"
-           routerLink="{{menu.link}}" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: menu.link === '/'}" tabindex="0"
-        >{{menu.title}}</a>
+        <ng-container *ngIf="!menu.childMenus?.length"> <!-- direct menu link -->
+          <a  ngClass="mat-button {{menu.mobileOnly === 'Y' ? 'mobile-only': ''}}"
+              routerLink="{{menu.link}}" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: menu.link === '/'}" tabindex="0"
+          >{{menu.title}}</a>
+        </ng-container>
+
+        <ng-container *ngIf="menu.childMenus?.length"> <!-- menu of child links -->
+          <a [matMenuTriggerFor]="belowMenu" ngClass="mat-button" (click)="dontClose($event)"
+             routerLinkActive="active-link" tabindex="0"
+          >{{menu.title}}</a>
+          <mat-menu #belowMenu="matMenu" xPosition="after" yPosition="below">
+            <ng-container *ngFor="let childMenu of menu.childMenus">
+              <a  ngClass="mat-button"
+                  routerLink="{{menu.link}}{{childMenu.link}}" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" tabindex="0"
+              >{{childMenu.title}}</a>
+            </ng-container>
+          </mat-menu>
+        </ng-container>
       </ng-container>
     </mat-menu>
   </div>

@@ -67,7 +67,6 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
   // Selection events
   @ViewChildren(MatCheckbox) checkboxes: QueryList<MatCheckbox>;
   protected _selectedRows: TableRow[] = [];
-  protected preserveSelections: boolean = false;
   protected clearSelections = () => {
     // clear the selection box UI so old states don't persist
     if (this.checkboxes) {
@@ -129,9 +128,6 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
     this.sortColumn = column.fieldName;
     column.sortDirection = (column.sortDirection === 'ASC') ? 'DESC' : 'ASC';
     const backup = Object.assign([], this.gridDataRows);
-    if (this.canSelect) { // otherwise selections will be cleared out
-      this.preserveSelections = true;
-    }
     setTimeout(() => {
       this.gridData = backup.sort(this.sortByField(this.sortColumn, column.sortDirection));
       this.detector.detectChanges();

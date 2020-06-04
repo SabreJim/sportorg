@@ -28,17 +28,21 @@ const returnError = (response, errorMessage, errorCode = 500) => {
 };
 
 const parseHtmlFields = (data, fieldNames) => {
-    if (data.map) { // presumably an array
-        return data.map((row) => {
-            fieldNames.map((fieldName) => { // update each html field
-                row[fieldName] = row[fieldName].replace(/&quot;/g, '"');
+    try {
+        if (data.map) { // presumably an array
+            return data.map((row) => {
+                fieldNames.map((fieldName) => { // update each html field
+                    row[fieldName] = row[fieldName].replace(/&quot;/g, '"');
+                });
+                return row;
+            })
+        } else { // presumably a singleObject
+            fieldNames.map((fieldName) => {
+                data[fieldName] = data[fieldName].replace(/&quot;/g, '"');
             });
-            return row;
-        })
-    } else { // presumably a singleObject
-        fieldNames.map((fieldName) => {
-            data[fieldName] = data[fieldName].replace(/&quot;/g, '"');
-        });
+            return data;
+        }
+    } catch (err) {
         return data;
     }
 }

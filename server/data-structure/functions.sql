@@ -1,6 +1,8 @@
+-- DROP FUNCTION beaches.get_or_create_user ;
 CREATE FUNCTION beaches.get_or_create_user (external_id VARCHAR(50),
     external_type VARCHAR(20),
-    user_email VARCHAR(100)) RETURNS INT
+    user_email VARCHAR(100),
+    user_display_name VARCHAR(250)) RETURNS INT
 SQL SECURITY INVOKER
 BEGIN
     DECLARE found_id INT;
@@ -15,23 +17,6 @@ BEGIN
         SELECT MIN(u.user_id) INTO found_id
         FROM beaches.users u WHERE LOWER(external_id) = LOWER(u.twitter_id);
     END IF;
-
-    -- if we can match on the email, update the user that way
-    IF found_id IS NULL THEN
-        SELECT MIN(u.user_id) INTO found_id
-            FROM beaches.users u WHERE LOWER(user_email) = LOWER(u.email);
-        -- update the google id if we found a matching email
-        IF found_id IS NOT NULL THEN
-            IF external_type <=> 'google' THEN
-                UPDATE beaches.users set google_id = external_id WHERE user_id = found_id;
-            ELSEIF external_type <=> 'facebook' THEN
-                UPDATE beaches.users set fb_id = external_id WHERE user_id = found_id;
-            ELSEIF external_type <=> 'twitter' THEN
-                UPDATE beaches.users set twitter_id = external_id WHERE user_id = found_id;
-            END IF;
-        END IF;
-    END IF;
-
 
     IF found_id IS NULL THEN -- still not matching user found
         -- create a new user that is not associated with a member
@@ -48,7 +33,8 @@ BEGIN
             SELECT MIN (u.user_id) INTO found_id
                 FROM beaches.users u WHERE LOWER(external_id) = LOWER(u.twitter_id);
         END IF;
-
+    ELSE -- update the user's display name
+        UPDATE beaches.users SET display_name = user_display_name WHERE user_id = found_id;
     END IF;
     CALL beaches.assign_members(found_id);
     RETURN found_id;

@@ -1,11 +1,10 @@
 import {NgModule} from "@angular/core";
 import {MaterialModule} from "../material.module";
-import {HomePageComponent} from "./home/home-page.component";
 import {CommonModule} from "@angular/common";
 import { ClassPageComponent } from './class-page/class-page.component';
 import { MemberPageComponent } from './member-page/member-page.component';
 import { EventPageComponent } from './event-page/event-page.component';
-import { AboutPageComponent } from './about-page/about-page.component';
+import { DynamicPageComponent } from './dynamic-page/dynamic-page.component';
 import {RouterModule} from "@angular/router";
 import {HttpClientModule} from "@angular/common/http";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
@@ -18,11 +17,10 @@ import { SchedulePageComponent } from './schedule-page/schedule-page.component';
 
 @NgModule({
   declarations: [
-    HomePageComponent,
     ClassPageComponent,
     MemberPageComponent,
     EventPageComponent,
-    AboutPageComponent,
+    DynamicPageComponent,
     RegisterPageComponent,
     AdminPageComponent,
     MyProfilePageComponent,

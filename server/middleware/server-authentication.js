@@ -59,9 +59,7 @@ const getSessionFromHeader = async(request) => {
     request.session = CurrentSession;
     return CurrentSession;
 }
-
-const getSessionByToken = async(token) => {
-const sessionQuery = `SELECT
+const GET_SESSION = `SELECT
             s.session_token as 'sessionToken',
             u.user_id,
             u.is_admin as 'isAdmin',
@@ -69,6 +67,9 @@ const sessionQuery = `SELECT
             uga.group_ids 'fitnessGroupAdmins',
             m.member_id as 'memberId',
             m.is_active as 'isActive',
+            u.file_admin as 'fileAdmin',
+            u.event_admin as 'eventAdmin',
+            u.display_name as 'displayName',
             u.email,
             m.year_of_birth
         FROM beaches.users u
@@ -76,30 +77,16 @@ const sessionQuery = `SELECT
         LEFT JOIN beaches.member_users mu ON mu.user_id = u.user_id AND mu.is_primary = 'Y'
         LEFT JOIN beaches.members m ON m.member_id = mu.member_id
         LEFT JOIN (SELECT CONCAT('[', GROUP_CONCAT(group_id), ']') group_ids,
-            user_id from beaches.user_group_admins GROUP BY user_id) uga ON uga.user_id = u.user_id
-        WHERE s.session_token = ?; `;
+            user_id from beaches.user_group_admins GROUP BY user_id) uga ON uga.user_id = u.user_id `;
+
+const getSessionByToken = async(token) => {
+const sessionQuery = `${GET_SESSION} WHERE s.session_token = ?; `;
     return await MySQL.runCommand(sessionQuery, [token]);
 }
 
 const getSession = async(userId) => {
     // get the userId and any other session information required to validate requests from the user
-    const sessionQuery = `SELECT
-            s.session_token as 'sessionToken',
-            u.user_id,
-            u.is_admin as 'isAdmin',
-            (CASE WHEN uga.group_ids IS NULL THEN 'N' ELSE 'Y' END) as 'isFitnessAdmin',
-            uga.group_ids 'fitnessGroupAdmins',
-            m.member_id as 'memberId',
-            m.is_active as 'isActive',
-            u.email,
-            m.year_of_birth
-        FROM beaches.users u
-        LEFT JOIN beaches.sessions s ON u.user_id = s.user_id
-        LEFT JOIN beaches.member_users mu ON mu.user_id = u.user_id AND mu.is_primary = 'Y'
-        LEFT JOIN beaches.members m ON m.member_id = mu.member_id
-        LEFT JOIN (SELECT CONCAT('[', GROUP_CONCAT(group_id), ']') group_ids,
-            user_id from beaches.user_group_admins GROUP BY user_id) uga ON uga.user_id = u.user_id
-        WHERE s.user_id = ?; `;
+    const sessionQuery = `${GET_SESSION} WHERE s.user_id = ?; `;
     return await MySQL.runCommand(sessionQuery, [userId]);
 };
 
@@ -116,6 +103,7 @@ const verifyToken = async(req, res, next) => {
             appSession.userId = decodedToken.uid;
             // if an email is not returned by firebase, assign a string value
             let userEmail = decodedToken.email;
+            let userDisplayName = decodedToken.name;
             if (!userEmail) {
                 userEmail = appSession.userId + '@' + decodedToken.firebase.sign_in_provider;
             }
@@ -127,8 +115,8 @@ const verifyToken = async(req, res, next) => {
             } // should also decode for twitter
 
             // get or create a user
-            const userQuery = `select beaches.get_or_create_user(?, ?, ?) as 'userId';`;
-            const userResponse = await MySQL.runCommand(userQuery, [appSession.userId, authSource, userEmail]);
+            const userQuery = `select beaches.get_or_create_user(?, ?, ?, ?) as 'userId';`;
+            const userResponse = await MySQL.runCommand(userQuery, [appSession.userId, authSource, userEmail, userDisplayName]);
             // get a sessionToken if a session already exists
             let existingSession = await getSession(userResponse.userId);
             let orgToken; // saving the decoded value in the DB, but passing the encoded version to the client
@@ -146,6 +134,9 @@ const verifyToken = async(req, res, next) => {
             appSession.isFitnessAdmin = existingSession.isFitnessAdmin;
             appSession.fitnessGroupAdmins = existingSession.fitnessGroupAdmins;
             appSession.isActive = existingSession.isActive;
+            appSession.isFileAdmin = existingSession.fileAdmin;
+            appSession.isEventAdmin = existingSession.eventAdmin;
+            appSession.displayName = existingSession.displayName;
             appSession.memberId = existingSession.memberId;
             appSession.sessionToken = crypto.AES.encrypt(orgToken, application.secretKey).toString();
             return returnSingle(res, appSession);

@@ -45,6 +45,7 @@
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
+    z-index: 200;
     .blue { color: #1565c0; }
     .green { color: #319c1e; }
     .gold { color: #e2d321; }

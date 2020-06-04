@@ -1,4 +1,4 @@
-<div class="app-wrapper">
+<div class="app-wrapper" (click)="dismissBannerFn()">
   <org-menu-bar></org-menu-bar>
   <ng-container *ngIf="appInUse === SPORT_ORG">
     <mat-card class="page-header">
@@ -6,7 +6,7 @@
     </mat-card>
   </ng-container>
 
-    <div class="page-body">
+    <div class="page-body" #pageBody>
       <div ngClass="main-content {{appInUse === SPORT_ORG ? '' : 'wide-content'}}">
         <router-outlet></router-outlet>
       </div>

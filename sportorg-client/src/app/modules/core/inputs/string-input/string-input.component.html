@@ -1,7 +1,7 @@
 <mat-form-field>
   <ng-container *ngIf="!useTextArea ">
-    <input matInput type="text" [value]="stringValue"  (input)="updateValue($event)"
-           [style.min-width]="minWidth"/>
+    <input matInput type="text" [value]="stringValue"
+           [style.min-width]="minWidth" [placeholder]="placeholder" [formControl]="textFormControl"/>
     <button mat-button *ngIf="stringValue" matSuffix mat-icon-button (click)="clearString()">
       <mat-icon>close</mat-icon>
     </button>

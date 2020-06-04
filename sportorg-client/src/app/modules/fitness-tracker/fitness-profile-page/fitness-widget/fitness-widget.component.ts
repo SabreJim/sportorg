@@ -5,6 +5,7 @@ import {ConfirmModalComponent} from "../../../core/modals/confirm-modal/confirm-
 import {SnackbarService} from "../../../core/services/snackbar.service";
 import {FitnessProxyService} from "../../../core/services/fitness-proxy.service";
 import {MatDialog} from "@angular/material";
+import {TipsProxyService} from "../../../core/services/tips-proxy.service";
 
 @Component({
   selector: 'app-fitness-widget',
@@ -35,6 +36,8 @@ export class FitnessWidgetComponent implements OnInit {
   public maxStatValue: number = 1;
   public levelColor: string = 'green';
 
+  public getTip = this.tipService.getToolTip;
+
   public resetProfile = () => {
     // confirm resetting profile
     const dialogRef = this.dialog.open(ConfirmModalComponent,
@@ -55,7 +58,7 @@ export class FitnessWidgetComponent implements OnInit {
   }
 
 
-  constructor(protected fitnessProxy: FitnessProxyService, protected dialog: MatDialog) { }
+  constructor(protected fitnessProxy: FitnessProxyService, protected dialog: MatDialog, protected tipService: TipsProxyService) { }
 
   ngOnInit() {
   }

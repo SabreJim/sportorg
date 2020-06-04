@@ -9,6 +9,9 @@ const getUsers = async(req, res, next) => {
                     u.email,
                     u.is_admin,
                     (CASE WHEN uga.group_ids IS NULL THEN 'N' ELSE 'Y' END) as 'is_fitness_admin',
+                    u.file_admin,
+                    u.event_admin,
+                    u.display_name,
                     u.google_id,
                     u.fb_id, 
                     u.twitter_id

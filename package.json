@@ -1,6 +1,6 @@
 {
   "name": "sportorg",
-  "version": "0.0.1",
+  "version": "1.1.0",
   "main": "server.js",
   "dependencies": {
     "@types/node": "^12.7.1",
@@ -29,6 +29,7 @@
     "install-client": "cd ./sportorg-client/ && npm install && cd ..",
     "build": "cd ./sportorg-client && ng build && cd ..",
     "build:prod": "cd ./sportorg-client && ng build --prod && cd ..",
-    "start-dev": "cd ./sportorg-client/ && ng serve --baseHref='/app/'"
+    "start-dev": "cd ./sportorg-client/ && ng serve --baseHref='/app/'",
+    "prod-deploy": "npm install && npm run install-client && npm run build:prod"
   }
 }

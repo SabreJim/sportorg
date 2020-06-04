@@ -3,7 +3,23 @@
     <h1>{{profile?.firstName}} {{profile?.lastName}}</h1>
   </mat-card-title>
   <mat-card-content class="exercise-list">
-    <ng-container *ngFor="let exercise of exercises">
+    <div class="exercise-filter filter-bar mat-card">
+      <div class="typeahead-filter">
+        <label>Search:</label>
+        <input type="text" placeholder="by exercise title" matInput [formControl]="textInput" />
+        <button mat-button *ngIf="searchText" matSuffix mat-icon-button (click)="clearString()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="filter-found">Found items: {{filteredExercises.length || 0}}</div>
+      <div class="checkbox-filter">
+        <label >Show:</label>
+        <mat-checkbox class="multi-select" *ngFor="let stat of statOptions"  (change)="selectStat($event, stat)">
+          {{stat.name}}
+        </mat-checkbox>
+      </div>
+    </div>
+    <ng-container *ngFor="let exercise of filteredExercises">
       <mat-card class="exercise-item">
         <div class="icon">
           <ng-container *ngIf="exercise.iconType === 'fa'">
@@ -21,7 +37,10 @@
           <div class="exercise-nums">
             <span class="value-icons">
               <ng-container *ngFor="let stat of exercise.statValues">
-              <div class="icon-wrapper"><i ngClass="mat-icon {{stat.icon}}" title="{{stat.name}}"></i>: {{stat.value}}</div>
+              <div class="icon-wrapper">
+                <i ngClass="mat-icon {{stat.icon}}" appTooltip [hangRight]="true"
+                     [tooltipData]="'Points earned towards: ' + stat.name"
+              ></i><span class="stat-value">{{stat.value}}</span></div>
                 </ng-container>
             </span>
           </div>

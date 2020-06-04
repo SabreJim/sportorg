@@ -1,4 +1,4 @@
-<mat-expansion-panel class="panel" (opened)="refreshData()"
+<mat-expansion-panel ngClass="panel {{tableAltClass}}" (opened)="refreshData()"
                      [expanded]="alwaysOpen" [disabled]="alwaysOpen" [hideToggle]="alwaysOpen"  >
   <mat-expansion-panel-header ngClass="panel-header {{(alwaysOpen) ? 'not-disabled' : ''}}">
     <mat-panel-title>
@@ -19,6 +19,7 @@
           [formFields]="configObject.columns"
           [editingRow]="editingRow"
           [entityType]="configObject.entityType"
+          [identityField]="configObject.identityField"
           (saveRecord)="runUpsert($event)"
           (deleteRecord)="runDeletion($event)"
         ></app-dynamic-form>

@@ -45,6 +45,7 @@
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
+    z-index: 200;
     .blue { color: #1565c0; }
     .green { color: #319c1e; }
     .gold { color: #e2d321; }
@@ -86,6 +87,26 @@
       font-size: 16px;
       font-weight: 600;
     }
+    .stat-columns {
+      display: flex;
+      flex-flow: row nowrap;
+      width: 100%;
+      .icon-wrapper{
+        display: flex;
+        flex: 1 1 64px;
+        max-width: 64px;
+        min-width: 48px;
+        font-size: 36px;
+        i {
+          flex: 1 1 auto;
+        }
+      }
+      .stat-row-wrapper {
+        display: flex;
+        flex-flow: column nowrap;
+        flex: 1 1 auto;
+      }
+    }
     .main-row, .sub-row {
       display: flex;
       flex-flow: row nowrap;
@@ -103,12 +124,6 @@
       background-color: #319c1e;
     }
 
-    .icon-wrapper {
-      font-size: 20px;
-      text-align: center;
-      margin-right: 8px;
-      margin-top: 5px;
-    }
     .stat-value {
       color: black;
       position: absolute;

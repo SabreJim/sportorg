@@ -11,10 +11,11 @@ export class TooltipComponent implements AfterViewInit {
   @Input() dataContent: any;
   @Input() sourceTop: string = '0px';
   @Input() sourceLeft: string = '0px';
-  @Input() panelClass: string = '400w';
+  @Input() panelClass: string = 'w400';
   @Output() userEntered = new EventEmitter<boolean>();
   @Output() userLeft = new EventEmitter<boolean>();
   @Output() tipCreated = new EventEmitter<boolean>();
+  @Output() userClicked = new EventEmitter<boolean>();
 
   public stealthRender = true;
   public enterTooltip = () => {
@@ -24,6 +25,7 @@ export class TooltipComponent implements AfterViewInit {
     this.userLeft.next(true);
     this.userEntered.next(false);
   }
+
   constructor() { }
 
   ngAfterViewInit(): void {

@@ -42,6 +42,13 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
 ::ng-deep.mat-expansion-panel-content {
   background-color: #eeeeee;
 }
+::ng-deep.mat-menu-panel {
+  min-height: unset !important;
+  .mat-menu-content {
+    display: flex;
+    flex-flow: column nowrap;
+  }
+}
 .panel-header {
   background-color: mat-color($primary, 100) !important;
   .header-description {
@@ -109,6 +116,21 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
   .popover-card {
   }
 }
+// for snackbars
+::ng-deep snack-bar-container.error-panel {
+  background-color: #ffd0d9fa;
+  border: 3px solid #ec224cfa;
+  border-radius: 10px;
+  color: black;
+  .mat-button {
+    color: black;
+    background-color: white;
+  }
+}
+
+::ng-deep .mat-simple-snackbar {
+  justify-content: center !important;
+}
 
 // input modals
 .mat-dialog-container{
@@ -169,6 +191,7 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
         margin: 2px;
         height: 40px;
         background-color: #dddddd;
+        overflow:hidden;
       }
     }
   }

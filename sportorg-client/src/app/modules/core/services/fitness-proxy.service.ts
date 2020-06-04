@@ -240,7 +240,6 @@ export class FitnessProxyService extends RestProxyService {
   // remove an exerciseEvent that was recorded in error
   public deleteExercise = (exercise: Exercise): Observable<boolean> => {
     return new Observable((subscription) => {
-      console.log('sending delete', exercise);
       this.delete(`exercise/${exercise.exerciseId}`).subscribe((response: ApiResponse<boolean>) => {
         if (response.hasErrors() || !response.success) {
           SnackbarService.error(`Exercise was not deleted successfully: ${response.message}`);

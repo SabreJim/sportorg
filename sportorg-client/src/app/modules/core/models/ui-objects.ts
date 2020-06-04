@@ -71,6 +71,7 @@ export interface AdminConfig {
   getter: () => Observable<any[]>;
   setter: (entity: any) => Observable<boolean>;
   delete: (entity: any) => Observable<boolean>;
+  identityField: string;
   notifySelection?: (row: any, state: boolean) => Observable<any>;
   entityType: string;
   disableAdd?: boolean;
@@ -84,6 +85,8 @@ export interface MenuItem {
   mobileOnly: 'Y' | 'N';
   altTitle: string;
   orderNumber: number;
+  parentMenuId?: number;
+  childMenus?: MenuItem[];
 }
 
 export interface RegistrationDialogData {
@@ -91,4 +94,24 @@ export interface RegistrationDialogData {
   programFees: number;
   season: string;
   year: number;
+}
+export interface AppStatus {
+  statusId: number;
+  appName: string;
+  bannerActive: string;
+  bannerText: string;
+  bannerLink?: string;
+}
+export interface PageContent {
+  pageId: number;
+  pageName: string;
+  title: string;
+  htmlContent: string;
+}
+export interface AppToolTip {
+  tipId: number;
+  tipName: string;
+  title: string;
+  text: string;
+  language?: string;
 }

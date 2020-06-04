@@ -1,5 +1,6 @@
 const express = require('express');
 const Classes = require('./response-handler/classes');
+const PageContent = require('./response-handler/page-content');
 const Programs = require('./response-handler/programs');
 const Members = require('./response-handler/members');
 const Users = require('./response-handler/users');
@@ -51,6 +52,7 @@ const createRouter = (config) => {
     router.get('/fees', Lookups.getFeeStructures);
     router.get('/lookups', Lookups.getLookupValues);
     router.get('/menus', Lookups.getMenus);
+    router.get('/app-status', Lookups.getAppStatus);
 
     // Class getters and setters
     router.get('/all-classes', addSession, Classes.getAllClasses);
@@ -77,6 +79,24 @@ const createRouter = (config) => {
     router.put('/member-users/member/:memberId/user/:userId/link/:setStatus', adminRequired, Users.linkMembers);
 
     // event endpoints
+
+    // dynamic page content
+    router.get('/page-content/:pageName', PageContent.getPage);
+    router.get('/all-pages', adminRequired, PageContent.getAllPages);
+    router.put('/page-content', jsonBody, adminRequired, PageContent.upsertPage);
+    router.delete('/page-content/:pageId', adminRequired, PageContent.deletePage);
+    router.get('/menu-list', adminRequired, PageContent.getMenuAdmin);
+    router.put('/menus', jsonBody, adminRequired, PageContent.upsertMenu);
+    router.delete('/menus/:menuId', adminRequired, PageContent.deleteMenu);
+    router.get('/all-banners', adminRequired, PageContent.getAllBanners);
+    router.put('/banners', jsonBody, adminRequired, PageContent.upsertBanner);
+    router.delete('/banners/:statusId', adminRequired, PageContent.deleteBanner);
+
+    // tooltips
+    router.get('/tool-tip/:tipName', PageContent.getToolTip);
+    router.get('/all-tool-tips', adminRequired, PageContent.getAllToolTips);
+    router.put('/tool-tip', jsonBody, adminRequired, PageContent.upsertToolTip);
+    router.delete('/tool-tip/:tipId', adminRequired, PageContent.deleteToolTip);
 
     // enrollment endpoints
     router.get('/my-enrollments', addSession, Enrollment.getMyEnrollments);

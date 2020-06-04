@@ -1,5 +1,13 @@
 const decamelize = require('decamelize');
-const sanitizeHtml = require('sanitize-html');
+const baseSanitizeHtml = require('sanitize-html');
+const sanitizeHtml = (text) => {
+    return baseSanitizeHtml(text, {
+        allowedTags: baseSanitizeHtml.defaults.allowedTags.concat(['font']),
+        allowedAttributes: { a: [ 'href', 'name', 'target' ], font: ['color'] }
+    })
+}
+
+
 const mixedJoin = (source, skipHead = false) => {
     let arr = '';
     if (!source.length) return arr;
@@ -74,7 +82,9 @@ const getCleanBody = (body, schema) => {
             if (typeof value !== 'string') {
                 isValid = false;
             } else {
-                cleanBody[field.fieldName] = value.replace(stringMask, '');
+                let noBadChars = value.replace(stringMask, '');
+                // also prepare quote marks for mySQL storage
+                cleanBody[field.fieldName] = noBadChars.replace(/"/g, '\\"');
             }
         }
     };
@@ -89,7 +99,8 @@ const getCleanBody = (body, schema) => {
             if (typeof value !== 'string') {
                 isValid = false;
             } else {
-                cleanBody[field.fieldName] = sanitizeHtml(value); // html sanitize
+                // strip out unsafe HTML tags, then replace quotes with html codes to save to MySQL
+                cleanBody[field.fieldName] = sanitizeHtml(value).replace(/"/g, '&quot;');
             }
         }
     };
@@ -224,7 +235,6 @@ const memberSchema = {
         {fieldName: 'competeGender', type: 'string', allowNull: true },
         {fieldName: 'isActive', type: 'string', allowNull: false },
         {fieldName: 'isAthlete', type: 'string', allowNull: false },
-        {fieldName: 'isFitnessAdmin', type: 'string', allowNull: true },
         {fieldName: 'membershipStart', type: 'date', allowNull: false },
         {fieldName: 'streetAddress', type: 'string', allowNull: true },
         {fieldName: 'city', type: 'string', allowNull: true },
@@ -243,10 +253,12 @@ const userSchema = {
         {fieldName: 'userId', type: 'int', allowNull: false },
         {fieldName: 'email', type: 'string', allowNull: false },
         {fieldName: 'isAdmin', type: 'string', allowNull: false },
-        {fieldName: 'isFitnessAdmin', type: 'string', allowNull: true },
         {fieldName: 'googleId', type: 'string', allowNull: true },
         {fieldName: 'fbId', type: 'string', allowNull: true },
-        {fieldName: 'twitterId', type: 'string', allowNull: true }
+        {fieldName: 'twitterId', type: 'string', allowNull: true },
+        {fieldName: 'fileAdmin', type: 'string', allowNull: true },
+        {fieldName: 'eventAdmin', type: 'string', allowNull: true },
+        {fieldName: 'displayName', type: 'string', allowNull: true }
     ]
 };
 
@@ -317,6 +329,51 @@ const fitnessGroupSchema = {
     ]
 };
 
+const pageSchema = {
+    primaryKey: 'pageId',
+    fields: [
+        {fieldName: 'pageId', type: 'int', allowNull: false },
+        {fieldName: 'pageName', type: 'string', allowNull: false },
+        {fieldName: 'title', type: 'string', allowNull: false },
+        {fieldName: 'htmlContent', type: 'html', allowNull: false }
+    ]
+};
+
+const menuSchema = {
+    primaryKey: 'menuId',
+    fields: [
+        {fieldName: 'menuId', type: 'int', allowNull: false },
+        {fieldName: 'title', type: 'string', allowNull: false },
+        {fieldName: 'altTitle', type: 'string', allowNull: true },
+        {fieldName: 'link', type: 'html', allowNull: false },
+        {fieldName: 'parentMenuId', type: 'int', allowNull: false },
+        {fieldName: 'orderNumber', type: 'int', allowNull: false }
+    ]
+};
+
+const bannerSchema = {
+    primaryKey: 'statusId',
+    fields: [
+        {fieldName: 'statusId', type: 'int', allowNull: false },
+        {fieldName: 'appName', type: 'string', allowNull: false },
+        {fieldName: 'bannerText', type: 'string', allowNull: false },
+        {fieldName: 'bannerLink', type: 'html', allowNull: false },
+        {fieldName: 'bannerActive', type: 'string', allowNull: false }
+    ]
+};
+
+const tipSchema = {
+    primaryKey: 'tipId',
+    fields: [
+        {fieldName: 'tipId', type: 'int', allowNull: false },
+        {fieldName: 'tipName', type: 'string', allowNull: false },
+        {fieldName: 'enTitle', type: 'string', allowNull: false },
+        {fieldName: 'frTitle', type: 'string', allowNull: true },
+        {fieldName: 'enText', type: 'html', allowNull: false },
+        {fieldName: 'frText', type: 'html', allowNull: true }
+    ]
+};
+
 module.exports = {
     getCleanBody,
     classScheduleSchema,
@@ -327,5 +384,9 @@ module.exports = {
     fitnessProfileSchema,
     exerciseLogSchema,
     exerciseSchema,
-    fitnessGroupSchema
+    fitnessGroupSchema,
+    pageSchema,
+    menuSchema,
+    bannerSchema,
+    tipSchema
 };

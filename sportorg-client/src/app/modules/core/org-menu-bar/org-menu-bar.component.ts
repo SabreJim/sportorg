@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {MenuItem, RecentItem} from "../models/ui-objects";
+import {MenuItem} from "../models/ui-objects";
 import {FirebaseAuthService} from "../services/firebase-auth.service";
 import {Subscription} from "rxjs";
 import {AppUser} from "../models/authentication";
@@ -18,16 +18,6 @@ export class OrgMenuBarComponent implements OnInit {
   public currentUser: AppUser;
   public appMenus: MenuItem[] = [];
 
-  // TODO: also switch over to REST request
-  public recentItems: RecentItem[] = [
-    {title: 'CFF Registration', link: 'http://www.fencing.ca', type: 'external'},
-    {title: 'Beaches Renovations', link: '/about-us', type: 'internal'},
-    {title: 'New Class Structure', link: '/classes', type: 'internal'}
-  ];
-
-  public exampleClick = (value: RecentItem) => {
-
-  }
   ngOnInit(): void {
     this.userSub = this.authService.CurrentUser.subscribe((user: AppUser) => {
       this.isAnon = user.isAnonymous;
@@ -42,6 +32,11 @@ export class OrgMenuBarComponent implements OnInit {
       this.userSub.unsubscribe();
     }
   }
+  public dontClose = (event: MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
   public login = this.authService.toggleLogin;
   public logout = this.authService.logout;
 }

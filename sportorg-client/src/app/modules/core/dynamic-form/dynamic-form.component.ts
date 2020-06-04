@@ -13,18 +13,29 @@ export class DynamicFormComponent implements OnInit {
 
   @Input() entityType: string = 'record';
   @Input() formFields: TableColumn[] = [];
+  @Input() identityField: string = 'id';
   @Input() set editingRow (row: any) {
-    const fields = row ? Object.keys(row) : [];
-    if (fields.length) {
-      this.currentRow = row;
+    // const fields = row ? Object.keys(row) : [];
+    // if (fields.length) {
+      this.currentRow = this.generateDefault(row);
       this.isDirty = false;
-      this.entitySaved = true;
-    } else { // an empty row was passed in
-      this.entitySaved = false;
-      this.isDirty = false;
-      this.currentRow = {};
-    }
+      if (this.currentRow[this.identityField] && this.currentRow[this.identityField] > 0) {
+        this.entitySaved = true;
+      } else {
+        this.entitySaved = false;
+      }
   }
+  // from the editing row, or a blank object, ensure we have all the fields listed
+  protected generateDefault = (row: any) => {
+    let safeRow = row || {};
+    this.formFields.map((field: TableColumn) => {
+      if (!safeRow.hasOwnProperty(field.fieldName)) {
+        safeRow[field.fieldName] = null;
+      }
+    });
+    return safeRow;
+  }
+
   @Output() saveRecord = new EventEmitter<any>();
   @Output() deleteRecord = new EventEmitter<any>();
   public currentRow: any = {};
@@ -34,6 +45,7 @@ export class DynamicFormComponent implements OnInit {
   public saveChanges = () => {
     this.saveRecord.emit(this.currentRow);
     this.entitySaved = true;
+    this.currentRow = {};
   };
 
   public requestDelete = () => {

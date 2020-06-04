@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FitnessProfile} from "../../../core/models/fitness-objects";
 import {Router} from "@angular/router";
+import {TipsProxyService} from "../../../core/services/tips-proxy.service";
 
 @Component({
   selector: 'app-profile-icon',
@@ -39,10 +40,12 @@ export class ProfileIconComponent implements OnInit {
     });
   }
 
+  public getTip = this.tipService.getToolTip;
+
   public useThisProfile = () => {
     this.router.navigate([`fitness-tracker/profile/${this.profile.athleteId}`]);
   }
-  constructor(protected router: Router) { }
+  constructor(protected router: Router, protected tipService: TipsProxyService) { }
 
   ngOnInit() {
 

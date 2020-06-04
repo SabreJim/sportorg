@@ -1,7 +1,19 @@
 <div class="tip-overlay" [style.height]="sourceTop" [style.width]="sourceLeft">
-  <div (mouseenter)="enterTooltip()" (mouseleave)="leaveTooltip()" ngClass="tip-content {{panelClass}}">
-    <ng-container [ngTemplateOutlet]="contentTemplate"
+  <div (mouseenter)="enterTooltip()" (mouseleave)="leaveTooltip()" (click)="userClicked.next(true)" ngClass="tip-content {{panelClass}}">
+    <ng-container [ngTemplateOutlet]="contentTemplate || defaultTemplate"
                   [ngTemplateOutletContext]="dataContent"></ng-container>
   </div>
 </div>
+
+<ng-template #defaultTemplate let-data="data">
+  <mat-card class="tip-card">
+    <mat-card-header *ngIf="data?.title && data?.title.length">
+      <mat-card-title class="tip-header">{{data.title}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p *ngIf="data && !data.text" [innerHtml]="data | safePipe: 'html'"></p>
+      <p *ngIf="data && data.text" [innerHtml]="data.text | safePipe: 'html'"></p>
+    </mat-card-content>
+  </mat-card>
+</ng-template>
 

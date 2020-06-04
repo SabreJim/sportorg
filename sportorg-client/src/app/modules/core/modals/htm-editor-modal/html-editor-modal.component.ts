@@ -57,7 +57,7 @@ export class HtmlEditorModalComponent implements AfterViewInit {
       editable: true,
       spellcheck: true,
       height: 'auto',
-      minHeight: '0',
+      minHeight: '250',
       maxHeight: 'auto',
       width: 'auto',
       minWidth: '0',

@@ -122,6 +122,7 @@ export class FitnessPageComponent implements OnInit, OnDestroy {
   public currentExerciseGroupId: number;
   public exerciseConfig: AdminConfig = {
     entityType: 'Exercise',
+    identityField: 'exerciseId',
     columns: [
       new TableColumn('name', 'Name', 'string'),
       new TableColumn('description', 'Description', 'html'),

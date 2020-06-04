@@ -15,6 +15,15 @@
     display: flex;
   }
 }
+mat-expansion-panel.tall-input-table {
+  max-height: 800px !important;
+  .mat-expansion-panel-content {
+    max-height: 700px;
+  }
+  .mat-sidenav-container {
+    max-height: 700px;
+  }
+}
 .side-nav {
   display: flex;
 }

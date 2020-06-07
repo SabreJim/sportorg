@@ -110,11 +110,35 @@ export interface AppMember {
   license: string;
   confirmed?: 'Y' | 'N';
 }
+export interface MemberAttendance {
+  memberId: number;
+  lastName: string;
+  firstName: string;
+  checkedIn: boolean;
+  flagged: boolean;
+  signedInBy?: string;
+  activeScreenRequired?: boolean;
+  screeningAnswers?: ScreeningAnswer[];
+}
+export interface ScreeningAnswer {
+  questionId: number;
+  answerId: number;
+  answerText?: string;
+  answerValue?: string;
+}
+export interface ScreeningQuestion {
+  questionId: number;
+  parentQuestionId?: number;
+  questionText: string;
+  answerValue?: number;
+  answers: ScreeningAnswer[];
+  childQuestions?: ScreeningQuestion[];
+}
 export interface AppMemberUser {
   userId: number;
   email: string;
   memberId: number;
-  memeberName: string;
+  memberName: string;
 }
 export interface RegistrationConfig {
   seasonId: number;

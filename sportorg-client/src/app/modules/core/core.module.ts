@@ -33,6 +33,8 @@ import { LoginRequiredComponent } from './modals/login-required/login-required.c
 import { LoginRequiredDirective } from './modals/login-required/login-required.directive';
 import { TabRoutingDirective } from './directives/tab-routing.directive';
 import { TooltipIconComponent } from './tooltip/tooltip-icon/tooltip-icon.component';
+import { CheckinModalComponent } from './modals/checkin-modal/checkin-modal.component';
+import { MemberScreeningModalComponent } from './modals/member-screening-modal/member-screening-modal.component';
 
 
 @NgModule({
@@ -63,7 +65,9 @@ import { TooltipIconComponent } from './tooltip/tooltip-icon/tooltip-icon.compon
     LoginRequiredComponent,
     LoginRequiredDirective,
     TabRoutingDirective,
-    TooltipIconComponent
+    TooltipIconComponent,
+    CheckinModalComponent,
+    MemberScreeningModalComponent
   ],
   exports: [
     OrgHeaderComponent,
@@ -108,6 +112,8 @@ import { TooltipIconComponent } from './tooltip/tooltip-icon/tooltip-icon.compon
     ConfirmModalComponent,
     MemberModalComponent,
     HtmlEditorModalComponent,
+    CheckinModalComponent,
+    MemberScreeningModalComponent,
     TooltipComponent,
     TooltipIconComponent,
     StringInputComponent,

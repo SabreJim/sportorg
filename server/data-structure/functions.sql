@@ -85,6 +85,7 @@ BEGIN
     CLOSE currentMember;
 END;
 /
+-- drop PROCEDURE beaches.assign_member_to_user;
 CREATE PROCEDURE beaches.assign_member_to_user (p_user_id INTEGER, p_member_id INTEGER )
     SQL SECURITY INVOKER
 BEGIN
@@ -97,6 +98,10 @@ BEGIN
         INSERT INTO beaches.member_users (user_id, member_id)
         VALUES (p_user_id, p_member_id);
     END IF;
+
+    -- default to primary club
+    UPDATE beaches.members set club_id = (SELECT MIN(club_id) FROM beaches.clubs)
+        WHERE club_id IS NULL;
 END;
 /
 

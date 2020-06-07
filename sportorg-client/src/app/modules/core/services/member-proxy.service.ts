@@ -1,5 +1,5 @@
 import {RestProxyService} from "./rest-proxy.service";
-import {AppMember} from "../models/data-objects";
+import {AppMember, MemberAttendance, ScreeningQuestion} from "../models/data-objects";
 import {Observable, Subject} from "rxjs";
 import {ApiResponse} from "../models/rest-objects";
 import {HttpClient} from "@angular/common/http";
@@ -71,6 +71,47 @@ export class MembersProxyService extends RestProxyService {
         } else {
           SnackbarService.notify('Member deleted successfully');
           subscription.next(true);
+        }
+      }, (error: any) => {});
+    });
+  }
+
+  // attendance endpoints
+
+  // get the list of members you have access to check in. Either a family member, or you are a club admin of their club
+  public getMemberAttendance = (): Observable<MemberAttendance[]> => {
+    return new Observable((subscription) => {
+      this.get('my-members/attendance').subscribe((response: ApiResponse<MemberAttendance[]>) => {
+        if (response.hasErrors()) {
+          SnackbarService.error('There was an error getting your members');
+          subscription.next([]);
+        } else {
+          subscription.next(response.data || []);
+        }
+      }, (error: any) => {});
+    });
+  };
+  public logAttendance = (member: MemberAttendance): Observable<any> => {
+    return new Observable((subscription) => {
+      this.put('my-members/attendance', member).subscribe((response: ApiResponse<any>) => {
+        if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`There was an error logging your attendance: ${response.message}`);
+          subscription.next(false);
+        } else {
+          subscription.next(response.data);
+        }
+      }, (error: any) => {});
+    });
+  }
+
+  public getScreeningQuestions = (): Observable<ScreeningQuestion[]> => {
+    return new Observable((subscription) => {
+      this.get('my-members/screening-questions').subscribe((response: ApiResponse<ScreeningQuestion[]>) => {
+        if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`There was an error getting the screening questions`);
+          subscription.next([]);
+        } else {
+          subscription.next(response.data);
         }
       }, (error: any) => {});
     });

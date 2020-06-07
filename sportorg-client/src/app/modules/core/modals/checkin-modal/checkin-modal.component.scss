@@ -1,0 +1,52 @@
+@import "../../../../../styles";
+
+.modal-wrapper-sm {
+  display: flex;
+  flex-flow: column nowrap;
+  overflow: hidden;
+}
+
+.question-wrapper {
+  display: flex;
+  flex-flow: column nowrap;
+  .question-text {
+    font-weight: 600;
+    display: flex;
+    margin-top: 10px;
+    flex: 1 1 auto;
+  }
+}
+.radio-group {
+  display: flex;
+  flex-flow: row wrap;
+  flex: 1 1 auto;
+  padding-bottom: 10px;
+  .answer-button {
+    margin-left: 20px;
+    font-weight: 600;
+  }
+}
+.sub-question-wrapper {
+  display:flex;
+  flex: 1 1 auto;
+  flex-flow: row nowrap;
+  .sub-question-left {
+    display: flex;
+    flex-flow: column nowrap;
+  }
+  .sub-question-right {
+    display: flex;
+    flex-flow: column nowrap;
+  }
+}
+.sub-question-row {
+  display: flex;
+  flex: 1 1 auto;
+  margin-left: 40px;
+  margin-bottom: 10px;
+  .sub-question-text {
+    flex: 1 1 auto;
+  }
+}
+
+

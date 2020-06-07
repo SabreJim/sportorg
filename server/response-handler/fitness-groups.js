@@ -1,18 +1,7 @@
 const MySQL = require('../middleware/mysql-service');
-const { returnResults, returnSingle, returnError, parseHtmlFields } = require('../middleware/response-handler');
+const { returnResults, returnSingle, returnError, parseHtmlFields, cleanSelected } = require('../middleware/response-handler');
 const { fitnessGroupSchema, getCleanBody } = require('../middleware/request-sanitizer');
 const getUserId = (req) =>  req.session.user_id;
-const cleanSelected = (queryResult) => {
-    if (queryResult && queryResult.length) {
-        return queryResult.map((type) => {
-            type.isSelected = (type.isSelected === 'Y');
-            if (type.hasOwnProperty('rowEdit')) type.rowEdit = (type.rowEdit === 'Y');
-            return type;
-        });
-    } else {
-        return [];
-    }
-}
 
 const confirmGroupAccess = (groupId, session) => {
     try {
@@ -45,7 +34,7 @@ const getMyGroups = async (req, res) => {
                         OR (fg.is_closed = 'Y' AND (ag.athlete_id IS NOT NULL OR ai.invitee_id IS NOT NULL))`;
     let queryResult = await MySQL.runQuery(statement, [myUserId]);
     if (queryResult && queryResult.length) {
-        returnResults(res, cleanSelected(queryResult));
+        returnResults(res, cleanSelected(queryResult, ['isSelected']));
     } else {
         returnResults(res, []);
     }
@@ -92,7 +81,7 @@ const getGroupExercises = async (req, res) => {
         WHERE e.is_deleted = 'N' `;
     let queryResult = await MySQL.runQuery(statement);
     queryResult = parseHtmlFields(queryResult, ['description']);
-    returnResults(res, cleanSelected(queryResult));
+    returnResults(res, cleanSelected(queryResult, ['isSelected', 'rowEdit']));
 }
 const getGroupTypes = async (req, res) => {
     const myUserId = getUserId(req);
@@ -108,7 +97,7 @@ const getGroupTypes = async (req, res) => {
             INNER JOIN beaches.user_group_admins uga ON uga.group_id = ${groupId} AND uga.user_id = ${myUserId}
 `;
     let queryResult = await MySQL.runQuery(statement);
-    returnResults(res, cleanSelected(queryResult));
+    returnResults(res, cleanSelected(queryResult, ['isSelected']));
 }
 const getGroupAges = async (req, res) => {
     const myUserId = getUserId(req);
@@ -126,7 +115,7 @@ const getGroupAges = async (req, res) => {
             INNER JOIN beaches.user_group_admins uga ON (${groupId} = -1 OR uga.group_id = ${groupId}) AND uga.user_id = ${myUserId}
     `;
     let queryResult = await MySQL.runQuery(statement);
-    returnResults(res, cleanSelected(queryResult));
+    returnResults(res, cleanSelected(queryResult, ['isSelected']));
 }
 const getGroupAthletes = async (req, res) => {
     const myUserId = getUserId(req);
@@ -148,7 +137,7 @@ const getGroupAthletes = async (req, res) => {
             INNER JOIN beaches.user_group_admins uga ON uga.group_id = ${groupId} AND uga.user_id = ${myUserId}
     `;
     let queryResult = await MySQL.runQuery(statement);
-    returnResults(res, cleanSelected(queryResult));
+    returnResults(res, cleanSelected(queryResult, ['isSelected']));
 }
 
 const assignProfileGroups = async (req, res) => {

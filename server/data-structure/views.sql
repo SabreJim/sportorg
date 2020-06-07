@@ -1,5 +1,5 @@
 drop view v_programs;
-CREATE VIEW v_programs as
+CREATE  SQL SECURITY INVOKER VIEW v_programs as
 SELECT
     p.program_id,
     p.color_id,
@@ -17,7 +17,7 @@ LEFT JOIN fee_structures f ON p.fee_id = f.fee_id
 ;
 
 drop view v_classes;
-CREATE VIEW v_classes AS
+CREATE  SQL SECURITY INVOKER VIEW v_classes AS
 SELECT
     ps.schedule_id,
     ps.season_id,
@@ -44,6 +44,7 @@ FROM program_schedules ps
     LEFT OUTER JOIN week_days wd ON wd.day_id = ps.day_id
 ;
 
+drop view beaches.v_lookups;
 CREATE SQL SECURITY INVOKER VIEW beaches.v_lookups
 AS
 SELECT f.fee_id as 'id', f.fee_name as 'name', CONCAT('$', f.fee_value) as 'more_info', 'fees' as 'lookup' FROM beaches.fee_structures f
@@ -57,7 +58,8 @@ UNION
 SELECT  r.region_id as 'id', r.region_name as 'name', r.region_code as 'more_info', 'regions' as 'lookup' FROM beaches.regions r
 ;
 
-CREATE VIEW v_enrollments AS
+drop view beaches.v_enrollments;
+CREATE  SQL SECURITY INVOKER VIEW beaches.v_enrollments AS
 SELECT
     ce.enroll_id,
     ce.member_id,
@@ -82,6 +84,7 @@ LEFT JOIN week_days wd ON wd.day_id = ps.day_id
 LEFT JOIN seasons s ON s.season_id = ps.season_id
 ;
 
+drop view beaches.v_athlete_profiles;
 CREATE SQL SECURITY INVOKER VIEW beaches.v_athlete_profiles
 AS
 SELECT
@@ -105,6 +108,7 @@ SELECT
 FROM beaches.athlete_profiles ap;
 ;
 
+drop view beaches.v_exercise_logs;
 CREATE SQL SECURITY INVOKER VIEW beaches.v_exercise_logs
 AS
 SELECT
@@ -135,6 +139,7 @@ FROM beaches.exercise_event ee
 
 
 -- required to grant permissions on secondary view
+drop view beaches.v_level_delta;
 CREATE SQL SECURITY INVOKER VIEW beaches.v_level_delta
 AS
 SELECT distinct ap.athlete_id,
@@ -149,6 +154,7 @@ FROM beaches.athlete_profiles ap
 LEFT JOIN beaches.level_up_logs ll ON ll.athlete_id = ap.athlete_id AND DATE(ll.level_up_date) > (NOW() - INTERVAL 7 DAY)
 GROUP BY ap.athlete_id;
 
+drop view beaches.v_exercise_delta;
 CREATE SQL SECURITY INVOKER VIEW beaches.v_exercise_delta
 AS
 SELECT distinct
@@ -174,7 +180,6 @@ SELECT distinct
     SUM(el.hand_speed_points) weekly_hand_speed,
     log_agg.hand_speed_gains  weekly_hand_speed_levels_gained,
     el.user_hand_speed_level
-
 FROM beaches.v_exercise_logs el
     LEFT JOIN beaches.v_level_delta log_agg ON el.athlete_id = log_agg.athlete_id
 WHERE DATE(el.event_date) > (NOW() - INTERVAL 7 DAY)

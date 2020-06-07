@@ -475,12 +475,12 @@ VALUES
 CREATE TABLE beaches.questions (
     question_id MEDIUMINT NOT NULL auto_increment,
     question_group VARCHAR(50) NOT NULL,
-    parent_question_id MEDIUMINT REFERENCES beaches.questions(question_id)
+    parent_question_id MEDIUMINT REFERENCES beaches.questions(question_id),
     en_text VARCHAR(250) NOT NULL,
     fr_text VARCHAR(250) NULL,
     answer_group_id INT NOT NULL REFERENCES beaches.question_answers(answer_group_id),
     allowed_invalid INT DEFAULT 0,
-    expected_answer MEDIUM INT REFERENCES beaches.question_answers(answer_id)
+    expected_answer MEDIUMINT REFERENCES beaches.question_answers(answer_id),
     PRIMARY KEY (question_id)
 );
 

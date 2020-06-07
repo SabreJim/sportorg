@@ -42,6 +42,10 @@
 
 <ng-template #dataCell let-row="row" let-column="column">
   <td class="body-cell {{column.displayType}}-cell" [hidden]="!column.showColumn">
-    <span class="content" [innerHTML]="row[column.displayField] | safePipe: 'html'"></span>
+    <span *ngIf="column.displayType !== 'boolean'" class="content" [innerHTML]="row[column.displayField] | safePipe: 'html'"></span>
+    <span *ngIf="column.displayType === 'boolean'" class="content">
+      <mat-icon>{{row[column.displayField] ? 'check_box' : 'check_box_outline_blank'  }}</mat-icon>
+
+    </span>
   </td>
 </ng-template>

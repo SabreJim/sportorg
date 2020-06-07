@@ -5,9 +5,11 @@ CREATE TABLE beaches.users (
     twitter_id VARCHAR(50),
     email VARCHAR(100) NOT NULL,
     is_admin CHAR(1) NOT NULL DEFAULT 'N',
+    file_admin VARCHAR(1) DEFAULT 'N' NOT NULL,
+    event_admin VARCHAR(1) DEFAULT 'N' NOT NULL,
+    display_name VARCHAR(250),
     PRIMARY KEY(user_id)
 );
-
 CREATE TABLE beaches.sessions (
     session_id MEDIUMINT NOT NULL auto_increment,
     session_token VARCHAR(200),
@@ -400,7 +402,6 @@ CREATE TABLE beaches.access_invites (
     PRIMARY KEY(invite_id)
     );
 
--- start banner and images upload work
 CREATE TABLE beaches.app_status (
     status_id MEDIUMINT NOT NULL auto_increment,
     app_name VARCHAR(100) NOT NULL,
@@ -422,15 +423,6 @@ insert into beaches.menus (title, link, mobile_only, parent_menu_id, order_numbe
 VALUES ('About Us', '/about-us', 'N', 7, 701),
  ('Policies', '/policies', 'N', 7, 702);
 
-ALTER TABLE beaches.users
-ADD display_name VARCHAR(250);
-
-ALTER TABLE beaches.users
-ADD file_admin VARCHAR(1) DEFAULT 'N' NOT NULL;
-
-ALTER TABLE beaches.users
-ADD event_admin VARCHAR(1) DEFAULT 'N' NOT NULL;
-
 CREATE TABLE beaches.tool_tips (
     tip_id MEDIUMINT NOT NULL auto_increment,
     tip_name VARCHAR(100) NOT NULL,
@@ -440,4 +432,81 @@ CREATE TABLE beaches.tool_tips (
     fr_text TEXT NULL,
     PRIMARY KEY(tip_id),
     UNIQUE KEY(tip_name)
+);
+
+-- start checkin changes
+CREATE TABLE beaches.clubs (
+    club_id MEDIUMINT NOT NULL auto_increment,
+    club_name VARCHAR(100) NOT NULL,
+    club_abbreviation VARCHAR(10) NOT NULL,
+    club_address VARCHAR(250) NULL,
+    club_link VARCHAR(250) NULL,
+    PRIMARY KEY(club_id)
+);
+INSERT INTO beaches.clubs (club_name, club_abbreviation, club_address, club_link)
+VALUES
+('Beaches East Sabre Club', 'BSCE', '512 George Street, Fredericton, NB', 'sabrebrain.com');
+
+ALTER TABLE beaches.members
+ADD club_id MEDIUMINT REFERENCES beaches.clubs(club_id);
+UPDATE beaches.members set club_id = 1;
+
+CREATE TABLE beaches.club_admin_users (
+    club_id MEDIUMINT NOT NULL REFERENCES beaches.clubs(club_id),
+    user_id MEDIUMINT NOT NULL REFERENCES beaches.users(user_id)
+    );
+
+-- for more complex multiple choice answers
+CREATE TABLE beaches.question_answers (
+    answer_id MEDIUMINT NOT NULL auto_increment,
+    answer_group_id INT NOT NULL,
+    en_answer_text VARCHAR(100) NOT NULL,
+    fr_answer_text VARCHAR(100) NULL,
+    PRIMARY KEY (answer_id)
+);
+INSERT INTO beaches.question_answers (answer_group_id, en_answer_text)
+VALUES
+(1, 'true'),
+(1, 'false'),
+(2, 'yes'),
+(2, 'no'),
+(3, 'no-question');
+
+CREATE TABLE beaches.questions (
+    question_id MEDIUMINT NOT NULL auto_increment,
+    question_group VARCHAR(50) NOT NULL,
+    parent_question_id MEDIUMINT REFERENCES beaches.questions(question_id)
+    en_text VARCHAR(250) NOT NULL,
+    fr_text VARCHAR(250) NULL,
+    answer_group_id INT NOT NULL REFERENCES beaches.question_answers(answer_group_id),
+    allowed_invalid INT DEFAULT 0,
+    expected_answer MEDIUM INT REFERENCES beaches.question_answers(answer_id)
+    PRIMARY KEY (question_id)
+);
+
+INSERT INTO beaches.questions (question_group, en_text, answer_group_id, parent_question_id, allowed_invalid, expected_answer)
+VALUES
+('active-screening', 'Do you have any of the following new or worsening symptoms or signs?', 3, null, 1, null),
+('active-screening', 'New or worsening cough', 2, 1, 0, 4),
+('active-screening', 'Shortness of breath', 2, 1, 0, 4),
+('active-screening', 'Sore throat', 2, 1, 0, 4),
+('active-screening', 'Runny nose, sneezing or nasal congestion (unexplained)', 2, 1, 0, 4),
+('active-screening', 'Hoarse voice', 2, 1, 0, 4),
+('active-screening', 'Difficulty swallowing', 2, 1, 0, 4),
+('active-screening', 'New smell or taste disorder(s)', 2, 1, 0, 4),
+('active-screening', 'Nausea, vomiting, diarrhea, abdominal pain', 2, 1, 0, 4),
+('active-screening', 'Unexplained fatigue', 2, 1, 0, 4),
+('active-screening', 'Chills', 2, 1, 0, 4),
+('active-screening', 'Headache (unexplained)', 2, 1, 0, 4),
+('active-screening', 'Have you travelled outside of Canada or had close contact with anyone that has travelled outside of Canada in the past 14 days?', 2, null, 0, 4),
+('active-screening', 'Do you have a fever? ', 2, null, 0, 4),
+('active-screening', 'Have you had close contact with anyone with respiratory illness or a confirmed or probable case of COVID-19?', 2, null, 0, 4);
+
+CREATE TABLE beaches.attendance_log (
+    attendance_id MEDIUMINT NOT NULL auto_increment,
+    member_id MEDIUMINT NOT NULL REFERENCES beaches.members(member_id),
+    checkin_date_time DATETIME NOT NULL,
+    checkin_by MEDIUMINT NOT NULL REFERENCES beaches.users(user_id),
+    is_flagged VARCHAR(1) NOT NULL DEFAULT 'N',
+    PRIMARY KEY (attendance_id)
 );

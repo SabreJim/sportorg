@@ -58,7 +58,7 @@
 }
 .mobile-only { display: none !important; }
 
-.fitness-icon {
+.fitness-icon, .check-in {
   flex: 1 1 36px;
   display: flex;
   min-height: 36px;
@@ -66,6 +66,18 @@
   max-width: 36px;
   min-width: 36px;
   align-self: center;
+  padding: 5px;
+  margin-left: 10px;
+  border: 1px solid white;
+}
+.check-in {
+  flex: 1 1 90px;
+  display: flex;
+  min-height: 36px;
+  max-height: 36px;
+  max-width: 90px;
+  min-width: 90px;
+  align-items: center;
   padding: 5px;
   margin-left: 10px;
   border: 1px solid white;

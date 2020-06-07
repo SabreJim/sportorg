@@ -265,3 +265,6 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
 .not-disabled {
   color: black !important;
 }
+.disabled {
+  background-color: grey !important;
+}

@@ -1,8 +1,6 @@
 <div class="menu-wrapper">
-<!--  <ng-container *ngIf="!isAnon">-->
-    <a ngClass="fitness-icon mat-button" routerLink="/fitness-tracker" routerLinkActive="active-link">
-      <mat-icon>fitness_center</mat-icon></a>
-<!--  </ng-container>-->
+  <a ngClass="fitness-icon mat-button" routerLink="/fitness-tracker" routerLinkActive="active-link">
+    <mat-icon>fitness_center</mat-icon></a>
 
   <nav class="menu-stack" >
     <ng-container *ngFor="let menu of appMenus">
@@ -57,6 +55,11 @@
       </ng-container>
     </mat-menu>
   </div>
+    <ng-container *ngIf="!isAnon">
+      <a ngClass="check-in mat-button" (click)="loadCheckin()">
+        check in <mat-icon>fact_check</mat-icon></a>
+    </ng-container>
+
   <div class="login">
     <a mat-button *ngIf="isAnon" [matMenuTriggerFor]="authMenu" tabindex="0" >
       Sign in

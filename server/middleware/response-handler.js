@@ -46,11 +46,25 @@ const parseHtmlFields = (data, fieldNames) => {
         return data;
     }
 }
+const cleanSelected = (queryResult, booleanFields = []) => {
+    if (queryResult && queryResult.length) {
+        return queryResult.map((type) => {
+
+            booleanFields.map((fieldName) => {
+                type[fieldName] = (type[fieldName] === 'Y');
+            });
+            return type;
+        });
+    } else {
+        return [];
+    }
+}
 
 module.exports = {
     returnResults,
     returnSingle,
     returnSuccess,
     returnError,
-    parseHtmlFields
+    parseHtmlFields,
+    cleanSelected
 }

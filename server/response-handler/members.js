@@ -1,5 +1,5 @@
 const MySQL = require('../middleware/mysql-service');
-const { returnResults, returnSingle, returnError } = require('../middleware/response-handler');
+const { returnResults, returnSingle, returnError, cleanSelected } = require('../middleware/response-handler');
 const { memberSchema, getCleanBody } = require('../middleware/request-sanitizer');
 
 const getMyMembers = async(req, res, next) => {
@@ -27,12 +27,136 @@ const getMyMembers = async(req, res, next) => {
             m.confirmed
         FROM members m
         LEFT JOIN regions r ON r.region_id = m.province_id
-        WHERE (m.is_active = 'Y'
-            AND EXISTS (SELECT user_id from member_users mu where m.member_id = mu.member_id AND mu.user_id = ${myUserId}))
-            OR ((SELECT u.is_admin FROM users u where u.user_id = ${myUserId}) = 'Y');`;
+        WHERE m.is_active = 'Y' AND 
+            (EXISTS (SELECT user_id from beaches.member_users mu where m.member_id = mu.member_id AND mu.user_id = ${myUserId})
+            OR (SELECT u.is_admin FROM beaches.users u where u.user_id = ${myUserId}) = 'Y'
+            OR EXISTS (SELECT cau.user_id FROM beaches.club_admin_users cau WHERE cau.user_id = ${myUserId} AND m.club_id = cau.club_id)
+            )`;
     const myMembers = await MySQL.runQuery(query);
     returnResults(res, myMembers);
 };
+
+// for listing members for attendance
+const getMemberAttendance = async(req, res, next) => {
+    const myUserId = (req.session && req.session.user_id) ? req.session.user_id : -1;
+    const query = `SELECT
+            m.member_id,
+            m.last_name,
+            m.first_name,
+            cl.club_id,
+            cl.club_name,
+            (CASE WHEN MAX(a.checkin_date_time) IS NOT NULL THEN 'Y' ELSE 'N' END) checked_in,
+            COALESCE(MAX(a.is_flagged), 'N') flagged,
+            u.signed_in_by,
+            'Y' active_screen_required
+        FROM beaches.members m
+            LEFT JOIN (SELECT member_id, checkin_date_time, checkin_by, is_flagged FROM beaches.attendance_log
+                WHERE DATE(checkin_date_time) = CURRENT_DATE() ) a ON a.member_id = m.member_id
+            LEFT JOIN (SELECT display_name as signed_in_by, user_id FROM beaches.users) u ON u.user_id = a.checkin_by 
+            LEFT JOIN beaches.clubs cl ON cl.club_id = m.club_id 
+        WHERE m.is_active = 'Y' AND m.confirmed = 'Y' AND 
+            (EXISTS (SELECT user_id from beaches.member_users mu where m.member_id = mu.member_id AND mu.user_id = ${myUserId})
+            OR (SELECT u.is_admin FROM beaches.users u where u.user_id = ${myUserId}) = 'Y'
+            OR EXISTS (SELECT cau.user_id FROM beaches.club_admin_users cau WHERE cau.user_id = ${myUserId} AND m.club_id = cau.club_id)
+            )
+        GROUP BY m.member_id, m.last_name, m.first_name, u.signed_in_by
+        `;
+    const myMembers = await MySQL.runQuery(query);
+    returnResults(res, cleanSelected(myMembers, ['checkedIn', 'flagged', 'activeScreenRequired']));
+};
+
+
+const logAttendance = async(req, res) => {
+    const userLog = req.body;
+    let anyInvalid = 'N';
+    if (userLog.activeScreenRequired) {
+        const answers = userLog.screeningAnswers || [];
+        const query =`SELECT 
+        q.question_id,
+        q.parent_question_id,
+        (CASE WHEN 'EN' = 'FR' THEN fr_text ELSE en_text END) question_text,
+        qa.answers,
+        q.allowed_invalid,
+        q.expected_answer
+    FROM beaches.questions q
+        LEFT JOIN (SELECT CONCAT('[', 
+        GROUP_CONCAT(JSON_OBJECT('answerId', answer_id, 'answerText', (CASE WHEN 'EN' = 'FR' THEN fr_answer_text ELSE en_answer_text END)))
+        , ']') answers, answer_group_id from beaches.question_answers GROUP BY answer_group_id) qa ON qa.answer_group_id = q.answer_group_id
+    WHERE q.question_group = 'active-screening'`;
+
+        // check each answer from the user against the expected answers
+        let questions = await MySQL.runQuery(query);
+        questions = cleanQuestions(questions);
+        questions.map((q) => {
+            const userAnswer = answers.find(item => item.questionId === q.questionId);
+           if (q.expectedAnswer && q.expectedAnswer !== userAnswer.answerId) {
+               anyInvalid = 'Y';
+           }
+           if (q.childQuestions && q.childQuestions.length) {
+               let countChildInvalid = 0;
+               q.childQuestions.map((childQ) => {
+                   const userChildAnswer = answers.find(item => item.questionId === childQ.questionId);
+                  if (childQ.expectedAnswer && childQ.expectedAnswer !== userChildAnswer.answerId) {
+                      countChildInvalid = countChildInvalid + 1;
+                  }
+               });
+               // child questions may have an "allowance" for how many can be invalid
+               if (countChildInvalid > q.allowedInvalid) {
+                   anyInvalid = 'Y';
+               }
+           }
+        });
+    }
+    // actually log the attendance here
+    const logStatement = `INSERT INTO beaches.attendance_log 
+        (member_id, checkin_date_time, checkin_by, is_flagged)
+        VALUES (${userLog.memberId}, NOW(), '${req.session.user_id}', '${anyInvalid}')`;
+
+    // note that if the user is flagged once, they are flagged for the entire day
+    const statementResult = await MySQL.runCommand(logStatement);
+    if (statementResult.insertId) {
+        returnSingle(res, {flagged: anyInvalid === 'Y'});
+    } else {
+        returnError(res, 'Check in could not be completed');
+    }
+}
+
+const cleanQuestions = (screeningQuestions) => {
+    let parentQuestions = [];
+    let childQuestions = [];
+    screeningQuestions.map((question) => {
+        question.answers = JSON.parse(question.answers);
+        if (!question.parentQuestionId)  {
+            parentQuestions.push(question);
+        } else {
+            childQuestions.push(question);
+        }
+    });
+    parentQuestions = parentQuestions.map((parent) => {
+        parent.childQuestions = childQuestions.filter((item) => item.parentQuestionId === parent.questionId);
+        return parent;
+    });
+    return parentQuestions;
+}
+
+const getScreeningQuestions = async (req, res) => {
+    const query =`SELECT 
+        q.question_id,
+        q.parent_question_id,
+        (CASE WHEN 'EN' = 'FR' THEN fr_text ELSE en_text END) question_text,
+        qa.answers
+    FROM beaches.questions q
+        LEFT JOIN (SELECT CONCAT('[', 
+        GROUP_CONCAT(JSON_OBJECT('answerId', answer_id, 'answerText', (CASE WHEN 'EN' = 'FR' THEN fr_answer_text ELSE en_answer_text END)))
+        , ']') answers, answer_group_id from beaches.question_answers GROUP BY answer_group_id) qa ON qa.answer_group_id = q.answer_group_id
+    WHERE q.question_group = 'active-screening'`;
+
+    const screeningQuestions = await MySQL.runQuery(query);
+    let parentQuestions = cleanQuestions(screeningQuestions);
+    returnResults(res, parentQuestions);
+}
+
+// for users looking up the list of club members. No authorization required and only show public information
 const getAnonymousMembers = async(req, res, next) => {
             const query = `SELECT
             m.member_id,
@@ -116,6 +240,9 @@ const deleteMember = async (req, res) => {
 module.exports = {
     getMyMembers,
     getAnonymousMembers,
+    getMemberAttendance,
+    logAttendance,
+    getScreeningQuestions,
     upsertMember,
     deleteMember
 };

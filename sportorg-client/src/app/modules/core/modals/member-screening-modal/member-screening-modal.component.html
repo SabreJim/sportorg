@@ -1,0 +1,31 @@
+<div class="modal-wrapper-sm">
+  <div class="form-scroller">
+    <form autocomplete="off" novalidate class="form-wrapper">
+
+      <mat-card class="field-card">
+        <div class="form-header">
+          <h2>Attendance</h2>
+          <p>These are the members you are authorized to check in.</p>
+        </div>
+        <mat-card class="checkin-action">
+          <p>Check in: {{selectedMember?.firstName}} {{selectedMember?.lastName}}</p>
+          <button mat-raised-button color="primary" (click)="checkinMember()" [disabled]="!selectedMember">Check in</button>
+        </mat-card>
+        <app-table
+          class="data-grid"
+          [tableColumns]="columns"
+          [gridData]="myMembers"
+          [isEditable]="false"
+          [canSelect]="true"
+          [singleSelect]="true"
+          (selectedRow)="selectMember($event, true)"
+          (deselectedRow)="selectMember($event, false)"
+        ></app-table>
+      </mat-card>
+    </form>
+  </div>
+  <div class="action-bar">
+    <button mat-raised-button [mat-dialog-close] color="primary">Done</button>
+  </div>
+</div>
+

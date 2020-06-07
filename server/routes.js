@@ -66,10 +66,13 @@ const createRouter = (config) => {
     router.delete('/programs/:programId', adminRequired, Programs.deleteProgram);
 
     // member/athlete endpoints
-    router.get('/my-members', addSession, Members.getMyMembers);
-    router.get('/members', addSession, Members.getAnonymousMembers);
+    router.get('/my-members', requireSession, Members.getMyMembers);
+    router.get('/members', addSession, Members.getAnonymousMembers); // for listing public data
     router.put('/members', jsonBody, addSession, Members.upsertMember);
     router.delete('/members/:memberId', adminRequired, Members.deleteMember);
+    router.get('/my-members/attendance', requireSession, Members.getMemberAttendance);
+    router.put('/my-members/attendance', requireSession, jsonBody, Members.logAttendance);
+    router.get('/my-members/screening-questions', requireSession, Members.getScreeningQuestions);
 
     // user endpoints
     router.get('/users', adminRequired, Users.getUsers);

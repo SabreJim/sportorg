@@ -4,7 +4,6 @@ import {Subscription} from "rxjs";
 import {Exercise, FitnessGroup, FitnessProfile} from "../../core/models/fitness-objects";
 import {AppUser} from "../../core/models/authentication";
 import {FirebaseAuthService} from "../../core/services/firebase-auth.service";
-import {AppMember, ProgramRecord} from "../../core/models/data-objects";
 import {MatDialog} from "@angular/material";
 import {FitnessProfileModalComponent} from "./fitness-profile-modal/fitness-profile-modal.component";
 import {FitnessGroupProxyService} from "../../core/services/fitness-group-proxy.service";

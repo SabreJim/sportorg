@@ -163,7 +163,7 @@ order_number INT,
 PRIMARY KEY(menu_id)
 );
 
-INSERT INTO menus (title, link, mobile_only, order_number, alt_title)
+INSERT INTO beaches.menus (title, link, mobile_only, order_number, alt_title)
 VALUES
 ('Home', '/', 'N', 1, 'principale'),
 ('Schedule', '/schedule', 'Y', 2, 'Programme'),

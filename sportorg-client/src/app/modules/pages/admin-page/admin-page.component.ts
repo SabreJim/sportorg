@@ -22,6 +22,7 @@ export class AdminPageComponent implements OnInit {
   public classConfig: AdminConfig = {
     entityType: 'Class',
     identityField: 'scheduleId',
+    filterBarFields: ['seasonName', 'programName', 'dayOfWeek'],
     columns: [
       TableColumn.fromConfig({fieldName: 'programId', title: 'Program', type: 'select',
         displayField: 'programName', lookupField: 'programs', displayType: 'long-string'}),
@@ -58,6 +59,20 @@ export class AdminPageComponent implements OnInit {
     getter: this.programService.getAllPrograms,
     setter: this.programService.upsertPrograms,
     delete: this.programService.deletePrograms
+  };
+
+  public feesConfig: AdminConfig = {
+    entityType: 'Fees',
+    identityField: 'feeId',
+    columns: [
+      new TableColumn('feeValue', '$ value', 'number'),
+      new TableColumn('feePeriod', 'Period', 'string'),
+      new TableColumn('feeName', 'Name', 'string'),
+      new TableColumn('registrationLink', 'Link', 'string'),
+    ],
+    getter: this.lookupService.getFeesAdmin,
+    setter: this.lookupService.upsertFee,
+    delete: this.lookupService.deleteFee
   };
 
   public userConfig: AdminConfig = {

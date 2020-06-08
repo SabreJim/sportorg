@@ -223,6 +223,16 @@ const programSchema = {
         {fieldName: 'programDescription', type: 'html', allowNull: true }
     ]
 };
+const feeSchema = {
+    primaryKey: 'feeId',
+    fields: [
+        {fieldName: 'feeId', type: 'int', allowNull: false },
+        {fieldName: 'feeValue', type: 'int', allowNull: false },
+        {fieldName: 'feePeriod', type: 'string', allowNull: false },
+        {fieldName: 'feeName', type: 'string', allowNull: false },
+        {fieldName: 'registrationLink', type: 'string', allowNull: true }
+    ]
+}
 
 const memberSchema = {
     primaryKey: 'memberId',
@@ -378,6 +388,7 @@ module.exports = {
     getCleanBody,
     classScheduleSchema,
     programSchema,
+    feeSchema,
     memberSchema,
     userSchema,
     enrollmentSchema,

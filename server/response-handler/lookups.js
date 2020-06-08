@@ -1,5 +1,6 @@
 const MySQL = require('../middleware/mysql-service');
-const { returnResults, returnSingle } = require('../middleware/response-handler');
+const { returnResults, returnSingle, returnError } = require('../middleware/response-handler');
+const { feeSchema, getCleanBody } = require('../middleware/request-sanitizer');
 
 
 const getFeeStructures = async(req, res, next) => {
@@ -12,6 +13,42 @@ const getLookupValues = async(req, res, next) => {
     const query = `SELECT * from v_lookups order by lookup`;
     const lookups = await MySQL.runQuery(query);
     returnResults(res, lookups);
+};
+
+const upsertFeeStructures = async(req, res) => {
+    const cleanFee = getCleanBody(req.body, feeSchema);
+    console.log('fees', cleanFee);
+    if (cleanFee.isValid) {
+        let statement;
+        if (cleanFee.isEdit){
+            statement = `UPDATE beaches.fee_structures SET ${cleanFee.setters.join(', ')} WHERE fee_id = ${cleanFee.cleanBody.programId}`;
+        } else {
+            statement = `INSERT INTO beaches.fee_structures ${cleanFee.insertValues}`;
+        }
+        const statementResult = await MySQL.runCommand(statement);
+        if (statementResult && statementResult.affectedRows) {
+            returnSingle(res, {affectedRows: statementResult.affectedRows});
+        } else {
+            returnError(res, 'An error occurred when updating this record');
+        }
+
+    } else {
+        returnError(res,'Fee could not be updated');
+    }
+}
+
+const deleteFee = async (req, res) => {
+    const feeId = req.params.feeId;
+    if (!feeId) {
+        return returnError(res, 'A member ID is required');
+    }
+    const statement = `DELETE FROM beaches.fee_structures WHERE fee_id = ${feeId}`;
+    const statementResult = await MySQL.runCommand(statement);
+    if (statementResult && statementResult.affectedRows) {
+        returnSingle(res, {affectedRows: statementResult.affectedRows});
+    } else {
+        returnError(res, 'An error occurred when deleting this record');
+    }
 };
 
 const getMenus = async (req, res, next) => {
@@ -53,5 +90,7 @@ module.exports = {
     getFeeStructures,
     getLookupValues,
     getMenus,
-    getAppStatus
+    getAppStatus,
+    upsertFeeStructures,
+    deleteFee
 };

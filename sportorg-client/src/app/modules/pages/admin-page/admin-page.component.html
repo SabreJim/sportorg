@@ -4,11 +4,15 @@
         <edit-panel class="admin-panel"
                     [configObject]="classConfig"
                     [tableAltClass]="'tall-input-table'"
+                    [filterBarFields]="classConfig.filterBarFields"
         ></edit-panel>
         <edit-panel class="admin-panel"
                     [configObject]="programConfig"
                     [tableAltClass]="'tall-input-table'"
         ></edit-panel>
+      <edit-panel class="admin-panel"
+                  [configObject]="feesConfig"
+      ></edit-panel>
         <edit-panel class="admin-panel"
                     [configObject]="memberConfig"
                     [tableAltClass]="'tall-input-table'"

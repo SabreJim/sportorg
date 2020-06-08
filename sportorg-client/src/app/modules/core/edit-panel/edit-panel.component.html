@@ -9,6 +9,18 @@
     </mat-panel-description>
   </mat-expansion-panel-header>
   <!--  local filter input-->
+  <ng-container *ngIf="filterBarFields.length > 0">
+    <div class="filter-bar mat-card">
+      <div class="typeahead-filter">
+        <label>Search:</label>
+        <input type="text"  matInput [formControl]="textInput" />
+        <button mat-button *ngIf="searchText" matSuffix mat-icon-button (click)="clearString()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="filter-found">Found items: {{filteredGridData.length || 0}}</div>
+    </div>
+  </ng-container>
 
 
   <mat-sidenav-container autosize>
@@ -28,9 +40,9 @@
     <mat-sidenav-content (click)="hideSideNav()" class="main-content">
 <!--  table content to display   -->
       <app-table
-        class="data-grid"
+        ngClass="data-grid {{(filterBarFields.length) ? 'filtered-table' : ''}}"
         [tableColumns]="configObject.columns"
-        [gridData]="gridData"
+        [gridData]="filteredGridData"
         [isEditable]="true"
         [canAddRows]="!configObject.disableAdd"
         [defaultObject]="configObject.defaultObject"

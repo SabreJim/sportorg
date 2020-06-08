@@ -263,7 +263,7 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
 }
 // filter bar styles
 .filter-bar {
-  display: flex;
+  display: flex !important;
   background-color: #ffffff;
   flex: 1 1 auto;
   flex-flow: row wrap;

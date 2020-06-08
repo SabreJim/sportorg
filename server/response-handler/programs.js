@@ -16,12 +16,13 @@ const getActivePrograms = async(req, res, next) => {
 const upsertProgram = async (req, res, next) => {
     let body = req.body;
     const cleanProgram = getCleanBody(body, programSchema);
+    console.log('program', cleanProgram);
     if (cleanProgram.isValid) {
         let statement;
         if (cleanProgram.isEdit){
-            statement = `UPDATE programs SET ${cleanProgram.setters.join(', ')} WHERE program_id = ${cleanProgram.cleanBody.programId}`;
+            statement = `UPDATE beaches.programs SET ${cleanProgram.setters.join(', ')} WHERE program_id = ${cleanProgram.cleanBody.programId}`;
         } else {
-            statement = `INSERT INTO program_schedules ${cleanProgram.insertValues}`;
+            statement = `INSERT INTO beaches.programs ${cleanProgram.insertValues}`;
         }
         const statementResult = await MySQL.runCommand(statement);
         if (statementResult && statementResult.affectedRows) {

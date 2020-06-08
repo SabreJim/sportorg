@@ -131,9 +131,15 @@
   min-width: 110px;
   justify-content: center;
 }
-.date-cell, .date-header, .time-cell, .time-header, .boolean-cell, .boolean-header {
+.date-cell, .date-header, .time-cell, .time-header {
   flex: 1 1 100px;
   min-width: 100px;
+  justify-content: center;
+}
+.boolean-cell, .boolean-header {
+  flex: 1 1 60px;
+  min-width: 60px;
+  max-width: 90px;
   justify-content: center;
 }
 .edit-cell, .edit-header {

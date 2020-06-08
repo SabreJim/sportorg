@@ -76,6 +76,7 @@ export interface AdminConfig {
   entityType: string;
   disableAdd?: boolean;
   allowSelect?: boolean;
+  filterBarFields?: string[];
 }
 
 export interface MenuItem {
@@ -89,12 +90,6 @@ export interface MenuItem {
   childMenus?: MenuItem[];
 }
 
-export interface RegistrationDialogData {
-  programName: string;
-  programFees: number;
-  season: string;
-  year: number;
-}
 export interface AppStatus {
   statusId: number;
   appName: string;

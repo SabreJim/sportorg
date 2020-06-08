@@ -6,6 +6,7 @@ import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
 import {MenuItem, AppStatus} from "../models/ui-objects";
 import {SnackbarService} from "./snackbar.service";
+import {FeeStructure} from "../models/data-objects";
 
 
 @Injectable({providedIn: 'root'})
@@ -100,6 +101,41 @@ export class LookupProxyService extends RestProxyService {
         }
         subscription.next(response.data || []);
       });
+    });
+  }
+  public getFeesAdmin = (): Observable<FeeStructure[]> => {
+    return new Observable<FeeStructure[]>((subscription) => {
+      this.get(`fees/` ).subscribe((response: ApiResponse<FeeStructure[]>) => {
+        if (response.hasErrors()) {
+          subscription.next([]);
+        }
+        subscription.next(response.data || []);
+      });
+    });
+  }
+  // update the exercise log and calculate any changes on the back end
+  public upsertFee = (fee: FeeStructure): Observable<boolean> => {
+    return new Observable((subscription) => {
+      this.put('fees', fee).subscribe((response: ApiResponse<boolean>) => {
+        if (response.hasErrors() || !response.success) {
+          subscription.next(false);
+        } else {
+          subscription.next(true);
+        }
+      }, (error: any) => {});
+    });
+  }
+
+  // remove an exerciseEvent that was recorded in error
+  public deleteFee = (fee: FeeStructure): Observable<boolean> => {
+    return new Observable((subscription) => {
+      this.delete(`fees/${fee.feeId}`).subscribe((response: ApiResponse<boolean>) => {
+        if (response.hasErrors() || !response.success) {
+          subscription.next(false);
+        } else {
+          subscription.next(true);
+        }
+      }, (error: any) => {});
     });
   }
 

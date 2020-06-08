@@ -49,7 +49,9 @@ const createRouter = (config) => {
     };
 
     // lookup item getters
-    router.get('/fees', Lookups.getFeeStructures);
+    router.get('/fees', adminRequired, Lookups.getFeeStructures);
+    router.put('/fees', adminRequired, jsonBody, Lookups.upsertFeeStructures);
+    router.delete('/fees/:feeId', adminRequired, Lookups.deleteFee);
     router.get('/lookups', Lookups.getLookupValues);
     router.get('/menus', Lookups.getMenus);
     router.get('/app-status', Lookups.getAppStatus);

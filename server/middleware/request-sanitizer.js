@@ -2,7 +2,7 @@ const decamelize = require('decamelize');
 const baseSanitizeHtml = require('sanitize-html');
 const sanitizeHtml = (text) => {
     return baseSanitizeHtml(text, {
-        allowedTags: baseSanitizeHtml.defaults.allowedTags.concat(['font']),
+        allowedTags: baseSanitizeHtml.defaults.allowedTags.concat(['font','h2', 'h1']),
         allowedAttributes: { a: [ 'href', 'name', 'target' ], font: ['color'] }
     })
 }

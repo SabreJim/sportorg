@@ -47,16 +47,9 @@ export class OrgMenuBarComponent implements OnInit, OnDestroy {
   }
 
   public loadCheckin = () => {
-    this.attendanceSub = this.memberService.getMemberAttendance().subscribe((members: MemberAttendance[]) => {
-      if (members && members.length === 1) {
-        // go directly to the screening modal
-        this.openScreeningDialog(members[0]);
-      } else {
-        // pick a member to check in
-        this.openAttendanceDialog(members);
-      }
-    });
+    this.attendanceSub = this.memberService.getMemberAttendance().subscribe(this.openAttendanceDialog);
   }
+
   public openScreeningDialog = (member: MemberAttendance) => {
     if (member.activeScreenRequired) {
       // open a dialog to ask active screening questions
@@ -90,7 +83,13 @@ export class OrgMenuBarComponent implements OnInit, OnDestroy {
       { maxHeight: '80vh', maxWidth: '80vw', minWidth: '60vw', data: members });
     dialogRef.afterClosed().subscribe((result: MemberAttendance) => {
       if (result && result.memberId) {
-        this.openScreeningDialog(result);
+        if (result.checkingOut) { // log that the member is leaving the facility
+          this.memberService.logAttendance(result).subscribe((saveResult: any) => {
+            SnackbarService.notify(`Checked out ${result.firstName}`);
+          });
+        } else {
+          this.openScreeningDialog(result);
+        }
       }
     });
   }

@@ -33,12 +33,14 @@ const parseHtmlFields = (data, fieldNames) => {
             return data.map((row) => {
                 fieldNames.map((fieldName) => { // update each html field
                     row[fieldName] = row[fieldName].replace(/&quot;/g, '"');
+                    row[fieldName] = row[fieldName].replace(/"&quot;/g, '"');
                 });
                 return row;
             })
         } else { // presumably a singleObject
             fieldNames.map((fieldName) => {
                 data[fieldName] = data[fieldName].replace(/&quot;/g, '"');
+                data[fieldName] = data[fieldName].replace(/"&quot;/g, '"');
             });
             return data;
         }

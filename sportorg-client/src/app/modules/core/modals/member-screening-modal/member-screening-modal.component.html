@@ -8,8 +8,9 @@
           <p>These are the members you are authorized to check in.</p>
         </div>
         <mat-card class="checkin-action">
-          <p>Check in: {{selectedMember?.firstName}} {{selectedMember?.lastName}}</p>
-          <button mat-raised-button color="primary" (click)="checkinMember()" [disabled]="!selectedMember">Check in</button>
+          <p>For member: {{selectedMember?.firstName}} {{selectedMember?.lastName}}</p>
+          <button mat-raised-button color="primary" (click)="checkinMember()" [disabled]="!canCheckIn">Check in</button>
+          <button mat-raised-button color="primary" (click)="checkoutMember()" [disabled]="!canCheckOut">Check out</button>
         </mat-card>
         <app-table
           class="data-grid"

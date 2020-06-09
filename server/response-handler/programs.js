@@ -1,22 +1,21 @@
 const MySQL = require('../middleware/mysql-service');
-const { returnResults, returnSingle, returnError } = require('../middleware/response-handler');
+const { returnResults, returnSingle, returnError, parseHtmlFields } = require('../middleware/response-handler');
 const { programSchema, getCleanBody } = require('../middleware/request-sanitizer');
 
 const getAllPrograms = async(req, res, next) => {
     const query = `SELECT * from v_programs ORDER BY is_active DESC, program_id`;
     const programs = await MySQL.runQuery(query);
-    returnResults(res, programs);
+    returnResults(res, parseHtmlFields(programs, ['programDescription']));
 };
 const getActivePrograms = async(req, res, next) => {
     const query = `SELECT * from v_programs WHERE is_active = 'Y' ORDER BY program_id`;
     const programs = await MySQL.runQuery(query);
-    returnResults(res, programs);
+    returnResults(res, parseHtmlFields(programs, ['programDescription']));
 };
 
 const upsertProgram = async (req, res, next) => {
     let body = req.body;
     const cleanProgram = getCleanBody(body, programSchema);
-    console.log('program', cleanProgram);
     if (cleanProgram.isValid) {
         let statement;
         if (cleanProgram.isEdit){

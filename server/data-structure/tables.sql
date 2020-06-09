@@ -510,3 +510,7 @@ CREATE TABLE beaches.attendance_log (
     is_flagged VARCHAR(1) NOT NULL DEFAULT 'N',
     PRIMARY KEY (attendance_id)
 );
+
+ALTER TABLE beaches.attendance_log
+ADD COLUMN status VARCHAR(5);
+UPDATE beaches.attendance_log set status = 'IN';

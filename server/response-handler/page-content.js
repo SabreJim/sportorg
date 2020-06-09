@@ -66,7 +66,7 @@ const getMenuAdmin = async (req, res) => {
     const query = `SELECT * FROM beaches.menus`;
     let queryResponse = await MySQL.runQuery(query);
     if (queryResponse && queryResponse.length) {
-        returnResults(res, queryResponse);
+        returnResults(res, parseHtmlFields(queryResponse, ['link']) );
     } else {
         returnResults(res, []);
     }
@@ -116,7 +116,7 @@ const getAllBanners = async (req, res) => {
     const query = `SELECT * FROM beaches.app_status`;
     let queryResponse = await MySQL.runQuery(query);
     if (queryResponse && queryResponse.length) {
-        returnResults(res, queryResponse);
+        returnResults(res, parseHtmlFields(queryResponse, ['bannerLink']));
     } else {
         returnResults(res, []);
     }

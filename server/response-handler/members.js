@@ -45,36 +45,41 @@ const getMemberAttendance = async(req, res, next) => {
             m.first_name,
             cl.club_id,
             cl.club_name,
-            (CASE WHEN MAX(a.checkin_date_time) IS NOT NULL THEN 'Y' ELSE 'N' END) checked_in,
-            COALESCE(MAX(a.is_flagged), 'N') flagged,
-            u.signed_in_by,
+            (CASE WHEN checkin.check_in_time IS NULL THEN 'N' ELSE 'Y' END) checked_in,
+            checkin.check_in_time,
+            checkin.is_flagged,
+            (CASE WHEN checkout.check_out_time IS NULL THEN 'N' ELSE 'Y' END) checked_out,
+            checkout.check_out_time,
             'Y' active_screen_required
         FROM beaches.members m
-            LEFT JOIN (SELECT member_id, checkin_date_time, checkin_by, is_flagged FROM beaches.attendance_log
-                WHERE DATE(checkin_date_time) = CURRENT_DATE() ) a ON a.member_id = m.member_id
-            LEFT JOIN (SELECT display_name as signed_in_by, user_id FROM beaches.users) u ON u.user_id = a.checkin_by 
-            LEFT JOIN beaches.clubs cl ON cl.club_id = m.club_id 
+        LEFT JOIN (SELECT al.member_id, MAX(TIME(al.checkin_date_time)) 'check_in_time', COALESCE(MAX(al.is_flagged), 'N') is_flagged
+            FROM beaches.attendance_log al
+            WHERE DATE(al.checkin_date_time) = CURRENT_DATE() AND status = 'IN' 
+            GROUP BY al.member_id) checkin on checkin.member_id = m.member_id
+         LEFT JOIN (SELECT al.member_id, MAX(TIME(al.checkin_date_time)) 'check_out_time'
+            FROM beaches.attendance_log al
+            WHERE DATE(al.checkin_date_time) = CURRENT_DATE() AND status = 'OUT' 
+            GROUP BY al.member_id) checkout on checkout.member_id = m.member_id
+        LEFT JOIN beaches.clubs cl ON cl.club_id = m.club_id          
         WHERE m.is_active = 'Y' AND m.confirmed = 'Y' AND 
             (EXISTS (SELECT user_id from beaches.member_users mu where m.member_id = mu.member_id AND mu.user_id = ${myUserId})
             OR (SELECT u.is_admin FROM beaches.users u where u.user_id = ${myUserId}) = 'Y'
             OR EXISTS (SELECT cau.user_id FROM beaches.club_admin_users cau WHERE cau.user_id = ${myUserId} AND m.club_id = cau.club_id)
             )
-        GROUP BY m.member_id, m.last_name, m.first_name, u.signed_in_by
         `;
     const myMembers = await MySQL.runQuery(query);
-    returnResults(res, cleanSelected(myMembers, ['checkedIn', 'flagged', 'activeScreenRequired']));
+    returnResults(res, cleanSelected(myMembers, ['checkedIn', 'checkedOut', 'flagged', 'activeScreenRequired']));
 };
 
 
 const logAttendance = async(req, res) => {
     const userLog = req.body;
     let anyInvalid = 'N';
-    if (userLog.activeScreenRequired) {
+    if (!userLog.checkingOut && userLog.activeScreenRequired) {
         const answers = userLog.screeningAnswers || [];
         const query =`SELECT 
         q.question_id,
         q.parent_question_id,
-        (CASE WHEN 'EN' = 'FR' THEN fr_text ELSE en_text END) question_text,
         qa.answers,
         q.allowed_invalid,
         q.expected_answer
@@ -109,8 +114,8 @@ const logAttendance = async(req, res) => {
     }
     // actually log the attendance here
     const logStatement = `INSERT INTO beaches.attendance_log 
-        (member_id, checkin_date_time, checkin_by, is_flagged)
-        VALUES (${userLog.memberId}, NOW(), '${req.session.user_id}', '${anyInvalid}')`;
+        (member_id, checkin_date_time, checkin_by, is_flagged, status)
+        VALUES (${userLog.memberId}, NOW(), '${req.session.user_id}', '${anyInvalid}', '${(userLog.checkingOut) ? 'OUT' : 'IN'}')`;
 
     // note that if the user is flagged once, they are flagged for the entire day
     const statementResult = await MySQL.runCommand(logStatement);

@@ -17,7 +17,6 @@ const getLookupValues = async(req, res, next) => {
 
 const upsertFeeStructures = async(req, res) => {
     const cleanFee = getCleanBody(req.body, feeSchema);
-    console.log('fees', cleanFee);
     if (cleanFee.isValid) {
         let statement;
         if (cleanFee.isEdit){

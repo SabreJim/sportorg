@@ -115,7 +115,11 @@ export interface MemberAttendance {
   lastName: string;
   firstName: string;
   checkedIn: boolean;
-  flagged: boolean;
+  checkInTime?: string;
+  checkedOut?: boolean;
+  checkOutTime?: string;
+  checkingOut?: boolean;
+  isFlagged: boolean;
   signedInBy?: string;
   activeScreenRequired?: boolean;
   screeningAnswers?: ScreeningAnswer[];

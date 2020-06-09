@@ -42,7 +42,7 @@ FROM program_schedules ps
     LEFT OUTER JOIN seasons s ON ps.season_id = s.season_id
     LEFT OUTER JOIN locations l ON l.location_id = p.location_id
     LEFT OUTER JOIN week_days wd ON wd.day_id = ps.day_id
-;
+    WHERE s.is_active = 'Y';
 
 drop view beaches.v_lookups;
 CREATE SQL SECURITY INVOKER VIEW beaches.v_lookups

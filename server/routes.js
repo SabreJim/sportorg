@@ -97,6 +97,9 @@ const createRouter = (config) => {
     router.get('/all-banners', adminRequired, PageContent.getAllBanners);
     router.put('/banners', jsonBody, adminRequired, PageContent.upsertBanner);
     router.delete('/banners/:statusId', adminRequired, PageContent.deleteBanner);
+    router.get('/all-questions', adminRequired, PageContent.getAllQuestions);
+    router.put('/questions', jsonBody, adminRequired, PageContent.upsertQuestion);
+    router.delete('/questions/:questionId', adminRequired, PageContent.deleteQuestion);
 
     // tooltips
     router.get('/tool-tip/:tipName', PageContent.getToolTip);

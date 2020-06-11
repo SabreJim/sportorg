@@ -5,6 +5,7 @@ import {ApiResponse} from "../models/rest-objects";
 import {Injectable} from "@angular/core";
 import {SnackbarService} from "./snackbar.service";
 import {AppStatus, MenuItem, PageContent} from "../models/ui-objects";
+import {ScreeningQuestion} from "../models/data-objects";
 
 
 @Injectable({providedIn: 'root'})
@@ -128,7 +129,7 @@ export class PageProxyService extends RestProxyService {
     return new Observable<boolean>((subscription) => {
       this.put('banners', banner).subscribe((response: ApiResponse<any>) => {
         if (response.hasErrors() || !response.success) {
-          SnackbarService.error(`Menu could not be update or inserted: ${response.message}`);
+          SnackbarService.error(`Banner could not be update or inserted: ${response.message}`);
           subscription.next(false);
         } else {
           if (banner.statusId > 0) {
@@ -147,6 +148,51 @@ export class PageProxyService extends RestProxyService {
       this.delete(`banners/${banner.statusId}`).subscribe((response: ApiResponse<boolean>) => {
         if (response.hasErrors() || !response.success) {
           SnackbarService.error(`Banner was not deleted successfully: ${response.message}`);
+          subscription.next(false);
+        } else {
+          subscription.next(true);
+        }
+      }, (error: any) => {});
+    });
+  }
+
+  ////////////////////////////////////////////////////
+  // Questions admin endpoints
+  ///////////////////////////////////////////////////
+  public getAllQuestions = (): Observable<ScreeningQuestion[]> => {
+    return new Observable<ScreeningQuestion[]>((subscription) => {
+      this.get(`all-questions/` ).subscribe((response: ApiResponse<ScreeningQuestion[]>) => {
+        if (response.hasErrors()) {
+          subscription.next([]);
+        }
+        subscription.next(response.data);
+      });
+    });
+  }
+
+  public upsertQuestion = (question: ScreeningQuestion): Observable<boolean> => {
+    return new Observable<boolean>((subscription) => {
+      this.put('questions', question).subscribe((response: ApiResponse<any>) => {
+        if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`Question could not be update or inserted: ${response.message}`);
+          subscription.next(false);
+        } else {
+          if (question.questionId > 0) {
+            SnackbarService.notify(`Question updated for: ${question.questionText}`);
+          } else {
+            SnackbarService.notify(`Question created for: ${question.questionText}`);
+          }
+          subscription.next(true);
+        }
+      }, (error: any) => {});
+    });
+  }
+
+  public deleteQuestion = (question: ScreeningQuestion): Observable<boolean> => {
+    return new Observable((subscription) => {
+      this.delete(`questions/${question.questionId}`).subscribe((response: ApiResponse<boolean>) => {
+        if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`Question was not deleted successfully: ${response.message}`);
           subscription.next(false);
         } else {
           subscription.next(true);

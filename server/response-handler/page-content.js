@@ -1,6 +1,6 @@
 const MySQL = require('../middleware/mysql-service');
 const { returnResults, returnSingle, returnError, parseHtmlFields } = require('../middleware/response-handler');
-const { pageSchema, menuSchema, bannerSchema, tipSchema, getCleanBody } = require('../middleware/request-sanitizer');
+const { pageSchema, menuSchema, bannerSchema, tipSchema, questionSchema, getCleanBody } = require('../middleware/request-sanitizer');
 
 // get the contents of a page that is stored in the DB
 const getPage = async (req, res) => {
@@ -223,6 +223,52 @@ const deleteToolTip = async (req, res) => {
         returnSingle(res, 'Not able to delete this toolTip');
     }
 };
+////////////////////////////////////////////////////
+// Question admin endpoints
+///////////////////////////////////////////////////
+const getAllQuestions = async (req, res) => {
+    const query = `SELECT * FROM beaches.questions`;
+    let queryResponse = await MySQL.runQuery(query);
+    if (queryResponse && queryResponse.length) {
+        returnResults(res, queryResponse);
+    } else {
+        returnResults(res, []);
+    }
+}
+
+const upsertQuestion = async(req, res, next) => {
+    const cleanQuestion = getCleanBody(req.body, questionSchema);
+    if (cleanQuestion.isValid) {
+        let statement;
+        let statementResult;
+        if (cleanQuestion.isEdit){
+            statement = `UPDATE beaches.questions SET ${cleanQuestion.setters.join(', ')} WHERE question_id = ${cleanQuestion.cleanBody.questionId}`;
+            statementResult = await MySQL.runCommand(statement);
+            if (statementResult && statementResult.affectedRows) {
+                return returnSingle(res, {affectedRows: statementResult.affectedRows});
+            }
+        } else {
+            statement = `INSERT INTO beaches.questions ${cleanQuestion.insertValues}`;
+            statementResult = await MySQL.runCommand(statement);
+            return returnSingle(res, {affectedRows: statementResult.affectedRows});
+        }
+        return returnError(res, 'An error occurred when updating this record');
+    } else {
+        returnError(res,'Question could not be updated');
+    }
+};
+
+const deleteQuestion = async (req, res) => {
+    const tipId = req.params.question || -1;
+    let statement = `DELETE FROM beaches.questions WHERE  questionId = ${tipId} `;
+    let statementResult = await MySQL.runCommand(statement);
+    if (statementResult && statementResult.affectedRows) {
+        returnSingle(res, {affectedRows: statementResult.affectedRows});
+    } else {
+        returnSingle(res, 'Not able to delete this question');
+    }
+};
+
 
 module.exports = {
     getPage,
@@ -238,5 +284,8 @@ module.exports = {
     getToolTip,
     getAllToolTips,
     upsertToolTip,
-    deleteToolTip
+    deleteToolTip,
+    getAllQuestions,
+    upsertQuestion,
+    deleteQuestion
 };

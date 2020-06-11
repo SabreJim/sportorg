@@ -217,6 +217,24 @@ export class AdminPageComponent implements OnInit {
     delete: this.tipService.deleteToolTip
   };
 
+  public questionConfig: AdminConfig = {
+    entityType: 'Question',
+    identityField: 'questionId',
+    columns: [
+      new TableColumn('questionId', 'Id', 'number'),
+      new TableColumn('questionGroup', 'Group of Questions', 'string'),
+      new TableColumn('enText', 'Question (EN)', 'string'),
+      new TableColumn('frText', 'Question (FR)', 'string'),
+      new TableColumn('answerGroupId', 'Answer Set Id', 'number'),
+      new TableColumn('parentQuestionId', 'Parent Question', 'number'),
+      new TableColumn('allowedInvalid', 'Allow # Incorrect', 'number'),
+      new TableColumn('expectedAnswer', 'Correct Answer Id', 'number')
+    ],
+    getter: this.pageService.getAllQuestions,
+    setter: this.pageService.upsertQuestion,
+    delete: this.pageService.deleteQuestion
+  };
+
   constructor(private lookupService: LookupProxyService, private classService: ClassesProxyService,
               private programService: ProgramsProxyService, private authService: FirebaseAuthService,
               private memberService: MembersProxyService, private pageService: PageProxyService,

@@ -11,19 +11,23 @@ import {StaticValuesService} from "../../services/static-values.service";
   styleUrls: ['./checkin-modal.component.scss']
 })
 export class CheckinModalComponent implements OnInit, OnDestroy {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: MemberAttendance,
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
               public matDialogRef: MatDialogRef<CheckinModalComponent>,
               public memberService: MembersProxyService) {
   }
   ngOnInit() {
-    if (this.data && this.data.memberId) {
-      this.currentMember = this.data;
+    if (this.data && this.data.member && this.data.member.memberId) {
+      this.currentMember = this.data.member;
+      this.questionGroup = this.data.questions;
+      this.title = this.data.title;
     }
-    this.questionSub = this.memberService.getScreeningQuestions().subscribe((questions: ScreeningQuestion[]) => {
+    this.questionSub = this.memberService.getScreeningQuestions(this.questionGroup).subscribe((questions: ScreeningQuestion[]) => {
       this.questions = questions;
     });
   }
+  protected questionGroup: string;
   protected questionSub: Subscription;
+  public title: string;
   public currentMember: MemberAttendance;
   public questions: ScreeningQuestion[];
   public allAnswered: boolean = false;

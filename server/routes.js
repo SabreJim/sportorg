@@ -74,7 +74,8 @@ const createRouter = (config) => {
     router.delete('/members/:memberId', adminRequired, Members.deleteMember);
     router.get('/my-members/attendance', requireSession, Members.getMemberAttendance);
     router.put('/my-members/attendance', requireSession, jsonBody, Members.logAttendance);
-    router.get('/my-members/screening-questions', requireSession, Members.getScreeningQuestions);
+    router.put('/my-members/consent', requireSession, jsonBody, Members.recordConsent);
+    router.get('/my-members/screening-questions/:questions', requireSession, Members.getScreeningQuestions);
 
     // user endpoints
     router.get('/users', adminRequired, Users.getUsers);
@@ -96,6 +97,9 @@ const createRouter = (config) => {
     router.get('/all-banners', adminRequired, PageContent.getAllBanners);
     router.put('/banners', jsonBody, adminRequired, PageContent.upsertBanner);
     router.delete('/banners/:statusId', adminRequired, PageContent.deleteBanner);
+    router.get('/all-questions', adminRequired, PageContent.getAllQuestions);
+    router.put('/questions', jsonBody, adminRequired, PageContent.upsertQuestion);
+    router.delete('/questions/:questionId', adminRequired, PageContent.deleteQuestion);
 
     // tooltips
     router.get('/tool-tip/:tipName', PageContent.getToolTip);

@@ -384,6 +384,20 @@ const tipSchema = {
     ]
 };
 
+const questionSchema = {
+    primaryKey: 'questionId',
+    fields: [
+        {fieldName: 'questionId', type: 'int', allowNull: false },
+        {fieldName: 'questionGroup', type: 'string', allowNull: false },
+        {fieldName: 'enText', type: 'string', allowNull: false },
+        {fieldName: 'frText', type: 'string', allowNull: true },
+        {fieldName: 'answerGroupId', type: 'int', allowNull: false },
+        {fieldName: 'parentQuestionId', type: 'int', allowNull: true },
+        {fieldName: 'allowed_invalid', type: 'int', allowNull: true },
+        {fieldName: 'expectedAnswer', type: 'int', allowNull: true }
+    ]
+};
+
 module.exports = {
     getCleanBody,
     classScheduleSchema,
@@ -399,5 +413,6 @@ module.exports = {
     pageSchema,
     menuSchema,
     bannerSchema,
-    tipSchema
+    tipSchema,
+    questionSchema
 };

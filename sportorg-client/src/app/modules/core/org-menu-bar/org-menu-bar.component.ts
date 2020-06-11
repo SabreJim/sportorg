@@ -7,8 +7,6 @@ import {LookupProxyService} from "../services/lookup-proxy.service";
 import {StaticValuesService} from "../services/static-values.service";
 import {MembersProxyService} from "../services/member-proxy.service";
 import {MemberAttendance} from "../models/data-objects";
-import {FitnessProfile} from "../models/fitness-objects";
-import {FitnessProfileModalComponent} from "../../fitness-tracker/fitness-page/fitness-profile-modal/fitness-profile-modal.component";
 import {MatDialog} from "@angular/material";
 import {CheckinModalComponent} from "../modals/checkin-modal/checkin-modal.component";
 import {MemberScreeningModalComponent} from "../modals/member-screening-modal/member-screening-modal.component";
@@ -54,7 +52,8 @@ export class OrgMenuBarComponent implements OnInit, OnDestroy {
     if (member.activeScreenRequired) {
       // open a dialog to ask active screening questions
       const dialogRef = this.dialog.open(CheckinModalComponent,
-        { maxHeight: '80vh', maxWidth: '80vw', minWidth: '60vw', data: member });
+        { maxHeight: '80vh', maxWidth: '80vw', minWidth: '60vw', data:
+            {member: member, questions: 'active-screening', title: `COVID-19 Active Screening for ${member.firstName}`} });
       dialogRef.afterClosed().subscribe((result: MemberAttendance) => {
         if (result && result.screeningAnswers) {
           this.memberService.logAttendance(result).subscribe((saveResult: any) => {
@@ -78,6 +77,25 @@ export class OrgMenuBarComponent implements OnInit, OnDestroy {
       });
     }
   }
+
+  public signConsentForm = (member: MemberAttendance) => {
+    // open a dialog to ask informed consent questions
+    const dialogRef = this.dialog.open(CheckinModalComponent,
+      { maxHeight: '80vh', maxWidth: '80vw', minWidth: '60vw', data:
+          {member: member, questions: 'club-consent-form', title: `Beaches East Informed Consent`} });
+    dialogRef.afterClosed().subscribe((result: MemberAttendance) => {
+      if (result && result.screeningAnswers) {
+        // update the member records as having signed the consent form
+        this.memberService.recordConsent(result).subscribe((saveResult: any) => {
+          if (saveResult.accepted) {
+            SnackbarService.notify(`Consent form has been signed for: ${member.firstName} ${member.lastName}`);
+          } else {
+            SnackbarService.notify(`Consent form not completed.`);
+          }
+        });
+      }
+    });
+  }
   public openAttendanceDialog = (members: MemberAttendance[]) => {
     const dialogRef = this.dialog.open(MemberScreeningModalComponent,
       { maxHeight: '80vh', maxWidth: '80vw', minWidth: '60vw', data: members });
@@ -87,9 +105,14 @@ export class OrgMenuBarComponent implements OnInit, OnDestroy {
           this.memberService.logAttendance(result).subscribe((saveResult: any) => {
             SnackbarService.notify(`Checked out ${result.firstName}`);
           });
-        } else {
-          this.openScreeningDialog(result);
+          return;
         }
+        if (result.signingConsent) {
+          this.signConsentForm(result);
+          return;
+        }
+       // otherwise, go through signin procedure
+        this.openScreeningDialog(result);
       }
     });
   }

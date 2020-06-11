@@ -167,13 +167,13 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
 
         // if the inner scrolling area is wider than the container, set the inner header to match
         if (innerElem.scrollWidth > outerElem.clientWidth) {
-          this.sharedWidth = `${outerElem.clientWidth}px`;
+          this.sharedWidth = `${innerElem.scrollWidth}px`;
           outerElem.onscroll = this.scrollSync;
         } else {
           if (this.vertScrollShown) {
             this.sharedWidth = `calc(${outerElem.clientWidth}px)`;
           } else {
-            this.sharedWidth = `calc(${outerElem.clientWidth}px)`;
+            this.sharedWidth = `calc(${outerElem.clientWidth - 10}px)`;
           }
         }
       } catch (err) {

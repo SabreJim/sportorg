@@ -119,7 +119,9 @@ export interface MemberAttendance {
   checkedOut?: boolean;
   checkOutTime?: string;
   checkingOut?: boolean;
+  signingConsent?: boolean;
   isFlagged: boolean;
+  consentSigned?: boolean;
   signedInBy?: string;
   activeScreenRequired?: boolean;
   screeningAnswers?: ScreeningAnswer[];

@@ -514,3 +514,6 @@ CREATE TABLE beaches.attendance_log (
 ALTER TABLE beaches.attendance_log
 ADD COLUMN status VARCHAR(5);
 UPDATE beaches.attendance_log set status = 'IN';
+
+ALTER TABLE beaches.members
+ADD COLUMN consent_signed VARCHAR(1) DEFAULT 'N';

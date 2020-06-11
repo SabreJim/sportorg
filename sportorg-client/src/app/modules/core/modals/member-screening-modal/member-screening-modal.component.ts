@@ -31,11 +31,17 @@ export class MemberScreeningModalComponent implements OnInit {
     new TableColumn('firstName', 'First Name', 'string'),
     new TableColumn('isFlagged', 'Followup required', 'boolean'),
     new TableColumn('checkInTime', 'In (time)', 'string'),
-    new TableColumn('checkOutTime', 'Out (time)', 'string')
+    new TableColumn('checkOutTime', 'Out (time)', 'string'),
+    new TableColumn('consentSigned', 'Consent', 'boolean'),
   ];
   public selectMember = (row: MemberAttendance, isSelected: boolean) => {
     if (isSelected) {
       this.selectedMember = row;
+      if (!this.selectedMember.consentSigned) {
+        this.canCheckOut = false;
+        this.canCheckIn = false;
+        return;
+      }
       // determine if this member can be checked in or out
       // not checked in, or checked and then checked out
       if ((!row.checkedIn && !row.checkedOut) ||
@@ -64,12 +70,22 @@ export class MemberScreeningModalComponent implements OnInit {
   public checkinMember = () => {
     if (this.selectedMember && this.canCheckIn) {
       this.selectedMember.checkingOut = false;
+      this.selectedMember.signingConsent = false;
       this.matDialogRef.close(this.selectedMember);
     }
   }
   public checkoutMember = () => {
     if (this.selectedMember && this.canCheckOut) {
       this.selectedMember.checkingOut = true;
+      this.selectedMember.signingConsent = false;
+      this.matDialogRef.close(this.selectedMember);
+    }
+  }
+
+  public signConsent = () => {
+    if (this.selectedMember) {
+      this.selectedMember.signingConsent = true;
+      this.selectedMember.checkingOut = false;
       this.matDialogRef.close(this.selectedMember);
     }
   }

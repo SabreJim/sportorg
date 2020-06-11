@@ -43,6 +43,7 @@ const getMemberAttendance = async(req, res, next) => {
             m.member_id,
             m.last_name,
             m.first_name,
+            m.consent_signed,
             cl.club_id,
             cl.club_name,
             (CASE WHEN checkin.check_in_time IS NULL THEN 'N' ELSE 'Y' END) checked_in,
@@ -52,11 +53,11 @@ const getMemberAttendance = async(req, res, next) => {
             checkout.check_out_time,
             'Y' active_screen_required
         FROM beaches.members m
-        LEFT JOIN (SELECT al.member_id, MAX(TIME(al.checkin_date_time)) 'check_in_time', COALESCE(MAX(al.is_flagged), 'N') is_flagged
+        LEFT JOIN (SELECT al.member_id, MAX(TIME(CONVERT_TZ(al.checkin_date_time, '+0:00' , '+1:00'))) 'check_in_time', COALESCE(MAX(al.is_flagged), 'N') is_flagged
             FROM beaches.attendance_log al
             WHERE DATE(al.checkin_date_time) = CURRENT_DATE() AND status = 'IN' 
             GROUP BY al.member_id) checkin on checkin.member_id = m.member_id
-         LEFT JOIN (SELECT al.member_id, MAX(TIME(al.checkin_date_time)) 'check_out_time'
+         LEFT JOIN (SELECT al.member_id, MAX(TIME(CONVERT_TZ(al.checkin_date_time, '+0:00' , '+1:00'))) 'check_out_time'
             FROM beaches.attendance_log al
             WHERE DATE(al.checkin_date_time) = CURRENT_DATE() AND status = 'OUT' 
             GROUP BY al.member_id) checkout on checkout.member_id = m.member_id
@@ -68,7 +69,7 @@ const getMemberAttendance = async(req, res, next) => {
             )
         `;
     const myMembers = await MySQL.runQuery(query);
-    returnResults(res, cleanSelected(myMembers, ['checkedIn', 'checkedOut', 'flagged', 'activeScreenRequired']));
+    returnResults(res, cleanSelected(myMembers, ['checkedIn', 'checkedOut', 'isFlagged', 'activeScreenRequired', 'consentSigned']));
 };
 
 
@@ -76,41 +77,8 @@ const logAttendance = async(req, res) => {
     const userLog = req.body;
     let anyInvalid = 'N';
     if (!userLog.checkingOut && userLog.activeScreenRequired) {
-        const answers = userLog.screeningAnswers || [];
-        const query =`SELECT 
-        q.question_id,
-        q.parent_question_id,
-        qa.answers,
-        q.allowed_invalid,
-        q.expected_answer
-    FROM beaches.questions q
-        LEFT JOIN (SELECT CONCAT('[', 
-        GROUP_CONCAT(JSON_OBJECT('answerId', answer_id, 'answerText', (CASE WHEN 'EN' = 'FR' THEN fr_answer_text ELSE en_answer_text END)))
-        , ']') answers, answer_group_id from beaches.question_answers GROUP BY answer_group_id) qa ON qa.answer_group_id = q.answer_group_id
-    WHERE q.question_group = 'active-screening'`;
-
-        // check each answer from the user against the expected answers
-        let questions = await MySQL.runQuery(query);
-        questions = cleanQuestions(questions);
-        questions.map((q) => {
-            const userAnswer = answers.find(item => item.questionId === q.questionId);
-           if (q.expectedAnswer && q.expectedAnswer !== userAnswer.answerId) {
-               anyInvalid = 'Y';
-           }
-           if (q.childQuestions && q.childQuestions.length) {
-               let countChildInvalid = 0;
-               q.childQuestions.map((childQ) => {
-                   const userChildAnswer = answers.find(item => item.questionId === childQ.questionId);
-                  if (childQ.expectedAnswer && childQ.expectedAnswer !== userChildAnswer.answerId) {
-                      countChildInvalid = countChildInvalid + 1;
-                  }
-               });
-               // child questions may have an "allowance" for how many can be invalid
-               if (countChildInvalid > q.allowedInvalid) {
-                   anyInvalid = 'Y';
-               }
-           }
-        });
+        const userAnswers = req.body.screeningAnswers || [];
+        anyInvalid = await checkAnswersAgainstQuestions(userLog.screeningAnswers, 'active-screening');
     }
     // actually log the attendance here
     const logStatement = `INSERT INTO beaches.attendance_log 
@@ -123,6 +91,71 @@ const logAttendance = async(req, res) => {
         returnSingle(res, {flagged: anyInvalid === 'Y'});
     } else {
         returnError(res, 'Check in could not be completed');
+    }
+}
+// check the answers to the consent questions, and update the member if they agreed to all terms
+const recordConsent = async(req, res) => {
+    const memberId = req.body.memberId;
+    const myUserId = (req.session && req.session.user_id) ? req.session.user_id : -1;
+    const userAnswers = req.body.screeningAnswers || [];
+    const anyInvalid = await checkAnswersAgainstQuestions(userAnswers, 'club-consent-form');
+    const consentSigned = (anyInvalid === 'Y') ? 'N' : 'Y';
+    // actually log the attendance here
+    const logStatement = `UPDATE beaches.members m SET m.consent_signed = '${consentSigned}'
+            WHERE m.member_id = ${memberId} AND 
+            (EXISTS (SELECT user_id from beaches.member_users mu where m.member_id = mu.member_id AND mu.user_id = ${myUserId})
+            OR (SELECT u.is_admin FROM beaches.users u where u.user_id = ${myUserId}) = 'Y')`;
+
+    // note that if the user is flagged once, they are flagged for the entire day
+    const statementResult = await MySQL.runCommand(logStatement);
+    if (statementResult.affectedRows > 0 && consentSigned === 'Y') {
+        returnSingle(res, { accepted: true });
+    } else {
+        returnSingle(res,{ accepted: false });
+    }
+}
+
+const checkAnswersAgainstQuestions = async (answers, questionGroup) => {
+    let anyInvalid = 'N';
+    try {
+        const query =`SELECT 
+            q.question_id,
+            q.parent_question_id,
+            qa.answers,
+            q.allowed_invalid,
+            q.expected_answer
+        FROM beaches.questions q
+            LEFT JOIN (SELECT CONCAT('[', 
+            GROUP_CONCAT(JSON_OBJECT('answerId', answer_id, 'answerText', (CASE WHEN 'EN' = 'FR' THEN fr_answer_text ELSE en_answer_text END)))
+            , ']') answers, answer_group_id from beaches.question_answers GROUP BY answer_group_id) qa ON qa.answer_group_id = q.answer_group_id
+        WHERE q.question_group = '${questionGroup}'`;
+
+        // check each answer from the user against the expected answers
+        let questions = await MySQL.runQuery(query);
+        questions = cleanQuestions(questions);
+        questions.map((q) => {
+            const userAnswer = answers.find(item => item.questionId === q.questionId);
+            if (q.expectedAnswer && q.expectedAnswer !== userAnswer.answerId) {
+                anyInvalid = 'Y';
+            }
+            if (q.childQuestions && q.childQuestions.length) {
+                let countChildInvalid = 0;
+                q.childQuestions.map((childQ) => {
+                    const userChildAnswer = answers.find(item => item.questionId === childQ.questionId);
+                    if (childQ.expectedAnswer && childQ.expectedAnswer !== userChildAnswer.answerId) {
+                        countChildInvalid = countChildInvalid + 1;
+                    }
+                });
+                // child questions may have an "allowance" for how many can be invalid
+                if (countChildInvalid > q.allowedInvalid) {
+                    anyInvalid = 'Y';
+                }
+            }
+        });
+        return anyInvalid;
+    } catch (err) {
+        console.log('error checking questions and answers');
+        return 'N';
     }
 }
 
@@ -145,6 +178,8 @@ const cleanQuestions = (screeningQuestions) => {
 }
 
 const getScreeningQuestions = async (req, res) => {
+    const questionGroup = req.params.questions || 'active-screening';
+
     const query =`SELECT 
         q.question_id,
         q.parent_question_id,
@@ -154,7 +189,7 @@ const getScreeningQuestions = async (req, res) => {
         LEFT JOIN (SELECT CONCAT('[', 
         GROUP_CONCAT(JSON_OBJECT('answerId', answer_id, 'answerText', (CASE WHEN 'EN' = 'FR' THEN fr_answer_text ELSE en_answer_text END)))
         , ']') answers, answer_group_id from beaches.question_answers GROUP BY answer_group_id) qa ON qa.answer_group_id = q.answer_group_id
-    WHERE q.question_group = 'active-screening'`;
+    WHERE q.question_group = '${questionGroup}'`;
 
     const screeningQuestions = await MySQL.runQuery(query);
     let parentQuestions = cleanQuestions(screeningQuestions);
@@ -247,6 +282,7 @@ module.exports = {
     getAnonymousMembers,
     getMemberAttendance,
     logAttendance,
+    recordConsent,
     getScreeningQuestions,
     upsertMember,
     deleteMember

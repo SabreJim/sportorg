@@ -4,7 +4,7 @@
 
       <mat-card class="field-card">
         <div class="form-header">
-          <h2>COVID-19 Active Screening for {{currentMember?.firstName}}</h2>
+          <h2>{{title}}</h2>
         </div>
         <p>Please answer each of the following questions to the best of your knowledge before entering the club</p>
 
@@ -44,7 +44,7 @@
     <button mat-raised-button [mat-dialog-close]>Cancel</button>
     <button mat-raised-button color="primary" (click)="saveAttendance()" ngClass="{{allAnswered ? '' : 'disabled'}}"
             appTooltip [showTooltip]="!allAnswered" [tooltipData]="'All questions must be answered'"
-      >Finish checking in</button>
+      >Finish and Sign</button>
   </div>
 </div>
 

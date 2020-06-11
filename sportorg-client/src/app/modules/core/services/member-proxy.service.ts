@@ -104,9 +104,22 @@ export class MembersProxyService extends RestProxyService {
     });
   }
 
-  public getScreeningQuestions = (): Observable<ScreeningQuestion[]> => {
+  public recordConsent = (member: MemberAttendance): Observable<any> => {
     return new Observable((subscription) => {
-      this.get('my-members/screening-questions').subscribe((response: ApiResponse<ScreeningQuestion[]>) => {
+      this.put('my-members/consent', member).subscribe((response: ApiResponse<any>) => {
+        if (response.hasErrors() || !response.success) {
+          SnackbarService.error(`There was an error accepting your consent form }`);
+          subscription.next(false);
+        } else {
+          subscription.next(response.data);
+        }
+      }, (error: any) => {});
+    });
+  }
+
+  public getScreeningQuestions = (questionGroupName: string): Observable<ScreeningQuestion[]> => {
+    return new Observable((subscription) => {
+      this.get(`my-members/screening-questions/${questionGroupName}`).subscribe((response: ApiResponse<ScreeningQuestion[]>) => {
         if (response.hasErrors() || !response.success) {
           SnackbarService.error(`There was an error getting the screening questions`);
           subscription.next([]);

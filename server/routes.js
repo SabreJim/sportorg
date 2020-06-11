@@ -74,7 +74,8 @@ const createRouter = (config) => {
     router.delete('/members/:memberId', adminRequired, Members.deleteMember);
     router.get('/my-members/attendance', requireSession, Members.getMemberAttendance);
     router.put('/my-members/attendance', requireSession, jsonBody, Members.logAttendance);
-    router.get('/my-members/screening-questions', requireSession, Members.getScreeningQuestions);
+    router.put('/my-members/consent', requireSession, jsonBody, Members.recordConsent);
+    router.get('/my-members/screening-questions/:questions', requireSession, Members.getScreeningQuestions);
 
     // user endpoints
     router.get('/users', adminRequired, Users.getUsers);

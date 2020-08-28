@@ -8,6 +8,17 @@ const returnResults = (response, data) => {
     }
 };
 
+const getDateOnly = (d) => {
+    const offset = (new Date().getTimezoneOffset()) / 60;
+    let requestDate = new Date();
+    if (d && !isNaN(new Date(d))) {
+        requestDate = new Date(d.substring(0, 10));
+    } else {
+        requestDate.setHours(requestDate.getHours() - offset); // adjust for local timezone
+    }
+    return requestDate.toISOString().substring(0, 10);
+}
+
 const returnSingle = (response, data) => {
     if (data) {
         response.status = 200;
@@ -68,5 +79,6 @@ module.exports = {
     returnSuccess,
     returnError,
     parseHtmlFields,
-    cleanSelected
+    cleanSelected,
+    getDateOnly
 }

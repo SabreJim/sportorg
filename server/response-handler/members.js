@@ -1,5 +1,5 @@
 const MySQL = require('../middleware/mysql-service');
-const { returnResults, returnSingle, returnError, cleanSelected } = require('../middleware/response-handler');
+const { returnResults, returnSingle, returnError, cleanSelected, getDateOnly } = require('../middleware/response-handler');
 const { memberSchema, getCleanBody } = require('../middleware/request-sanitizer');
 
 const getMyMembers = async(req, res, next) => {
@@ -39,6 +39,7 @@ const getMyMembers = async(req, res, next) => {
 // for listing members for attendance
 const getMemberAttendance = async(req, res, next) => {
     const myUserId = (req.session && req.session.user_id) ? req.session.user_id : -1;
+    let requestDate = getDateOnly(req.query.date);
     const query = `SELECT
             m.member_id,
             m.last_name,
@@ -46,20 +47,21 @@ const getMemberAttendance = async(req, res, next) => {
             m.consent_signed,
             cl.club_id,
             cl.club_name,
-            (CASE WHEN checkin.check_in_time IS NULL THEN 'N' ELSE 'Y' END) checked_in,
+            (CASE WHEN IFNULL(checkin.check_in_time, 0) > IFNULL(checkout.check_out_time, 0) THEN 'Y'
+                ELSE 'N' END) checked_in,
             checkin.check_in_time,
             checkin.is_flagged,
             (CASE WHEN checkout.check_out_time IS NULL THEN 'N' ELSE 'Y' END) checked_out,
             checkout.check_out_time,
             'Y' active_screen_required
         FROM beaches.members m
-        LEFT JOIN (SELECT al.member_id, MAX(TIME(CONVERT_TZ(al.checkin_date_time, '+0:00' , '+1:00'))) 'check_in_time', COALESCE(MAX(al.is_flagged), 'N') is_flagged
+        LEFT JOIN (SELECT al.member_id, MAX(TIME(al.checkin_date_time)) check_in_time, COALESCE(MAX(al.is_flagged), 'N') is_flagged
             FROM beaches.attendance_log al
-            WHERE DATE(al.checkin_date_time) = CURRENT_DATE() AND status = 'IN' 
+            WHERE DATE(al.checkin_date_time) = '${requestDate}' AND status = 'IN' 
             GROUP BY al.member_id) checkin on checkin.member_id = m.member_id
-         LEFT JOIN (SELECT al.member_id, MAX(TIME(CONVERT_TZ(al.checkin_date_time, '+0:00' , '+1:00'))) 'check_out_time'
+         LEFT JOIN (SELECT al.member_id, MAX(TIME(al.checkin_date_time)) 'check_out_time'
             FROM beaches.attendance_log al
-            WHERE DATE(al.checkin_date_time) = CURRENT_DATE() AND status = 'OUT' 
+            WHERE DATE(al.checkin_date_time) = '${requestDate}' AND status = 'OUT' 
             GROUP BY al.member_id) checkout on checkout.member_id = m.member_id
         LEFT JOIN beaches.clubs cl ON cl.club_id = m.club_id          
         WHERE m.is_active = 'Y' AND m.confirmed = 'Y' AND 

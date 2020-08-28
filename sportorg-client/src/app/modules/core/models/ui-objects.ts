@@ -26,6 +26,10 @@ export interface ColumnConfig {
   lookupField?: string;
   lookupStatic?: LookupItem[];
   showColumn?: boolean;
+  buttonClass?: string;
+  buttonFn?: (any) => void;
+  buttonTextFn?: (any) => string;
+  buttonDisabledFn?: (any) => boolean;
   sortDirection?: 'ASC' | 'DESC';
 }
 export class TableColumn {
@@ -36,12 +40,20 @@ export class TableColumn {
   displayField?: string;
   lookupField?: string;
   lookupStatic?: LookupItem[];
+  buttonClass?: string;
+  buttonFn?: (any) => void;
+  buttonTextFn?: (any) => string;
+  buttonDisabledFn?: (any) => boolean;
   showColumn: boolean;
   sortDirection: 'ASC' | 'DESC';
   static fromConfig = (config: ColumnConfig) => {
     const column = new TableColumn(config.fieldName, config.title, config.type, config.displayField);
     column.lookupField = config.lookupField;
     column.lookupStatic = config.lookupStatic;
+    column.buttonClass = config.buttonClass || '';
+    column.buttonFn = config.buttonFn || function() { return null; };
+    column.buttonTextFn = config.buttonTextFn || function () { return 'click me'};
+    column.buttonDisabledFn = config.buttonDisabledFn || function () { return false};
     if (config.displayType) {
       column.displayType = config.displayType;
     }

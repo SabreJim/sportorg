@@ -22,71 +22,38 @@ export class MemberScreeningModalComponent implements OnInit {
   }
 
   public myMembers: MemberAttendance[];
-  public selectedMember: MemberAttendance;
-
+  public checkinFn = (row: MemberAttendance) => {
+    if (!row) return;
+    if (!row.consentSigned) {
+      row.signingConsent = true;
+      row.checkingOut = false;
+      this.matDialogRef.close(row);
+      return;
+    }
+    if (!row.checkedIn){
+      row.checkingOut = false;
+      row.signingConsent = false;
+      this.matDialogRef.close(row);
+      return;
+    }
+    // must be checking out then
+    row.checkingOut = true;
+    row.signingConsent = false;
+    this.matDialogRef.close(row);
+  }
+  public buttonTextFn = (row: MemberAttendance) => {
+    if (!row.consentSigned) return 'Consent';
+    if (row.checkedIn) return 'Check Out';
+    return 'Check In';
+  }
+  public disableFn = (row: MemberAttendance) => {
+    return false;//row.checkedOut === true;
+  }
   public columns: TableColumn[] = [
     new TableColumn('checkedIn', 'Checked In', 'boolean'),
-    new TableColumn('checkedOut', 'Checked Out', 'boolean'),
-    new TableColumn('lastName', 'Last Name', 'string'),
+    TableColumn.fromConfig({fieldName: 'checkIn', title: 'Check In/Out', type: 'button', buttonClass: '',
+      buttonTextFn: this.buttonTextFn, buttonFn: this.checkinFn, buttonDisabledFn: this.disableFn}),
     new TableColumn('firstName', 'First Name', 'string'),
-    new TableColumn('isFlagged', 'Followup required', 'boolean'),
-    new TableColumn('checkInTime', 'In (time)', 'string'),
-    new TableColumn('checkOutTime', 'Out (time)', 'string'),
-    new TableColumn('consentSigned', 'Consent', 'boolean'),
+    new TableColumn('lastName', 'Last Name', 'string')
   ];
-  public selectMember = (row: MemberAttendance, isSelected: boolean) => {
-    if (isSelected) {
-      this.selectedMember = row;
-      if (!this.selectedMember.consentSigned) {
-        this.canCheckOut = false;
-        this.canCheckIn = false;
-        return;
-      }
-      // determine if this member can be checked in or out
-      // not checked in, or checked and then checked out
-      if ((!row.checkedIn && !row.checkedOut) ||
-        (row.checkedIn && row.checkedOut && row.checkOutTime > row.checkInTime)){
-        this.canCheckIn = true;
-      } else {
-        this.canCheckIn = false;
-      }
-
-      // checked in but not checked out, or both but checked in again after checking out
-      if ((row.checkedIn && !row.checkedOut) ||
-        (row.checkedIn && row.checkedOut && row.checkOutTime < row.checkInTime)){
-        this.canCheckOut = true;
-      } else {
-        this.canCheckOut = false;
-      }
-    } else {
-      this.selectedMember = null;
-      this.canCheckOut = false;
-      this.canCheckIn = false;
-    }
-  }
-
-  public canCheckIn: boolean = false;
-  public canCheckOut: boolean = false;
-  public checkinMember = () => {
-    if (this.selectedMember && this.canCheckIn) {
-      this.selectedMember.checkingOut = false;
-      this.selectedMember.signingConsent = false;
-      this.matDialogRef.close(this.selectedMember);
-    }
-  }
-  public checkoutMember = () => {
-    if (this.selectedMember && this.canCheckOut) {
-      this.selectedMember.checkingOut = true;
-      this.selectedMember.signingConsent = false;
-      this.matDialogRef.close(this.selectedMember);
-    }
-  }
-
-  public signConsent = () => {
-    if (this.selectedMember) {
-      this.selectedMember.signingConsent = true;
-      this.selectedMember.checkingOut = false;
-      this.matDialogRef.close(this.selectedMember);
-    }
-  }
 }

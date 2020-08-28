@@ -79,9 +79,9 @@ export class MembersProxyService extends RestProxyService {
   // attendance endpoints
 
   // get the list of members you have access to check in. Either a family member, or you are a club admin of their club
-  public getMemberAttendance = (): Observable<MemberAttendance[]> => {
+  public getMemberAttendance = (requestDate: string = null): Observable<MemberAttendance[]> => {
     return new Observable((subscription) => {
-      this.get('my-members/attendance').subscribe((response: ApiResponse<MemberAttendance[]>) => {
+      this.get(`my-members/attendance?date=${requestDate}`).subscribe((response: ApiResponse<MemberAttendance[]>) => {
         if (response.hasErrors()) {
           SnackbarService.error('There was an error getting your members');
           subscription.next([]);

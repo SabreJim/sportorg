@@ -7,23 +7,12 @@
           <h2>Attendance</h2>
           <p>These are the members you are authorized to check in.</p>
         </div>
-        <mat-card class="checkin-action">
-          <p>For member: {{selectedMember?.firstName}} {{selectedMember?.lastName}}</p>
-          <ng-container *ngIf="selectedMember?.memberId && !selectedMember?.consentSigned">
-            <button mat-raised-button color="primary" (click)="signConsent()">Consent Form</button>
-          </ng-container>
-          <button mat-raised-button color="primary" (click)="checkinMember()" [disabled]="!canCheckIn">Check in</button>
-          <button mat-raised-button color="primary" (click)="checkoutMember()" [disabled]="!canCheckOut">Check out</button>
-        </mat-card>
         <app-table
           class="data-grid"
           [tableColumns]="columns"
           [gridData]="myMembers"
           [isEditable]="false"
-          [canSelect]="true"
-          [singleSelect]="true"
-          (selectedRow)="selectMember($event, true)"
-          (deselectedRow)="selectMember($event, false)"
+          [canSelect]="false"
         ></app-table>
       </mat-card>
     </form>

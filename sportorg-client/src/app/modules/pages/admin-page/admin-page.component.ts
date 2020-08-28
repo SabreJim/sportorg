@@ -6,7 +6,7 @@ import {StaticValuesService} from "../../core/services/static-values.service";
 import {ProgramsProxyService} from "../../core/services/programs-proxy.service";
 import {FirebaseAuthService} from "../../core/services/firebase-auth.service";
 import {MembersProxyService} from "../../core/services/member-proxy.service";
-import {AppMember, AppMemberUser} from "../../core/models/data-objects";
+import {AppMember, AppMemberUser, MemberAttendance} from "../../core/models/data-objects";
 import {UserData} from "../../core/models/authentication";
 import {Subscription} from "rxjs";
 import {LookupItem} from "../../core/models/rest-objects";
@@ -146,6 +146,28 @@ export class AdminPageComponent implements OnInit {
         this.unlinkMemberUser = memberUsers[0];
       }
     };
+    public getMemberAttendance = () => {
+      let requestDate = null;
+      if (this.attendDate && this.attendDate.toISOString) {
+        requestDate = (this.attendDate.toISOString()).substring(0, 10);
+      }
+
+      this.memberService.getMemberAttendance(requestDate).subscribe((attendance: MemberAttendance[]) => {
+        this.memberAttendance = attendance;
+      });
+    }
+    public attendDate: Date;
+    public memberAttendance: MemberAttendance[] = [];
+    public attendColumns: TableColumn[] = [
+    new TableColumn('checkedIn', 'Checked In', 'boolean'),
+    new TableColumn('checkedOut', 'Checked Out', 'boolean'),
+    new TableColumn('lastName', 'Last Name', 'string'),
+    new TableColumn('firstName', 'First Name', 'string'),
+    new TableColumn('isFlagged', 'Followup required', 'boolean'),
+    new TableColumn('checkInTime', 'In (time)', 'string'),
+    new TableColumn('checkOutTime', 'Out (time)', 'string'),
+    new TableColumn('consentSigned', 'Consent', 'boolean'),
+  ];
     public linkMembers = (memberId: number, userId: number, setLinked: boolean) => {
       this.authService.setMemberLink(memberId, userId, setLinked).subscribe((completed: boolean) => {
         // clear out the selections

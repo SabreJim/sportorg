@@ -62,6 +62,34 @@
             ></app-table>
           </div>
         </mat-expansion-panel>
+
+
+      <mat-expansion-panel (afterExpand)="getMemberAttendance()" class="expand-admin">
+        <mat-expansion-panel-header class="panel-header">
+          <h3>Check Member Attendance</h3>
+        </mat-expansion-panel-header>
+        <div class="table-box">
+          <p class="prompt-text">
+            Select which date to view attendance for:
+          </p>
+          <div class="action-items">
+            <mat-form-field appearance="fill" >
+              <input matInput [matDatepicker]="attendDatePicker" disabled [(ngModel)]="attendDate">
+              <mat-datepicker-toggle matSuffix [for]="attendDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #attendDatePicker disabled="false"></mat-datepicker>
+            </mat-form-field>
+            <button mat-raised-button color="primary" class=""
+                    (click)="getMemberAttendance()">Search</button>
+          </div>
+
+          <app-table ngClass="select-table"
+                     [tableColumns]="attendColumns"
+                     [gridData]="memberAttendance"
+                     [canSelect]="false"
+                     [trackById]="'memberUserId'"
+          ></app-table>
+        </div>
+      </mat-expansion-panel>
     </mat-tab>
     <mat-tab label="Pages/Menus" >
         <edit-panel class="admin-panel"

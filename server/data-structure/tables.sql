@@ -517,3 +517,63 @@ UPDATE beaches.attendance_log set status = 'IN';
 
 ALTER TABLE beaches.members
 ADD COLUMN consent_signed VARCHAR(1) DEFAULT 'N';
+
+-- start invoicing changes
+ALTER TABLE beaches.members
+ADD COLUMN is_loyalty_member VARCHAR(1) DEFAULT 'N' NOT NULL ;
+
+CREATE TABLE beaches.invoices (
+    invoice_id MEDIUMINT NOT NULL auto_increment,
+    external_id MEDIUMINT NULL,
+    from_id MEDIUMINT NOT NULL,
+    from_type VARCHAR(50) NOT NULL,
+    to_id MEDIUMINT NOT NULL,
+    to_type VARCHAR(50) NOT NULL,
+    amount FLOAT(9, 2) NOT NULL,
+    update_date DATETIME NOT NULL,
+    due_date DATE NULL,
+    PRIMARY KEY (invoice_id)
+);
+CREATE TABLE beaches.line_items (
+    item_id MEDIUMINT NOT NULL auto_increment,
+    invoice_id MEDIUMINT NOT NULL REFERENCES beaches.invoices(invoice_id),
+    unit_price FLOAT(9, 2) NOT NULL,
+    units INT NOT NULL,
+    description VARCHAR(250) NOT NULL,
+    update_date DATETIME NOT NULL,
+    PRIMARY KEY (item_id)
+);
+CREATE TABLE beaches.payments (
+    payment_id MEDIUMINT NOT NULL auto_increment,
+    external_id MEDIUMINT NULL,
+    invoice_id MEDIUMINT NULL REFERENCES beaches.invoices(invoice_id),
+    from_id MEDIUMINT NOT NULL,
+    from_type VARCHAR(50) NOT NULL,
+    to_id MEDIUMINT NOT NULL,
+    to_type VARCHAR(50) NOT NULL,
+    amount FLOAT(9, 2) NOT NULL,
+    payment_date DATE NOT NULL,
+    payment_method VARCHAR(50) NULL,
+    update_date DATETIME NOT NULL,
+    PRIMARY KEY (payment_id)
+);
+
+ALTER TABLE beaches.class_enrollments
+ADD COLUMN program_id MEDIUMINT NULL REFERENCES beaches.programs(program_id);
+ALTER TABLE beaches.class_enrollments
+ADD COLUMN season_id MEDIUMINT NULL REFERENCES beaches.season(season_id);
+ALTER TABLE beaches.class_enrollments
+MODIFY schedule_id MEDIUMINT NULL;
+ALTER TABLE beaches.class_enrollments
+ADD COLUMN invoice_id MEDIUMINT NULL REFERENCES beaches.invoices(invoice_id);
+
+CREATE TABLE beaches.companies (
+    company_id MEDIUMINT NOT NULL auto_increment,
+    company_name VARCHAR(200) NOT NULL,
+    company_type VARCHAR(50) NULL,
+    PRIMARY KEY (company_id)
+);
+INSERT INTO beaches.companies (company_name) VALUES ('Beaches East');
+INSERT INTO beaches.projects
+(project_name, type, private_key_id, private_key)
+VALUES ('beachesEast', 'config', 'companyId', 1);

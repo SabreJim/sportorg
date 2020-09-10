@@ -35,6 +35,8 @@ import { TabRoutingDirective } from './directives/tab-routing.directive';
 import { TooltipIconComponent } from './tooltip/tooltip-icon/tooltip-icon.component';
 import { CheckinModalComponent } from './modals/checkin-modal/checkin-modal.component';
 import { MemberScreeningModalComponent } from './modals/member-screening-modal/member-screening-modal.component';
+import {InvoiceModalComponent} from "./modals/invoice-modal/invoice-modal.component";
+import {PaymentModalComponent} from "./modals/payment-modal/payment-modal.component";
 
 
 @NgModule({
@@ -55,6 +57,7 @@ import { MemberScreeningModalComponent } from './modals/member-screening-modal/m
     SportorgCalendarComponent,
     ConfirmModalComponent,
     BooleanInputComponent,
+    PaymentModalComponent,
     ProgramPanelComponent,
     TooltipComponent,
     TooltipDirective,
@@ -62,6 +65,7 @@ import { MemberScreeningModalComponent } from './modals/member-screening-modal/m
     HtmlEditorModalComponent,
     FilterBarComponent,
     OrgSnackbarComponent,
+    InvoiceModalComponent,
     LoginRequiredComponent,
     LoginRequiredDirective,
     TabRoutingDirective,
@@ -81,6 +85,8 @@ import { MemberScreeningModalComponent } from './modals/member-screening-modal/m
     TooltipDirective,
     SelectInputComponent,
     OrgSnackbarComponent,
+    InvoiceModalComponent,
+    PaymentModalComponent,
     LoginRequiredComponent,
     SelectInputComponent,
     DatePickerComponent,
@@ -113,6 +119,8 @@ import { MemberScreeningModalComponent } from './modals/member-screening-modal/m
     MemberModalComponent,
     HtmlEditorModalComponent,
     CheckinModalComponent,
+    InvoiceModalComponent,
+    PaymentModalComponent,
     MemberScreeningModalComponent,
     TooltipComponent,
     TooltipIconComponent,

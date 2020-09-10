@@ -15,6 +15,7 @@ export class StringInputComponent implements OnInit {
   @Input() minWidth: string = '200px';
   @Input() useTextArea: boolean = false;
   @Input() placeholder: string;
+  @Input() disabled = '';
   @Output() stringChanged = new EventEmitter<string>();
 
   public textFormControl = new FormControl();

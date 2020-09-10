@@ -21,6 +21,7 @@ import {MatSelectChange} from "@angular/material";
 export class SelectInputComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() lookupType: string;
+  @Input() showEmpty = true;
   @Input() maxWidth: string = '100%';
   @Input() set staticLookup (items: LookupItem[]) {
     if (items && items.length) {
@@ -35,7 +36,11 @@ export class SelectInputComponent implements OnInit, AfterViewInit, OnDestroy {
         this.selectedValue = newValue;
         if (!this.isDestroyed) this.detector.detectChanges();
       });
-
+    } else if (this.options.length) {
+      // a blank value is being set after the component has been initialized
+      this.selectedValue = null;
+      this.selectionObject.emit(null);
+      this.selectedChanged.emit(null);
     }
   } get selected() { return this.selectedValue; }
   @Output() selectedChanged =  new EventEmitter<number>();

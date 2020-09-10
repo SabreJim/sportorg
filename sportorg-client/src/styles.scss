@@ -70,6 +70,7 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
   display: flex !important;
   flex: 1 1 auto !important;
   padding-right: 10px !important;
+  line-height: 1.2;
   text-align: right;
   border: none;
   width: unset !important;
@@ -77,6 +78,7 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
 ::ng-deep.mat-form-field-suffix {
   align-self: center;
 }
+
 
 // list items
 .mat-list {
@@ -127,7 +129,13 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
     background-color: white;
   }
 }
-
+// for "stepper" wizards
+::ng-deep .mat-step {
+  background-color: white;
+}
+::ng-deep .mat-step-header {
+  background-color: #bbdefb !important;
+}
 ::ng-deep .mat-simple-snackbar {
   justify-content: center !important;
 }
@@ -144,6 +152,11 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
   }
   .form-scroller {
     height: calc(80vh - 60px - 40px);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .form-scroller-sm {
+    height: calc(60vh - 85px - 120px);
     overflow-x: hidden;
     overflow-y: auto;
   }

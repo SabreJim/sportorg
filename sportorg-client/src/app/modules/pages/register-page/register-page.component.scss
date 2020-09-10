@@ -1,4 +1,28 @@
 @import "~src/styles";
+
+.register-wizard {
+  width: calc(100% - 20px);
+  margin: 10px;
+  display: flex;
+  flex-flow: column nowrap;
+  flex: 1 1 auto;
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: #efefef;
+  overflow:hidden;
+
+  .step-nav-buttons {
+    display: flex;
+    flex-flow: row;
+    padding-top: 20px;
+    justify-content: center;
+  }
+}
+.chosen-value {
+  margin-left: 50px;
+  font-size: 16px;
+  font-weight: bolder;
+}
 .select-box, .table-box {
   display: flex;
   flex-flow: row nowrap;
@@ -27,44 +51,81 @@
     background-color: white;
   }
 }
+.class-list {
+  border: 1px solid black;
+  max-width: calc(100% - 150px);
+  min-width: 400px;
+  span {
+    margin:0 10px;
+    flex: 1 1 auto;
+  }
+}
 .action-button {
   display: flex;
   flex: 1 1 auto;
   margin: 20px;
 }
-.description {
+.two-column {
   display: flex;
-  flex: 1 1 400px;
-  max-width: 400px;
-  color: blue;
-  background-color: lightgrey;
-  border: 1px solid black;
-  border-radius: 5px;
-  margin-right: 20px;
-  margin-left: auto;
-  justify-content: center;
+  flex: 1 1 100%;
+  flex-flow: row wrap;
   align-items: center;
-  height: 30px;
-}
-.summary-item {
-  display: flex;
-  flex-flow: row nowrap;
-  margin: 10px 0;
-  h3 {
-    font-size: 24px;
-    margin-right: 20px;
+  .column {
+    display: flex;
+    flex: 1 1 40%;
+    flex-flow: column nowrap;
+    margin: 0 10px;
+    align-items: center;
+  }
+  ul {
+    background-color: #dddddd;
+    margin-left: 20px;
+    li {
+      padding: 5px 15px;
+    }
   }
 }
-.summary-description {
-  padding: 0 40px;
-  max-width: 800px;
-  flex: 1 1 auto;
-  font-style: italic;
-}
-.button-row {
+
+.summary-box {
   display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+  flex-flow: column wrap;
+
+  .summary-item {
+    display: flex;
+    flex-flow: row wrap;
+    margin: 10px 0;
+    border-bottom: 1px dashed black;
+    h3 {
+      font-size: 24px;
+      margin-right: 20px;
+      flex: 1 1 200px;
+      max-width: 200px;
+      min-width: 200px;
+      justify-content: flex-start;
+    }
+    .item-description {
+      display: flex;
+      flex: 1 1 auto;
+      margin-top: 15px;
+      justify-content: center;
+      align-items: center;
+      height: 30px;
+      font-style: italic;
+    }
+    .item-value {
+      display: flex;
+      flex: 1 1 auto;
+      color: blue;
+      margin-right: 20px;
+      margin-left: auto;
+      margin-top: 15px;
+      justify-content: flex-end;
+      height: 30px;
+    }
+    .final-cost {
+      font-size: 20px;
+      font-weight:bolder;
+      font-weight: 700;
+    }
+  }
 }

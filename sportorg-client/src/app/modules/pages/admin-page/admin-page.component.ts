@@ -62,7 +62,7 @@ export class AdminPageComponent implements OnInit {
   };
 
   public feesConfig: AdminConfig = {
-    entityType: 'Fees',
+    entityType: 'Fee',
     identityField: 'feeId',
     columns: [
       new TableColumn('feeValue', '$ value', 'number'),

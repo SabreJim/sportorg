@@ -1,6 +1,6 @@
 import {RestProxyService} from "./rest-proxy.service";
-import {AppMember, Enrollment, RegistrationConfig} from "../models/data-objects";
-import {Observable} from "rxjs";
+import {EnrolledMember, Enrollment, RegistrationConfig} from "../models/data-objects";
+import {Observable, Subject} from "rxjs";
 import {ApiResponse} from "../models/rest-objects";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
@@ -13,6 +13,8 @@ export class EnrollmentProxyService extends RestProxyService {
   constructor(http: HttpClient, appRouter: Router) {
     super(http, appRouter);
   }
+  public EnrolledMembers = new Subject<EnrolledMember[]>();
+  // list program enrollments this user can see
   public getMyEnrollments = (): Observable<Enrollment[]> => {
     return new Observable((subscription) => {
       this.get('my-enrollments/').subscribe((response: ApiResponse<Enrollment[]>) => {
@@ -24,6 +26,17 @@ export class EnrollmentProxyService extends RestProxyService {
         }
       }, (error: any) => {});
     });
+  };
+
+  public getMyEnrolledMembers = (seasonId: number)=> {
+      this.get(`my-enrollments/members/${seasonId}`).subscribe((response: ApiResponse<EnrolledMember[]>) => {
+        if (response.hasErrors()) {
+          SnackbarService.error('Member Enrollments could not be loaded at this time');
+          this.EnrolledMembers.next([]);
+        } else {
+          this.EnrolledMembers.next(response.data || []);
+        }
+      }, (error: any) => {});
   };
   public enrollClass = (enrollmentBody: RegistrationConfig): Observable<boolean> => {
     return new Observable((subscription) => {

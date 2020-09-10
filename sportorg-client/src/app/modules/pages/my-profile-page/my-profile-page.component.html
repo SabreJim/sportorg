@@ -1,39 +1,55 @@
 <div class="page-wrapper">
-  <mat-expansion-panel [disabled]="true">
+  <mat-expansion-panel >
     <mat-expansion-panel-header class="panel-header" >
       <h1>My Profile</h1>
-      <p class="summary-description">Information about the current user</p>
+      <p class="summary-description"></p>
     </mat-expansion-panel-header>
     <div class="summary-box">
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Display Name</mat-label>
+        <input matInput [value]="myProfile?.displayName" [disabled]="'disabled'">
+      </mat-form-field>
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Login Method</mat-label>
+        <input matInput [value]="myProfile?.loginMethod" [disabled]="'disabled'">
+      </mat-form-field>
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Email</mat-label>
+        <input matInput [value]="(myProfile && myProfile.hasMember) ? myProfile.myEmail : 'No member profile'" [disabled]="'disabled'">
+      </mat-form-field>
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Address</mat-label>
+        <input matInput [value]="(myProfile && myProfile.hasMember) ? myProfile.myAddress : 'No member profile'" [disabled]="'disabled'">
+      </mat-form-field>
+      <mat-form-field appearance="outline" floatLabel="always" class="wide-field">
+        <mat-label>My Fencers</mat-label>
+        <input matInput [value]="myProfile?.myFencers" [disabled]="'disabled'">
+      </mat-form-field>
     </div>
   </mat-expansion-panel>
 
   <mat-expansion-panel >
     <mat-expansion-panel-header class="panel-header">
-      <h1>My Members/Fencers</h1>
+      <h1>Members/Fencers</h1>
     </mat-expansion-panel-header>
     <div class="table-box">
       <p class="prompt-text">
         These are the users associated with your account. You can register new fencers on the register page,
         or if you think you should have access to existing members, please contact the administrator.
       </p>
-      <button mat-raised-button color="primary" class="action-button"
-              [disabled]="!selectedMember || !selectedMember.memberId"
-              (click)="editMyMember()">Edit Member</button>
       <app-table ngClass="select-table"
                  [tableColumns]="memberColumns"
                  [gridData]="myMembers"
-                 [canSelect]="true"
+                 [canSelect]="false"
                  [trackById]="'memberId'"
-                 (selectedRows)="selectMembers($event)"
-                 [singleSelect]="true"
+                 [isEditable]="false"
       ></app-table>
     </div>
   </mat-expansion-panel>
 
   <mat-expansion-panel>
     <mat-expansion-panel-header class="panel-header">
-      <h1>My Enrollments</h1>
+      <h1>Program Enrollments</h1>
     </mat-expansion-panel-header>
     <div class="table-box">
       <p class="prompt-text">
@@ -50,6 +66,36 @@
                  [trackById]="'enrollId'"
                  (selectedRows)="selectEnrollments($event)"
                  [singleSelect]="true"
+      ></app-table>
+    </div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel (opened)="getFinancials()">
+    <mat-expansion-panel-header class="panel-header">
+      <h1>Financials</h1>
+    </mat-expansion-panel-header>
+    <div class="table-box">
+      <p class="prompt-text">
+        These are invoices that have been issued. If you feel that these records are not accurate, please contact the administrator.
+      </p>
+      <app-table ngClass="select-table"
+                 [tableColumns]="invoiceColumns"
+                 [gridData]="myInvoices"
+                 [trackById]="'invoiceId'"
+                 [canSelect]="false"
+                 [isEditable]="false"
+      ></app-table>
+      <p class="prompt-text">
+        These are payments that have been recorded. If you feel that these records are not accurate, please contact the administrator.
+      </p>
+      <button mat-raised-button color="primary" class="link-button" *ngIf="currentUser?.isAdmin"
+              (click)="recordNewPayment()">Record Payment</button>
+      <app-table ngClass="select-table"
+                 [tableColumns]="paymentColumns"
+                 [gridData]="myPayments"
+                 [trackById]="'paymentId'"
+                 [canSelect]="false"
+                 [isEditable]="false"
       ></app-table>
     </div>
   </mat-expansion-panel>

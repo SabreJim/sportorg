@@ -1,0 +1,20 @@
+.modal-form-field {
+  display: flex;
+}
+.wrap-fields {
+  display: flex;
+  flex-flow: row wrap;
+  .select-row {
+    display: flex;
+    flex-flow: column;
+    flex: 1 1 auto;
+    padding: 10px;
+  }
+  .select-row-lg {
+    display: flex;
+    flex-flow: column;
+    flex: 2 2 auto;
+    min-width: 300px;
+    padding: 10px;
+  }
+}

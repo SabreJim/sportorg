@@ -126,10 +126,13 @@
   max-width: 250px;
   overflow: hidden;
 }
-.number-cell, .number-header {
+.number-cell, .number-header, .currency-cell, .currency-header  {
   flex: 1 1 110px;
   min-width: 110px;
-  justify-content: center;
+  justify-content: flex-end;
+}
+.currency-cell span::before {
+  content: '$'
 }
 .button-cell, .button-header {
   flex: 1 1 80px;
@@ -175,4 +178,10 @@
   ::ng-deep .cdk-virtual-scroll-viewport {
     min-height: 640px !important;
   }
+}
+.green {
+  background-color: forestgreen !important;
+}
+.red {
+  background-color: palevioletred !important;
 }

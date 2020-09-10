@@ -5,6 +5,7 @@ const Programs = require('./response-handler/programs');
 const Members = require('./response-handler/members');
 const Users = require('./response-handler/users');
 const Enrollment = require('./response-handler/enrollments');
+const Finances = require('./response-handler/finance');
 const Lookups = require('./response-handler/lookups');
 const Fitness = require('./response-handler/fitness');
 const FitnessGroups = require('./response-handler/fitness-groups');
@@ -82,6 +83,7 @@ const createRouter = (config) => {
     router.put('/user', jsonBody, adminRequired, Users.updateUser);
     router.delete('/members/:userId', adminRequired, Users.deleteUser);
     router.get('/member-users', adminRequired, Users.getMemberUsers);
+    router.get('/my-user-profile', requireSession, Users.getMyProfile);
     router.put('/member-users/member/:memberId/user/:userId/link/:setStatus', adminRequired, Users.linkMembers);
 
     // event endpoints
@@ -108,8 +110,18 @@ const createRouter = (config) => {
     router.delete('/tool-tip/:tipId', adminRequired, PageContent.deleteToolTip);
 
     // enrollment endpoints
-    router.get('/my-enrollments', addSession, Enrollment.getMyEnrollments);
-    router.put('/enroll-class', jsonBody, addSession, Enrollment.enrollInClass);
+    router.put('/enroll-class', jsonBody, requireSession, Enrollment.enrollInClass);
+    router.delete('/enroll-class', jsonBody, requireSession, Enrollment.deleteEnrollment);
+    router.get('/my-enrollments/', requireSession, Enrollment.getMyMemberEnrollments);
+    router.get('/my-enrollments/members/:seasonId', requireSession, Enrollment.getMyMembersEnrolled);
+
+    // financial requests
+    router.put('/payment', jsonBody, adminRequired, Finances.recordPayment);
+    router.get('/my-invoices/user/:userId', adminRequired, Finances.getUsersInvoices);
+    router.get('/my-invoices/', requireSession, Finances.getMyInvoices);
+    router.put('/invoice/cancel/:invoiceId', adminRequired, Finances.cancelInvoice);
+    router.get('/my-payments/user/:userId', adminRequired, Finances.getUsersPayments);
+    router.get('/my-payments/', requireSession, Finances.getMyPayments);
 
     // session management
     router.get('/session-token', Authentication.verifyToken);

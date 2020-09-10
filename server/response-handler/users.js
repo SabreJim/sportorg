@@ -95,10 +95,33 @@ const linkMembers = async(req, res) => {
     }
 }
 
+const getMyProfile =  async (req, res) => {
+    const myUserId = (req.session && req.session.user_id) ? req.session.user_id : -1;
+    const query = `SELECT
+            u.user_id,
+            u.display_name,
+            (CASE WHEN u.fb_id IS NULL THEN 'Google' ELSE 'Facebook'END) login_method,
+            (CASE WHEN mmu.is_primary IS NULL THEN 'N' ELSE 'Y' END) has_member,
+            (SELECT mm.email) my_email,
+            (SELECT mm.street_address) my_address,
+            GROUP_CONCAT(CONCAT(m.first_name, ' ', m.last_name)) my_fencers
+            
+        FROM beaches.users u
+        LEFT JOIN beaches.member_users mmu ON mmu.user_id = u.user_id AND mmu.is_primary = 'Y'
+        LEFT JOIN beaches.members mm ON mm.member_id = mmu.member_id
+        LEFT JOIN beaches.member_users mu ON mu.user_id = u.user_id
+        LEFT JOIN beaches.members m ON m.member_id = mu.member_id
+        WHERE u.user_id = ${myUserId}
+        GROUP BY u.user_id, u.display_name, login_method, has_member, my_email, my_address;`;
+    const myProfile = await MySQL.runQuery(query);
+    returnSingle(res, myProfile[0]);
+};
+
 module.exports = {
     getUsers,
     updateUser,
     deleteUser,
     getMemberUsers,
-    linkMembers
+    linkMembers,
+    getMyProfile
 };

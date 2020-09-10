@@ -3,14 +3,13 @@ import * as Firebase from "firebase/app";
 import 'firebase/auth';
 import GoogleAuthProvider = Firebase.auth.GoogleAuthProvider;
 import FacebookAuthProvider = Firebase.auth.FacebookAuthProvider;
-import {AppSession, AppUser, UserData} from "../models/authentication";
+import {AppSession, AppUser, UserData, UserProfile} from "../models/authentication";
 import {Observable, Subject} from "rxjs";
 import {RestProxyService} from "./rest-proxy.service";
 import {ApiResponse} from "../models/rest-objects";
 import {StaticValuesService} from "./static-values.service";
 import {SnackbarService} from "./snackbar.service";
 import {AppMemberUser} from "../models/data-objects";
-import {skip} from "rxjs/operators";
 
 
 @Injectable({providedIn: 'root'})
@@ -106,6 +105,20 @@ export class FirebaseAuthService extends RestProxyService {
     } else {
       this.CurrentUser.next(this.currentUser);
     }
+  };
+
+  public getMyProfile = (): Observable<UserProfile> => {
+    return new Observable((subscription) => {
+      this.get('my-user-profile/').subscribe((response: ApiResponse<UserProfile>) => {
+        if (response.hasErrors()) {
+          SnackbarService.error('Your profile could not be loaded at this time');
+          subscription.next(null);
+        } else {
+          subscription.next(response.data);
+        }
+      }, (error: any) => {
+      });
+    });
   };
 
   public isAdmin = (): boolean => {

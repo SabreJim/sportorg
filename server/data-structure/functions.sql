@@ -250,3 +250,143 @@ BEGIN
     RETURN rows_updated;
 END;
 /
+
+-- start of financial updates
+CREATE FUNCTION beaches.enroll_in_program(p_member_id INTEGER, p_program_id INTEGER, p_season_id INTEGER, p_user_id INTEGER) RETURNS INT
+    SQL SECURITY INVOKER
+BEGIN
+    DECLARE rows_updated INT default 0;
+    DECLARE enrollment_exists INT DEFAULT 0;
+    DECLARE base_cost FLOAT DEFAULT 0;
+    DECLARE final_cost FLOAT DEFAULT 0;
+    DECLARE loyalty_discount INT DEFAULT 0;
+    DECLARE family_discount INT DEFAULT 0;
+    DECLARE new_invoice_id INT DEFAULT 0;
+    DECLARE new_enroll_id INT DEFAULT 0;
+    DECLARE program_name VARCHAR(200) DEFAULT ' ';
+    DECLARE member_name VARCHAR(200) DEFAULT ' ';
+    DECLARE season_name VARCHAR(200) DEFAULT ' ';
+
+
+    -- verify the enrollment doesn't exist
+    SELECT COUNT(1) INTO enrollment_exists
+    FROM beaches.class_enrollments WHERE season_id = p_season_id AND
+        member_id = p_member_id AND program_id = p_program_id;
+
+    IF enrollment_exists > 0 THEN
+        RETURN 0;
+    END IF;
+
+    -- calculate the costs and any discounts
+    SELECT fs.fee_value, p.program_name INTO base_cost, program_name
+    FROM beaches.programs p
+    INNER JOIN beaches.fee_structures fs ON fs.fee_id = p.fee_id
+    WHERE p.program_id = p_program_id;
+
+    SELECT CONCAT(s.name, ' ', s.year) INTO season_name
+    FROM beaches.seasons s
+    WHERE s.season_id = p_season_id;
+
+    SELECT  CONCAT(first_name, ', ', last_name),
+            (CASE WHEN is_loyalty_member = 'Y' THEN -50 ELSE 0 END) INTO member_name, loyalty_discount
+    FROM beaches.members
+    WHERE member_id = p_member_id;
+
+    SELECT (CASE WHEN count(1) > 0 THEN 10 ELSE 0 END) INTO family_discount FROM beaches.class_enrollments ce
+    WHERE ce.member_id IN
+    (SELECT m.member_id FROM beaches.members m WHERE
+        (EXISTS (SELECT user_id from beaches.member_users mu where m.member_id = mu.member_id AND mu.user_id = p_user_id)
+            OR (SELECT u.is_admin FROM beaches.users u where u.user_id = p_user_id) = 'Y'
+            )
+     );
+     SET final_cost = base_cost + loyalty_discount;
+     SET family_discount = final_cost * (family_discount / 100) * -1;
+     SET final_cost = final_cost + family_discount;
+
+    -- create the enrollment
+    INSERT INTO beaches.class_enrollments
+        (member_id, program_id, season_id, created_by, created_date)
+    VALUES
+        (p_member_id, p_program_id, p_season_id, p_user_id, CURDATE());
+    SELECT LAST_INSERT_ID() INTO new_enroll_id;
+    SET rows_updated = rows_updated + ROW_COUNT();
+
+    -- create the invoice
+    INSERT INTO beaches.invoices
+        (from_id, from_type, to_id, to_type, amount, update_date)
+    VALUES
+        (p_member_id, 'member', 1, 'company', final_cost, CURDATE());
+    SELECT LAST_INSERT_ID() INTO new_invoice_id;
+    SET rows_updated = rows_updated + ROW_COUNT();
+
+    -- create the line item
+    INSERT INTO beaches.line_items (invoice_id, unit_price, units, description, update_date)
+    VALUES (new_invoice_id, base_cost, 1, CONCAT('REGISTRATION: ', program_name, ' -- ', season_name, ' -- ', member_name) , CURDATE());
+    IF loyalty_discount != 0 THEN
+        INSERT INTO beaches.line_items(invoice_id, unit_price, units, description, update_date)
+        VALUES (new_invoice_id, loyalty_discount, 1, 'Loyalty discount' , CURDATE());
+    END IF;
+    IF family_discount != 0 THEN
+        INSERT INTO beaches.line_items(invoice_id, unit_price, units, description, update_date)
+        VALUES (new_invoice_id, family_discount, 1, 'Family discount' , CURDATE());
+    END IF;
+
+    -- link the enrollment to the invoice
+    UPDATE beaches.class_enrollments SET invoice_id = new_invoice_id WHERE enroll_id = new_enroll_id;
+
+    RETURN rows_updated;
+END;
+/
+
+
+CREATE FUNCTION beaches.record_payment(creating_user_id INTEGER, request_body JSON) RETURNS INTEGER
+    SQL SECURITY INVOKER
+BEGIN
+    DECLARE v_to_id INT default null;
+    DECLARE v_to_type VARCHAR(200) default null;
+    DECLARE v_from_id INT default null;
+    DECLARE v_from_type VARCHAR(200) default null;
+    DECLARE v_invoice_id INT default null;
+    DECLARE v_amount FLOAT default null;
+    DECLARE v_method VARCHAR(200) default null;
+
+    DECLARE new_payment_id INT default 0;
+    DECLARE invoice_exists INT DEFAULT 0;
+    DECLARE member_exists INT DEFAULT 0;
+
+    -- get the values from the JSON request
+    set v_to_id = JSON_EXTRACT(request_body,'$.toId');
+    set v_from_id = JSON_EXTRACT(request_body,'$.fromId');
+    set v_invoice_id = JSON_EXTRACT(request_body,'$.invoiceId');
+    set v_amount = JSON_EXTRACT(request_body,'$.amount');
+    set v_to_type = JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.toType'));
+    set v_from_type = JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.fromType'));
+    set v_method = JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.paymentMethod'));
+
+    -- verify the enrollment doesn't exist
+    SELECT COUNT(1) INTO invoice_exists
+    FROM beaches.invoices WHERE invoice_id = v_invoice_id;
+
+    -- only use valid FK to invoices
+    IF invoice_exists =  0 THEN
+        SET v_invoice_id = NULL;
+    END IF;
+
+    -- only apply to existing members
+    IF v_from_type = 'member' THEN
+        SELECT COUNT(1) INTO member_exists
+        FROM beaches.members where member_id = v_from_id;
+        IF member_exists = 0 THEN
+            RETURN -1;
+        END IF;
+    END IF;
+
+    -- create the enrollment
+    INSERT INTO beaches.payments
+        (invoice_id, from_id, from_type, to_id, to_type, amount, payment_date, payment_method, update_date)
+    VALUES
+        (v_invoice_id, v_from_id, v_from_type, v_to_id, v_to_type, v_amount, CURDATE(), v_method, CURDATE());
+    SELECT LAST_INSERT_ID() INTO new_payment_id;
+    RETURN new_payment_id;
+END;
+/

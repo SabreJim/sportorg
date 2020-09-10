@@ -36,12 +36,13 @@ SELECT
     ps.duration,
     p.color_id,
     ps.min_age,
-    ps.max_age
-FROM program_schedules ps
-    LEFT OUTER JOIN programs p ON ps.program_id = p.program_id
-    LEFT OUTER JOIN seasons s ON ps.season_id = s.season_id
-    LEFT OUTER JOIN locations l ON l.location_id = p.location_id
-    LEFT OUTER JOIN week_days wd ON wd.day_id = ps.day_id
+    ps.max_age,
+    (SELECT count(1) FROM beaches.class_enrollments where season_id = ps.season_id AND program_id = ps.program_id) number_enrolled
+FROM beaches.program_schedules ps
+    LEFT OUTER JOIN beaches.programs p ON ps.program_id = p.program_id
+    LEFT OUTER JOIN beaches.seasons s ON ps.season_id = s.season_id
+    LEFT OUTER JOIN beaches.locations l ON l.location_id = p.location_id
+    LEFT OUTER JOIN beaches.week_days wd ON wd.day_id = ps.day_id
     WHERE s.is_active = 'Y';
 
 drop view beaches.v_lookups;

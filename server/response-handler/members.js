@@ -25,8 +25,8 @@ const getMyMembers = async(req, res, next) => {
             m.home_phone,
             m.license,
             m.confirmed
-        FROM members m
-        LEFT JOIN regions r ON r.region_id = m.province_id
+        FROM beaches.members m
+        LEFT JOIN beaches.regions r ON r.region_id = m.province_id
         WHERE m.is_active = 'Y' AND 
             (EXISTS (SELECT user_id from beaches.member_users mu where m.member_id = mu.member_id AND mu.user_id = ${myUserId})
             OR (SELECT u.is_admin FROM beaches.users u where u.user_id = ${myUserId}) = 'Y'

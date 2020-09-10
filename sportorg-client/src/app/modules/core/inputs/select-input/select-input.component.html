@@ -1,4 +1,9 @@
 <mat-select [(ngModel)]="selectedValue" [name]="lookupType" (selectionChange)="itemSelected($event)" [style.max-width]="maxWidth" >
+  <ng-container *ngIf="showEmpty">
+    <mat-option  [value]="">
+      <span class="main-text">-- select an option --</span>
+    </mat-option>
+  </ng-container>
   <mat-option *ngFor="let option of options" [value]="option.id">
     <span class="main-text">{{option.name}}</span> <span *ngIf="option.moreInfo" class="alt-text">({{option.moreInfo}})</span>
   </mat-option>

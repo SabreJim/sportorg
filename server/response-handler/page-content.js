@@ -259,8 +259,8 @@ const upsertQuestion = async(req, res, next) => {
 };
 
 const deleteQuestion = async (req, res) => {
-    const tipId = req.params.question || -1;
-    let statement = `DELETE FROM beaches.questions WHERE  questionId = ${tipId} `;
+    const questionId = req.params.questionId || -1;
+    let statement = `DELETE FROM beaches.questions WHERE  question_id = ${questionId} `;
     let statementResult = await MySQL.runCommand(statement);
     if (statementResult && statementResult.affectedRows) {
         returnSingle(res, {affectedRows: statementResult.affectedRows});
@@ -268,7 +268,6 @@ const deleteQuestion = async (req, res) => {
         returnSingle(res, 'Not able to delete this question');
     }
 };
-
 
 module.exports = {
     getPage,

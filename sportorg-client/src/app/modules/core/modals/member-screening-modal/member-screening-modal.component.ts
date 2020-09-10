@@ -42,17 +42,20 @@ export class MemberScreeningModalComponent implements OnInit {
     this.matDialogRef.close(row);
   }
   public buttonTextFn = (row: MemberAttendance) => {
-    if (!row.consentSigned) return 'Consent';
-    if (row.checkedIn) return 'Check Out';
+    if (!row.consentSigned) {
+      row.buttonColor = 'red';
+      return 'Consent';
+    }
+    if (row.checkedIn) {
+      row.buttonColor = 'green';
+      return 'Check Out';
+    }
     return 'Check In';
-  }
-  public disableFn = (row: MemberAttendance) => {
-    return false;//row.checkedOut === true;
   }
   public columns: TableColumn[] = [
     new TableColumn('checkedIn', 'Checked In', 'boolean'),
-    TableColumn.fromConfig({fieldName: 'checkIn', title: 'Check In/Out', type: 'button', buttonClass: '',
-      buttonTextFn: this.buttonTextFn, buttonFn: this.checkinFn, buttonDisabledFn: this.disableFn}),
+    TableColumn.fromConfig({fieldName: 'checkIn', title: 'Check In/Out', type: 'button', buttonClass: 'buttonColor',
+      buttonTextFn: this.buttonTextFn, buttonFn: this.checkinFn}),
     new TableColumn('firstName', 'First Name', 'string'),
     new TableColumn('lastName', 'Last Name', 'string')
   ];

@@ -278,9 +278,11 @@ const enrollmentSchema = {
     fields: [
         {fieldName: 'enrollId', type: 'int', allowNull: false },
         {fieldName: 'memberId', type: 'int', allowNull: false },
-        {fieldName: 'scheduleIds', type: 'int-array', allowNull: false },
+        {fieldName: 'programId', type: 'int', allowNull: false },
+        {fieldName: 'seasonId', type: 'int', allowNull: false },
+        // {fieldName: 'scheduleIds', type: 'int-array', allowNull: false },
         {fieldName: 'userId', type: 'int', allowNull: false },
-        {fieldName: 'feeValue', type: 'float', allowNull: true },
+        // {fieldName: 'feeValue', type: 'float', allowNull: true },
     ]
 };
 
@@ -398,6 +400,20 @@ const questionSchema = {
     ]
 };
 
+const paymentSchema = {
+    primaryKey: 'paymentId',
+    fields: [
+        {fieldName: 'paymentId', type: 'int', allowNull: false },
+        {fieldName: 'toId', type: 'int', allowNull: false },
+        {fieldName: 'fromId', type: 'int', allowNull: false },
+        {fieldName: 'invoiceId', type: 'int', allowNull: true },
+        {fieldName: 'amount', type: 'float', allowNull: false },
+        {fieldName: 'paymentMethod', type: 'string', allowNull: true },
+        {fieldName: 'toType', type: 'string', allowNull: true },
+        {fieldName: 'fromType', type: 'string', allowNull: true }
+    ]
+};
+
 module.exports = {
     getCleanBody,
     classScheduleSchema,
@@ -414,5 +430,6 @@ module.exports = {
     menuSchema,
     bannerSchema,
     tipSchema,
-    questionSchema
+    questionSchema,
+    paymentSchema
 };

@@ -40,7 +40,7 @@ export class EditPanelComponent implements OnInit {
     this.textInput.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((newText) => {
-        if (newText && newText.length) {
+        if (newText && newText.toUpperCase) {
           this.searchText = newText.toUpperCase();
         } else {
           this.searchText = '';
@@ -80,7 +80,12 @@ export class EditPanelComponent implements OnInit {
           this.gridData = rows.map((row: any) => {
             let searchable = [];
             this.filterBarFields.map((fieldName: string) => {
-              searchable.push(row[fieldName].toUpperCase());
+              if (row[fieldName]) {
+                searchable.push(row[fieldName].toUpperCase());
+              }
+              else {
+                searchable.push(row[fieldName]);
+              }
             });
 
             row.searchText = searchable.join(' ');

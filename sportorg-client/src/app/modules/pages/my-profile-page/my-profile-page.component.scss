@@ -71,3 +71,17 @@
 .not-disabled {
   color: black !important;
 }
+.summary-box {
+  display: flex;
+  flex-flow: row wrap;
+  margin-top: 40px;
+  justify-content: flex-start;
+  .mat-form-field {
+    display: flex;
+    min-width: 300px;
+    padding: 10px;
+  }
+}
+.wide-field {
+  width: 100%;
+}

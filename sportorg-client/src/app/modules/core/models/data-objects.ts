@@ -39,6 +39,7 @@ export interface ClassRecord {
   startDate: string;
   startTime: string;
   duration: number;
+  numberEnrolled?: number;
 
   year?: number;
   feeId: number;
@@ -125,6 +126,7 @@ export interface MemberAttendance {
   signedInBy?: string;
   activeScreenRequired?: boolean;
   screeningAnswers?: ScreeningAnswer[];
+  buttonColor?: string;
 }
 export interface ScreeningAnswer {
   questionId: number;
@@ -168,4 +170,45 @@ export interface Enrollment {
   seasonName: string;
   programFee: number;
   enrolledCost: number;
+}
+export interface EnrolledMember {
+  memberId: number;
+  firstName: string;
+  lastName: string;
+  isActive: string;
+  isAthlete: string;
+  confirmed: string;
+  isEnrolled: string;
+  isLoyaltyMember: string;
+}
+
+export interface Invoice {
+  invoiceId: number;
+  memberId: number;
+  memberName: string;
+  lineItemsJson?: string;
+  lineItems?: InvoiceItem[];
+  invoiceAmount: string;
+  paidAmount?: string;
+  updateDate?: string;
+  balance?: string;
+  status?: string;
+}
+export interface InvoiceItem {
+  itemId: number;
+  description: string;
+  units: number;
+  unitPrice: number,
+  updateDate?: string;
+}
+
+export interface Payment {
+  paymentId: number;
+  fromId: number;
+  fromType: string;
+  toId: number;
+  toType: string;
+  invoiceId?: number;
+  amount: number;
+  paymentMethod?: string;
 }

@@ -36,3 +36,13 @@ export interface UserData { // for managing other users
   fbId?: string;
   twitterId?: string;
 }
+
+export interface UserProfile {
+  userId: number;
+  displayName: string;
+  loginMethod: string;
+  hasMember?: string;
+  myEmail?: string;
+  myAddress?: string;
+  myFencers?: string;
+}

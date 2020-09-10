@@ -1,5 +1,5 @@
-drop view v_programs;
-CREATE  SQL SECURITY INVOKER VIEW v_programs as
+drop view beaches.v_programs;
+CREATE  SQL SECURITY INVOKER VIEW beaches.v_programs as
 SELECT
     p.program_id,
     p.color_id,
@@ -16,8 +16,8 @@ LEFT JOIN locations l ON p.location_id = l.location_id
 LEFT JOIN fee_structures f ON p.fee_id = f.fee_id
 ;
 
-drop view v_classes;
-CREATE  SQL SECURITY INVOKER VIEW v_classes AS
+drop view beaches.v_classes;
+CREATE  SQL SECURITY INVOKER VIEW beaches.v_classes AS
 SELECT
     ps.schedule_id,
     ps.season_id,

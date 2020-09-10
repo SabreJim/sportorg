@@ -20,7 +20,7 @@ const upsertFeeStructures = async(req, res) => {
     if (cleanFee.isValid) {
         let statement;
         if (cleanFee.isEdit){
-            statement = `UPDATE beaches.fee_structures SET ${cleanFee.setters.join(', ')} WHERE fee_id = ${cleanFee.cleanBody.programId}`;
+            statement = `UPDATE beaches.fee_structures SET ${cleanFee.setters.join(', ')} WHERE fee_id = ${cleanFee.cleanBody.feeId}`;
         } else {
             statement = `INSERT INTO beaches.fee_structures ${cleanFee.insertValues}`;
         }

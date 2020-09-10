@@ -60,8 +60,8 @@ export class MyProfilePageComponent implements OnInit, OnDestroy {
   protected invoiceSub: Subscription;
   protected paymentSub: Subscription;
   protected profileSub: Subscription;
-  protected currentUser: AppUser;
 
+  public currentUser: AppUser;
   public myProfile: UserProfile;
   public myMembers: AppMember[] = [];
   public myInvoices: Invoice[] = [];

@@ -146,8 +146,8 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
   };
 
   // Manage synced up scrolling
-  @ViewChild(CdkVirtualScrollViewport, {static: false})  ScrollArea: CdkVirtualScrollViewport;
-  @ViewChild('scrollingHeader', {static: false})  TableHeader: ElementRef;
+  @ViewChild(CdkVirtualScrollViewport)  ScrollArea: CdkVirtualScrollViewport;
+  @ViewChild('scrollingHeader')  TableHeader: ElementRef;
   public readonly ROW_SIZE = 46;
   public SCROLL_MIN_BUFFER = 20 * this.ROW_SIZE;
   public SCROLL_MAX_BUFFER = 100 * this.ROW_SIZE;

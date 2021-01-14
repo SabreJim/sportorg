@@ -267,7 +267,6 @@ BEGIN
     DECLARE member_name VARCHAR(200) DEFAULT ' ';
     DECLARE season_name VARCHAR(200) DEFAULT ' ';
 
-
     -- verify the enrollment doesn't exist
     SELECT COUNT(1) INTO enrollment_exists
     FROM beaches.class_enrollments WHERE season_id = p_season_id AND
@@ -293,7 +292,7 @@ BEGIN
     WHERE member_id = p_member_id;
 
     SELECT (CASE WHEN count(1) > 0 THEN 10 ELSE 0 END) INTO family_discount FROM beaches.class_enrollments ce
-    WHERE ce.member_id IN
+    WHERE ce.season_id = p_season_id AND ce.member_id IN
     (SELECT m.member_id FROM beaches.members m WHERE
         (EXISTS (SELECT user_id from beaches.member_users mu where m.member_id = mu.member_id AND mu.user_id = p_user_id)
             OR (SELECT u.is_admin FROM beaches.users u where u.user_id = p_user_id) = 'Y'

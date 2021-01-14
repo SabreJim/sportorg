@@ -114,18 +114,13 @@ import {PaymentModalComponent} from "./modals/payment-modal/payment-modal.compon
     RouteGuardService
   ],
   entryComponents: [
-    AppTableComponent,
     ConfirmModalComponent,
     MemberModalComponent,
     HtmlEditorModalComponent,
     CheckinModalComponent,
     InvoiceModalComponent,
     PaymentModalComponent,
-    MemberScreeningModalComponent,
-    TooltipComponent,
-    TooltipIconComponent,
-    StringInputComponent,
-    LoginRequiredComponent
+    MemberScreeningModalComponent
   ]
 })
 export class CoreModule { }

@@ -7,7 +7,7 @@ import {LookupProxyService} from "../services/lookup-proxy.service";
 import {StaticValuesService} from "../services/static-values.service";
 import {MembersProxyService} from "../services/member-proxy.service";
 import {MemberAttendance} from "../models/data-objects";
-import {MatDialog} from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 import {CheckinModalComponent} from "../modals/checkin-modal/checkin-modal.component";
 import {MemberScreeningModalComponent} from "../modals/member-screening-modal/member-screening-modal.component";
 import {SnackbarService} from "../services/snackbar.service";

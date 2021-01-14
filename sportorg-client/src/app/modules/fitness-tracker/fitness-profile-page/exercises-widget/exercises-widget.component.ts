@@ -10,7 +10,8 @@ import {StaticValuesService} from "../../../core/services/static-values.service"
 import {Subscription} from "rxjs";
 import {SnackbarService} from "../../../core/services/snackbar.service";
 import {ConfirmModalComponent} from "../../../core/modals/confirm-modal/confirm-modal.component";
-import {MatCheckboxChange, MatDialog} from "@angular/material";
+import { MatCheckboxChange } from "@angular/material/checkbox";
+import { MatDialog } from "@angular/material/dialog";
 import {AppUser} from "../../../core/models/authentication";
 import {LookupItem} from "../../../core/models/rest-objects";
 import {FormControl} from "@angular/forms";

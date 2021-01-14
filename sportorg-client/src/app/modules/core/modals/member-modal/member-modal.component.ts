@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import {AppMember} from "../../models/data-objects";
 import {LookupItem} from "../../models/rest-objects";
 import {StaticValuesService} from "../../services/static-values.service";

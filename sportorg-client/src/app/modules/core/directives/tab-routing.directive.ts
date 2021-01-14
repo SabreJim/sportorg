@@ -1,5 +1,5 @@
 import {Directive, ElementRef, Input, OnInit} from '@angular/core';
-import {MatTabGroup} from "@angular/material";
+import { MatTabGroup } from "@angular/material/tabs";
 
 @Directive({
   selector: '[appTabRouting]'

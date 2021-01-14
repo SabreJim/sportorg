@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import {AppMember, Invoice, Payment} from "../../models/data-objects";
 import {Subscription} from "rxjs";
 import {LookupItem} from "../../models/rest-objects";

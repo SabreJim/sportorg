@@ -4,7 +4,7 @@ import {FirebaseAuthService} from "./modules/core/services/firebase-auth.service
 import {LookupProxyService} from "./modules/core/services/lookup-proxy.service";
 import {AppStatus} from "./modules/core/models/ui-objects";
 import {Subscription} from "rxjs";
-import {MatSnackBar, MatSnackBarRef, SimpleSnackBar} from "@angular/material";
+import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from "@angular/material/snack-bar";
 import {StaticValuesService} from "./modules/core/services/static-values.service";
 import {first} from "rxjs/operators";
 

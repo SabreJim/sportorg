@@ -14,7 +14,7 @@ import {ClassRecord, ProgramRecord} from "../models/data-objects";
 import {StaticValuesService} from "../services/static-values.service";
 import {Subscription} from "rxjs";
 import {ProgramsProxyService} from "../services/programs-proxy.service";
-import {MatDialog} from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 
 export interface TimeSlot {
   id: number;

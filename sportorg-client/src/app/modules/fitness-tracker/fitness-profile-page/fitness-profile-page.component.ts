@@ -7,7 +7,7 @@ import {FirebaseAuthService} from "../../core/services/firebase-auth.service";
 import {FitnessProfile} from "../../core/models/fitness-objects";
 import {StaticValuesService} from "../../core/services/static-values.service";
 import {ConfirmModalComponent} from "../../core/modals/confirm-modal/confirm-modal.component";
-import {MatDialog} from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   selector: 'app-fitness-profile-page',

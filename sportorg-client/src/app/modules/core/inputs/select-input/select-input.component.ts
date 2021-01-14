@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import {LookupProxyService} from "../../services/lookup-proxy.service";
 import {LookupItem} from "../../models/rest-objects";
-import {MatSelectChange} from "@angular/material";
+import { MatSelectChange } from "@angular/material/select";
 
 @Component({
   selector: 'app-select-input',

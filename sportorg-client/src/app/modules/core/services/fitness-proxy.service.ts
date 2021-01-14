@@ -31,7 +31,7 @@ export class FitnessProxyService extends RestProxyService {
   // get any profiles that this user can see
   public getMyFitnessProfiles = (): Observable<FitnessProfile[]> => {
     return new Observable((subscription) => {
-        this.get('my-fitness-profiles').subscribe((response: ApiResponse<FitnessProfile[]>) => {
+        this.get('fitness/my-fitness-profiles').subscribe((response: ApiResponse<FitnessProfile[]>) => {
           if (response.hasErrors()) {
             SnackbarService.error(`Profiles could not be retrieved at this time`);
             subscription.next([]);
@@ -58,7 +58,7 @@ export class FitnessProxyService extends RestProxyService {
 
   // get the full profile of an athlete
   public getFitnessProfile = (athleteId: number) => {
-    this.get(`fitness-profile/${athleteId}`).subscribe((response: ApiResponse<FitnessProfile>) => {
+    this.get(`fitness/fitness-profile/${athleteId}`).subscribe((response: ApiResponse<FitnessProfile>) => {
       if (response.hasErrors()) {
         SnackbarService.error(`Profile could not be retrieved at this time`);
         this.FitnessProfile.next(null);
@@ -76,7 +76,7 @@ export class FitnessProxyService extends RestProxyService {
   }
   public getMyGroups = (athleteId: number): Observable<FitnessGroup[]> => {
     return new Observable((subscription) => {
-      this.get(`my-groups/${athleteId}`).subscribe((response: ApiResponse<FitnessGroup[]>) => {
+      this.get(`fitness/my-groups/${athleteId}`).subscribe((response: ApiResponse<FitnessGroup[]>) => {
         if (response.hasErrors()) {
           SnackbarService.error(`Athlete Groups could not be retrieved at this time`);
           subscription.next([]);
@@ -116,7 +116,7 @@ export class FitnessProxyService extends RestProxyService {
   // add a fitness profile
   public createFitnessProfile = (newProfile: FitnessProfile): Observable<boolean> => {
     return new Observable((subscription) => {
-      this.put('fitness-profile', newProfile).subscribe((response: ApiResponse<any>) => {
+      this.put('fitness/fitness-profile', newProfile).subscribe((response: ApiResponse<any>) => {
         if (response.hasErrors() || !response.success) {
           SnackbarService.error(`Profile could not be created successfully: ${response.message}`);
           subscription.next(false);
@@ -135,7 +135,7 @@ export class FitnessProxyService extends RestProxyService {
   // getExerciseLogs
   public getExerciseLogs = (athleteId): Observable<FitnessLogItem[]> => {
     return new Observable((subscription) => {
-      this.get(`fitness-logs/${athleteId}`).subscribe((response: ApiResponse<FitnessLogItem[]>) => {
+      this.get(`fitness/fitness-logs/${athleteId}`).subscribe((response: ApiResponse<FitnessLogItem[]>) => {
         if (response.hasErrors()) {
           SnackbarService.error(`Profiles could not be retrieved at this time`);
           subscription.next([]);
@@ -149,7 +149,7 @@ export class FitnessProxyService extends RestProxyService {
   // update the exercise log and calculate any changes on the back end
   public recordExerciseEvent = (newEvent: FitnessLogItem): Observable<ExerciseLogResults> => {
     return new Observable((subscription) => {
-      this.put('exercise-event', newEvent).subscribe((response: ApiResponse<ExerciseLogResults>) => {
+      this.put('fitness/exercise-event', newEvent).subscribe((response: ApiResponse<ExerciseLogResults>) => {
         if (response.hasErrors() || !response.success) {
           SnackbarService.error(`We couldn't record that exercise: ${response.message}`);
           subscription.next({athleteId: -1, levelUps: []});
@@ -163,7 +163,7 @@ export class FitnessProxyService extends RestProxyService {
   // remove an exerciseEvent that was recorded in error
   public deleteExerciseEvent = (eventId: number): Observable<ExerciseLogResults> => {
     return new Observable((subscription) => {
-      this.delete(`exercise-event/${eventId}`).subscribe((response: ApiResponse<ExerciseLogResults>) => {
+      this.delete(`fitness/exercise-event/${eventId}`).subscribe((response: ApiResponse<ExerciseLogResults>) => {
         if (response.hasErrors() || !response.success) {
           SnackbarService.error(`Exercise was not deleted successfully: ${response.message}`);
           subscription.next({athleteId: -1, levelUps: []});
@@ -176,7 +176,7 @@ export class FitnessProxyService extends RestProxyService {
 
   public resetProfile = (athleteId: number): Observable<boolean> => {
     return new Observable((subscription) => {
-      this.put(`fitness-profile/reset/${athleteId}`, null).subscribe((response: ApiResponse<boolean>) => {
+      this.put(`fitness/fitness-profile/reset/${athleteId}`, null).subscribe((response: ApiResponse<boolean>) => {
         if (response.hasErrors() || !response.success) {
           SnackbarService.error(`Athlete could not be reset: ${response.message}`);
           subscription.next(false);
@@ -207,7 +207,7 @@ export class FitnessProxyService extends RestProxyService {
 
   // compareMyFitness
   public runCompare = (athleteId: number, athleteTypes: number[], ageCategory: number, groupId: number) => {
-    this.get(`compare-fitness/${athleteId}`, {athleteTypes: athleteTypes, ageCategory: ageCategory, groupId})
+    this.get(`fitness/compare-fitness/${athleteId}`, {athleteTypes: athleteTypes, ageCategory: ageCategory, groupId})
       .subscribe((response: ApiResponse<string>) => {
       if (response.hasErrors()) {
         SnackbarService.error(`Comparisons could not be retrieved at this time`);
@@ -226,7 +226,7 @@ export class FitnessProxyService extends RestProxyService {
   public upsertExercise = (exercise: Exercise, groupId: number): Observable<boolean> => {
     return new Observable((subscription) => {
       exercise.ownerGroupId = exercise.ownerGroupId || groupId;
-      this.put(`exercise`, exercise).subscribe((response: ApiResponse<boolean>) => {
+      this.put(`fitness/exercise`, exercise).subscribe((response: ApiResponse<boolean>) => {
         if (response.hasErrors() || !response.success) {
           SnackbarService.error(`Exercise could not be updated: ${response.message}`);
           subscription.next(false);
@@ -240,7 +240,7 @@ export class FitnessProxyService extends RestProxyService {
   // remove an exerciseEvent that was recorded in error
   public deleteExercise = (exercise: Exercise): Observable<boolean> => {
     return new Observable((subscription) => {
-      this.delete(`exercise/${exercise.exerciseId}`).subscribe((response: ApiResponse<boolean>) => {
+      this.delete(`fitness/exercise/${exercise.exerciseId}`).subscribe((response: ApiResponse<boolean>) => {
         if (response.hasErrors() || !response.success) {
           SnackbarService.error(`Exercise was not deleted successfully: ${response.message}`);
           subscription.next(false);

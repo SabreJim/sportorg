@@ -22,8 +22,6 @@
           </ng-container>
         </mat-menu>
       </ng-container>
-
-
     </ng-container>
 
   </nav>
@@ -55,10 +53,8 @@
       </ng-container>
     </mat-menu>
   </div>
-    <ng-container *ngIf="!isAnon ">
-      <a ngClass="check-in mat-button" (click)="loadCheckin()">
-        check in <mat-icon>fact_check</mat-icon></a>
-    </ng-container>
+
+  <checkin-menu *ngIf="!isAnon"></checkin-menu>
 
   <div class="login">
     <a mat-button *ngIf="isAnon" [matMenuTriggerFor]="authMenu" tabindex="0" >

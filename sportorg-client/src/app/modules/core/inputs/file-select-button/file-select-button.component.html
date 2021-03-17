@@ -1,0 +1,17 @@
+<button mat-raised-button [matMenuTriggerFor]="selectFileMenu" (menuClosed)="clearSelections()" (menuOpened)="getFileInfo()"
+  >Select a file</button>
+<mat-menu #selectFileMenu="matMenu" [xPosition]="xPosition" [yPosition]="yPosition" [class]="'wide-menu'" >
+  <div class="menu-content" (click)="$event.stopPropagation()">
+    <app-table
+      [canSelect]="true"
+      [trackById]="'fileId'"
+      [singleSelect]="true"
+      [tableColumns]="fileColumns"
+      [gridData]="fileRows"
+      (selectedRow)="getSelectedFile($event)"
+    ></app-table>
+  </div>
+</mat-menu>
+
+
+

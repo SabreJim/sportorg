@@ -17,6 +17,7 @@
         <div class="form-field">
           <h3>Description</h3>
           <div ngClass="input-item input-grows ">
+<!--            TODO: text area not working!!! -->
             <app-string-input [value]="newGroup.description" [useTextArea]="true" (stringChanged)="newGroup.description = $event"></app-string-input>
           </div>
         </div>

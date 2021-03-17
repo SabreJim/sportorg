@@ -3,141 +3,85 @@
 <form autocomplete="off" novalidate class="form-wrapper">
 
   <mat-card class="field-card">
-    <div class="form-header">
-      <h2>Member Name</h2>
-      <input matInput [disabled]="true" [value]="member?.name" class="input-item-disabled">
-    </div>
-
-    <div class="multi-field">
-      <div class="form-field">
-        <h3>First Name*</h3>
-        <div ngClass="input-item {{invalid.firstName ? 'invalid' : ''}}">
-          <app-string-input [value]="member.firstName" (stringChanged)="updateName($event, 'firstName', true)"></app-string-input>
-          <mat-error *ngIf="invalid.firstName">First name is required</mat-error>
-        </div>
-      </div>
-      <div class="form-field">
-        <h3>Middle Name</h3>
-        <div class="input-item">
-          <app-string-input [value]="member.middleName" (stringChanged)="updateName($event, 'middleName')"></app-string-input>
-        </div>
-      </div>
-      <div class="form-field">
-        <h3>Last Name*</h3>
-        <div ngClass="input-item {{invalid.lastName ? 'invalid' : ''}}">
-          <app-string-input [value]="member.lastName" (stringChanged)="updateName($event, 'lastName', true)"></app-string-input>
-          <mat-error *ngIf="invalid.lastName">Last name is required</mat-error>
-        </div>
-      </div>
+    <div class="form-header"><h2>Member Name</h2></div>
+    <div class="form-content">
+      <app-string-input [(value)]="member.firstName"
+                        [title]="'First name'" [isRequired]="true"
+                        (valid)="checkValid($event, 'firstName')"
+                        ></app-string-input>
+      <app-string-input [(value)]="member.middleName"
+                        [title]="'Middle name'"
+                        ></app-string-input>
+      <app-string-input [(value)]="member.lastName"
+                        [title]="'Last name'" [isRequired]="true"
+                        (valid)="checkValid($event, 'lastName')"
+                        ></app-string-input>
     </div>
   </mat-card>
 
   <mat-card class="field-card">
     <div class="form-header"><h2>Status</h2></div>
-    <div class="multi-field">
-      <div class="form-field">
-        <h3>Year of Birth</h3>
-        <div class="input-item">
-          <app-number-input [value]="member.yearOfBirth" (numberChanged)="member.yearOfBirth = $event"></app-number-input>
-        </div>
-      </div>
-      <div class="form-field">
-        <h3>License (through <a href="http://fencing.ca/purchase-a-cff-licence/" target="_blank">Canadian Fencing Federation</a>)</h3>
-        <div class="input-item">
-          <app-string-input [value]="member.license" (stringChanged)="updateLicense($event)"></app-string-input>
-        </div>
-      </div>
-      <div class="form-field">
-        <h3>Gender (for competition)</h3>
-        <div ngClass="input-item select-item {{invalid.competeGender ? 'invalid' : ''}}">
-          <app-select-input
-            [staticLookup]="genderLookup"
-            [selected]="decodeLookup(member.competeGender, genderLookup)"
-            (selectionObject)="selectGender($event)"
-          ></app-select-input>
-          <mat-error *ngIf="invalid.competeGender">Please select a competition category</mat-error>
-        </div>
-      </div>
-      <div class="form-field">
-        <h3>Athlete</h3>
-        <div class="input-item select-item">
-          <app-boolean-input (valueChanged)="member.isAthlete = ($event === 'Y') ? 'Y': 'N'"
-                             [value]="member.isAthlete" ></app-boolean-input>
-        </div>
-      </div>
-    </div>
+    <div class="form-content">
+      <app-number-input [(value)]="member.yearOfBirth"
+                        [title]="'Year of birth'"
+                        ></app-number-input>
+      <app-string-input [(value)]="member.license" [title]="'CFF License'"
+                        [hint]="'acquired through the Canadian Fencing Federation: https://www.fencing.ca'"
+      ></app-string-input>
 
+      <app-select-input
+        [staticLookup]="genderLookup"
+        [title]="'Gender (for competition)'"
+        [selected]="decodeLookup(member.competeGender, genderLookup)"
+        (selectionObject)="selectGender($event)"
+      ></app-select-input>
+
+      <app-boolean-input (valueChanged)="member.isAthlete = ($event === 'Y') ? 'Y': 'N'"
+                         [title]="'Athlete'"
+                         [value]="member.isAthlete" ></app-boolean-input>
+
+    </div>
   </mat-card>
 
   <mat-card class="field-card">
-    <div class="form-header">
-      <h2>Address</h2>
-      <input matInput [disabled]="true" [value]="composedAddress" class="input-item-disabled">
-    </div>
+    <div class="form-header"><h2>Address</h2></div>
 
-    <div class="multi-field">
-      <div class="form-field">
-        <h3>Street Address</h3>
-        <div class="input-item">
-          <app-string-input [value]="member.streetAddress" (stringChanged)="updateAddress($event, 'streetAddress')"></app-string-input>
-        </div>
-      </div>
-      <div class="form-field">
-        <h3>City</h3>
-        <div class="input-item">
-          <app-string-input [value]="member.city" (stringChanged)="updateAddress($event, 'city')"></app-string-input>
-        </div>
-      </div>
-      <div class="form-field">
-        <h3>Province</h3>
-        <div ngClass="input-item select-item">
-          <app-select-input
-            [lookupType]="'regions'"
-            [selected]="member.provinceId"
-            (selectedChanged)="selectProvince($event)"
-          ></app-select-input>
-        </div>
-      </div>
-      <div class="form-field">
-        <h3>Postal Code</h3>
-        <div ngClass="input-item {{invalid.postalCode ? 'invalid' : ''}}">
-          <app-string-input [value]="member.postalCode" (stringChanged)="updateAddress($event, 'postalCode')"></app-string-input>
-          <mat-error *ngIf="invalid.postalCode">Postal code must be valid</mat-error>
-        </div>
-      </div>
+    <div class="form-content">
+      <app-string-input [(value)]="member.streetAddress" [setWidth]="'600px'" [title]="'Street address'"></app-string-input>
+      <app-string-input [(value)]="member.city" [title]="'City'"></app-string-input>
+
+      <app-select-input
+        [lookupType]="'regions'"
+        [title]="'Province'"
+        [(selected)]="member.provinceId"
+      ></app-select-input>
+
+      <app-string-input [(value)]="member.postalCode" [title]="'Postal code'"></app-string-input>
     </div>
   </mat-card>
   <mat-card class="field-card">
     <div class="form-header"><h2>Contact Info</h2></div>
-    <div class="multi-field">
-      <div class="form-field">
-        <h3>Email*</h3>
-        <div ngClass="input-item {{invalid.email ? 'invalid' : ''}}">
-          <app-string-input [value]="member.email" (stringChanged)="updateEmail($event)"></app-string-input>
-          <mat-error *ngIf="invalid.email">Email is required and must be formatted correctly</mat-error>
-        </div>
-      </div>
-      <div class="form-field">
-        <h3>Cell Phone</h3>
-        <div ngClass="input-item {{invalid.cellPhone ? 'invalid' : ''}}">
-          <app-string-input [value]="member.cellPhone" (stringChanged)="updatePhone($event, 'cellPhone')"></app-string-input>
-          <mat-error *ngIf="invalid.cellPhone">Cell phone number must be formatted correctly</mat-error>
-        </div>
-      </div>
-      <div class="form-field">
-        <h3>Home Phone</h3>
-        <div ngClass="input-item {{invalid.homePhone ? 'invalid' : ''}}">
-          <app-string-input [value]="member.homePhone" (stringChanged)="updatePhone($event, 'homePhone')"></app-string-input>
-          <mat-error *ngIf="invalid.homePhone">Home number must be formatted correctly</mat-error>
-        </div>
-      </div>
+    <div class="form-content">
+      <app-string-input [value]="member.email"
+                        [title]="'Email'"
+                        [isRequired]="true"
+                        [validationType]="'email'"
+      ></app-string-input>
+
+      <app-string-input [value]="member.cellPhone"
+                        [title]="'Cell phone'"
+                        (valueChange)="updatePhone($event, 'cellPhone')"></app-string-input>
+
+      <app-string-input [value]="member.homePhone"
+                        [title]="'Home phone'"
+                        (valueChange)="updatePhone($event, 'homePhone')"></app-string-input>
     </div>
   </mat-card>
 </form>
   </div>
 <div class="action-bar">
   <button mat-raised-button [mat-dialog-close]>Cancel</button>
-  <button mat-raised-button color="primary" (click)="saveForm()">Save</button>
+  <button mat-raised-button color="primary" [disabled]="invalid && invalid.length > 0" (click)="saveForm()">Save</button>
 </div>
 </div>
 

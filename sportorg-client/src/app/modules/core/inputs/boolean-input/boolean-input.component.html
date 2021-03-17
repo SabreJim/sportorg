@@ -1,1 +1,5 @@
- <mat-checkbox [(ngModel)]="booleanValue" (change)="updateValue()"></mat-checkbox>
+<mat-form-field floatLabel="true" appearance="outline" [style.max-width]="setWidth" [style.min-width]="setWidth">
+   <input type="number" matInput class="hidden"/>
+  <h3>{{title}}</h3>
+   <mat-checkbox [(ngModel)]="booleanValue" (change)="updateValue()"></mat-checkbox>
+ </mat-form-field>

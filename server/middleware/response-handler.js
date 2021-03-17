@@ -1,3 +1,5 @@
+const getUserId = (req) => (req.session && req.session.user_id) ? req.session.user_id : -1;
+
 const returnResults = (response, data) => {
     if (data && data.length) {
         response.status = 200;
@@ -74,6 +76,7 @@ const cleanSelected = (queryResult, booleanFields = []) => {
 }
 
 module.exports = {
+    getUserId,
     returnResults,
     returnSingle,
     returnSuccess,

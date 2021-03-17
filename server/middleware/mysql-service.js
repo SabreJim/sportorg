@@ -20,6 +20,18 @@ const cleanRows = (rows) => {
     }, rows);
 };
 
+const safeErrors = (error) => {
+    const safeError = {};
+    for (const [key, value] of Object.entries(error)) {
+        if (typeof error[key] === 'string') {
+            safeError[key] = (error[key]).slice(0, 2000);
+        } else {
+            safeError[key] = error[key];
+        }
+    }
+    return safeError;
+};
+
 const runQuery = (query, params = []) => {
     let safeParams = (R.is(Array, params)) ? params : [params];
     return new Promise((resolve, reject) => {
@@ -27,7 +39,7 @@ const runQuery = (query, params = []) => {
             // const pool = MYSQL.createPool(savedConfig.mysql);
             DB.query(query, safeParams, function (error, results, fields) {
                 if (error) {
-                    console.log('MySQL data errors', error);
+                    console.log('MySQL data errors', safeErrors(error));
                     reject([]);
                 } else {
                     resolve(cleanRows(results));
@@ -47,7 +59,7 @@ const runCommand = (query, params = []) => {
             // const pool = MYSQL.createPool(savedConfig.mysql);
             DB.query(query, safeParams, function (error, results, fields) {
                 if (error) {
-                    console.log('MySQL data errors', error);
+                    console.log('MySQL data errors', safeErrors(error));
                     resolve([]);
                 } else {
                     if (results.length) {

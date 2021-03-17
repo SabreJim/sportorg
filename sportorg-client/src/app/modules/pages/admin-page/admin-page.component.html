@@ -40,12 +40,12 @@
 
               <app-select-input
                 [staticLookup]="userRows"
-                (selectedChanged)="linkUserId = $event"
+                (selectedChange)="linkUserId = $event"
               ></app-select-input>
 
               <app-select-input
                 [staticLookup]="memberRows"
-                (selectedChanged)="linkMemberId = $event"
+                (selectedChange)="linkMemberId = $event"
               ></app-select-input>
 
               <button mat-raised-button color="warn" class="link-button" [disabled]="!unlinkMemberUser"

@@ -6,7 +6,6 @@ import {AppStatus} from "./modules/core/models/ui-objects";
 import {Subscription} from "rxjs";
 import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from "@angular/material/snack-bar";
 import {StaticValuesService} from "./modules/core/services/static-values.service";
-import {first} from "rxjs/operators";
 
 @Component({
   selector: 'app-root',
@@ -18,6 +17,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   // app names
   public readonly SPORT_ORG = 'beachesEast';
   public readonly FITNESS = 'fitnessTracker';
+  public isMobile = false;
   public appInUse: string = this.SPORT_ORG;
   protected statusSub: Subscription;
   protected bannerRef: MatSnackBarRef<SimpleSnackBar>;
@@ -28,6 +28,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     // subscribe to the user's logged in state
     this.authService.enableAuthentication();
+    this.isMobile = StaticValuesService.checkMobile();
   }
   ngAfterViewInit(): void {
 

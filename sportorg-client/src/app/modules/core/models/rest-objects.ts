@@ -23,6 +23,7 @@ export interface LookupItem {
   moreInfo?: any;
   lookup: string;
   description?: string;
+  checked?: boolean;
   numberValue?: number;
 }
 

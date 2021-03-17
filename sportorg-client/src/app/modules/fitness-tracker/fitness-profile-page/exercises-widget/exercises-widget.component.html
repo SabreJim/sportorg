@@ -3,34 +3,11 @@
     <h1>{{profile?.firstName}} {{profile?.lastName}}</h1>
   </mat-card-title>
   <mat-card-content class="exercise-list">
-    <div class="exercise-filter filter-bar mat-card">
-      <div class="typeahead-filter">
-        <label>Search:</label>
-        <input type="text" placeholder="by exercise title" matInput [formControl]="textInput" />
-        <button mat-button *ngIf="searchText" matSuffix mat-icon-button (click)="clearString()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
-      <div class="filter-found">Found items: {{filteredExercises.length || 0}}</div>
-      <div class="checkbox-filter">
-        <label >Show:</label>
-        <mat-checkbox class="multi-select" *ngFor="let stat of statOptions"  (change)="selectStat($event, stat)">
-          {{stat.name}}
-        </mat-checkbox>
-      </div>
-    </div>
+
+    <app-filter-bar class="mat-card" [filterConfig]="filterConfig" (requestFilter)="filterExercises($event)"></app-filter-bar>
+
     <ng-container *ngFor="let exercise of filteredExercises">
       <mat-card class="exercise-item">
-        <div class="icon">
-          <ng-container *ngIf="exercise.iconType === 'fa'">
-            <span class="icon-wrapper"><i ngClass="mat-icon {{exercise.iconName}}" ></i></span>
-          </ng-container>
-          <ng-container *ngIf="exercise.iconType === 'mat'">
-            <span class="icon-wrapper">
-              <mat-icon>{{exercise.iconName}}</mat-icon>
-            </span>
-          </ng-container>
-        </div>
         <div class="info">
           <div class="exercise-name">{{exercise.name}}</div>
           <div class="exercise-desc"><p [innerHtml]="exercise.description | safePipe: 'html'"></p></div>
@@ -45,11 +22,29 @@
             </span>
           </div>
         </div>
-        <div class="actions">
-          <div class="set-desc"><span>One set is:</span><span>{{exercise.measurementUnitQuantity}} {{exercise.measurementUnit}}</span></div>
-          <button mat-raised-button color="primary" (click)="logExercise(1, exercise.exerciseId, exercise)">1 Set</button>
-          <button mat-raised-button color="primary" (click)="logExercise(2, exercise.exerciseId, exercise)">2 Sets</button>
-          <button mat-raised-button color="primary" (click)="logExercise(3, exercise.exerciseId, exercise)">3 Sets</button>
+        <div class="right-stack">
+          <div class="icon">
+            <ng-container *ngIf="exercise.fileId > 0">
+            <span class="icon-wrapper">
+              <img class="image-item" restImage [restSrcId]="exercise.fileId" [maxSize]="120" src="" (click)="showFullImage(exercise)" />
+            </span>
+            </ng-container>
+            <ng-container *ngIf="!exercise.fileId">
+              <ng-container *ngIf="exercise.iconType === 'fa'">
+                <span class="icon-wrapper"><i ngClass="mat-icon {{exercise.iconName}}" ></i></span>
+              </ng-container>
+              <ng-container *ngIf="exercise.iconType === 'mat'">
+            <span class="icon-wrapper">
+              <mat-icon>{{exercise.iconName}}</mat-icon>
+            </span>
+              </ng-container>
+            </ng-container>
+          </div>
+
+          <div class="actions">
+            <div class="set-desc"><span>One set is:</span><span>{{exercise.measurementUnitQuantity}} {{exercise.measurementUnit}}</span></div>
+            <button mat-raised-button color="primary" (click)="logExercise(1, exercise.exerciseId, exercise)">Completed</button>
+          </div>
         </div>
       </mat-card>
     </ng-container>

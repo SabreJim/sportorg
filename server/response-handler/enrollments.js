@@ -77,7 +77,6 @@ const getMyMembersEnrolled = async(req, res, next) => {
             m.is_athlete,
             m.email,
             m.license,
-            m.confirmed,
             m.is_loyalty_member,
             (CASE WHEN 
             (SELECT count(1) FROM beaches.class_enrollments where member_id = m.member_id and season_id = ${seasonId})

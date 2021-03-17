@@ -8,12 +8,15 @@ const Enrollment = require('../response-handler/enrollments');
 const Finances = require('../response-handler/finance');
 const Lookups = require('../response-handler/lookups');
 const Authentication = require('../middleware/server-authentication');
-
+const Files = require('../response-handler/files');
+const jsonBody = require('body-parser').json();
+const fileBody = require('body-parser').json({ limit: '10mb', inflate: true});
+const caching = require('../middleware/caching-service');
 const { adminRequired, addSession, requireSession } = require('./authentication');
 
 const createRouter = (config) => {
     const router = express.Router();
-    const jsonBody = require('body-parser').json();
+    // router.use(caching);
 
 // middleware that is specific to this router
 //     router.use(function timeLog (req, res, next) {
@@ -98,6 +101,12 @@ const createRouter = (config) => {
     // session management
     router.get('/session-token', Authentication.verifyToken);
     router.put('/end-session', jsonBody, Authentication.endSession);
+
+    // file management
+    router.post('/files', fileBody, requireSession, Files.uploadFile);
+    router.get('/files/get-list/:fileType', requireSession, Files.getAllFiles);
+    router.get('/files/:id', Files.getFile);
+    router.get('/images/:id', Files.getImage);
 
     return router;
 };

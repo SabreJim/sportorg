@@ -195,8 +195,8 @@ ALTER TABLE programs DROP FOREIGN KEY fk_season_id;
 ALTER TABLE programs drop column season_id;
 drop table program_levels;
 
-alter table members
-add column confirmed VARCHAR(1);
+--alter table members
+--add column confirmed VARCHAR(1);
 alter table members
 add column license VARCHAR(50);
 alter table members
@@ -239,12 +239,12 @@ CREATE TABLE beaches.class_enrollments (
 );
 
 // FITNESS TRACKER
-CREATE TABLE beaches.images (
-    image_id MEDIUMINT NOT NULL auto_increment,
-    type VARCHAR(30),
-    value BLOB,
-    PRIMARY KEY(image_id)
-);
+--CREATE TABLE beaches.images (
+--    image_id MEDIUMINT NOT NULL auto_increment,
+--    type VARCHAR(30),
+--    value BLOB,
+--    PRIMARY KEY(image_id)
+--);
 
 CREATE TABLE beaches.exercises (
     exercise_id MEDIUMINT NOT NULL auto_increment,
@@ -252,7 +252,7 @@ CREATE TABLE beaches.exercises (
     description VARCHAR(1000),
     measurement_unit VARCHAR(50) NOT NULL,
     measurement_unit_quantity INT NOT NULL,
-    image_id MEDIUMINT references beaches.images(image_id),
+    file_id MEDIUMINT references beaches.files(file_id),
     icon_type VARCHAR(20) NOT NULL,
     icon_name VARCHAR(50) NOT NULL,
     balance_value INT DEFAULT 0,
@@ -577,3 +577,22 @@ INSERT INTO beaches.companies (company_name) VALUES ('Beaches East');
 INSERT INTO beaches.projects
 (project_name, type, private_key_id, private_key)
 VALUES ('beachesEast', 'config', 'companyId', 1);
+
+-- start of file upload changes
+CREATE TABLE beaches.files (
+    file_id MEDIUMINT NOT NULL auto_increment,
+    data MEDIUMBLOB NOT NULL,
+    preview MEDIUMBLOB NULL,
+    file_name VARCHAR(200) NOT NULL DEFAULT 'image.jpg',
+    file_type VARCHAR(40) NOT NULL DEFAULT 'image',
+    asset_type VARCHAR(40),
+    category VARCHAR(40) NOT NULL DEFAULT 'all',
+    updated_by MEDIUMINT references beaches.users(user_id),
+    update_date DATETIME default CURRENT_TIMESTAMP,
+    PRIMARY KEY (file_id)
+);
+ALTER TABLE beaches.exercises DROP COLUMN image_id;
+ALTER TABLE beaches.exercises ADD file_id MEDIUMINT references beaches.files(file_id);
+DROP TABLE beaches.images;
+
+alter table beaches.members DROP column confirmed;

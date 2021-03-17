@@ -96,12 +96,11 @@ export class MyProfilePageComponent implements OnInit, OnDestroy {
   ];
 
   public getMembers = () => {
-    if (!this.memberSub) {
-      this.memberSub = this.memberService.getMyMembers().subscribe((myMembers: AppMember[]) => {
-        this.myMembers = myMembers;
-        this.detector.detectChanges();
-      });
-    }
+    StaticValuesService.cleanSubs([this.memberSub]); // remove old sub
+    this.memberSub = this.memberService.getMyMembers().subscribe((myMembers: AppMember[]) => {
+      this.myMembers = myMembers;
+      this.detector.detectChanges();
+    });
   };
 
   // Enrollments configuration

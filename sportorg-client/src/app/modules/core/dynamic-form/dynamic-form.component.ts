@@ -103,6 +103,13 @@ export class DynamicFormComponent implements OnInit {
       this.isDirty = true;
     }
   };
+  public updateFileId = (newId: number, fieldName: string) => {
+    if (newId !== this.currentRow[fieldName]){
+      this.currentRow[fieldName] = newId;
+      this.isDirty = true;
+    }
+  };
+
   constructor(public dialog: MatDialog, private lookupService: LookupProxyService) { }
 
   ngOnInit() {

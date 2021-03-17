@@ -1,0 +1,47 @@
+<button mat-raised-button [matMenuTriggerFor]="uploadMenu"
+        [ngClass]="{'menu-done': completed, 'menu-cancel': wasCancelled, 'menu-progress': inProgress, 'menu-fail' : failed }"
+  >{{(completed ? 'Completed' : 'Upload file')}}</button>
+<mat-menu #uploadMenu="matMenu" [xPosition]="position">
+  <div class="menu-content" (click)="$event.stopPropagation()">
+      <input
+        type="file"
+        #fileInputElement id="fileSelectId"
+        style="display: none;"
+        [accept]="accepts"
+        [formControl]="fileInputControl"
+        (input)="fileChanged()" />
+
+    <button mat-raised-button color="primary" class="select-button"
+            (click)="selectFile($event)"
+            [disabled]="fileObject || completed"
+    >Select file</button>
+    <div *ngIf="fileObject" class="file-details">
+      <div><strong>File name:</strong></div>
+      <div class="user-text"><span>{{fileObject.name}}</span></div>
+    </div>
+    <div *ngIf="fileObject" class="file-details">
+      <div><strong>File size:</strong></div>
+      <div class="user-text"><span>{{fileObject.size / 1024 | number:'1.1-3' }} KB</span></div>
+    </div>
+    <div class="action-row">
+      <button *ngIf="fileObject" mat-raised-button color="primary"
+              class="upload-button"
+              (click)="uploadFiles($event)"
+              [disabled]="inProgress || completed"
+      >Send files</button>
+      <button *ngIf="fileObject" mat-raised-button color="warn"
+              class="cancel-button"
+              (click)="cancel()"
+      >{{completed ? 'Upload another' : 'Cancel'}}</button>
+    </div>
+
+
+    <div class="progress-wrapper" *ngIf="inProgress">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+  </div>
+
+</mat-menu>
+
+
+

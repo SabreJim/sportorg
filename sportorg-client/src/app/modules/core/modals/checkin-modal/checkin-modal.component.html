@@ -1,8 +1,8 @@
 <div class="modal-wrapper-sm">
-  <div class="form-scroller">
+  <div class="{{(useMobile) ? '' : 'form-scroller'}}">
     <form autocomplete="off" novalidate class="form-wrapper">
 
-      <mat-card class="field-card">
+      <mat-card class="field-card" *ngIf="!useMobile">
         <div class="form-header">
           <h2>{{title}}</h2>
         </div>
@@ -18,27 +18,72 @@
                   {{answer.answerText}}
                 </mat-radio-button>
               </mat-radio-group>
-            <div class="sub-question-wrapper">
-              <div class="sub-question-left">
-                <div *ngFor="let subQuestion of question.childQuestions" class="sub-question-row sub-question-text">{{subQuestion.questionText}}</div>
-              </div>
-
+            <div class="sub-question-wrapper" *ngFor="let subQuestion of question.childQuestions">
+              <div class="sub-question-left">{{subQuestion.questionText}}</div>
               <div class="sub-question-right">
-                <div *ngFor="let subQuestion of question.childQuestions" class="sub-question-row">
-                  <mat-radio-group
-                    class="radio-group" name="sub-question-group-{{subQuestion.questionId}}"
-                    [(ngModel)]="subQuestion.answerValue" (change)="updateAnswers()">
-                    <mat-radio-button class="answer-button" *ngFor="let answer of subQuestion.answers" [value]="answer.answerId">
-                      {{answer.answerText}}
-                    </mat-radio-button>
-                  </mat-radio-group>
-                </div>
+                <mat-radio-group
+                  class="radio-group" name="sub-question-group-{{subQuestion.questionId}}"
+                  [(ngModel)]="subQuestion.answerValue" (change)="updateAnswers()">
+                  <mat-radio-button class="answer-button" *ngFor="let answer of subQuestion.answers" [value]="answer.answerId">
+                    {{answer.answerText}}
+                  </mat-radio-button>
+                </mat-radio-group>
               </div>
             </div>
           </div>
         </mat-card>
       </mat-card>
     </form>
+
+    <mat-card class="field-card" *ngIf="useMobile && questions && questions.length">
+      <div class="form-header">
+        <h2>{{title}}</h2>
+      </div>
+      <p>Please answer each of the following questions to the best of your knowledge before entering the club</p>
+      <div class="progress-header">
+        <mat-progress-bar class="progress-bar"
+          [color]="'primary'"
+          [mode]="'determinate'"
+          [value]="(currentQuestionIndex + 1) / (questions.length + 1) * 100">
+        </mat-progress-bar>
+        <span class="progress-text">{{currentQuestionIndex + 1}} / {{questions.length + 1}}</span>
+      </div>
+      <div class="stepper-content" *ngIf="currentQuestionIndex < questions.length">
+        <div class="question-text"><strong>{{questions[currentQuestionIndex].questionText}}</strong></div>
+        <mat-radio-group *ngIf="questions[currentQuestionIndex]?.answers.length > 1" [formControl]="stepperRadioGroup"
+                         class="radio-group" name="question-group-{{questions[currentQuestionIndex].questionId}}"
+                         [(ngModel)]="questions[currentQuestionIndex].answerValue" (change)="updateSingleAnswer(false)">
+          <mat-radio-button class="answer-button" *ngFor="let answer of questions[currentQuestionIndex].answers" [value]="answer.answerId">
+            {{answer.answerText}}
+          </mat-radio-button>
+        </mat-radio-group>
+
+        <div class="sub-question-wrapper top-space" *ngIf="questions[currentQuestionIndex] && questions[currentQuestionIndex].childQuestions[currentSubQuestionIndex]">
+          <div class="sub-question-left">{{questions[currentQuestionIndex].childQuestions[currentSubQuestionIndex].questionText}}</div>
+          <div class="sub-question-right">
+            <mat-radio-group [formControl]="stepperSubRadioGroup"
+              class="radio-group" name="sub-question-group-{{questions[currentQuestionIndex].childQuestions[currentSubQuestionIndex].questionId}}"
+              [(ngModel)]="questions[currentQuestionIndex].childQuestions[currentSubQuestionIndex].answerValue" (change)="updateSingleAnswer(true)">
+              <mat-radio-button class="answer-button" *ngFor="let answer of questions[currentQuestionIndex].childQuestions[currentSubQuestionIndex].answers" [value]="answer.answerId">
+                {{answer.answerText}}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </div>
+        <div class="progress-header" *ngIf="questions[currentQuestionIndex] && questions[currentQuestionIndex].childQuestions[currentSubQuestionIndex]">
+          <mat-progress-bar class="progress-bar"
+                            [color]="'accent'"
+                            [mode]="'determinate'"
+                            [value]="(currentSubQuestionIndex + 1) / (questions[currentQuestionIndex].childQuestions.length + 1) * 100">
+          </mat-progress-bar>
+          <span class="progress-text">{{currentSubQuestionIndex + 1}} / {{questions[currentQuestionIndex].childQuestions.length + 1}}</span>
+        </div>
+
+      </div>
+      <div class="stepper-content" *ngIf="currentQuestionIndex === questions.length">
+        <p class="completed"><strong>All done!</strong></p>
+      </div>
+    </mat-card>
   </div>
   <div class="action-bar">
     <button mat-raised-button [mat-dialog-close]>Cancel</button>

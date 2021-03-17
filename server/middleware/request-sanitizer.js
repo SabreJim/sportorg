@@ -253,8 +253,7 @@ const memberSchema = {
         {fieldName: 'email', type: 'string', allowNull: false },
         {fieldName: 'cellPhone', type: 'string', allowNull: true },
         {fieldName: 'homePhone', type: 'string', allowNull: true },
-        {fieldName: 'license', type: 'string', allowNull: true },
-        {fieldName: 'confirmed', type: 'string', allowNull: true }
+        {fieldName: 'license', type: 'string', allowNull: true }
     ]
 };
 const userSchema = {
@@ -316,7 +315,7 @@ const exerciseSchema = {
         {fieldName: 'ownerGroupId', type: 'int', allowNull: false },
         {fieldName: 'name', type: 'string', allowNull: false },
         {fieldName: 'description', type: 'html', allowNull: true},
-        {fieldName: 'imageId', type: 'string', allowNull: true},
+        {fieldName: 'fileId', type: 'int', allowNull: true},
         {fieldName: 'measurementUnit', type: 'string', allowNull: false },
         {fieldName: 'measurementUnitQuantity', type: 'int', allowNull: false },
         {fieldName: 'iconType', type: 'string', allowNull: false },

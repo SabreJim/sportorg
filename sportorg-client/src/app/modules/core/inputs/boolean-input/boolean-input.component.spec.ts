@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { BooleanInputComponent } from './boolean-input.component';
 
@@ -6,7 +6,7 @@ describe('BooleanInputComponent', () => {
   let component: BooleanInputComponent;
   let fixture: ComponentFixture<BooleanInputComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BooleanInputComponent ]
     })

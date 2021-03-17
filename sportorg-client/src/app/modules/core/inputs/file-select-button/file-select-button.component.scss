@@ -1,0 +1,19 @@
+.menu-content {
+  display: flex;
+  flex-flow: column nowrap;
+  min-width: 560px;
+  align-items: flex-start;
+  padding: 8px;
+  font-family: Roboto;
+  font-size: 14px;
+  .mat-raised-button {
+    margin: 10px;
+  }
+}
+::ng-deep.wide-menu {
+  max-width: 1000px;
+}
+
+.select-button {
+  align-self: flex-end;
+}

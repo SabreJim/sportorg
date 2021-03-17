@@ -1,1 +1,38 @@
-<p>filter-bar works!</p>
+<div class="filter-bar">
+      <mat-form-field floatLabel="always" appearance="outline" [ngClass]="{'hidden': !filterConfig.hasSearch}">
+        <mat-label>{{filterConfig.searchTitle}}</mat-label>
+        <input type="text" [placeholder]="filterConfig.searchPlaceholder" matInput [formControl]="textInput"/>
+      </mat-form-field>
+
+    <ng-container *ngFor="let filter of filterConfig.options">
+        <ng-container *ngIf="!filter.singleSelect">
+          <mat-form-field floatLabel="always" appearance="outline" >
+            <mat-label>{{filter.title}}</mat-label>
+            <input matInput class="hidden" />
+
+            <mat-button mat-raised-button color="primary" [matMenuTriggerFor]="belowMenu">{{filter.placeholder}}</mat-button>
+            <mat-menu #belowMenu="matMenu" xPosition="after" yPosition="below" >
+              <div (click)="$event.stopPropagation()" class="select-menu">
+                <mat-checkbox class="multi-select" *ngFor="let option of filter.options"
+                              (change)="selectCheckbox($event, option, filter.fieldName)">
+                  {{option.name}}
+                </mat-checkbox>
+              </div>
+            </mat-menu>
+          </mat-form-field>
+        </ng-container>
+
+        <ng-container *ngIf="filter.singleSelect">
+          <mat-form-field floatLabel="always" appearance="outline" >
+            <mat-label>{{filter.title}}</mat-label>
+            <input matInput class="hidden" />
+            <mat-button-toggle-group (change)="selectRadio($event, filter.fieldName)">
+              <mat-button-toggle *ngFor="let option of filter.options"
+                                 [value]="option.id"
+              >{{option.name}}</mat-button-toggle>
+            </mat-button-toggle-group>
+          </mat-form-field>
+        </ng-container>
+
+    </ng-container>
+</div>

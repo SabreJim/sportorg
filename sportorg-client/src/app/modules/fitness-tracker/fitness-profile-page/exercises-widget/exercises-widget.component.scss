@@ -1,3 +1,10 @@
+app-filter-bar {
+  max-width: 80%;
+  min-width: 80%;
+  margin-bottom: 10px;
+  padding-top: 24px;
+  padding-bottom: 0;
+}
 .widget-card {
   max-width: 800px;
   margin: 0 auto;
@@ -24,28 +31,58 @@
       flex-flow: row wrap;
       margin-bottom: 10px;
       //background-color: #cbf3cb;
-      .icon {
+      .right-stack {
+        flex: 1 1 120px;
         display: flex;
-        max-width: 60px;
+        max-width: 120px;
+        flex-flow: column nowrap;
+        padding: 10px;
+        justify-content: center;
         align-items: center;
-        margin-right: 10px;
-        .edit-button {
-          position: absolute;
-          top: 5px;
-          left: 5px;
-          min-width: 50px;
+        .icon {
+          display: flex;
+          max-width: 100px;
+          align-items: center;
+          margin-right: 10px;
+          margin-bottom: 20px;
+          img {
+            cursor: zoom-in;
+          }
+          .edit-button {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            min-width: 50px;
+            .mat-icon {
+              font-size: 24px;
+              height: 24px;
+              width: 24px;
+            }
+          }
           .mat-icon {
-            font-size: 24px;
-            height: 24px;
-            width: 24px;
+            font-size: 80px;
+            height: 80px;
+            width: 80px;
           }
         }
-        .mat-icon {
-          font-size: 36px;
-          height: 40px;
-          width: 40px;
+        .actions {
+          max-width: 100px;
+          min-width: 100px;
+          justify-content: center;
+          align-items: center;
+          display: flex;
+          flex-flow: column nowrap;
+          .set-desc {
+            font-weight: 600;
+            display: flex;
+            flex-flow: column nowrap;
+          }
+          .mat-raised-button {
+            margin: 5px 0;
+          }
         }
       }
+
       .info {
         flex: 1 1 0px;
         display: flex;
@@ -85,31 +122,16 @@
 
         }
       }
-      .actions {
-        max-width: 100px;
-        min-width: 100px;
-        justify-content: center;
-        align-items: center;
-        display: flex;
-        flex-flow: column nowrap;
-        .set-desc {
-          font-weight: 600;
-          display: flex;
-          flex-flow: column nowrap;
-        }
-        .mat-raised-button {
-          margin: 5px 0;
-        }
-      }
     }
   }
 }
-@media (max-width: 800px) {
+@media (max-width: 600px) {
  .exercise-item {
-   .actions {
+   .right-stack {
      flex: 1 1 auto !important;
      flex-flow: row nowrap !important;
      max-width: 100% !important;
+     justify-content: space-evenly !important;
      .mat-raised-button {
        display: flex;
        flex: 1 1 auto;

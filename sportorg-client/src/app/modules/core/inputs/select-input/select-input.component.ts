@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import {LookupProxyService} from "../../services/lookup-proxy.service";
 import {LookupItem} from "../../models/rest-objects";
-import {MatSelectChange} from "@angular/material";
+import { MatSelectChange } from "@angular/material/select";
 
 @Component({
   selector: 'app-select-input',
@@ -22,7 +22,8 @@ export class SelectInputComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() lookupType: string;
   @Input() showEmpty = true;
-  @Input() maxWidth: string = '100%';
+  @Input() title: string;
+  @Input() setWidth: string = '400px';
   @Input() set staticLookup (items: LookupItem[]) {
     if (items && items.length) {
       this.options = items;
@@ -40,10 +41,10 @@ export class SelectInputComponent implements OnInit, AfterViewInit, OnDestroy {
       // a blank value is being set after the component has been initialized
       this.selectedValue = null;
       this.selectionObject.emit(null);
-      this.selectedChanged.emit(null);
+      this.selectedChange.emit(null);
     }
   } get selected() { return this.selectedValue; }
-  @Output() selectedChanged =  new EventEmitter<number>();
+  @Output() selectedChange =  new EventEmitter<number>();
   @Output() selectionObject =  new EventEmitter<LookupItem>();
   public selectedValue: number = null;
   public options: LookupItem[] = [];
@@ -54,7 +55,7 @@ export class SelectInputComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public itemSelected = (newSelection: MatSelectChange) => {
-    this.selectedChanged.emit(newSelection.value);
+    this.selectedChange.emit(newSelection.value);
     const foundItem = this.options.find(item => item.id === newSelection.value);
     this.selectionObject.emit(foundItem);
   }

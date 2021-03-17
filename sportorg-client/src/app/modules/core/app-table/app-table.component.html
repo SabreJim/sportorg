@@ -49,7 +49,7 @@
     <span *ngIf="column.displayType === 'button'" class="content">
                   <button class="mat-raised-button mat-button-base mat-primary {{row[column.buttonClass]}}"
                           [disabled]="column.buttonDisabledFn(row)"
-                          (click)="column.buttonFn(row)">{{column.buttonTextFn(row)}}</button>
+                          (click)="column.buttonFn(row, $event)">{{column.buttonTextFn(row)}}</button>
     </span>
   </td>
 </ng-template>

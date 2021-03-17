@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormControl} from "@angular/forms";
-import {debounceTime, distinctUntilChanged} from "rxjs/operators";
+import {FormControl, ValidatorFn, Validators} from "@angular/forms";
+import {debounceTime, distinctUntilChanged, filter} from "rxjs/operators";
 
 @Component({
   selector: 'app-string-input',
@@ -10,27 +10,61 @@ import {debounceTime, distinctUntilChanged} from "rxjs/operators";
 export class StringInputComponent implements OnInit {
 
   @Input() set value (newValue: string) {
-    this.stringValue = newValue;
+    if (this.textFormControl) {
+      this.textFormControl.setValue(newValue);
+    }
   }
-  @Input() minWidth: string = '200px';
+  @Input() setWidth: string = '350px';
   @Input() useTextArea: boolean = false;
-  @Input() placeholder: string;
-  @Input() disabled = '';
-  @Output() stringChanged = new EventEmitter<string>();
+  @Input() hint: string;
+  @Input() title: string;
+  @Input() set isRequired (newValue: boolean) {
+    this._isRequired = newValue;
+    this.updateValidators();
+  } get isRequired() {
+    return this._isRequired;
+  }
+  protected _isRequired = false;
+  @Input() set validationType (newValue: string) {
+    this._validationType = newValue;
+    this.updateValidators();
+  } get validationType() {
+    return this._validationType;
+  }
+  protected _validationType = '';
+  @Input() set disabled (setDisabled: boolean) {
+    if (setDisabled) {
+      this.textFormControl.enable();
+    } else {
+      this.textFormControl.disable()
+    }
+  }
+  @Output() valueChange = new EventEmitter<string>();
+  @Output() valid = new EventEmitter<boolean>();
 
   public textFormControl = new FormControl();
   public clearString = () => {
-    this.stringValue = null;
     this.textFormControl.setValue(null);
-    this.stringChanged.emit(this.stringValue);
+    this.valueChange.emit(null);
+  }
+
+  protected updateValidators = () => {
+    const validators: ValidatorFn[] = [];
+    if (this.isRequired) {
+      validators.push(Validators.required);
+    }
+    if (this.validationType && this.validationType === 'email'){
+      validators.push(Validators.email);
+    }
+    this.textFormControl.setValidators(validators);
+    this.textFormControl.updateValueAndValidity();
   }
 
   public updateValue =(event: Event) => {
     const newValue = (event.srcElement as HTMLInputElement).value || null;
     // TODO: input sanitization
-    this.stringChanged.emit(newValue);
+    this.valueChange.emit(newValue);
   }
-  public stringValue: string;
   constructor() { }
 
   ngOnInit() {
@@ -38,13 +72,17 @@ export class StringInputComponent implements OnInit {
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((newText) => {
         if (newText && newText.length) {
-          this.stringChanged.emit(newText);
-          this.stringValue = newText;
+          this.valueChange.emit(newText);
         } else {
-          this.stringChanged.emit(null);
-          this.stringValue = null;
+          this.valueChange.emit(null);
+          this.textFormControl.setValue(null);
         }
       });
+
+    this.textFormControl.statusChanges
+      .pipe().subscribe((status: string) => {
+      this.valid.emit(status === 'VALID');
+    });
   }
 
 }

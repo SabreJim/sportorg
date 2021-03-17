@@ -18,6 +18,8 @@ export class BooleanInputComponent implements OnInit {
   }
   @Input() valueMask: string[] = ['Y', 'N'];
   @Input() useBoolean: boolean = false;
+  @Input() setWidth = '300px';
+  @Input() title: string;
   @Output() valueChanged = new EventEmitter<string>();
   @Output() booleanChanged = new EventEmitter<boolean>();
   public stringValue: string;

@@ -46,7 +46,7 @@
             [lookupType]="editField.lookupField"
             [staticLookup]="editField.lookupStatic"
             [selected]="currentRow[editField.fieldName]"
-            (selectedChanged)="updateSelection($event, editField.fieldName)"
+            (selectedChange)="updateSelection($event, editField.fieldName)"
           ></app-select-input>
         </ng-container>
       <ng-container *ngIf="editField.type ==='html'">
@@ -54,6 +54,20 @@
           [htmlString]="currentRow[editField.fieldName]"
           (updateHtml)="updateHtml($event, editField.fieldName)"
         ></app-html-input>
+      </ng-container>
+      <ng-container *ngIf="editField.type ==='image'">
+        <input type="text" disabled [value]="currentRow[editField.fieldName]" />
+        <file-select-button
+          [fileType]="'image'"
+          [category]="entityType"
+          (updatedId)="updateFileId($event, editField.fieldName)"
+        ></file-select-button>
+        <file-upload-button
+          [fileType]="'image'"
+          [category]="entityType"
+          [requestType]="entityType"
+          (updatedId)="updateFileId($event, editField.fieldName)"
+        ></file-upload-button>
       </ng-container>
       </div>
     </div>

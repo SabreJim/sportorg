@@ -62,7 +62,8 @@ export interface Exercise {
   description: string;
   iconType: string;
   iconName: string;
-  imageId: number;
+  fileId: number;
+  showFullImage?: boolean;
   measurementUnit: string;
   measurementUnitQuantity: number; // how many counts as "1"
   balanceValue?: number;

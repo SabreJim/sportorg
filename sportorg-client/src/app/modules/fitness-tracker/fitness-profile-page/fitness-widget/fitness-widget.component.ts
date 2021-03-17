@@ -4,7 +4,7 @@ import {AppUser} from "../../../core/models/authentication";
 import {ConfirmModalComponent} from "../../../core/modals/confirm-modal/confirm-modal.component";
 import {SnackbarService} from "../../../core/services/snackbar.service";
 import {FitnessProxyService} from "../../../core/services/fitness-proxy.service";
-import {MatDialog} from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 import {TipsProxyService} from "../../../core/services/tips-proxy.service";
 
 @Component({

@@ -267,7 +267,6 @@ BEGIN
     DECLARE member_name VARCHAR(200) DEFAULT ' ';
     DECLARE season_name VARCHAR(200) DEFAULT ' ';
 
-
     -- verify the enrollment doesn't exist
     SELECT COUNT(1) INTO enrollment_exists
     FROM beaches.class_enrollments WHERE season_id = p_season_id AND
@@ -293,7 +292,7 @@ BEGIN
     WHERE member_id = p_member_id;
 
     SELECT (CASE WHEN count(1) > 0 THEN 10 ELSE 0 END) INTO family_discount FROM beaches.class_enrollments ce
-    WHERE ce.member_id IN
+    WHERE ce.season_id = p_season_id AND ce.member_id IN
     (SELECT m.member_id FROM beaches.members m WHERE
         (EXISTS (SELECT user_id from beaches.member_users mu where m.member_id = mu.member_id AND mu.user_id = p_user_id)
             OR (SELECT u.is_admin FROM beaches.users u where u.user_id = p_user_id) = 'Y'
@@ -388,5 +387,54 @@ BEGIN
         (v_invoice_id, v_from_id, v_from_type, v_to_id, v_to_type, v_amount, CURDATE(), v_method, CURDATE());
     SELECT LAST_INSERT_ID() INTO new_payment_id;
     RETURN new_payment_id;
+END;
+/
+
+CREATE FUNCTION beaches.upload_file(p_meta_data JSON, p_payload MEDIUMBLOB, p_preview MEDIUMBLOB) RETURNS INTEGER
+    SQL SECURITY INVOKER
+BEGIN
+    DECLARE new_id INTEGER default 0;
+    DECLARE v_existing_file_id INTEGER default 0;
+    DECLARE v_updated_by INT DEFAULT 0;
+    DECLARE v_file_name VARCHAR(200) DEFAULT 'image.jpg';
+    DECLARE v_file_type VARCHAR(40) DEFAULT 'image';
+    DECLARE v_asset_type VARCHAR(40) DEFAULT 'image';
+    DECLARE v_category VARCHAR(40) DEFAULT 'all';
+
+    -- get the values from the JSON request
+    set v_existing_file_id = JSON_EXTRACT(p_meta_data,'$.fileId');
+    set v_updated_by = JSON_UNQUOTE(JSON_EXTRACT(p_meta_data,'$.updatedBy'));
+    set v_file_name = JSON_UNQUOTE(JSON_EXTRACT(p_meta_data,'$.fileName'));
+    set v_file_type = JSON_UNQUOTE(JSON_EXTRACT(p_meta_data,'$.fileType'));
+    set v_asset_type = JSON_UNQUOTE(JSON_EXTRACT(p_meta_data,'$.assetType'));
+    set v_category = JSON_UNQUOTE(JSON_EXTRACT(p_meta_data,'$.category'));
+
+    IF v_existing_file_id > 0 THEN -- updating an existing record
+        UPDATE beaches.files SET
+            file_name = v_file_name, file_type = v_file_type, asset_type = v_asset_type,
+            category = v_category, updated_by = v_updated_by, update_date = CURDATE()
+            WHERE file_id = v_existing_file_id;
+        IF p_payload IS NOT NULL THEN -- empty payload means not changing the content
+            UPDATE beaches.files SET data = p_payload WHERE file_id = v_existing_file_id;
+        END IF;
+        IF p_preview IS NOT NULL THEN
+            UPDATE beaches.files SET preview = p_preview WHERE file_id = v_existing_file_id;
+        END IF;
+        return v_existing_file_id;
+    ELSE -- adding a new record
+        IF p_payload IS NOT NULL THEN -- empty payload with no existing record means nothing to do
+            INSERT INTO beaches.files
+                (data, file_name, file_type, asset_type, category, updated_by, update_date)
+                VALUES
+                (p_payload, v_file_name, v_file_type, v_asset_type, v_category, v_updated_by, CURDATE());
+            SELECT LAST_INSERT_ID() INTO new_id;
+            IF p_preview IS NOT NULL THEN
+                UPDATE beaches.files SET preview = p_preview WHERE file_id = new_id;
+            END IF;
+            RETURN new_id;
+        ELSE
+            return -1;
+        END IF;
+    END IF;
 END;
 /

@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit
 import {TableColumn} from "../../core/models/ui-objects";
 import {AppMember, Enrollment, Invoice, InvoiceItem, MemberAttendance, Payment} from "../../core/models/data-objects";
 import {MemberModalComponent} from "../../core/modals/member-modal/member-modal.component";
-import {MatDialog} from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 import {MembersProxyService} from "../../core/services/member-proxy.service";
 import {FirebaseAuthService} from "../../core/services/firebase-auth.service";
 import {AppUser, UserProfile} from "../../core/models/authentication";
@@ -96,12 +96,11 @@ export class MyProfilePageComponent implements OnInit, OnDestroy {
   ];
 
   public getMembers = () => {
-    if (!this.memberSub) {
-      this.memberSub = this.memberService.getMyMembers().subscribe((myMembers: AppMember[]) => {
-        this.myMembers = myMembers;
-        this.detector.detectChanges();
-      });
-    }
+    StaticValuesService.cleanSubs([this.memberSub]); // remove old sub
+    this.memberSub = this.memberService.getMyMembers().subscribe((myMembers: AppMember[]) => {
+      this.myMembers = myMembers;
+      this.detector.detectChanges();
+    });
   };
 
   // Enrollments configuration

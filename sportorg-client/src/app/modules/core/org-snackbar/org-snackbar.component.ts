@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatSnackBar} from "@angular/material";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import {Subscription} from "rxjs";
 import {SnackbarService, SnackMessage} from "../services/snackbar.service";
 

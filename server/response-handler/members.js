@@ -23,8 +23,7 @@ const getMyMembers = async(req, res, next) => {
             m.email,
             m.cell_phone,
             m.home_phone,
-            m.license,
-            m.confirmed
+            m.license
         FROM beaches.members m
         LEFT JOIN beaches.regions r ON r.region_id = m.province_id
         WHERE m.is_active = 'Y' AND 
@@ -64,7 +63,7 @@ const getMemberAttendance = async(req, res, next) => {
             WHERE DATE(al.checkin_date_time) = '${requestDate}' AND status = 'OUT' 
             GROUP BY al.member_id) checkout on checkout.member_id = m.member_id
         LEFT JOIN beaches.clubs cl ON cl.club_id = m.club_id          
-        WHERE m.is_active = 'Y' AND m.confirmed = 'Y' AND 
+        WHERE m.is_active = 'Y' AND
             (EXISTS (SELECT user_id from beaches.member_users mu where m.member_id = mu.member_id AND mu.user_id = ${myUserId})
             OR (SELECT u.is_admin FROM beaches.users u where u.user_id = ${myUserId}) = 'Y'
             OR EXISTS (SELECT cau.user_id FROM beaches.club_admin_users cau WHERE cau.user_id = ${myUserId} AND m.club_id = cau.club_id)
@@ -156,7 +155,6 @@ const checkAnswersAgainstQuestions = async (answers, questionGroup) => {
         });
         return anyInvalid;
     } catch (err) {
-        console.log('error checking questions and answers');
         return 'N';
     }
 }
@@ -212,7 +210,7 @@ const getAnonymousMembers = async(req, res, next) => {
             DATE_FORMAT(m.membership_start, '%Y-%m-%d') as 'membership_start',
             m.license
         FROM members m
-        WHERE m.is_active = 'Y' AND m.confirmed = 'Y';`;
+        WHERE m.is_active = 'Y';`;
     const allMembers = await MySQL.runQuery(query);
     returnResults(res, allMembers);
 };
@@ -235,7 +233,7 @@ const upsertMember = async (req, res, next) => {
             }
         } else {
             // when creating a new member, first ensure there isn't already a duplicate
-            const matchQuery = `select count(member_id) as 'matches' from members
+            const matchQuery = `select count(member_id) as 'matches' from beaches.members
             where (UPPER(first_name) = UPPER(?) AND UPPER(last_name) = UPPER(?))
             OR (UPPER(license) = UPPER(?))`;
 

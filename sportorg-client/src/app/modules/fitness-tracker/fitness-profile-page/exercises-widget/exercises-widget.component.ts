@@ -10,11 +10,14 @@ import {StaticValuesService} from "../../../core/services/static-values.service"
 import {Subscription} from "rxjs";
 import {SnackbarService} from "../../../core/services/snackbar.service";
 import {ConfirmModalComponent} from "../../../core/modals/confirm-modal/confirm-modal.component";
-import {MatCheckboxChange, MatDialog} from "@angular/material";
+import { MatCheckboxChange } from "@angular/material/checkbox";
+import { MatDialog } from "@angular/material/dialog";
 import {AppUser} from "../../../core/models/authentication";
 import {LookupItem} from "../../../core/models/rest-objects";
 import {FormControl} from "@angular/forms";
 import {distinctUntilChanged, debounceTime} from "rxjs/operators";
+import {ImagePreviewModalComponent} from "../../../core/modals/image-preview-modal/image-preview-modal.component";
+import {FilterBarConfig, FilterRequest} from "../../../core/filter-bar/filter-bar.component";
 
 @Component({
   selector: 'app-exercises-widget',
@@ -45,7 +48,7 @@ export class ExercisesWidgetComponent implements OnInit, OnDestroy {
             exercise.statValues = icons;
             return exercise;
           });
-          this.filterExercises();
+          this.filterExercises(null);
         });
       }
       this.fitnessProxy.getExercises(this.profile.athleteId);
@@ -61,43 +64,36 @@ export class ExercisesWidgetComponent implements OnInit, OnDestroy {
     { id: 4, name: 'foot speed', lookup: 'statValues', moreInfo: 'footSpeedValue' },
     { id: 5, name: 'hand speed', lookup: 'statValues', moreInfo: 'handSpeedValue' },
   ];
-  protected selectedStats: string[] = [];
-
-  public selectStat = (change: MatCheckboxChange, source: LookupItem) => {
-    if (change.checked) {
-      // add to selected
-      this.selectedStats.push(source.moreInfo);
-    } else {
-      this.selectedStats = this.selectedStats.filter((id) => id !== source.moreInfo);
-    }
-    this.filterExercises();
-  };
-
-  public searchText: string = '';
-  public textInput = new FormControl();
-  public clearString = () => {
-    this.searchText = '';
-    this.textInput.setValue(null);
-    this.filterExercises();
+  public filterConfig: FilterBarConfig = {
+    hasSearch: true,
+    searchTitle: 'Search',
+    searchPlaceholder: 'Search exercises',
+    options: [
+      { title: 'Stats', placeholder: 'Show only ...', fieldName: 'stats', singleSelect: false, value: '', options: this.statOptions }
+    ]
   }
+
   // run the join of typeahead filtering and selection filtering
-  public filterExercises = () => {
+  public filterExercises = (request: FilterRequest) => {
     if (!this.exercises || !this.exercises.length) {
       this.filteredExercises = [];
       return; // no source to filter on
     }
     this.filteredExercises = this.exercises.filter((row: Exercise) => {
+      if (!request) return true; // not filtered yet
       let searchMatch = true;
-      if (this.searchText && !((row.name.toUpperCase()).includes(this.searchText))) {
+      if (request.search && !((row.name.toUpperCase()).includes(request.search))) {
         searchMatch = false;
       }
       let statMatch = true;
       // all selected and none selected both return everything
-      if (this.selectedStats.length > 0 && this.selectedStats.length < this.statOptions.length) {
+      const filterStats: number[] = request.filters['stats'];
+      if (filterStats.length > 0 && filterStats.length  < this.statOptions.length) {
         // check if the row has the requested values
         let anyMatch = false;
-        this.selectedStats.forEach((stat: string, index: number) => {
-          if (row[stat] && row[stat] > 0) {
+        filterStats.forEach((statId: number) => {
+          const statOption: LookupItem = this.statOptions.find(item => item.id = statId);
+          if (row[statOption.moreInfo] && row[statOption.moreInfo] > 0) {
             anyMatch = true;
           }
         });
@@ -107,6 +103,11 @@ export class ExercisesWidgetComponent implements OnInit, OnDestroy {
     });
   }
 
+  // throw up the full image in a modal. Animated GIFs should appear in the modal but not the preview
+  public showFullImage = (exercise: Exercise) => {
+    this.dialog.open(ImagePreviewModalComponent,
+      { data: { imageId: exercise.fileId, isPreview: false } });
+  }
   public exercises: Exercise[] = [];
   public filteredExercises: Exercise[] = [];
 
@@ -132,16 +133,7 @@ export class ExercisesWidgetComponent implements OnInit, OnDestroy {
   constructor(protected fitnessProxy: FitnessProxyService, protected dialog: MatDialog) { }
 
   ngOnInit() {
-    this.textInput.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged())
-      .subscribe((newText) => {
-        if (newText && newText.length) {
-          this.searchText = newText.toUpperCase();
-        } else {
-          this.searchText = '';
-        }
-        this.filterExercises();
-      });
+
   }
 
   ngOnDestroy(): void {

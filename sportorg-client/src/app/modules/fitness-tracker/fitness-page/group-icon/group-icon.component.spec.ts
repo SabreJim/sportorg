@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { GroupIconComponent } from './group-icon.component';
 
@@ -6,7 +6,7 @@ describe('GroupIconComponent', () => {
   let component: GroupIconComponent;
   let fixture: ComponentFixture<GroupIconComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ GroupIconComponent ]
     })

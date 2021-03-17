@@ -8,11 +8,11 @@
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "module": "commonjs",
+    "module": "es2020",
     "moduleResolution": "node",
     "importHelpers": true,
     "suppressImplicitAnyIndexErrors": true,
-    "target": "es5",
+    "target": "es2015",
     "typeRoots": [
       "node_modules/@types"
     ],

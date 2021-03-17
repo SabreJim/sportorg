@@ -115,8 +115,7 @@ export class AdminPageComponent implements OnInit {
       new TableColumn('postalCode', 'Postal Code', 'string'),
       new TableColumn('cellPhone', 'Cell #', 'string'),
       new TableColumn('isActive', 'Active', 'boolean'),
-      new TableColumn('isAthlete', 'Athlete', 'boolean'),
-      new TableColumn('confirmed', 'Confirmed', 'boolean')
+      new TableColumn('isAthlete', 'Athlete', 'boolean')
     ]
   };
 

@@ -1,10 +1,14 @@
-<mat-select [(ngModel)]="selectedValue" [name]="lookupType" (selectionChange)="itemSelected($event)" [style.max-width]="maxWidth" >
-  <ng-container *ngIf="showEmpty">
-    <mat-option  [value]="">
-      <span class="main-text">-- select an option --</span>
+<mat-form-field floatLabel="always" appearance="outline" [style.min-width]="'calc(50px + ' + setWidth + ')'" [style.max-width]="'calc(50px + ' + setWidth + ')'">
+  <mat-label>{{title}}</mat-label>
+  <input type="number" matInput class="hidden"/>
+  <mat-select [(ngModel)]="selectedValue" [name]="lookupType" (selectionChange)="itemSelected($event)" [style.min-width]="setWidth" [style.max-width]="setWidth" >
+    <ng-container *ngIf="showEmpty">
+      <mat-option  [value]="">
+        <span class="main-text">-- select an option --</span>
+      </mat-option>
+    </ng-container>
+    <mat-option *ngFor="let option of options" [value]="option.id">
+      <span class="main-text">{{option.name}}</span> <span *ngIf="option.moreInfo" class="alt-text">({{option.moreInfo}})</span>
     </mat-option>
-  </ng-container>
-  <mat-option *ngFor="let option of options" [value]="option.id">
-    <span class="main-text">{{option.name}}</span> <span *ngIf="option.moreInfo" class="alt-text">({{option.moreInfo}})</span>
-  </mat-option>
-</mat-select>
+  </mat-select>
+</mat-form-field>

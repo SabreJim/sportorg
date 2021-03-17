@@ -27,7 +27,7 @@ export interface ColumnConfig {
   lookupStatic?: LookupItem[];
   showColumn?: boolean;
   buttonClass?: string;
-  buttonFn?: (any) => void;
+  buttonFn?: (any, event: MouseEvent) => void;
   buttonTextFn?: (any) => string;
   buttonDisabledFn?: (any) => boolean;
   sortDirection?: 'ASC' | 'DESC';
@@ -41,7 +41,7 @@ export class TableColumn {
   lookupField?: string;
   lookupStatic?: LookupItem[];
   buttonClass?: string;
-  buttonFn?: (any) => void;
+  buttonFn?: (any, MouseEvent) => void;
   buttonTextFn?: (any) => string;
   buttonDisabledFn?: (any) => boolean;
   showColumn: boolean;
@@ -67,7 +67,7 @@ export class TableColumn {
     } else {
       this.displayField = fieldName;
     }
-    if (['string' , 'long-string' , 'number', 'currency' ,'date', 'time', 'select', 'boolean', 'html'].includes(type)) {
+    if (['string' , 'long-string' , 'number', 'currency' ,'date', 'time', 'select', 'boolean', 'html', 'image'].includes(type)) {
       this.type = type;
     } else {
       this.type = 'string';

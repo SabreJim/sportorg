@@ -37,6 +37,11 @@ import { CheckinModalComponent } from './modals/checkin-modal/checkin-modal.comp
 import { MemberScreeningModalComponent } from './modals/member-screening-modal/member-screening-modal.component';
 import {InvoiceModalComponent} from "./modals/invoice-modal/invoice-modal.component";
 import {PaymentModalComponent} from "./modals/payment-modal/payment-modal.component";
+import {FileUploadButtonComponent} from "./inputs/file-upload-button/file-upload-button.component";
+import {RestImageDirective} from "./directives/rest-image.directive";
+import {FileSelectButtonComponent} from "./inputs/file-select-button/file-select-button.component";
+import {ImagePreviewModalComponent} from "./modals/image-preview-modal/image-preview-modal.component";
+import {CheckinMenuComponent} from "./org-menu-bar/checkin-menu/checkin-menu.component";
 
 
 @NgModule({
@@ -71,7 +76,12 @@ import {PaymentModalComponent} from "./modals/payment-modal/payment-modal.compon
     TabRoutingDirective,
     TooltipIconComponent,
     CheckinModalComponent,
-    MemberScreeningModalComponent
+    CheckinMenuComponent,
+    MemberScreeningModalComponent,
+    FileUploadButtonComponent,
+    FileSelectButtonComponent,
+    RestImageDirective,
+    ImagePreviewModalComponent
   ],
   exports: [
     OrgHeaderComponent,
@@ -99,7 +109,11 @@ import {PaymentModalComponent} from "./modals/payment-modal/payment-modal.compon
     TooltipDirective,
     HtmlEditorModalComponent,
     LoginRequiredDirective,
-    TabRoutingDirective
+    TabRoutingDirective,
+    FileUploadButtonComponent,
+    FileSelectButtonComponent,
+    RestImageDirective,
+    FilterBarComponent
   ],
   imports: [
     MaterialModule,
@@ -114,7 +128,6 @@ import {PaymentModalComponent} from "./modals/payment-modal/payment-modal.compon
     RouteGuardService
   ],
   entryComponents: [
-    AppTableComponent,
     ConfirmModalComponent,
     MemberModalComponent,
     HtmlEditorModalComponent,
@@ -122,10 +135,7 @@ import {PaymentModalComponent} from "./modals/payment-modal/payment-modal.compon
     InvoiceModalComponent,
     PaymentModalComponent,
     MemberScreeningModalComponent,
-    TooltipComponent,
-    TooltipIconComponent,
-    StringInputComponent,
-    LoginRequiredComponent
+    ImagePreviewModalComponent
   ]
 })
 export class CoreModule { }

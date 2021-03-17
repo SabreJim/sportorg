@@ -1,0 +1,38 @@
+::ng-deep .checkin-menu-wrapper {
+  max-width: 400px;
+}
+
+.checkin-menu {
+  padding: 5px;
+  .member-menu-row {
+    padding-bottom: 5px;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    .checkin-button {
+      margin-right: 10px;
+      max-width: 90px;
+      min-width: 90px;
+    }
+    .checkin-name {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      max-width: 250px;
+      white-space: nowrap;
+    }
+  }
+}
+.checkin-prompt {
+  margin: 5px 15px;
+}
+.check-in {
+  flex: 1 1 100px;
+  display: flex;
+  min-height: 36px;
+  max-height: 36px;
+  max-width: 100px;
+  min-width: 100px;
+  align-items: center;
+  margin: 10px 5px;
+  border: 1px solid white;
+}

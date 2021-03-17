@@ -6,7 +6,7 @@ import {
   OnInit,
 } from "@angular/core";
 import {AppMember} from "../../models/data-objects";
-import {MatDialog} from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 import {LoginRequiredComponent} from "./login-required.component";
 
 

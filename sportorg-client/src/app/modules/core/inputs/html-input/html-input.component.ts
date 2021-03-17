@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {HtmlEditorModalComponent} from "../../modals/htm-editor-modal/html-editor-modal.component";
-import {MatDialog} from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   selector: 'app-html-input',

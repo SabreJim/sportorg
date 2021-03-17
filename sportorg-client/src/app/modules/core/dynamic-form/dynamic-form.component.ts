@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {TableColumn} from "../models/ui-objects";
 import {LookupProxyService} from "../services/lookup-proxy.service";
-import {MatDialog} from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 import {ConfirmModalComponent} from "../modals/confirm-modal/confirm-modal.component";
 
 @Component({
@@ -103,6 +103,13 @@ export class DynamicFormComponent implements OnInit {
       this.isDirty = true;
     }
   };
+  public updateFileId = (newId: number, fieldName: string) => {
+    if (newId !== this.currentRow[fieldName]){
+      this.currentRow[fieldName] = newId;
+      this.isDirty = true;
+    }
+  };
+
   constructor(public dialog: MatDialog, private lookupService: LookupProxyService) { }
 
   ngOnInit() {

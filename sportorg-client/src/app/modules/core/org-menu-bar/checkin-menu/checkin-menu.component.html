@@ -1,0 +1,15 @@
+<button class="check-in mat-button"  [matMenuTriggerFor]="mobileMenu" (onMenuOpen)="getMembers()">
+  check in <mat-icon>fact_check</mat-icon>
+</button>
+
+<mat-menu #mobileMenu  yPosition="below" class="checkin-menu-wrapper">
+  <div class="checkin-menu">
+    <p class="checkin-prompt"><strong>These are the members you can check in:</strong></p>
+    <div *ngFor="let member of myMembers" class="member-menu-row">
+      <button mat-raised-button class="checkin-button mat-primary {{member.buttonColor}}"
+              (click)="doCheckinAction(member)">{{member.buttonText}}</button>
+      <div class="checkin-name">{{member.firstName}} {{member.lastName}}</div>
+    </div>
+  </div>
+
+</mat-menu>

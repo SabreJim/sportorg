@@ -30,23 +30,37 @@
   display:flex;
   flex: 1 1 auto;
   flex-flow: row nowrap;
+  justify-content: space-between;
   .sub-question-left {
     display: flex;
+    flex: 2;
     flex-flow: column nowrap;
   }
   .sub-question-right {
     display: flex;
+    flex: 1;
     flex-flow: column nowrap;
   }
 }
-.sub-question-row {
-  display: flex;
-  flex: 1 1 auto;
-  margin-left: 40px;
-  margin-bottom: 10px;
-  .sub-question-text {
-    flex: 1 1 auto;
+
+.progress-header {
+  margin-bottom: 20px;
+  .progress-bar {
+    position: absolute;
+    height: 22px;
+  }
+  .progress-text {
+    position:absolute;
+    right: 50%;
   }
 }
-
-
+.stepper-content {
+  margin-top: 30px;
+}
+.top-space {
+  margin-top: 20px;
+}
+.completed {
+  text-align: center;
+  font-size: 18px;
+}

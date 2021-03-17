@@ -109,7 +109,6 @@ export interface AppMember {
   cellPhone?: string;
   homePhone?: string;
   license: string;
-  confirmed?: 'Y' | 'N';
 }
 export interface MemberAttendance {
   memberId: number;
@@ -127,6 +126,7 @@ export interface MemberAttendance {
   activeScreenRequired?: boolean;
   screeningAnswers?: ScreeningAnswer[];
   buttonColor?: string;
+  buttonText?: string;
 }
 export interface ScreeningAnswer {
   questionId: number;
@@ -177,7 +177,6 @@ export interface EnrolledMember {
   lastName: string;
   isActive: string;
   isAthlete: string;
-  confirmed: string;
   isEnrolled: string;
   isLoyaltyMember: string;
 }

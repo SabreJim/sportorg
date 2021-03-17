@@ -11,7 +11,7 @@ import {FitnessProxyService} from "../../../core/services/fitness-proxy.service"
 import {Subscription} from "rxjs";
 import {LookupProxyService} from "../../../core/services/lookup-proxy.service";
 import {LookupItem} from "../../../core/models/rest-objects";
-import {MatCheckboxChange} from "@angular/material";
+import { MatCheckboxChange } from "@angular/material/checkbox";
 import {StaticValuesService} from "../../../core/services/static-values.service";
 
 @Component({

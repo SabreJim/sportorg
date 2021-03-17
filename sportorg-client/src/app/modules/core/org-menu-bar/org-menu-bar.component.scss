@@ -70,18 +70,6 @@
   margin-left: 10px;
   border: 1px solid white;
 }
-.check-in {
-  flex: 1 1 90px;
-  display: flex;
-  min-height: 36px;
-  max-height: 36px;
-  max-width: 90px;
-  min-width: 90px;
-  align-items: center;
-  padding: 5px;
-  margin-left: 10px;
-  border: 1px solid white;
-}
 @media(max-width: 1000px) {
   .optional-button { display: none !important; }
   .mobile-only { display: block !important; }

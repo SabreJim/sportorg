@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import {AppMember} from "../../models/data-objects";
 import {LookupItem} from "../../models/rest-objects";
 import {StaticValuesService} from "../../services/static-values.service";
@@ -47,11 +47,18 @@ export class MemberModalComponent implements OnInit {
     email: '',
     cellPhone: null,
     homePhone: null,
-    license: null,
-    confirmed: 'N'
+    license: null
   };
 
-  public invalid: any = {};
+  public invalid: string[] = [];
+  public checkValid = (isValid: boolean, fieldName: string) => {
+    if (isValid && this.invalid.includes(fieldName)) {
+     this.invalid = this.invalid.filter(item => item !== fieldName);
+    }
+    if (!isValid && !(this.invalid.includes(fieldName))) {
+      this.invalid.push(fieldName);
+    }
+  }
   public composedAddress = '';
   public genderLookup: LookupItem[] = [
     {id: 1, lookup: 'gender', name: 'Male', description: 'M'},
@@ -67,60 +74,26 @@ export class MemberModalComponent implements OnInit {
   public selectGender = (newValue: LookupItem) => {
     this.member.competeGender = (newValue.description === 'M') ? 'M' : 'F';
   };
-
-  public selectProvince = (newId: number) => {
-    this.member.provinceId = newId;
-  };
-
-  public updateLicense = (newValue: string) => {
-    this.member.license = newValue;
-    // format to CFF license
-  };
-  public updateEmail = (newValue: string) => {
-    this.member.email = newValue;
-    // validate email format
-    this.invalid.email = !(StaticValuesService.validateEmail(newValue, true));
-  };
+  public setYear = (event: number) => {
+    console.log('get year', event);
+  }
 
   public updatePhone = (newValue: string, position: string) => {
     // validate phone numbers
-    this.invalid[position] = !(StaticValuesService.validatePhone(newValue));
-    if (!this.invalid[position]) {
+    const isValidPhone = StaticValuesService.validatePhone(newValue);
+    this.checkValid(isValidPhone, position);
+    if (isValidPhone) {
       this.member[position] = StaticValuesService.formatPhone(newValue);
     } else {
       this.member[position] = newValue;
     }
   };
 
-  public updateName = (newValue: string, position: string, isRequired = false) => {
-    this.invalid[position] = isRequired && !newValue;
-    this.member[position] = newValue;
-    this.member.name = `${this.member.lastName || ''}, ${this.member.firstName || ''} ${this.member.middleName || ''}`;
-  };
-  public updateAddress = (newValue: string, position: string) => {
-    this.composedAddress = `${this.member.streetAddress || ''}, ${this.member.city || ''} ${this.member.provinceName || ''}, ${this.member.postalCode || ''}`;
-    this.member[position] = newValue;
-  };
 
   // validate the input and send the data to be saved
   public saveForm = () => {
-    let anyInvalid = false;
-    let requiredFields = ['firstName', 'lastName', 'email'];
-    // check required fields are filled in
-    requiredFields.map((fieldName: string) => {
-      if (!this.member[fieldName]) {
-        anyInvalid = true;
-        this.invalid[fieldName] = true;
-      }
-    });
-
-    // check the validation of existing fields
-    Object.values(this.invalid).map((value: boolean) => {
-      if (value) anyInvalid = true;
-    });
+    if (this.invalid.length) return;
     // if nothing is missing, send the request
-    if (!anyInvalid) {
-      this.matDialogRef.close(this.member);
-    }
+    this.matDialogRef.close(this.member);
   }
 }

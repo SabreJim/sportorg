@@ -1,7 +1,6 @@
 const MySQL = require('../middleware/mysql-service');
-const { returnResults, returnSingle, returnError, parseHtmlFields } = require('../middleware/response-handler');
+const { getUserId, returnResults, returnSingle, returnError, parseHtmlFields } = require('../middleware/response-handler');
 const { fitnessProfileSchema ,exerciseLogSchema, exerciseSchema, getCleanBody } = require('../middleware/request-sanitizer');
-const getUserId = (req) => (req.session && req.session.user_id) ? req.session.user_id : -1;
 
 const BASE_YEAR = 2019;
 const  LEVEL_MULTIPLIER = 2;

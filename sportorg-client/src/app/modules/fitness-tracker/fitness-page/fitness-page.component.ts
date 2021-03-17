@@ -4,7 +4,7 @@ import {Subscription} from "rxjs";
 import {Exercise, FitnessGroup, FitnessProfile} from "../../core/models/fitness-objects";
 import {AppUser} from "../../core/models/authentication";
 import {FirebaseAuthService} from "../../core/services/firebase-auth.service";
-import {MatDialog} from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 import {FitnessProfileModalComponent} from "./fitness-profile-modal/fitness-profile-modal.component";
 import {FitnessGroupProxyService} from "../../core/services/fitness-group-proxy.service";
 import {StaticValuesService} from "../../core/services/static-values.service";
@@ -125,7 +125,7 @@ export class FitnessPageComponent implements OnInit, OnDestroy {
     columns: [
       new TableColumn('name', 'Name', 'string'),
       new TableColumn('description', 'Description', 'html'),
-      new TableColumn('imageId', 'Image Id', 'number'),
+      new TableColumn('fileId', 'Image Id', 'image'),
       new TableColumn('iconType', 'Icon Type', 'string'),
       new TableColumn('iconName', 'Icon Name', 'string'),
       new TableColumn('balanceValue', 'Balance', 'number'),
@@ -142,7 +142,7 @@ export class FitnessPageComponent implements OnInit, OnDestroy {
       name: 'Exercise',
       measurementUnit : 'reps',
       measurementUnitQuantity: 10,
-      imageId: null,
+      fileId: null,
       iconType: 'fas',
       iconName: 'fas fa-wind',
       balanceValue: 0,

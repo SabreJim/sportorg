@@ -9,7 +9,8 @@ import {
   Output, QueryList, ViewChild, ViewChildren
 } from '@angular/core';
 import {TableColumn} from "../models/ui-objects";
-import {MatCheckbox, MatCheckboxChange, MatSelectChange} from "@angular/material";
+import { MatCheckbox, MatCheckboxChange } from "@angular/material/checkbox";
+import { MatSelectChange } from "@angular/material/select";
 import {CdkVirtualScrollViewport} from "@angular/cdk/scrolling";
 import {SnackbarService} from "../services/snackbar.service";
 
@@ -146,8 +147,8 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
   };
 
   // Manage synced up scrolling
-  @ViewChild(CdkVirtualScrollViewport, {static: false})  ScrollArea: CdkVirtualScrollViewport;
-  @ViewChild('scrollingHeader', {static: false})  TableHeader: ElementRef;
+  @ViewChild(CdkVirtualScrollViewport)  ScrollArea: CdkVirtualScrollViewport;
+  @ViewChild('scrollingHeader')  TableHeader: ElementRef;
   public readonly ROW_SIZE = 46;
   public SCROLL_MIN_BUFFER = 20 * this.ROW_SIZE;
   public SCROLL_MAX_BUFFER = 100 * this.ROW_SIZE;

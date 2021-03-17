@@ -27,8 +27,11 @@ app.use('/rest', firebase.initializeFirebase);
 // })
 
 // a REST router for server-side calls
-const appRouter = require('./server/routes');
+const appRouter = require('./server/routes/routes');
 app.use('/rest', appRouter(config));
+
+const fitnessRouter = require('./server/routes/fitness-routes');
+app.use('/rest/fitness', fitnessRouter(config));
 
 // a router to handle all static page requests
 app.use('/app', express.static(path.join(__dirname, '/sportorg-client/dist/sportorg-client')));

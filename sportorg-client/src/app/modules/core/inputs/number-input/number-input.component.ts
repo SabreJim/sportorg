@@ -1,4 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {FormControl, Validators} from "@angular/forms";
+import {debounceTime, distinctUntilChanged} from "rxjs/operators";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-number-input',
@@ -8,33 +11,59 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 export class NumberInputComponent implements OnInit {
 
   @Input() set value (newValue: number) {
-    this.numberValue = newValue;
+    if (this.numberFormControl) {
+      console.log('setting value', newValue);
+      this.numberFormControl.setValue(newValue);
+    }
   }
   @Input() numberType: 'int' | 'float' = 'int';
-  @Input() maxWidth: string = '300px';
-  @Output() numberChanged = new EventEmitter<number>();
+  @Input() title: string;
+  @Input() setWidth: string = '300px';
+  @Input() set isRequired (newValue: boolean) {
+    this._isRequired = newValue;
+    if (this.numberFormControl) {
+      this.numberFormControl.setValidators([Validators.required]);
+    }
+  } get isRequired() {
+    return this._isRequired;
+  }
+  protected _isRequired = false;
+  protected changeSub: Subscription;
+
+  @Output() valueChange = new EventEmitter<number>();
+  @Output() valid = new EventEmitter<boolean>();
+
+  public numberFormControl = new FormControl();
 
   public clearNumber = () => {
-    this.numberValue = null;
-    this.numberChanged.emit(this.numberValue);
+    this.valueChange.emit(null);
   }
 
-  public updateValue =(event: Event) => {
-    const newValue = (event.srcElement as HTMLInputElement).value || null;
-    let num: number;
-    if (this.numberType === 'float') {
-      num = parseFloat(newValue);
-    } else {
-      num = parseInt(newValue);
-    }
-    if (!isNaN(num) && newValue === num.toString()){
-      this.numberChanged.emit(num);
-    }
-  }
-  public numberValue: number;
   constructor() { }
 
   ngOnInit() {
+    this.changeSub = this.numberFormControl.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((newNumber: string) => {
+        console.log('what is in sub?', newNumber, typeof newNumber);
+        if (typeof newNumber === 'number') {
+          this.valueChange.emit(newNumber);
+        } else if (newNumber && newNumber.length) {
+          let num: number;
+          if (this.numberType === 'float') {
+            num = parseFloat(newNumber);
+          } else {
+            num = parseInt(newNumber);
+          }
+          this.valueChange.emit(num);
+        } else {
+          this.valueChange.emit(null);
+        }
+      });
+    this.numberFormControl.statusChanges
+      .pipe().subscribe((status: string) => {
+      this.valid.emit(status === 'VALID');
+    });
   }
 
 }

@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import {AngularEditorConfig} from "@kolkov/angular-editor/lib/config";
 
 export interface HtmlEditorModalConfig {

@@ -53,6 +53,10 @@
       </ng-container>
     </mat-menu>
   </div>
+    <a *ngIf="currentUser?.isAdmin" ngClass="fitness-icon mat-button" (click)="toggleMobile()" >
+      <mat-icon *ngIf="isMobile">mobile_off</mat-icon>
+      <mat-icon *ngIf="!isMobile">mobile_friendly</mat-icon>
+    </a>
 
   <checkin-menu *ngIf="!isAnon"></checkin-menu>
 

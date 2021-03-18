@@ -28,3 +28,4 @@ export GOOGLE_APPLICATION_CREDENTIALS="/server/sportorg/server/beaches-sportorg-
 2. ssh into the PROD server
 3. git pull master branch
 4. npm run prod-deploy
+5. On interserver, not enough memory to run regular build. Use `npm run build:prod`

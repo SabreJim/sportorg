@@ -16,12 +16,15 @@ import { MatDialog } from "@angular/material/dialog";
 })
 export class OrgMenuBarComponent implements OnInit, OnDestroy {
   constructor(private authService: FirebaseAuthService, private lookupService: LookupProxyService,
-              private memberService: MembersProxyService, public dialog: MatDialog) { }
+              private memberService: MembersProxyService, public dialog: MatDialog) {
+    this.isMobile = StaticValuesService.checkMobile();
+  }
   protected userSub: Subscription;
   protected attendanceSub: Subscription;
   public isAnon = true;
   public currentUser: AppUser;
   public appMenus: MenuItem[] = [];
+  public isMobile = false;
 
   ngOnInit(): void {
     this.userSub = this.authService.CurrentUser.subscribe((user: AppUser) => {
@@ -40,6 +43,12 @@ export class OrgMenuBarComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
 
+  public toggleMobile = () => {
+    if (this.currentUser.isAdmin) {
+      StaticValuesService.setMobileMode(!(StaticValuesService.checkMobile()));
+      this.isMobile = StaticValuesService.checkMobile();
+    }
+  }
   public login = this.authService.toggleLogin;
   public logout = this.authService.logout;
 }

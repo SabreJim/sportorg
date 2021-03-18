@@ -1,5 +1,5 @@
 <div class="modal-wrapper-sm">
-  <div class="{{(useMobile) ? '' : 'form-scroller'}}">
+  <div class="form-scroller">
     <form autocomplete="off" novalidate class="form-wrapper">
 
       <mat-card class="field-card" *ngIf="!useMobile">
@@ -36,9 +36,6 @@
     </form>
 
     <mat-card class="field-card" *ngIf="useMobile && questions && questions.length">
-      <div class="form-header">
-        <h2>{{title}}</h2>
-      </div>
       <p>Please answer each of the following questions to the best of your knowledge before entering the club</p>
       <div class="progress-header">
         <mat-progress-bar class="progress-bar"

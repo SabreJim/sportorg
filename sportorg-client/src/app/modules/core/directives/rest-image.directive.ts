@@ -1,6 +1,6 @@
 import {Directive, Input, OnInit, ViewContainerRef} from "@angular/core";
 import {FileProxyService} from "../services/file-proxy.service";
-import {maxWorkers} from "@angular-devkit/build-angular/src/utils";
+
 
 @Directive({
   selector: '[restImage]'

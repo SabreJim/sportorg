@@ -1,7 +1,7 @@
-<mat-form-field floatLabel="always" appearance="outline" [style.min-width]="'calc(50px + ' + setWidth + ')'" [style.max-width]="'calc(50px + ' + setWidth + ')'">
+<mat-form-field floatLabel="always" appearance="outline" >
   <mat-label>{{title}}</mat-label>
   <input type="number" matInput class="hidden"/>
-  <mat-select [(ngModel)]="selectedValue" [name]="lookupType" (selectionChange)="itemSelected($event)" [style.min-width]="setWidth" [style.max-width]="setWidth" >
+  <mat-select [(ngModel)]="selectedValue" [name]="lookupType" (selectionChange)="itemSelected($event)" [disabled]="disabled">
     <ng-container *ngIf="showEmpty">
       <mat-option  [value]="">
         <span class="main-text">-- select an option --</span>

@@ -41,6 +41,7 @@ const deleteEnrollment = async (req, res) => {
 const getMyMemberEnrollments = async(req, res, next) => {
     const myUserId = (req.session && req.session.user_id) ? req.session.user_id : -1;
     const query = `SELECT
+            ce.enroll_id,
             m.member_id,
             CONCAT(m.first_name, ' ', m.last_name) member_name,
             ce.program_id,

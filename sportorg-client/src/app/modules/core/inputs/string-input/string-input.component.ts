@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, ValidatorFn, Validators} from "@angular/forms";
 import {debounceTime, distinctUntilChanged, filter} from "rxjs/operators";
+import {StaticValuesService} from "../../services/static-values.service";
 
 @Component({
   selector: 'app-string-input',
@@ -14,7 +15,6 @@ export class StringInputComponent implements OnInit {
       this.textFormControl.setValue(newValue);
     }
   }
-  @Input() setWidth: string = '350px';
   @Input() useTextArea: boolean = false;
   @Input() hint: string;
   @Input() title: string;

@@ -1,53 +1,50 @@
-<div class="modal-wrapper-sm">
-  <h1>Record a New Payment</h1>
-    <mat-card class="form-scroller-sm">
-      <mat-card-content class="scroll-modal-lg">
-        <div class="wrap-fields">
-          <div class="select-row">
-            <h3>From</h3>
-            <app-select-input
-              [showEmpty]="true"
-              [staticLookup]="members"
-              [selected]="payment?.fromId"
-              (selectionObject)="selectPayFrom($event)"
-            ></app-select-input>
-          </div>
-          <div class="select-row-lg">
-            <h3>Against invoice</h3>
-            <app-select-input
-              [showEmpty]="true"
-              [staticLookup]="memberInvoices"
-              [selected]="payment?.invoiceId"
-              (selectionObject)="selectInvoice($event)"
-            ></app-select-input>
-          </div>
-          <div class="select-row">
-            <h3>Payment to</h3>
-            <mat-form-field appearance="outline" floatLabel="always" class="modal-form-field">
-              <input matInput [value]="'Beaches Sabre Club East'" [disabled]="'disabled'">
-            </mat-form-field>
-          </div>
-          <div class="select-row">
-            <h3>Amount</h3>
-              <app-number-input
-                [value]="payment?.amount"
-                (numberChanged)="updateAmount($event)"
-                [numberType]="'float'"
-              ></app-number-input>
-          </div>
-          <div class="select-row">
-            <h3>Payment Method</h3>
-            <app-select-input
-              [staticLookup]="paymentMethods"
-              [selected]="1"
-              (selectionObject)="selectMethod($event)"
-            ></app-select-input>
-          </div>
+<div class="modal-wrapper">
+  <div class="form-scroller">
+    <form autocomplete="off" novalidate class="form-wrapper">
+
+      <mat-card class="field-card">
+        <div class="form-header"><h2>Record a New Payment</h2></div>
+        <div class="form-content">
+          <app-select-input
+            [title]="'From'"
+            [showEmpty]="true"
+            [staticLookup]="members"
+            [selected]="payment?.fromId"
+            (selectionObject)="selectPayFrom($event)"
+          ></app-select-input>
+
+          <app-select-input
+            [title]="'Against invoice'"
+            [showEmpty]="true"
+            [staticLookup]="memberInvoices"
+            [selected]="payment?.invoiceId"
+            (selectionObject)="selectInvoice($event)"
+          ></app-select-input>
+          <mat-form-field appearance="outline" floatLabel="always"  class="modal-form-field">
+            <mat-label>Payment to</mat-label>
+            <input matInput [value]="'Beaches Sabre Club East'" [disabled]="'disabled'">
+<!--            TODO: drop down -->
+          </mat-form-field>
+
+          <app-number-input
+            [title]="'Amount'"
+            [value]="payment?.amount"
+            (valueChange)="updateAmount($event)"
+            [numberType]="'float'"
+          ></app-number-input>
+
+          <app-select-input
+            [title]="'Payment Method'"
+            [staticLookup]="paymentMethods"
+            [selected]="1"
+            (selectionObject)="selectMethod($event)"
+          ></app-select-input>
         </div>
-      </mat-card-content>
-    </mat-card>
+      </mat-card>
+    </form>
+  </div>
   <div class="action-bar">
-    <button mat-raised-button [mat-dialog-close]="false">Cancel</button>
+    <button mat-raised-button [mat-dialog-close]>Cancel</button>
     <button mat-raised-button color="primary" [disabled]="!paymentValid()" (click)="savePayment()">Commit</button>
   </div>
 </div>

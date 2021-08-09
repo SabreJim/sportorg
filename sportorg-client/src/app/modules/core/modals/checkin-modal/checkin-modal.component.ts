@@ -15,7 +15,6 @@ export class CheckinModalComponent implements OnInit, OnDestroy {
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
               public matDialogRef: MatDialogRef<CheckinModalComponent>,
               public memberService: MembersProxyService) {
-    this.useMobile = StaticValuesService.checkMobile();
   }
   ngOnInit() {
 
@@ -36,7 +35,7 @@ export class CheckinModalComponent implements OnInit, OnDestroy {
   public currentMember: MemberAttendance;
   public questions: ScreeningQuestion[];
   public allAnswered: boolean = false;
-  public useMobile: boolean;
+  public isMobile = StaticValuesService.isMobile;
   public currentQuestionIndex = 0;
   public currentSubQuestionIndex = 0;
   public stepperRadioGroup = new FormControl();
@@ -96,7 +95,6 @@ export class CheckinModalComponent implements OnInit, OnDestroy {
         this.stepperSubRadioGroup.reset();
       }
     }
-    console.log('QUESTIONS', this.questions);
   }
 
 

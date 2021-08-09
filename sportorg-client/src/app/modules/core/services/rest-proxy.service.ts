@@ -5,7 +5,8 @@ import {Observable, of} from "rxjs";
 import {ApiResponse} from "../models/rest-objects";
 import {map, catchError} from "rxjs/operators";
 import {StaticValuesService} from "./static-values.service";
-
+import { clone } from 'ramda';
+import {FilterRequest} from "../filter-bar/filter-bar.component";
 export interface FileUploadRequest {
   file: File;
 }
@@ -23,8 +24,13 @@ export class RestProxyService {
   protected convertHttpParam = (params: object) => {
     let httpParam = new HttpParams();
     if (params) {
-      for (const field of Object.keys(params)) {
-        httpParam = httpParam.set(field, params[field]);
+      let allParams = clone(params);
+      if (params.hasOwnProperty('filters')) { // presumed to be a filterRequest
+        allParams = clone((params as FilterRequest).filters);
+        allParams.search = (params as FilterRequest).search;
+      }
+      for (const field of Object.keys(allParams)) {
+        httpParam = httpParam.set(field, allParams[field]);
       }
     }
     return httpParam;
@@ -52,11 +58,7 @@ export class RestProxyService {
       // handle success cases
       map((response: ApiResponse<any>) => {
         // return specifically the correct type of object
-        const cleanResponse = new ApiResponse(response.data);
-        cleanResponse.success = true;
-        cleanResponse.index = response.index || 1;
-        cleanResponse.status = response.status || 200;
-        return cleanResponse;
+        return new ApiResponse(response.data, !response.message, response.index || 1, response.message );
       }),
       catchError((err: HttpErrorResponse) => {
         const errResponse = new ApiResponse([], false);
@@ -68,7 +70,6 @@ export class RestProxyService {
             this.appRouter.navigate([err.error.redirct]);
           }
         }
-
         return of(errResponse);
       })
     );

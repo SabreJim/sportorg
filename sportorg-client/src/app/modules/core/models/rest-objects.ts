@@ -19,6 +19,7 @@ export class ApiResponse<T> {
 }
 export interface LookupItem {
   id: number;
+  stringId?: string;
   name: string;
   moreInfo?: any;
   lookup: string;

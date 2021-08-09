@@ -36,3 +36,34 @@ mat-expansion-panel.tall-input-table {
   margin-left: auto !important;
   flex: 1 1 auto;
 }
+.panel-filter-bar {
+  display: flex;
+  flex: 1 1 auto;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+  .search-input {
+    flex: 5;
+    margin-right: 10px;
+  }
+  @media (max-width: 600px) {
+    .filter-found { display: none !important;}
+    .filter-found-mobile {display: flex !important;}
+  }
+  .filter-found-mobile {
+    display: none;
+    flex: 1;
+  }
+  .filter-found {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .mat-chip {
+    padding: 5px 10px;
+    border-radius: 15px;
+    margin-left: 5px;
+  }
+}

@@ -1,3 +1,7 @@
-<button mat-raised-button color="primary" class="action-button"
-        [disabled]="disabled"
-        (click)="editHtml()">Edit Html</button>
+<mat-form-field floatLabel="always" appearance="outline" >
+  <mat-label>{{title}}</mat-label>
+  <input type="number" matInput class="hidden"/>
+  <button mat-raised-button color="primary" class="action-button"
+          [disabled]="disabled"
+          (click)="editHtml()">Edit Html</button>
+</mat-form-field>

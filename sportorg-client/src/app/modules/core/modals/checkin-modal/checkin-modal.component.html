@@ -2,7 +2,7 @@
   <div class="form-scroller">
     <form autocomplete="off" novalidate class="form-wrapper">
 
-      <mat-card class="field-card" *ngIf="!useMobile">
+      <mat-card class="field-card" *ngIf="!(isMobile())">
         <div class="form-header">
           <h2>{{title}}</h2>
         </div>
@@ -35,7 +35,7 @@
       </mat-card>
     </form>
 
-    <mat-card class="field-card" *ngIf="useMobile && questions && questions.length">
+    <mat-card class="field-card" *ngIf="(isMobile()) && questions && questions.length">
       <p>Please answer each of the following questions to the best of your knowledge before entering the club</p>
       <div class="progress-header">
         <mat-progress-bar class="progress-bar"

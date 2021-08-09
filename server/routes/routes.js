@@ -6,9 +6,11 @@ const Members = require('../response-handler/members');
 const Users = require('../response-handler/users');
 const Enrollment = require('../response-handler/enrollments');
 const Finances = require('../response-handler/finance');
+const Companies = require('../response-handler/companies');
 const Lookups = require('../response-handler/lookups');
 const Authentication = require('../middleware/server-authentication');
 const Files = require('../response-handler/files');
+const AppConfig = require('../response-handler/app-config');
 const jsonBody = require('body-parser').json();
 const fileBody = require('body-parser').json({ limit: '10mb', inflate: true});
 const caching = require('../middleware/caching-service');
@@ -36,6 +38,8 @@ const createRouter = (config) => {
     router.get('/all-classes', addSession, Classes.getAllClasses);
     router.put('/classes', jsonBody, adminRequired, Classes.upsertClass);
     router.delete('/classes/:scheduleId', adminRequired, Classes.deleteClass);
+    router.get('/seasons', addSession, Classes.getSeasons);
+    router.put('/season', jsonBody, adminRequired, Classes.upsertSeason);
 
     // Program getters and setters
     router.get('/all-programs', addSession, Programs.getAllPrograms);
@@ -94,9 +98,12 @@ const createRouter = (config) => {
     router.put('/payment', jsonBody, adminRequired, Finances.recordPayment);
     router.get('/my-invoices/user/:userId', adminRequired, Finances.getUsersInvoices);
     router.get('/my-invoices/', requireSession, Finances.getMyInvoices);
+    router.put('/invoice/', jsonBody, adminRequired, Finances.upsertInvoice);
     router.put('/invoice/cancel/:invoiceId', adminRequired, Finances.cancelInvoice);
     router.get('/my-payments/user/:userId', adminRequired, Finances.getUsersPayments);
     router.get('/my-payments/', requireSession, Finances.getMyPayments);
+    router.get('/companies/', Companies.getCompanies);
+    router.put('/company/', jsonBody, adminRequired, Companies.upsertCompany);
 
     // session management
     router.get('/session-token', Authentication.verifyToken);
@@ -107,6 +114,10 @@ const createRouter = (config) => {
     router.get('/files/get-list/:fileType', requireSession, Files.getAllFiles);
     router.get('/files/:id', Files.getFile);
     router.get('/images/:id', Files.getImage);
+
+    // ap config
+    router.put('/app-config', jsonBody, adminRequired, AppConfig.updateAppConfigs);
+    router.get('/app-config', adminRequired, AppConfig.getAppConfigs);
 
     return router;
 };

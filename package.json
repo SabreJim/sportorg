@@ -29,8 +29,8 @@
     "start-local": "node http-server.js env=local",
     "start": "node http-server.js env=prod",
     "install-client": "cd ./sportorg-client/ && npm install && cd ..",
-    "build": "cd ./sportorg-client && ng build && cd ..",
-    "build:prod": "cd ./sportorg-client && ng build --prod && cd ..",
+    "build": "cd ./sportorg-client && npm run build && cd ..",
+    "build:prod": "cd ./sportorg-client && npm run build-prod && cd ..",
     "start-dev": "cd ./sportorg-client/ && ng serve --baseHref='/app/'",
     "prod-deploy": "npm install && npm run install-client && npm run build:prod"
   }

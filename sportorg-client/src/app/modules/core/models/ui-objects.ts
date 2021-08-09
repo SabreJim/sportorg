@@ -1,21 +1,6 @@
-import {ProgramSchedule} from "./data-objects";
-import { map } from 'ramda';
-import { CalendarEvent } from 'angular-calendar';
-import { EventColor } from 'calendar-utils';
+// import {EventAction, EventColor} from 'calendar-utils';
 import {LookupItem} from "./rest-objects";
 import {Observable} from "rxjs";
-
-export interface RecentItem {
-  title: string;
-  link: string;
-  type?: string;
-}
-
-export interface OrgCalendarEvent extends CalendarEvent {
-  location?: string;
-  details?: string;
-  groupName?: string;
-}
 
 export interface ColumnConfig {
   title: string;
@@ -121,4 +106,9 @@ export interface AppToolTip {
   title: string;
   text: string;
   language?: string;
+}
+
+export interface ConfigRow {
+  configItem: string;
+  value: string;
 }

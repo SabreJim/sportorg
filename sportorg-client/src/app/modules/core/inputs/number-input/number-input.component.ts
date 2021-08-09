@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, Validators} from "@angular/forms";
 import {debounceTime, distinctUntilChanged} from "rxjs/operators";
 import {Subscription} from "rxjs";
+import {StaticValuesService} from "../../services/static-values.service";
 
 @Component({
   selector: 'app-number-input',
@@ -12,13 +13,11 @@ export class NumberInputComponent implements OnInit {
 
   @Input() set value (newValue: number) {
     if (this.numberFormControl) {
-      console.log('setting value', newValue);
       this.numberFormControl.setValue(newValue);
     }
   }
   @Input() numberType: 'int' | 'float' = 'int';
   @Input() title: string;
-  @Input() setWidth: string = '300px';
   @Input() set isRequired (newValue: boolean) {
     this._isRequired = newValue;
     if (this.numberFormControl) {
@@ -45,7 +44,6 @@ export class NumberInputComponent implements OnInit {
     this.changeSub = this.numberFormControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((newNumber: string) => {
-        console.log('what is in sub?', newNumber, typeof newNumber);
         if (typeof newNumber === 'number') {
           this.valueChange.emit(newNumber);
         } else if (newNumber && newNumber.length) {

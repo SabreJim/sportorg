@@ -4,33 +4,11 @@ const { memberSchema, getCleanBody } = require('../middleware/request-sanitizer'
 
 const getMyMembers = async(req, res, next) => {
     const myUserId = (req.session && req.session.user_id) ? req.session.user_id : -1;
-    const query = `SELECT
-            m.member_id,
-            m.first_name,
-            m.middle_name,
-            m.last_name,
-            CONCAT (m.last_name, ', ', m.first_name) as 'name',
-            m.year_of_birth,
-            m.compete_gender,
-            m.is_active,
-            m.is_athlete,
-            DATE_FORMAT(m.membership_start, '%Y-%m-%d') as 'membership_start',
-            m.street_address,
-            m.city,
-            m.province_id,
-            r.region_name as province_name,
-            m.postal_code,
-            m.email,
-            m.cell_phone,
-            m.home_phone,
-            m.license
-        FROM beaches.members m
-        LEFT JOIN beaches.regions r ON r.region_id = m.province_id
-        WHERE m.is_active = 'Y' AND 
-            (EXISTS (SELECT user_id from beaches.member_users mu where m.member_id = mu.member_id AND mu.user_id = ${myUserId})
-            OR (SELECT u.is_admin FROM beaches.users u where u.user_id = ${myUserId}) = 'Y'
-            OR EXISTS (SELECT cau.user_id FROM beaches.club_admin_users cau WHERE cau.user_id = ${myUserId} AND m.club_id = cau.club_id)
-            )`;
+    const query = `SELECT * FROM beaches.v_members m
+                    WHERE m.is_active = 'Y' AND 
+                        (m.user_access_id = ${myUserId}
+                        OR (SELECT u.is_admin FROM beaches.users u where u.user_id = ${myUserId}) = 'Y'
+                        OR EXISTS (SELECT cau.user_id FROM beaches.club_admin_users cau WHERE cau.user_id = ${myUserId} AND m.club_id = cau.club_id))`;
     const myMembers = await MySQL.runQuery(query);
     returnResults(res, myMembers);
 };
@@ -52,8 +30,8 @@ const getMemberAttendance = async(req, res, next) => {
             checkin.is_flagged,
             (CASE WHEN checkout.check_out_time IS NULL THEN 'N' ELSE 'Y' END) checked_out,
             checkout.check_out_time,
-            'Y' active_screen_required
-        FROM beaches.members m
+            (SELECT private_key FROM beaches.projects where project_name = 'beachesEast' AND private_key_id = 'checkinScreeningRequired') active_screen_required
+        FROM beaches.v_members m
         LEFT JOIN (SELECT al.member_id, MAX(TIME(al.checkin_date_time)) check_in_time, COALESCE(MAX(al.is_flagged), 'N') is_flagged
             FROM beaches.attendance_log al
             WHERE DATE(al.checkin_date_time) = '${requestDate}' AND status = 'IN' 
@@ -63,7 +41,7 @@ const getMemberAttendance = async(req, res, next) => {
             WHERE DATE(al.checkin_date_time) = '${requestDate}' AND status = 'OUT' 
             GROUP BY al.member_id) checkout on checkout.member_id = m.member_id
         LEFT JOIN beaches.clubs cl ON cl.club_id = m.club_id          
-        WHERE m.is_active = 'Y' AND
+        WHERE m.is_active = 'Y' AND m.currently_enrolled = 'Y' AND
             (EXISTS (SELECT user_id from beaches.member_users mu where m.member_id = mu.member_id AND mu.user_id = ${myUserId})
             OR (SELECT u.is_admin FROM beaches.users u where u.user_id = ${myUserId}) = 'Y'
             OR EXISTS (SELECT cau.user_id FROM beaches.club_admin_users cau WHERE cau.user_id = ${myUserId} AND m.club_id = cau.club_id)
@@ -198,20 +176,65 @@ const getScreeningQuestions = async (req, res) => {
 
 // for users looking up the list of club members. No authorization required and only show public information
 const getAnonymousMembers = async(req, res, next) => {
-            const query = `SELECT
+    const getCompoundFilter = (filterName, query, values, tableField) => {
+        let filter = '';
+        if (query[filterName]) {
+            let ids = [];
+            values.map((v) => {
+                if (query[filterName].includes(v.name)) {
+                    ids.push(v.value);
+                }
+            });
+            if (ids.length) {
+                filter = `AND ${tableField} IN ('${ids.join("','")}') `;
+            }
+        }
+        return filter;
+    }
+    let activeFilter = getCompoundFilter('memberTypes', req.query,
+        [{name: 'isActive', value: 'Y'}, {name: 'isInactive', value: 'N'}], 'm.is_active');
+    let athleteFilter = getCompoundFilter('memberTypes', req.query,
+        [{name: 'isAthlete', value: 'Y'}, {name: 'isNotAthlete', value: 'N'}], 'm.is_athlete');
+    let enrolledFilter = getCompoundFilter('memberTypes', req.query,
+        [{name: 'enrolled', value: 'Y'}, {name: 'notEnrolled', value: 'N'}], 'm.currently_enrolled');
+    let genderFilter = getCompoundFilter('gender', req.query,
+        [{name: 'M', value: 'M'}, {name: 'F', value: 'F'}], 'm.compete_gender');
+    let ageFilter = '';
+    if (req.query.age && req.query.age.length) {
+        const ageIds = req.query.age.split(',');
+        ageFilter = ' AND (';
+        const ageStrings = [];
+        ageIds.map((ageId) => {
+            ageStrings.push(`(m.compete_age >= (SELECT ac.min FROM beaches.age_categories ac where ac.age_id = ${ageId}) 
+                AND m.compete_age <= (SELECT ac.max FROM beaches.age_categories ac where ac.age_id = ${ageId}))`);
+        });
+        if (ageStrings.length) {
+            ageFilter = ` AND (${ageStrings.join(' OR ')}) `;
+        }
+    }
+    let searchFilter = '';
+    if (req.query.search && req.query.search.length) {
+        searchFilter = ` AND UPPER(m.member_name) LIKE UPPER('%${req.query.search}%')`;
+    }
+    const searchQuery = `SELECT DISTINCT
             m.member_id,
             m.first_name,
             m.middle_name,
             m.last_name,
-            CONCAT (m.last_name, ', ', m.first_name) as 'name',
-            m.year_of_birth,
+            m.member_name,
+            m.compete_age,
             m.compete_gender,
             m.is_athlete,
-            DATE_FORMAT(m.membership_start, '%Y-%m-%d') as 'membership_start',
-            m.license
-        FROM members m
-        WHERE m.is_active = 'Y';`;
-    const allMembers = await MySQL.runQuery(query);
+            m.membership_start,
+            m.license,
+            m.currently_enrolled,
+            m.club_abbreviation
+        FROM beaches.v_members m
+        WHERE 1 = 1 ${activeFilter} ${athleteFilter} ${enrolledFilter} ${genderFilter} ${ageFilter} ${searchFilter}
+        ORDER BY m.member_name
+        ;`;
+    // TODO: server-side sorting on initial requests
+    const allMembers = await MySQL.runQuery(searchQuery);
     returnResults(res, allMembers);
 };
 

@@ -11,6 +11,7 @@ import {
 import {LookupProxyService} from "../../services/lookup-proxy.service";
 import {LookupItem} from "../../models/rest-objects";
 import { MatSelectChange } from "@angular/material/select";
+import {StaticValuesService} from "../../services/static-values.service";
 
 @Component({
   selector: 'app-select-input',
@@ -23,7 +24,8 @@ export class SelectInputComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() lookupType: string;
   @Input() showEmpty = true;
   @Input() title: string;
-  @Input() setWidth: string = '400px';
+  @Input() disabled: boolean = false;
+  @Input() required: boolean = false;
   @Input() set staticLookup (items: LookupItem[]) {
     if (items && items.length) {
       this.options = items;
@@ -32,13 +34,16 @@ export class SelectInputComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   @Input() set selected(newValue: number) {
-    if (newValue !== null && newValue !== undefined && this.options.length) {
-      setTimeout(() => {
+    if (newValue !== null && newValue !== undefined) {
+      if ( this.options.length) { // lookup already available
+        setTimeout(() => {
+          this.selectedValue = newValue;
+          if (!this.isDestroyed) this.detector.detectChanges();
+        });
+      } else { // park the value for after the lookup arrives
         this.selectedValue = newValue;
-        if (!this.isDestroyed) this.detector.detectChanges();
-      });
-    } else if (this.options.length) {
-      // a blank value is being set after the component has been initialized
+      }
+    } else if (this.options.length) {  // a blank value is being set after the component has been initialized
       this.selectedValue = null;
       this.selectionObject.emit(null);
       this.selectedChange.emit(null);

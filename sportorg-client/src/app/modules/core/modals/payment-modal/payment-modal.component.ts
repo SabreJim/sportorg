@@ -67,7 +67,7 @@ export class PaymentModalComponent implements AfterViewInit {
     this.payment.fromId = event.id;
     const tempInvoices: LookupItem[] = [];
     this.allInvoices.map((invoice: Invoice) => {
-      if (invoice.memberId === this.payment.fromId) {
+      if (invoice.fromId === this.payment.fromId) {
         tempInvoices.push({
           id: invoice.invoiceId,
           name: `${invoice.invoiceAmount} from: ${invoice.updateDate}`,

@@ -11,19 +11,13 @@
   padding-top: 12px;
   padding-left: 12px;
 }
-@media (max-width: 1000px) {
-  .logo-img{ height: 13vh; }
-  h1 { font-size: 4vw; }
+@media (min-width:1000px) {
+  h1 { font-size: 5vw !important; }
 }
-
-@media (max-width: 1000px) {
-  .logo-img{ height: 10vh; }
-  h1 { font-size: 3vw; }
-  .info-box .info-line{font-size: 14px; }
+@media (min-width: 600px) {
+  h1 { font-size: 3.5vw !important; }
 }
 @media (max-width: 600px) {
-  .logo-img{ height: 6vh; }
-  h1 { font-size: 2.5vw; }
   .info-box { display: none !important; }
 }
 h1 {
@@ -31,9 +25,9 @@ h1 {
   align-self: center;
   text-align:center;
   margin: 0;
-  font-size: 8vh;
+  font-size: 3.5vh;
 }
-
+.logo-img{ height: 10vh; }
 .info-box {
   flex: 1 1 250px;
   display: flex;
@@ -43,5 +37,6 @@ h1 {
   padding-left: 10px;
   .info-line {
     margin: 0 !important;
+    font-size: 14px;
   }
 }

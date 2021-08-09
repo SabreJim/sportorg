@@ -3,19 +3,22 @@ import {
   ChangeDetectorRef,
   Component,
   Input,
-  OnChanges,
   OnInit,
-  SimpleChanges
 } from '@angular/core';
-import {AdminConfig, TableColumn} from "../models/ui-objects";
-import {Observable} from "rxjs";
-import {FormControl} from "@angular/forms";
-import {Exercise} from "../models/fitness-objects";
-import {debounceTime, distinctUntilChanged} from "rxjs/operators";
+import {AdminConfig} from "../models/ui-objects";
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {EditModalComponent} from "./edit-modal/edit-modal.component";
+import {clone} from 'ramda';
 
 export interface SearchableGridRow {
   searchText?: string;
 }
+export interface EditModalResponse {
+  record: any;
+  saveRecord?: boolean;
+  deleteRecord?: boolean;
+}
+
 @Component({
   selector: 'edit-panel',
   templateUrl: './edit-panel.component.html',
@@ -24,7 +27,7 @@ export interface SearchableGridRow {
 })
 export class EditPanelComponent implements OnInit {
 
-  constructor(private detector: ChangeDetectorRef) { }
+  constructor(private detector: ChangeDetectorRef, protected dialog: MatDialog) { }
 
   @Input() configObject: AdminConfig;
   @Input() set refreshNow(doIt: boolean) {
@@ -37,41 +40,25 @@ export class EditPanelComponent implements OnInit {
   @Input() tableAltClass: string = '';
   @Input() filterBarFields?: string[] = [];
   ngOnInit() {
-    this.textInput.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged())
-      .subscribe((newText) => {
-        if (newText && newText.toUpperCase) {
-          this.searchText = newText.toUpperCase();
-        } else {
-          this.searchText = '';
-        }
-        this.filterRows();
-      });
   }
 
-  public searchText: string = '';
-  public textInput = new FormControl();
-  public clearString = () => {
-    this.searchText = '';
-    this.textInput.setValue(null);
-    this.filterRows();
-  }
+  public filterBarText: string = null;
+  protected dialogRef: MatDialogRef<EditModalComponent>;
   // run the join of typeahead filtering and selection filtering
-  public filterRows = () => {
+  public filterRecords = (textValue: string) => {
     if (!this.gridData || !this.gridData.length) {
       this.filteredGridData = [];
       return; // no source to filter on
     }
+    const searchText = (textValue && textValue.length) ? textValue.toUpperCase() : null;
     this.filteredGridData = this.gridData.filter((row: SearchableGridRow) => {
-      return (!this.searchText || ((row.searchText).includes(this.searchText)));
+      return (!searchText || ((row.searchText).includes(searchText)));
     });
     this.detector.detectChanges();
   }
 
   public gridData: SearchableGridRow[] = [];
   public filteredGridData: SearchableGridRow[] = [];
-  public editorOpen = false;
-  public editingRow: any = null;
 
   public refreshData = () => {
     if (this.configObject.columns && this.configObject.columns.length && this.configObject.getter) {
@@ -91,7 +78,8 @@ export class EditPanelComponent implements OnInit {
             row.searchText = searchable.join(' ');
             return row;
           });
-          this.clearString();
+          this.filterBarText = null; // set initial states
+          this.filteredGridData = clone(this.gridData);
         } else {
           this.gridData = rows; // no need for a searchable string
           this.filteredGridData = rows;
@@ -102,25 +90,21 @@ export class EditPanelComponent implements OnInit {
     }
   };
 
-  public runUpsert = (body: any) => {
-    this.configObject.setter(body).subscribe((result: boolean) => {
-      this.editorOpen = false;
-      this.refreshData();
-    });
-  };
-
-  public runDeletion = (record: any) => {
-    this.configObject.delete(record).subscribe((result: boolean) => {
-      this.editorOpen = false;
-      this.refreshData();
-    });
-  };
-
   public editRow = (rowObject: any) => {
-    this.editingRow = rowObject;
-    setTimeout(() => {
-      this.editorOpen = true;
-      this.detector.detectChanges();
+    const dialogRef = this.dialog.open(EditModalComponent,
+      { width: '80vw', height: '80vh', data: { record: rowObject, columns: this.configObject.columns, entityType: this.configObject.entityType }});
+    dialogRef.afterClosed().subscribe((result: EditModalResponse) => {
+      if (result) {
+        if (result.saveRecord && result.record) {
+          this.configObject.setter(result.record).subscribe((result: boolean) => {
+            this.refreshData();
+          });
+        } else if (result.deleteRecord && result.record){
+          this.configObject.delete(result.record).subscribe((result: boolean) => {
+            this.refreshData();
+          });
+        }
+      }
     });
   };
 
@@ -130,13 +114,4 @@ export class EditPanelComponent implements OnInit {
       });
     }
   }
-
-  public hideSideNav = () => {
-    if (this.editorOpen) {
-      this.editingRow = null;
-      this.editorOpen = false;
-      this.detector.detectChanges();
-    }
-  };
-
 }

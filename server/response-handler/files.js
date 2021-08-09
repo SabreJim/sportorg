@@ -24,7 +24,6 @@ const uploadFile = async(req, res, next) => {
         fileId: req.query.fileId || -1
     };
     const requestType = req.query.requestType;
-    console.log('got request type', requestType, metaData);
     // if the category of file matches the user's permissions, they can proceed
     switch (requestType) {
         case 'FITNESS':
@@ -89,16 +88,12 @@ const getFile = async(req, res, next) => {
     const fileId = req.params.id;
     if (!fileId) returnSingle(res, {message: 'No file id provided'});
 
-    console.log('got id?', fileId, typeof fileId);
     const query = `SELECT file_name, data FROM beaches.files where file_id = ${parseInt(fileId, 10)}`;
-    console.log('got query', query);
     // note that if the user is flagged once, they are flagged for the entire day
     const statementResult = await MySQL.runCommand(query);
-    console.log('got result?', !!statementResult);
     if (statementResult.data) {
         const buff = Buffer.from(statementResult.data, 'base64');
         const text = buff.toString('ascii');
-        console.log('find metadata?', text.slice(0, 40));
         const nometaData = buff.slice(text.indexOf(';base64,') + 8, buff.length);
 
         const noTagBuffer = Buffer.from(nometaData, 'base64');

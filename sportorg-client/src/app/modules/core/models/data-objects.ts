@@ -94,6 +94,7 @@ export interface AppMember {
   firstName: string;
   middleName: string;
   lastName: string;
+  memberName?: string;
   name: string;
   yearOfBirth: number;
   competeGender: 'M' | 'F',
@@ -183,13 +184,18 @@ export interface EnrolledMember {
 
 export interface Invoice {
   invoiceId: number;
-  memberId: number;
-  memberName: string;
+  fromId: number;
+  fromType: string;
+  toId: number;
+  toType: string;
+  fromName?: string;
+  companyName?: string;
   lineItemsJson?: string;
   lineItems?: InvoiceItem[];
   invoiceAmount: string;
   paidAmount?: string;
   updateDate?: string;
+  dueDate?: string;
   balance?: string;
   status?: string;
 }
@@ -199,6 +205,15 @@ export interface InvoiceItem {
   units: number;
   unitPrice: number,
   updateDate?: string;
+  isEditing?: boolean;
+}
+
+export interface NewInvoice {
+  fromId: number;
+  fromType: string;
+  toId: number;
+  toType: string;
+  dueDate?: string;
 }
 
 export interface Payment {
@@ -210,4 +225,25 @@ export interface Payment {
   invoiceId?: number;
   amount: number;
   paymentMethod?: string;
+}
+
+export interface Company {
+  companyId: number;
+  companyName: string;
+  streetAddress?: string;
+  city?: string;
+  postalCode?: string;
+  regionId?: number;
+  email?: string;
+  regionName?: string;
+  regionCode?: string;
+}
+
+export interface Season {
+  seasonId: number;
+  name: string;
+  year: number;
+  startDate: string;
+  endDate: string;
+  isActive: 'Y' | 'N';
 }

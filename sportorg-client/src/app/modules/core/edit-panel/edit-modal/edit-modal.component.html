@@ -1,0 +1,92 @@
+<div class="modal-wrapper-sm">
+  <div class="modal-header">
+   Edit {{entityType}}
+  </div>
+  <div class="form-scroller">
+    <form autocomplete="off" novalidate class="form-wrapper">
+      <mat-card class="field-card">
+        <ng-container *ngFor="let editField of formFields">
+          <div class="field-wrapper">
+            <div class="editor-field">
+              <ng-container *ngIf="editField.type ==='string'">
+                <app-string-input
+                  [title]="editField.title"
+                  [value]="record[editField.fieldName]"
+                  (valueChange)="updateString($event, editField.fieldName)"
+                ></app-string-input>
+              </ng-container>
+              <ng-container *ngIf="editField.type ==='number'">
+                <app-number-input
+                  [title]="editField.title"
+                  [value]="record[editField.fieldName]"
+                  (valueChange)="updateNumber($event, editField.fieldName)"
+                ></app-number-input>
+              </ng-container>
+              <ng-container *ngIf="editField.type ==='boolean'">
+                <app-boolean-input
+                  [title]="editField.title"
+                  [value]="record[editField.fieldName]"
+                  (valueChanged)="updateBoolean($event, editField.fieldName)"
+                ></app-boolean-input>
+              </ng-container>
+              <ng-container *ngIf="editField.type ==='time'">
+                <app-time-input
+                  [title]="editField.title"
+                  [value]="record[editField.fieldName]"
+                  (timeChanged)="updateTime($event, editField.fieldName)"
+                ></app-time-input>
+              </ng-container>
+              <ng-container *ngIf="editField.type ==='date'">
+                <app-date-picker
+                  [title]="editField.title"
+                  [dateValue]="record[editField.fieldName]"
+                  (dateValueChanged)="updateDate($event, editField.fieldName)"
+                ></app-date-picker>
+              </ng-container>
+              <ng-container *ngIf="editField.type ==='select'">
+                <app-select-input
+                  [title]="editField.title"
+                  [lookupType]="editField.lookupField"
+                  [staticLookup]="editField.lookupStatic"
+                  [selected]="record[editField.fieldName]"
+                  (selectedChange)="updateSelection($event, editField.fieldName)"
+                ></app-select-input>
+              </ng-container>
+              <ng-container *ngIf="editField.type ==='html'">
+                <app-html-input
+                  [title]="editField.title"
+                  [htmlString]="record[editField.fieldName]"
+                  (updateHtml)="updateHtml($event, editField.fieldName)"
+                ></app-html-input>
+              </ng-container>
+              <ng-container *ngIf="editField.type ==='image'">
+                <span class="edit-field-title">{{editField.title}}</span>
+                <input type="text" disabled [value]="record[editField.fieldName]" />
+                <file-select-button
+                  [title]="editField.title"
+                  [fileType]="'image'"
+                  [category]="entityType"
+                  (updatedId)="updateFileId($event, editField.fieldName)"
+                ></file-select-button>
+                <file-upload-button
+                  [fileType]="'image'"
+                  [category]="entityType"
+                  [requestType]="entityType"
+                  (updatedId)="updateFileId($event, editField.fieldName)"
+                ></file-upload-button>
+              </ng-container>
+            </div>
+          </div>
+        </ng-container>
+      </mat-card>
+    </form>
+  </div>
+  <div class="action-bar">
+    <button mat-raised-button color="warn" (click)="deleteRecord()" [disabled]="isNewRecord">Delete</button>
+    <button mat-raised-button [mat-dialog-close]>Cancel</button>
+    <button mat-raised-button color="primary" (click)="saveRecord()" ngClass="{{recordValid ? '' : 'disabled'}}"
+            [disabled]="!isDirty()"
+    >Save</button>
+  </div>
+</div>
+

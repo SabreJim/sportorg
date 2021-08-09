@@ -78,6 +78,7 @@
       <p class="prompt-text">
         These are invoices that have been issued. If you feel that these records are not accurate, please contact the administrator.
       </p>
+      <button mat-raised-button [color]="'primary'" *ngIf="currentUser && currentUser.isAdmin" (click)="createInvoice()">Create Invoice</button>
       <app-table ngClass="select-table"
                  [tableColumns]="invoiceColumns"
                  [gridData]="myInvoices"

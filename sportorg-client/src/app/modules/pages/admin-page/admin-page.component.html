@@ -16,7 +16,12 @@
         <edit-panel class="admin-panel"
                     [configObject]="memberConfig"
                     [tableAltClass]="'tall-input-table'"
+                    [filterBarFields]="memberConfig.filterBarFields"
         ></edit-panel>
+      <edit-panel class="admin-panel"
+                  [configObject]="seasonConfig"
+                  [tableAltClass]="'tall-input-table'"
+      ></edit-panel>
     </mat-tab>
     <mat-tab label="Users" >
         <edit-panel class="admin-panel"
@@ -56,8 +61,7 @@
                        [tableColumns]="memberLinkColumns"
                        [gridData]="memberUserRows"
                        [canSelect]="true"
-                       [trackById]="'memberUserId'"
-                       (selectedRows)="selectMemberUser($event)"
+                       (selectedRow)="selectMemberUser($event)"
                        [singleSelect]="true"
             ></app-table>
           </div>
@@ -115,6 +119,27 @@
                   [configObject]="questionConfig"
                   [tableAltClass]="'tall-input-table'"
       ></edit-panel>
+    </mat-tab>
+    <mat-tab label="Config" >
+      <mat-expansion-panel (afterExpand)="getAppConfig()" class="expand-admin">
+        <mat-expansion-panel-header class="panel-header">
+          <h3>Configure the App</h3>
+        </mat-expansion-panel-header>
+        <div class="config-box">
+          <mat-card *ngFor="let item of configRows">
+            <app-string-input [(value)]="item.value"
+                              [title]="item.configItem"
+            ></app-string-input>
+          </mat-card>
+        </div>
+        <button mat-raised-button color="warn" class="link-button" (click)="saveConfig()">Save</button>
+      </mat-expansion-panel>
+
+      <edit-panel class="admin-panel"
+                  [configObject]="companyConfig"
+                  [tableAltClass]="'tall-input-table'"
+      ></edit-panel>
+
     </mat-tab>
   </mat-tab-group>
 </div>

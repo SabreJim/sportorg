@@ -14,6 +14,7 @@ export class HtmlInputComponent implements OnInit {
   }
   @Input() disabled: boolean = false;
   @Output() updateHtml = new EventEmitter<string>();
+  @Input() title: string = '';
 
   public editHtml = () => {
     // open a modal and pass in the member

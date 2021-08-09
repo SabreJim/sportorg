@@ -12,6 +12,7 @@ export class DatePickerComponent implements OnInit {
   @Input() set dateValue (incomingDate: string) { // external setter
     this.formValue = StaticValuesService.localizeDate(incomingDate);
   }
+  @Input() title = 'Date';
   @Output() dateValueChanged = new EventEmitter<string>();
   constructor() { }
   public dateControl = new FormControl({value: null, disabled: false});

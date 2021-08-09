@@ -57,6 +57,18 @@ ADD start_date DATE;
 ALTER TABLE beaches.programs
 ADD end_date DATE;
 
+CREATE TABLE beaches.files (
+    file_id MEDIUMINT NOT NULL auto_increment,
+    data MEDIUMBLOB NOT NULL,
+    preview MEDIUMBLOB NULL,
+    file_name VARCHAR(200) NOT NULL DEFAULT 'image.jpg',
+    file_type VARCHAR(40) NOT NULL DEFAULT 'image',
+    asset_type VARCHAR(40),
+    category VARCHAR(40) NOT NULL DEFAULT 'all',
+    updated_by MEDIUMINT references beaches.users(user_id),
+    update_date DATETIME default CURRENT_TIMESTAMP,
+    PRIMARY KEY (file_id)
+);
 
 -- data tables
 CREATE TABLE fee_structures (
@@ -239,13 +251,6 @@ CREATE TABLE beaches.class_enrollments (
 );
 
 // FITNESS TRACKER
---CREATE TABLE beaches.images (
---    image_id MEDIUMINT NOT NULL auto_increment,
---    type VARCHAR(30),
---    value BLOB,
---    PRIMARY KEY(image_id)
---);
-
 CREATE TABLE beaches.exercises (
     exercise_id MEDIUMINT NOT NULL auto_increment,
     name VARCHAR(100) NOT NULL,
@@ -578,21 +583,24 @@ INSERT INTO beaches.projects
 (project_name, type, private_key_id, private_key)
 VALUES ('beachesEast', 'config', 'companyId', 1);
 
--- start of file upload changes
-CREATE TABLE beaches.files (
-    file_id MEDIUMINT NOT NULL auto_increment,
-    data MEDIUMBLOB NOT NULL,
-    preview MEDIUMBLOB NULL,
-    file_name VARCHAR(200) NOT NULL DEFAULT 'image.jpg',
-    file_type VARCHAR(40) NOT NULL DEFAULT 'image',
-    asset_type VARCHAR(40),
-    category VARCHAR(40) NOT NULL DEFAULT 'all',
-    updated_by MEDIUMINT references beaches.users(user_id),
-    update_date DATETIME default CURRENT_TIMESTAMP,
-    PRIMARY KEY (file_id)
-);
-ALTER TABLE beaches.exercises DROP COLUMN image_id;
-ALTER TABLE beaches.exercises ADD file_id MEDIUMINT references beaches.files(file_id);
-DROP TABLE beaches.images;
+-- start of news-posts and filtering changes
+-- update beaches.enroll_in_program to not set final amount
+ALTER TABLE beaches.invoices DROP COLUMN amount;
+ALTER TABLE beaches.invoices ADD COLUMN cancelled VARCHAR(1) DEFAULT 'N';
+ALTER TABLE beaches.companies ADD COLUMN street_address VARCHAR(200) ;
+ALTER TABLE beaches.companies ADD COLUMN city VARCHAR(50) ;
+ALTER TABLE beaches.companies ADD COLUMN postal_code VARCHAR(10) ;
+ALTER TABLE beaches.companies ADD COLUMN region_id VARCHAR(200) references beaches.regions(region_id) ;
+ALTER TABLE beaches.companies add column email VARCHAR(100);
+UPDATE beaches.companies
+SET street_address = '512 George Street',
+city = 'Fredericton'
+WHERE company_name = 'Beaches East';
 
-alter table beaches.members DROP column confirmed;
+INSERT INTO beaches.projects (project_name, type, private_key_id, private_key)
+VALUES
+('beachesEast', 'config', 'currentYear', '2021');
+INSERT INTO beaches.projects
+(project_name, type, private_key_id, private_key)
+VALUES
+('beachesEast', 'config', 'checkinScreeningRequired', 'N');

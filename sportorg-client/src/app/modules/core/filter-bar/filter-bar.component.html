@@ -1,20 +1,24 @@
 <div class="filter-bar">
-      <mat-form-field floatLabel="always" appearance="outline" [ngClass]="{'hidden': !filterConfig.hasSearch}">
+      <mat-form-field floatLabel="always" appearance="outline" class="search-bar" [ngClass]="{'hidden': !filterConfig.hasSearch}">
         <mat-label>{{filterConfig.searchTitle}}</mat-label>
         <input type="text" [placeholder]="filterConfig.searchPlaceholder" matInput [formControl]="textInput"/>
       </mat-form-field>
 
     <ng-container *ngFor="let filter of filterConfig.options">
         <ng-container *ngIf="!filter.singleSelect">
-          <mat-form-field floatLabel="always" appearance="outline" >
+          <mat-form-field floatLabel="always" appearance="outline" [ngClass]="{'filter-menu': !filter.showHint, 'filter-menu-hint': filter.showHint}">
             <mat-label>{{filter.title}}</mat-label>
             <input matInput class="hidden" />
-
-            <mat-button mat-raised-button color="primary" [matMenuTriggerFor]="belowMenu">{{filter.placeholder}}</mat-button>
+            <mat-button mat-raised-button color="primary" class="filter-menu-button mat-raised-button"  [matMenuTriggerFor]="belowMenu"
+                        [ngClass]="{ 'green': filter.currentFilterText && filter.currentFilterText.length }">
+              <mat-icon>filter_list</mat-icon>
+            </mat-button>
+            <div *ngIf="filter.showHint" class="filter-hint-text" title="{{filter.currentFilterText}}">{{filter.currentFilterText}}</div>
             <mat-menu #belowMenu="matMenu" xPosition="after" yPosition="below" >
               <div (click)="$event.stopPropagation()" class="select-menu">
                 <mat-checkbox class="multi-select" *ngFor="let option of filter.options"
-                              (change)="selectCheckbox($event, option, filter.fieldName)">
+                              [checked]="option.checked"
+                              (change)="selectCheckbox($event, option, filter.fieldName, filter)">
                   {{option.name}}
                 </mat-checkbox>
               </div>
@@ -23,7 +27,7 @@
         </ng-container>
 
         <ng-container *ngIf="filter.singleSelect">
-          <mat-form-field floatLabel="always" appearance="outline" >
+          <mat-form-field floatLabel="always" appearance="outline" class="radio-filter">
             <mat-label>{{filter.title}}</mat-label>
             <input matInput class="hidden" />
             <mat-button-toggle-group (change)="selectRadio($event, filter.fieldName)">

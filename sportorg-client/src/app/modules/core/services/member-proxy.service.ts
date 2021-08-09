@@ -6,6 +6,7 @@ import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
 import {SnackbarService} from "./snackbar.service";
+import {FilterRequest} from "../filter-bar/filter-bar.component";
 
 
 @Injectable({providedIn: 'root'})
@@ -13,8 +14,6 @@ export class MembersProxyService extends RestProxyService {
   constructor(http: HttpClient, appRouter: Router) {
     super(http, appRouter);
   }
-  public PublicMembers = new Subject<AppMember[]>();
-  protected memberCache: AppMember[] = [];
 
   public getMyMembers = (): Observable<AppMember[]> => {
     return new Observable((subscription) => {
@@ -24,25 +23,23 @@ export class MembersProxyService extends RestProxyService {
           subscription.next([]);
         } else {
           subscription.next(response.data || []);
-          this.PublicMembers.next(response.data);
         }
       }, (error: any) => {});
     });
   };
-  public getAllMembers = () => {
-    if (this.memberCache.length > 0) {
-      this.PublicMembers.next(this.memberCache);
-    } else {
-      this.get('members/').subscribe((response: ApiResponse<AppMember[]>) => {
+  public searchMembers = (filter: FilterRequest) : Observable<AppMember[]> => {
+    return new Observable((subscription) => {
+      this.get(`members/`, filter).subscribe((response: ApiResponse<AppMember[]>) => {
         if (response.hasErrors()) {
           SnackbarService.error(`There was an error getting all members: ${response.message}`);
-          this.PublicMembers.next([]);
+          subscription.next([]);
         } else {
-          this.memberCache = response.data || [];
-          this.PublicMembers.next(this.memberCache);
+          subscription.next(response.data);
         }
-      }, (error: any) => {});
-    }
+      }, (error: any) => {
+        subscription.next([]);
+      });
+    });
   };
 
   public upsertMember = (memberBody: AppMember): Observable<boolean> => {

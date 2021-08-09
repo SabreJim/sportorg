@@ -4,6 +4,7 @@ import {FormControl} from "@angular/forms";
 import {MatCheckboxChange} from "@angular/material/checkbox";
 import {LookupItem} from "../models/rest-objects";
 import {MatButtonToggleChange} from "@angular/material/button-toggle";
+import {LookupProxyService} from "../services/lookup-proxy.service";
 
 
 export interface FilterBarConfig {
@@ -16,9 +17,12 @@ export interface FilterConfig {
   title: string;
   fieldName: string;
   placeholder?: string;
+  currentFilterText?: string;
   singleSelect: boolean;
+  showHint?: boolean;
   value: string;
   options: LookupItem[];
+  lookupName?: string;
 }
 
 export interface FilterRequest {
@@ -32,11 +36,28 @@ export interface FilterRequest {
   styleUrls: ['./filter-bar.component.scss']
 })
 export class FilterBarComponent implements OnInit {
+  constructor (protected lookupService: LookupProxyService) {
+  }
 
-  @Input() filterConfig: FilterBarConfig = {
-    hasSearch: true,
-    options: []
-  };
+  @Input() set filterConfig (newConfig: FilterBarConfig) {
+    if (!newConfig) {
+      return;
+    }
+    this._filterConfig = newConfig;
+    if (this._filterConfig.options) {
+      this._filterConfig.options.map((config: FilterConfig) => {
+        if (config.lookupName && this.lookupService.Subjects[config.lookupName]) {
+          // automatically get the lookup values
+          this.lookupService.Subjects[config.lookupName].subscribe((items: LookupItem[]) => {
+            config.options = items;
+          });
+        }
+      });
+    }
+  } get filterConfig () {
+    return this._filterConfig;
+  }
+  private _filterConfig: FilterBarConfig = { hasSearch: true, options: [] };
 
   @Output() requestFilter = new EventEmitter<FilterRequest>();
 
@@ -45,22 +66,29 @@ export class FilterBarComponent implements OnInit {
 
   protected currentFilter: FilterRequest = { search: '', filters: {}};
 
-
-  public clearString = () => {
-    this.searchText = '';
-    this.textInput.setValue(null);
-    this.currentFilter.search = this.searchText;
-    this.requestFilter.emit(this.currentFilter);
-  }
-
-  public selectCheckbox = (change: MatCheckboxChange, source: LookupItem, fieldName: string) => {
-    let currentSelections: number[] = this.currentFilter.filters[fieldName] || [];
+  public selectCheckbox = (change: MatCheckboxChange, source: LookupItem, fieldName: string, config: FilterConfig) => {
+    let currentSelections: any[] = this.currentFilter.filters[fieldName] || [];
+    let currentSelectedNames: string[] = []; // for hint text
+    if (config.currentFilterText && config.currentFilterText.length) {
+      currentSelectedNames = config.currentFilterText.split(', ');
+    }
     if (change.checked) {
       // add to selected
-      currentSelections.push(source.id);
+      if (source.id === -1) {
+        currentSelections.push(source.stringId);
+      } else {
+        currentSelections.push(source.id);
+      }
+      currentSelectedNames.push(source.name);
     } else {
-      currentSelections = currentSelections.filter((id) => id !== source.id);
+      if (source.id === -1) {
+        currentSelections = currentSelections.filter((id) => id !== source.stringId);
+      } else {
+        currentSelections = currentSelections.filter((id) => id !== source.id);
+      }
+      currentSelectedNames = currentSelectedNames.filter((name) => name !== source.name);
     }
+    config.currentFilterText = currentSelectedNames.join(', ');
     this.currentFilter.filters[fieldName] = currentSelections;
     this.requestFilter.emit(this.currentFilter);
   };
@@ -74,7 +102,6 @@ export class FilterBarComponent implements OnInit {
     }
     this.requestFilter.emit(this.currentFilter);
   };
-  constructor() { }
 
   ngOnInit() {
     this.textInput.valueChanges

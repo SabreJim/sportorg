@@ -31,3 +31,9 @@
     margin: 0 10px;
   }
 }
+.config-box {
+  display: flex;
+  flex: 1;
+  flex-flow: row wrap;
+  justify-content: space-between;
+}

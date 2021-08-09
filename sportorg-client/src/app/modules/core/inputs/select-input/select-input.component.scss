@@ -1,8 +1,11 @@
 .mat-select{
   border: 1px solid grey;
-  padding: 5px;
-  min-width: 282px;
+  padding: 10px;
+  min-width: 200px;
   font-weight: 600;
+  ::ng-deep .mat-select-arrow-wrapper {
+    transform: unset !important;
+  }
 }
 .main-text {
 

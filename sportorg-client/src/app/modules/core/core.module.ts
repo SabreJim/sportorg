@@ -42,7 +42,9 @@ import {RestImageDirective} from "./directives/rest-image.directive";
 import {FileSelectButtonComponent} from "./inputs/file-select-button/file-select-button.component";
 import {ImagePreviewModalComponent} from "./modals/image-preview-modal/image-preview-modal.component";
 import {CheckinMenuComponent} from "./org-menu-bar/checkin-menu/checkin-menu.component";
-
+import {EditModalComponent} from "./edit-panel/edit-modal/edit-modal.component";
+import {environment} from "../../../environments/environment";
+import {AngularFireModule} from "@angular/fire";
 
 @NgModule({
   declarations: [
@@ -51,6 +53,7 @@ import {CheckinMenuComponent} from "./org-menu-bar/checkin-menu/checkin-menu.com
     RegistrationButtonComponent,
     SafePipe,
     EditPanelComponent,
+    EditModalComponent,
     AppTableComponent,
     DynamicFormComponent,
     SelectInputComponent,
@@ -89,6 +92,7 @@ import {CheckinMenuComponent} from "./org-menu-bar/checkin-menu/checkin-menu.com
     RegistrationButtonComponent,
     SafePipe,
     EditPanelComponent,
+    EditModalComponent,
     AppTableComponent,
     SportorgCalendarComponent,
     ProgramPanelComponent,
@@ -122,7 +126,8 @@ import {CheckinMenuComponent} from "./org-menu-bar/checkin-menu/checkin-menu.com
     RouterModule,
     HttpClientModule,
     CommonModule,
-    AngularEditorModule
+    AngularEditorModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig),
   ],
   providers: [
     RouteGuardService
@@ -130,6 +135,7 @@ import {CheckinMenuComponent} from "./org-menu-bar/checkin-menu/checkin-menu.com
   entryComponents: [
     ConfirmModalComponent,
     MemberModalComponent,
+    EditModalComponent,
     HtmlEditorModalComponent,
     CheckinModalComponent,
     InvoiceModalComponent,

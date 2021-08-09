@@ -1,7 +1,6 @@
 <div class="modal-wrapper">
   <div class="form-scroller">
 <form autocomplete="off" novalidate class="form-wrapper">
-
   <mat-card class="field-card">
     <div class="form-header"><h2>Member Name</h2></div>
     <div class="form-content">
@@ -47,7 +46,7 @@
     <div class="form-header"><h2>Address</h2></div>
 
     <div class="form-content">
-      <app-string-input [(value)]="member.streetAddress" [setWidth]="'600px'" [title]="'Street address'"></app-string-input>
+      <app-string-input [(value)]="member.streetAddress" [title]="'Street address'"></app-string-input>
       <app-string-input [(value)]="member.city" [title]="'City'"></app-string-input>
 
       <app-select-input

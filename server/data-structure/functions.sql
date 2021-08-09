@@ -312,9 +312,9 @@ BEGIN
 
     -- create the invoice
     INSERT INTO beaches.invoices
-        (from_id, from_type, to_id, to_type, amount, update_date)
+        (from_id, from_type, to_id, to_type, update_date)
     VALUES
-        (p_member_id, 'member', 1, 'company', final_cost, CURDATE());
+        (p_member_id, 'member', 1, 'company', CURDATE());
     SELECT LAST_INSERT_ID() INTO new_invoice_id;
     SET rows_updated = rows_updated + ROW_COUNT();
 

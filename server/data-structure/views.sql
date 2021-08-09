@@ -57,6 +57,12 @@ UNION
 SELECT s.season_id as 'id', CONCAT(s.name, ' ', s.year) as 'name', date_format(s.start_date,'%Y-%m-%d') as 'more_info', 'seasons' as 'lookup' FROM beaches.seasons s where s.is_active = 'Y'
 UNION
 SELECT  r.region_id as 'id', r.region_name as 'name', r.region_code as 'more_info', 'regions' as 'lookup' FROM beaches.regions r
+UNION
+SELECT  a.age_id as 'id', a.label as 'name', a.name as 'more_info', 'ageCategories' as 'lookup' FROM beaches.age_categories a
+UNION
+SELECT  c.club_id as 'id', c.club_name as 'name', c.club_abbreviation as 'more_info', 'clubs' as 'lookup' FROM beaches.clubs c
+UNION
+SELECT  co.company_id as 'id', co.company_name as 'name', null as 'more_info', 'companies' as 'lookup' FROM beaches.companies co
 ;
 
 drop view beaches.v_enrollments;
@@ -84,7 +90,39 @@ LEFT JOIN fee_structures f ON f.fee_id = p.fee_id
 LEFT JOIN week_days wd ON wd.day_id = ps.day_id
 LEFT JOIN seasons s ON s.season_id = ps.season_id
 ;
+DROP VIEW  beaches.v_members;
+CREATE  SQL SECURITY INVOKER VIEW beaches.v_members AS
+SELECT DISTINCT
+            m.member_id,
+            CONCAT(m.first_name, ' ', m.last_name) member_name,
+            m.is_athlete,
+            m.club_id,
+            cl.club_abbreviation,
+            m.first_name,
+            m.middle_name,
+            m.last_name,
+            m.year_of_birth,
+            CONVERT((SELECT private_key FROM beaches.projects where type = 'config' AND private_key_id = 'currentYear'), SIGNED) - m.year_of_birth compete_age,
+            m.compete_gender,
+            DATE_FORMAT(m.membership_start, '%Y-%m-%d') as 'membership_start',
+            m.email,
+            m.street_address,
+            m.cell_phone,
+            m.home_phone,
+            m.postal_code,
+            m.license,
+            m.consent_signed,
+            m.is_active,
+            mu.user_id user_access_id,
+            (CASE WHEN (SELECT private_key FROM beaches.projects WHERE type = 'config' AND private_key_id = 'currentSeason')
+            	IN (SELECT season_id FROM beaches.class_enrollments ce WHERE ce.member_id = m.member_id)
+            	THEN 'Y' ELSE 'N' END) currently_enrolled
+        FROM beaches.members m
+        INNER JOIN beaches.clubs cl ON cl.club_id = m.club_id
+        INNER JOIN beaches.member_users mu ON m.member_id = mu.member_id
+        ;
 
+-- fitness tracker views
 drop view beaches.v_athlete_profiles;
 CREATE SQL SECURITY INVOKER VIEW beaches.v_athlete_profiles
 AS

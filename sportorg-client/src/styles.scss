@@ -1,6 +1,6 @@
 
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
-@import "~angular-calendar/css/angular-calendar.css";
+//@import "~angular-calendar/css/angular-calendar.css";
 
 @import '~@angular/material/theming';
 @include mat-core();
@@ -63,6 +63,9 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
   flex: 1 1 auto;
   height: 100%;
 }
+::ng-deep.mat-form-field-label {
+  padding-bottom: 1px;
+}
 ::ng-deep.mat-form-field-flex {
   align-items: center !important;
 }
@@ -77,6 +80,8 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
 }
 ::ng-deep.mat-form-field-suffix {
   align-self: center;
+  display: flex;
+  flex-flow: row;
 }
 
 
@@ -148,10 +153,23 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
     flex-flow: column nowrap;
     width: calc(80vw - 40px);
     overflow: hidden;
-    height: calc(80vh - 50px);
+  }
+  .modal-fixed-wrapper {
+    display: flex;
+    flex-flow: column nowrap;
+    width: calc(800px - 40px);
+    overflow: hidden;
+  }
+  .horizontal-scroll {
+    overflow-x: auto !important;
   }
   .form-scroller {
-    height: calc(80vh - 60px - 40px);
+    max-height: calc(75vh - 40px - 40px);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .form-scroller-fixed {
+    max-height: calc(80vh - 40px - 40px);
     overflow-x: hidden;
     overflow-y: auto;
   }
@@ -160,17 +178,28 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
     overflow-x: hidden;
     overflow-y: auto;
   }
+  .modal-header {
+    flex: 1;
+    min-height: 40px;
+    max-height: 40px;
+    padding-right:10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 30px;
+    font-weight: bolder;
+  }
   .action-bar {
     flex: 1 1 40px;
     display: flex;
     width: 100%;
     max-height: 40px;
-    margin-top: 20px;
+    margin-top: 10px;
     margin-bottom: 10px;
     align-self: flex-end;
     justify-content: flex-end;
     button {
-      margin: 0 20px;
+      margin: 0 0 0 20px;
     }
   }
 
@@ -228,12 +257,15 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
   //}
 }
 
-app-string-input, app-number-input, app-boolean-input, app-date-picker, app-select-input {
+app-string-input, app-number-input, app-boolean-input, app-date-picker, app-select-input, app-time-input {
   display:flex;
+  flex: 1;
+  min-width: 250px;
   margin: 5px 5px 25px 5px;
   background-color: transparent;
   .mat-form-field {
     display: flex;
+    flex: 1;
     max-height: 70px;
   }
   input {

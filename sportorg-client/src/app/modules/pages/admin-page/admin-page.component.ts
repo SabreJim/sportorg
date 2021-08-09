@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {AdminConfig, TableColumn} from "../../core/models/ui-objects";
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {AdminConfig, ConfigRow, TableColumn} from "../../core/models/ui-objects";
 import {LookupProxyService} from "../../core/services/lookup-proxy.service";
 import {ClassesProxyService} from "../../core/services/classes-proxy.service";
 import {StaticValuesService} from "../../core/services/static-values.service";
@@ -12,13 +12,15 @@ import {Subscription} from "rxjs";
 import {LookupItem} from "../../core/models/rest-objects";
 import {PageProxyService} from "../../core/services/page-proxy.service";
 import {TipsProxyService} from "../../core/services/tips-proxy.service";
+import {FinancialProxyService} from "../../core/services/financial-proxy.service";
+import {AppConfigService} from "../../core/services/app-config.service";
 
 @Component({
   selector: 'app-admin-page',
   templateUrl: './admin-page.component.html',
   styleUrls: ['./admin-page.component.scss']
 })
-export class AdminPageComponent implements OnInit {
+export class AdminPageComponent implements OnInit, OnDestroy {
   public classConfig: AdminConfig = {
     entityType: 'Class',
     identityField: 'scheduleId',
@@ -75,6 +77,21 @@ export class AdminPageComponent implements OnInit {
     delete: this.lookupService.deleteFee
   };
 
+  public seasonConfig: AdminConfig = {
+    entityType: 'Season',
+    identityField: 'seasonId',
+    columns: [
+      new TableColumn('name', 'Name', 'string'),
+      new TableColumn('year', 'Year', 'number'),
+      new TableColumn('startDate', 'Start', 'date'),
+      new TableColumn('endDate', 'End', 'date'),
+      new TableColumn('isActive', 'Active', 'boolean')
+    ],
+    getter: this.programService.getSeasons,
+    setter: this.programService.upsertSeason,
+    delete: null
+  };
+
   public userConfig: AdminConfig = {
     entityType: 'User',
     identityField: 'userId',
@@ -96,6 +113,7 @@ export class AdminPageComponent implements OnInit {
   public memberConfig: AdminConfig = {
     entityType: 'Member',
     identityField: 'memberId',
+    filterBarFields: ['lastName', 'firstName', 'email'],
     getter: this.memberService.getMyMembers,
     setter: this.memberService.upsertMember,
     delete: this.memberService.deleteMember,
@@ -140,9 +158,9 @@ export class AdminPageComponent implements OnInit {
       this.memberService.getMyMembers().subscribe();
       this.authService.getUsers().subscribe();
     };
-    public selectMemberUser = (memberUsers: AppMemberUser[]) => {
-      if (memberUsers.length) {
-        this.unlinkMemberUser = memberUsers[0];
+    public selectMemberUser = (memberUsers: AppMemberUser) => {
+      if (memberUsers) {
+        this.unlinkMemberUser = memberUsers;
       }
     };
     public getMemberAttendance = () => {
@@ -256,13 +274,43 @@ export class AdminPageComponent implements OnInit {
     delete: this.pageService.deleteQuestion
   };
 
+  protected configSub: Subscription;
+  public configRows: ConfigRow[] = [];
+  public getAppConfig = () => {
+    this.configSub = this.configService.getAppConfigs().subscribe((rows: ConfigRow[]) => {
+      console.log('got configs', rows);
+      this.configRows = rows;
+    })
+  }
+  public saveConfig = () => {
+
+  }
+
+  public companyConfig: AdminConfig = {
+    entityType: 'Company',
+    identityField: 'companyId',
+    columns: [
+      new TableColumn('companyName', 'Name', 'string'),
+      new TableColumn('streetAddress', 'Address', 'string'),
+      new TableColumn('city', 'City', 'string'),
+      new TableColumn('postalCode', 'Postal Code', 'string'),
+      new TableColumn('email', 'Email', 'string'),
+      TableColumn.fromConfig({ fieldName: 'regionId', title: 'Province', type: 'select', displayField: 'provinceName',
+        lookupField: 'regions' })
+    ],
+    getter: this.financialService.getCompanies,
+    setter: this.financialService.upsertCompany,
+    delete: null
+  };
+
   constructor(private lookupService: LookupProxyService, private classService: ClassesProxyService,
               private programService: ProgramsProxyService, private authService: FirebaseAuthService,
               private memberService: MembersProxyService, private pageService: PageProxyService,
-              private tipService: TipsProxyService) { }
+              private tipService: TipsProxyService, private financialService: FinancialProxyService,
+              private configService: AppConfigService) { }
 
   ngOnInit() {
-    this.memberSub = this.memberService.PublicMembers.subscribe((members: AppMember[]) => {
+    this.memberSub = this.memberService.searchMembers(null).subscribe((members: AppMember[]) => {
       this.memberRows = members.map((item: AppMember) => {
         return { id: item.memberId, name: `${item.lastName}, ${item.firstName}`, lookup: 'member'};
       });
@@ -272,6 +320,10 @@ export class AdminPageComponent implements OnInit {
         return { id: item.userId, name: item.email, lookup: 'user'};
       });
     });
+  }
+
+  ngOnDestroy(): void {
+    StaticValuesService.cleanSubs([this.configSub]);
   }
 
 }

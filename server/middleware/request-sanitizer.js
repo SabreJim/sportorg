@@ -35,6 +35,7 @@ const getCleanBody = (body, schema) => {
                 cleanBody[field.fieldName] = null;
             } else if (field.allowNull) {
                 cleanBody[field.fieldName] = null;
+                body[field.fieldName] = null;
             } else {
                 isValid = false;
                 cleanBody[field.fieldName] = null;
@@ -45,6 +46,7 @@ const getCleanBody = (body, schema) => {
                 cleanBody[field.fieldName] = null;
             } else if (field.allowNull) {
                 cleanBody[field.fieldName] = null;
+                body[field.fieldName] = null;
                 return false; // stop checking
             } else {
                 isValid = false;
@@ -80,7 +82,11 @@ const getCleanBody = (body, schema) => {
         const value = body[field.fieldName];
         if (validate(value, field)) {
             if (typeof value !== 'string') {
-                isValid = false;
+                if (value === null || value === undefined) {
+                    cleanBody[field.fieldName] = null; // allow null if not required field
+                } else {
+                    isValid = false;
+                }
             } else {
                 let noBadChars = value.replace(stringMask, '');
                 // also prepare quote marks for mySQL storage
@@ -131,6 +137,9 @@ const getCleanBody = (body, schema) => {
                         if (typeof item === 'number' && type === 'int' && item === parseInt(item)) {
                             arr.push(item);
                         }
+                        if (typeof item === 'object' && type === 'object'){
+                            arr.push(item);
+                        }
                     });
                 } catch (err) {
                     isValid = false;
@@ -166,6 +175,9 @@ const getCleanBody = (body, schema) => {
                 break;
             case 'string-array':
                 cleanArray(field, 'string');
+                break;
+            case 'object-array':
+                cleanArray(field, 'object');
                 break;
         }
     }
@@ -210,6 +222,18 @@ const classScheduleSchema = {
     ]
 };
 
+const seasonSchema = {
+    primaryKey: 'seasonId',
+    fields: [
+        {fieldName: 'seasonId', type: 'int', allowNull: false },
+        {fieldName: 'name', type: 'string', allowNull: false },
+        {fieldName: 'year', type: 'int', allowNull: false },
+        {fieldName: 'startDate', type: 'date', allowNull: false },
+        {fieldName: 'endDate', type: 'date', allowNull: false },
+        {fieldName: 'isActive', type: 'string', allowNull: false }
+    ]
+};
+
 const programSchema = {
     primaryKey: 'programId',
     fields: [
@@ -245,12 +269,12 @@ const memberSchema = {
         {fieldName: 'competeGender', type: 'string', allowNull: true },
         {fieldName: 'isActive', type: 'string', allowNull: false },
         {fieldName: 'isAthlete', type: 'string', allowNull: false },
-        {fieldName: 'membershipStart', type: 'date', allowNull: false },
+        {fieldName: 'membershipStart', type: 'date', allowNull: true },
         {fieldName: 'streetAddress', type: 'string', allowNull: true },
         {fieldName: 'city', type: 'string', allowNull: true },
         {fieldName: 'provinceId', type: 'int', allowNull: true },
         {fieldName: 'postalCode', type: 'string', allowNull: true },
-        {fieldName: 'email', type: 'string', allowNull: false },
+        {fieldName: 'email', type: 'string', allowNull: true },
         {fieldName: 'cellPhone', type: 'string', allowNull: true },
         {fieldName: 'homePhone', type: 'string', allowNull: true },
         {fieldName: 'license', type: 'string', allowNull: true }
@@ -413,9 +437,37 @@ const paymentSchema = {
     ]
 };
 
+const invoiceSchema = {
+    primaryKey: 'invoiceId',
+    fields: [
+        {fieldName: 'invoiceId', type: 'int', allowNull: false },
+        {fieldName: 'fromId', type: 'int', allowNull: false },
+        {fieldName: 'fromType', type: 'string', allowNull: false },
+        {fieldName: 'toId', type: 'int', allowNull: false },
+        {fieldName: 'toType', type: 'string', allowNull: false },
+        {fieldName: 'lineItems', type: 'object-array', allowNull: false },
+        {fieldName: 'dueDate', type: 'date', allowNull: true }
+    ]
+};
+
+const companySchema = {
+    primaryKey: 'companyId',
+    fields: [
+        {fieldName: 'companyId', type: 'int', allowNull: false },
+        {fieldName: 'companyName', type: 'string', allowNull: false },
+        {fieldName: 'streetAddress', type: 'string', allowNull: true },
+        {fieldName: 'city', type: 'string', allowNull: true },
+        {fieldName: 'postalCode', type: 'string', allowNull: true },
+        {fieldName: 'provinceId', type: 'number', allowNull: true },
+        {fieldName: 'email', type: 'string', allowNull: true },
+        {fieldName: 'companyType', type: 'string', allowNull: true }
+    ]
+};
+
 module.exports = {
     getCleanBody,
     classScheduleSchema,
+    seasonSchema,
     programSchema,
     feeSchema,
     memberSchema,
@@ -430,5 +482,7 @@ module.exports = {
     bannerSchema,
     tipSchema,
     questionSchema,
-    paymentSchema
+    paymentSchema,
+    invoiceSchema,
+    companySchema
 };

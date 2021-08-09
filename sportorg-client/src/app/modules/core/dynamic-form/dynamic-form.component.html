@@ -14,13 +14,13 @@
         <ng-container *ngIf="editField.type ==='string'">
           <app-string-input
             [value]="currentRow[editField.fieldName]"
-            (stringChanged)="updateString($event, editField.fieldName)"
+            (valueChange)="updateString($event, editField.fieldName)"
           ></app-string-input>
         </ng-container>
         <ng-container *ngIf="editField.type ==='number'">
           <app-number-input
             [value]="currentRow[editField.fieldName]"
-            (numberChanged)="updateNumber($event, editField.fieldName)"
+            (valueChange)="updateNumber($event, editField.fieldName)"
           ></app-number-input>
         </ng-container>
       <ng-container *ngIf="editField.type ==='boolean'">

@@ -1,3 +1,9 @@
+.filter-bar {
+  .mat-form-field {
+    padding: 5px 10px;
+    max-height: 40px;
+  }
+}
 .multi-select {
   margin-right: 10px;
 }
@@ -6,4 +12,31 @@
   display: flex;
   flex-flow: column nowrap;
   padding: 10px;
+}
+.search-bar {
+  flex: 4 4 auto;
+  input {
+    max-height: 30px;
+  }
+}
+
+.filter-menu { flex: 1 }
+.filter-menu-hint { flex: 2 }
+.filter-menu, .filter-menu-hint {
+  .mat-form-field-infix {
+    padding: 10px 0;
+  }
+  .filter-menu-button {
+  }
+  .filter-hint-text {
+    padding-left: 5px;
+    padding-top: 12px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 200px;
+  }
+}
+.radio-filter {
+  flex: 2
 }

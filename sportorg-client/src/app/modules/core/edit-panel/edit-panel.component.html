@@ -2,57 +2,37 @@
                      [expanded]="alwaysOpen" [disabled]="alwaysOpen" [hideToggle]="alwaysOpen"  >
   <mat-expansion-panel-header ngClass="panel-header {{(alwaysOpen) ? 'not-disabled' : ''}}">
     <mat-panel-title>
-      <h3 class="panel-title">{{configObject.entityType}}s</h3>
+      <h3 class="panel-title">{{configObject.entityType}} Records</h3>
     </mat-panel-title>
     <mat-panel-description class="header-description">
-      <span class="">Edit {{configObject.entityType}}s</span>
+      <!--   could add more details here   -->
     </mat-panel-description>
   </mat-expansion-panel-header>
   <!--  local filter input-->
   <ng-container *ngIf="filterBarFields.length > 0">
-    <div class="filter-bar mat-card">
-      <div class="typeahead-filter">
-        <label>Search:</label>
-        <input type="text"  matInput [formControl]="textInput" />
-        <button mat-button *ngIf="searchText" matSuffix mat-icon-button (click)="clearString()">
-          <mat-icon>close</mat-icon>
-        </button>
+    <div class="panel-filter-bar mat-card">
+      <div class="search-input">
+        <app-string-input
+          [title]="'Search rows'"
+          [value]="filterBarText"
+          (valueChange)="filterRecords($event)"
+        ></app-string-input>
       </div>
-      <div class="filter-found">Found items: {{filteredGridData.length || 0}}</div>
+      <div class="filter-found">Found items:<mat-chip selected color="primary">{{filteredGridData.length || 0}}</mat-chip></div>
+      <div class="filter-found-mobile"><mat-chip color="primary">{{filteredGridData.length || 0}}</mat-chip></div>
     </div>
   </ng-container>
-
-
-  <mat-sidenav-container autosize>
-    <!--  side-nav for editor -->
-    <mat-sidenav #editNav [mode]="'side'" [opened]="editorOpen" class="side-nav"
-                 [fixedInViewport]="false" fixedTopGap="56">
-        <app-dynamic-form
-          [formFields]="configObject.columns"
-          [editingRow]="editingRow"
-          [entityType]="configObject.entityType"
-          [identityField]="configObject.identityField"
-          (saveRecord)="runUpsert($event)"
-          (deleteRecord)="runDeletion($event)"
-        ></app-dynamic-form>
-    </mat-sidenav>
-
-    <mat-sidenav-content (click)="hideSideNav()" class="main-content">
-<!--  table content to display   -->
-      <app-table
-        ngClass="data-grid {{(filterBarFields.length) ? 'filtered-table' : ''}}"
-        [tableColumns]="configObject.columns"
-        [gridData]="filteredGridData"
-        [isEditable]="true"
-        [canAddRows]="!configObject.disableAdd"
-        [defaultObject]="configObject.defaultObject"
-        (editRow)="editRow($event)"
-        [canSelect]="configObject.allowSelect === true"
-        (selectedRow)="notifySelectionState($event, true)"
-        (deselectedRow)="notifySelectionState($event, false)"
-        [altClass]="tableAltClass"
-      ></app-table>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
-
+  <app-table
+    ngClass="data-grid {{(filterBarFields.length) ? 'filtered-table' : ''}}"
+    [tableColumns]="configObject.columns"
+    [gridData]="filteredGridData"
+    [isEditable]="true"
+    [canAddRows]="!configObject.disableAdd"
+    [defaultObject]="configObject.defaultObject"
+    (editRow)="editRow($event)"
+    [canSelect]="configObject.allowSelect === true"
+    (selectedRow)="notifySelectionState($event, true)"
+    (deselectedRow)="notifySelectionState($event, false)"
+    [altClass]="tableAltClass"
+  ></app-table>
 </mat-expansion-panel>

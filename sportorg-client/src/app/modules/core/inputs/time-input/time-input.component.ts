@@ -16,6 +16,7 @@ export class TimeInputComponent implements OnInit {
     this.timeValue = null;
     this.timeChanged.emit(this.timeValue);
   }
+  @Input() title = 'Time';
 
   public updateValue =(event: Event) => {
     const newValue = (event.srcElement as HTMLInputElement).value || null;

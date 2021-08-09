@@ -20,6 +20,7 @@ export interface TimeSlot {
   id: number;
   type: 'class' | 'empty';
   startTime: string;
+  endTime?: string;
   eventName?: string;
   height?: number;
   colorId?: number;
@@ -142,6 +143,7 @@ export class SportorgCalendarComponent implements OnInit {
               id: matchingClass.scheduleId,
               type: 'class',
               startTime: StaticValuesService.getUITime(matchingClass.startTime),
+              endTime: StaticValuesService.getUITime(matchingClass.endTime),
               eventName: matchingClass.programName,
               programId: matchingClass.programId,
               height: height,
@@ -152,7 +154,7 @@ export class SportorgCalendarComponent implements OnInit {
               endDate: matchingClass.endDate
             });
           } else {
-            currentColumn.push({ id: 0, type: 'empty', startTime: time });
+            currentColumn.push({ id: 0, type: 'empty', startTime: time});
           }
         }
         this.timeSlotGrid.push(currentColumn);

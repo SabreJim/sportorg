@@ -1,18 +1,15 @@
 <div class="page-wrapper">
-  <mat-expansion-panel [expanded]="true" [disabled]="true">
-    <mat-expansion-panel-header class="panel-header">
-      <h1>Members/Fencers</h1>
-    </mat-expansion-panel-header>
-    <div class="primary-table-box">
-      <p class="prompt-text">
-        These are the fencers that represent our club, and the members of the community that support us. We hope to
-        expand this page to include athlete profiles of the adventures and exploits of our more daring members.
-      </p>
+  <h1> Members/Fencers</h1>
+    <mat-card class="table-card">
+      <app-filter-bar
+        [filterConfig]="filterConfig"
+        (requestFilter)="filterMembers($event)"
+      ></app-filter-bar>
       <app-table ngClass="primary-table"
                  [tableColumns]="memberColumns"
                  [gridData]="memberRows"
                  [trackById]="'memberId'"
+                 [altClass]="'tall-input-table'"
       ></app-table>
-    </div>
-  </mat-expansion-panel>
+    </mat-card>
 </div>

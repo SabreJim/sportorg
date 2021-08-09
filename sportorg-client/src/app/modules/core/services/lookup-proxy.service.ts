@@ -1,6 +1,6 @@
 import {RestProxyService} from "./rest-proxy.service";
-import {Observable, of, Subject} from "rxjs";
-import {ApiResponse, IndexedCache, LookupItem} from "../models/rest-objects";
+import {Observable, Subject} from "rxjs";
+import {ApiResponse, LookupItem} from "../models/rest-objects";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
@@ -22,6 +22,8 @@ export class LookupProxyService extends RestProxyService {
   protected regionCache: LookupItem[] = [];
   protected ageCategoryCache: LookupItem[] = [];
   protected athleteTypeCache: LookupItem[] = [];
+  protected clubCache: LookupItem[] = [];
+  protected companyCache: LookupItem[] = [];
 
 
   public Subjects: Record<string, Subject<LookupItem[]>> = {
@@ -32,6 +34,8 @@ export class LookupProxyService extends RestProxyService {
     regions: new Subject<LookupItem[]>(),
     ageCategories: new Subject<LookupItem[]>(),
     athleteTypes: new Subject<LookupItem[]>(),
+    clubs: new Subject<LookupItem[]>(),
+    companies: new Subject<LookupItem[]>()
   };
 
   protected pushLookups = () => {
@@ -42,6 +46,8 @@ export class LookupProxyService extends RestProxyService {
     this.Subjects.regions.next(this.regionCache);
     this.Subjects.ageCategories.next(this.ageCategoryCache);
     this.Subjects.athleteTypes.next(this.athleteTypeCache);
+    this.Subjects.clubs.next(this.clubCache);
+    this.Subjects.companies.next(this.companyCache);
   };
   public refreshLookups = (repull: boolean = false) => {
     const extractLookup = (source: LookupItem[], name: string, byId: boolean = false) => {
@@ -71,6 +77,8 @@ export class LookupProxyService extends RestProxyService {
           this.regionCache = extractLookup(response.data, 'regions');
           this.ageCategoryCache = extractLookup(response.data, 'ageCategories', true);
           this.athleteTypeCache = extractLookup(response.data, 'athleteTypes');
+          this.clubCache = extractLookup(response.data, 'clubs');
+          this.companyCache = extractLookup(response.data, 'companies');
           this.pushLookups();
         }
       }, (error: any) => {});

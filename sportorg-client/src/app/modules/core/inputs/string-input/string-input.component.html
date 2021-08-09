@@ -1,11 +1,11 @@
 <ng-container *ngIf="!useTextArea ">
-  <mat-form-field floatLabel="true" appearance="outline" [style.min-width]="'calc(115px + ' + setWidth + ')'" [style.max-width]="'calc(115px + ' + setWidth + ')'">
+  <mat-form-field floatLabel="always" appearance="outline">
     <mat-label>{{title}}</mat-label>
     <button matprefix *ngIf="hint" mat-icon-button
             appTooltip [hangRight]="true" [tooltipData]="hint"
     ><mat-icon>info</mat-icon></button>
     <input type="text" matInput [required]="isRequired"
-           [style.min-width]="setWidth" [style.max-width]="setWidth" [formControl]="textFormControl"/>
+            [formControl]="textFormControl"/>
     <button mat-button *ngIf="textFormControl.value" matSuffix mat-icon-button (click)="clearString()">
       <mat-icon>close</mat-icon>
     </button>
@@ -19,6 +19,5 @@
             cdkTextareaAutosize
             #autosize="cdkTextareaAutosize"
             cdkAutosizeMinRows="1"
-            [style.min-width]="setWidth"
             cdkAutosizeMaxRows="8"></textarea>
 </ng-container>

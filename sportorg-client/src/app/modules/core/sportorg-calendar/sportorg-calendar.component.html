@@ -28,7 +28,10 @@
               <a class="event-name"
                  [tooltipTemplate]="programTemplate" appTooltip [delayOpen]="0" [tooltipData]="getProgram(event.programId)" [tooltipPanelClass]="'w1000'"
               >{{event.eventName}}</a>
-              <span class="start-time">{{event.startTime}}</span>
+              <span class="start-time">{{event.startTime}} {{(event.endTime) ? '->': ''}}</span>
+              <ng-container *ngIf="event.endTime">
+                <span class="end-time">{{event.endTime}}</span>
+              </ng-container>
             </div>
           </ng-container>
         </ng-container>

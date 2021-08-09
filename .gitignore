@@ -5,7 +5,6 @@
 node_modules/**
 sportorg-client/node_modules/**
 /node_modules/
-/sportorg-client/dist/**
 /.firebaserc
 /server/beaches-sportorg-firebase-adminsdk-jfp8a-40b94b9e9c.json
 /firebase.json

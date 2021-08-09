@@ -1,7 +1,6 @@
-<mat-form-field floatLabel="always" appearance="outline"  [style.min-width]="'calc(75px + ' + setWidth + ')'" [style.max-width]="'calc(75px + ' + setWidth + ')'">
+<mat-form-field floatLabel="always" appearance="outline">
   <mat-label>{{title}}</mat-label>
-  <input type="number" matInput [required]="isRequired"
-         [style.min-width]="setWidth" [style.max-width]="setWidth" [formControl]="numberFormControl"/>
+  <input type="number" matInput [required]="isRequired" [formControl]="numberFormControl"/>
   <button mat-button *ngIf="numberFormControl.value" matSuffix mat-icon-button (click)="clearNumber()">
     <mat-icon>close</mat-icon>
   </button>

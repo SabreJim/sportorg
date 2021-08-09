@@ -1,7 +1,11 @@
 import {Injectable} from "@angular/core";
-import {EventColor} from "calendar-utils";
 import {LookupItem} from "../models/rest-objects";
-import {Subscription} from "rxjs";
+import { Subscription } from "rxjs";
+
+export interface EventColor {
+  primary: string;
+  secondary: string;
+}
 
 @Injectable({providedIn: 'root'})
 export class StaticValuesService {
@@ -11,13 +15,11 @@ export class StaticValuesService {
     StaticValuesService.SessionToken = token;
   };
 
-  public static checkMobile = () => {
-    return StaticValuesService.isMobile;
-  }
+  public static isMobile = () => StaticValuesService._isMobile;
   public static setMobileMode = (value: boolean) => {
-    StaticValuesService.isMobile = value;
+    StaticValuesService._isMobile = value;
   }
-  private static isMobile = false;
+  private static _isMobile = false;
 
   public static cleanSubs = (subs: Subscription[]) => {
     if (subs && subs.length){

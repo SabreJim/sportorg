@@ -17,7 +17,7 @@ const getMyMembers = async(req, res, next) => {
 const getMemberAttendance = async(req, res, next) => {
     const myUserId = (req.session && req.session.user_id) ? req.session.user_id : -1;
     let requestDate = getDateOnly(req.query.date);
-    const query = `SELECT
+    const query = `SELECT DISTINCT
             m.member_id,
             m.last_name,
             m.first_name,

@@ -154,7 +154,7 @@ SELECT DISTINCT
             m.license,
             m.consent_signed,
             m.is_active,
-            mu.user_id user_access_id,
+            mu.access user_access_ids,
             m.is_loyalty_member,
             (CASE WHEN (SELECT private_key FROM beaches.projects WHERE type = 'config' AND private_key_id = 'currentSeason')
             	IN (SELECT season_id FROM beaches.class_enrollments ce WHERE ce.member_id = m.member_id)
@@ -162,7 +162,8 @@ SELECT DISTINCT
         	ce.seasons
         FROM beaches.members m
         LEFT JOIN beaches.clubs cl ON cl.club_id = m.club_id
-        INNER JOIN beaches.member_users mu ON m.member_id = mu.member_id
+        LEFT JOIN (SELECT GROUP_CONCAT(user_id) access, member_id FROM beaches.member_users GROUP BY member_id) mu
+        	ON mu.member_id = m.member_id
     	LEFT JOIN (SELECT CONCAT('[',
             GROUP_CONCAT(JSON_OBJECT(
             'seasonId',  ce.season_id,

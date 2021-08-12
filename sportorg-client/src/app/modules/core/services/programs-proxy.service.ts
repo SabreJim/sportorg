@@ -9,7 +9,6 @@ import {SnackbarService} from "./snackbar.service";
 @Injectable({providedIn: 'root'})
 export class ProgramsProxyService extends RestProxyService {
   public Programs = new Subject<ProgramRecord[]>();
-  protected programCache: ProgramRecord[] = [];
 
   public getAllPrograms = (): Observable<ProgramRecord[]> => {
     return new Observable((subscription) => {
@@ -23,20 +22,16 @@ export class ProgramsProxyService extends RestProxyService {
         }, (error: any) => {});
     });
   };
-  public getPrograms = () => {
-    if (this.programCache.length > 0) {
-      this.Programs.next(this.programCache);
-    } else {
-      this.get('programs/').subscribe((response: ApiResponse<ProgramRecord[]>) => {
-        if (response.hasErrors()) {
-          SnackbarService.error('Programs could not be loaded at this time');
-          this.Programs.next([]);
-        } else {
-          this.programCache = response.data || [];
-          this.Programs.next(this.programCache);
-        }
-      }, (error: any) => {});
-    }
+  public getPrograms = (seasonId: number = null) => {
+    const params = seasonId ? { seasonId: seasonId } : {};
+    this.get('programs/', params).subscribe((response: ApiResponse<ProgramRecord[]>) => {
+      if (response.hasErrors()) {
+        SnackbarService.error('Programs could not be loaded at this time');
+        this.Programs.next([]);
+      } else {
+        this.Programs.next(response.data || []);
+      }
+    }, (error: any) => {});
   };
 
   public upsertPrograms = (classBody: ProgramRecord): Observable<boolean> => {

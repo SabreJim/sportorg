@@ -39,7 +39,7 @@ export interface ClassRecord {
   startDate: string;
   startTime: string;
   duration: number;
-  numberEnrolled?: number;
+  enrolled?: number;
 
   year?: number;
   feeId: number;
@@ -59,6 +59,10 @@ export interface ProgramRecord {
   isActive: 'Y' | 'N';
   expanded?: boolean;
   colorValue?: string;
+  classes?: any;
+  daysText?: string;
+  seasonName?: string;
+  loyaltyDiscount?: string;
 }
 
 export interface ProgramSchedule {
@@ -110,6 +114,13 @@ export interface AppMember {
   cellPhone?: string;
   homePhone?: string;
   license: string;
+  isLoyaltyMember?: string;
+  seasons?: string;
+  seasonEnrollments?: MemberSeasonEnrollment[];
+}
+export interface MemberSeasonEnrollment {
+  seasonId: number;
+  enrolled: string;
 }
 export interface MemberAttendance {
   memberId: number;

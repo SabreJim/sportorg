@@ -277,7 +277,8 @@ const memberSchema = {
         {fieldName: 'email', type: 'string', allowNull: true },
         {fieldName: 'cellPhone', type: 'string', allowNull: true },
         {fieldName: 'homePhone', type: 'string', allowNull: true },
-        {fieldName: 'license', type: 'string', allowNull: true }
+        {fieldName: 'license', type: 'string', allowNull: true },
+        {fieldName: 'loyaltyDiscount', type: 'string', allowNull: true }
     ]
 };
 const userSchema = {

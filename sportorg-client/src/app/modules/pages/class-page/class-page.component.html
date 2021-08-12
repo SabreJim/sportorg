@@ -1,5 +1,14 @@
 <div class="page-wrapper">
   <h2>Programs</h2>
+  <mat-form-field class="season-field" floatLabel="always" appearance="outline">
+    <mat-label >Season</mat-label>
+    <input type="number" matInput class="hidden"/>
+    <mat-button-toggle-group class="radio-toggle" [value]="currentSeason" (change)="selectSeason($event.value)">
+      <mat-button-toggle class="radio-toggle-item" [value]="season" *ngFor="let season of seasons" >
+        <strong>{{season.name}}</strong> ({{season.moreInfo}})
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </mat-form-field>
   <mat-accordion [multi]="true" id="programs">
     <ng-container *ngFor="let programItem of currentPrograms">
       <app-program-panel

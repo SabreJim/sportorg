@@ -1,8 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {
   AppMember,
   ClassRecord,
-  EnrolledMember,
+  EnrolledMember, MemberSeasonEnrollment,
   ProgramRecord,
   RegistrationConfig
 } from "../../core/models/data-objects";
@@ -19,6 +19,8 @@ import { MatStepper } from "@angular/material/stepper";
 import {MemberModalComponent} from "../../core/modals/member-modal/member-modal.component";
 import {EnrollmentProxyService} from "../../core/services/enrollment-proxy.service";
 import {SnackbarService} from "../../core/services/snackbar.service";
+import {LookupProxyService} from "../../core/services/lookup-proxy.service";
+import {clone} from 'ramda';
 
 
 @Component({
@@ -29,7 +31,7 @@ import {SnackbarService} from "../../core/services/snackbar.service";
     './register-page.component.scss'
   ]
 })
-export class RegisterPageComponent implements OnInit, OnDestroy {
+export class RegisterPageComponent implements AfterViewInit, OnDestroy {
   public readonly LOYALTY_DISCOUNT = 50;
   public readonly FAMILY_DISCOUNT = 10;
   public currentUser: AppUser;
@@ -43,50 +45,81 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
     scheduleIds: [],
     memberId: null
   };
-  public allPrograms: LookupItem[] = [];
-  public currentProgram: LookupItem;
+  public allPrograms: ProgramRecord[] = [];
+  public currentProgram: ProgramRecord;
   public currentSeason: LookupItem;
   public currentClasses: ClassRecord[];
-  public currentMember: LookupItem;
+  public seasons: LookupItem[] = [];
+  public defaultSeason: LookupItem;
+  public currentMember: AppMember;
   public enrolledMembers: EnrolledMember[] = [];
-  public availableMembers: LookupItem[] = [];
+  public availableMembers: AppMember[] = [];
   public finalCost: string = '';
   protected allClasses: ClassRecord[] = [];
   public includedClasses: ClassRecord[] = [];
+  public alreadyEnrolled = false;
 
   constructor(private authService: FirebaseAuthService, private classService: ClassesProxyService,
               private programService: ProgramsProxyService, private memberService: MembersProxyService,
-              public dialog: MatDialog, private enrollmentService: EnrollmentProxyService) {
+              public dialog: MatDialog, private enrollmentService: EnrollmentProxyService,
+              protected LookupService: LookupProxyService, protected detector: ChangeDetectorRef) {
   }
 
   public selectSeason = (season: LookupItem) => {
     if (season && season.id) {
       this.currentRegistration.seasonId = season.id;
       this.currentSeason = season;
-      this.enrollmentService.getMyEnrolledMembers(season.id);
+      this.programService.getPrograms(season.id);
+      this.currentProgram = null;
+      this.includedClasses = [];
     } else {
       this.currentRegistration.seasonId = null;
       this.currentSeason = null;
+      this.currentProgram = null;
+      this.includedClasses = [];
     }
+    this.checkProgramEnrolled();
   };
 
-  public selectProgram = (program: LookupItem) => {
-    if (program && program.id) {
-      this.currentRegistration.programId = program.id;
+  public checkProgramEnrolled = () => {
+    if (this.currentMember && this.currentSeason) {
+      let alreadyEnrolled = false;
+      if (this.currentMember.seasonEnrollments) {
+        this.currentMember.seasonEnrollments.map((s: MemberSeasonEnrollment) => {
+          if (s.seasonId === this.currentSeason.id && s.enrolled === 'Y') {
+            alreadyEnrolled = true;
+          }
+        });
+      }
+      this.alreadyEnrolled = alreadyEnrolled;
+    } else {
+      this.alreadyEnrolled = false;
+    }
+  }
+
+  public selectProgram = (program: ProgramRecord) => {
+    if (program && program.programId) {
+      this.currentRegistration.programId = program.programId;
       this.currentProgram = program;
-      this.includedClasses = this.allClasses.filter((c: ClassRecord) => {
-        return c.seasonId === this.currentRegistration.seasonId && c.programId === this.currentRegistration.programId;
-      });
+      try {
+        // const str = program.classes.data.map(String.fromCharCode);
+        this.includedClasses = JSON.parse(program.classes);
+      } catch (err) {
+        this.includedClasses = [];
+      }
     } else {
       this.currentRegistration.programId = null;
       this.currentProgram = null;
     }
   };
 
-  public selectMember = (member: LookupItem) => {
+  public selectMember = (member: AppMember) => {
     if (member) {
+      if (member.seasons && member.seasons.length && !member.seasonEnrollments) {
+        member.seasonEnrollments = JSON.parse(member.seasons);
+      }
       this.currentMember = member;
-      this.currentRegistration.memberId = this.currentMember.id;
+      this.currentRegistration.memberId = this.currentMember.memberId;
     } else {
       this.currentMember = null;
       this.currentRegistration.memberId = null;
@@ -97,8 +130,8 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
   // pre-calculate the costs
   protected calculateCost = () => {
     if (this.currentProgram && this.currentMember) {
-      let cost = this.currentProgram.numberValue || 0;
-      if (this.currentMember.description === 'Y') { // loyalty member discount
+      let cost = this.currentProgram.feeValue || 0;
+      if (this.currentMember.isLoyaltyMember === 'Y' && this.currentProgram.loyaltyDiscount === 'Y') { // loyalty member discount
         cost = Math.max(0, cost - this.LOYALTY_DISCOUNT);
       }
       if (this.enrolledMembers.length) { // apply family discount if another member has been signed up by this user
@@ -131,7 +164,8 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
   public resetForm = (stepper: MatStepper) => {
     this.selectMember(null);
     this.selectProgram(null);
-    this.selectSeason(null);
+    this.selectSeason(this.defaultSeason);
+    this.alreadyEnrolled = false;
     // go back to the first step
     stepper.reset();
   }
@@ -151,46 +185,27 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
     });
   };
 
-  ngOnInit() {
+  ngAfterViewInit() {
     this.userSub = this.authService.CurrentUser.subscribe((user: AppUser) => {
       this.currentUser = user;
+      this.memberService.getMyMembers().subscribe((myMembers: AppMember[]) => {
+        if (myMembers && myMembers.length) {
+          this.availableMembers = myMembers;
+          this.detector.detectChanges();
+        }
+      });
     });
     this.authService.getSession();
 
     this.programSub = this.programService.Programs.subscribe((programs: ProgramRecord[]) => {
-      this.allPrograms = programs.map((program: ProgramRecord) => {
-        return {
-          id: program.programId,
-          name: program.programName,
-          moreInfo: `$${program.feeValue}`,
-          lookup: 'programs',
-          description: program.programDescription,
-          numberValue: program.feeValue
-        }
-      });
+      this.allPrograms = programs;
     });
 
-    this.classesSub = this.classService.getAllClasses().subscribe((classes: ClassRecord[]) => {
-      this.allClasses = classes;
-    });
-
-    this.programService.getPrograms();
-    this.memberSub = this.enrollmentService.EnrolledMembers.subscribe((members: EnrolledMember[]) => {
-      this.enrolledMembers = [];
-      this.availableMembers = [];
-      members.map((member: EnrolledMember) => {
-        const lookupItem: LookupItem = {
-          id: member.memberId,
-        name: `${member.firstName} ${member.lastName}`,
-        description: member.isLoyaltyMember,
-        lookup: 'enrolledMember'
-        };
-        if (member.isEnrolled === 'Y') {
-          this.enrolledMembers.push(member);
-        } else {
-          this.availableMembers.push(lookupItem);
-        }
-      });
+    this.LookupService.getLookup('seasons').subscribe((items: LookupItem[]) => {
+      this.seasons = items;
+      const currentSeason = items.find(i => i.id === parseInt(i.otherId));
+      this.selectSeason(currentSeason);
+      this.defaultSeason = clone(currentSeason);
     });
   }
 

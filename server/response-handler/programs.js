@@ -8,7 +8,11 @@ const getAllPrograms = async(req, res, next) => {
     returnResults(res, parseHtmlFields(programs, ['programDescription']));
 };
 const getActivePrograms = async(req, res, next) => {
-    const query = `SELECT * from v_programs WHERE is_active = 'Y' ORDER BY program_id`;
+    let seasonFilter = '';
+    if (req.query && req.query.seasonId) {
+        seasonFilter = ` AND p.season_id = ${req.query.seasonId}`;
+    }
+    const query = `SELECT p.* from v_program_classes p WHERE 1 = 1 ${seasonFilter} ORDER BY program_id`;
     const programs = await MySQL.runQuery(query);
     returnResults(res, parseHtmlFields(programs, ['programDescription']));
 };

@@ -604,3 +604,5 @@ INSERT INTO beaches.projects
 (project_name, type, private_key_id, private_key)
 VALUES
 ('beachesEast', 'config', 'checkinScreeningRequired', 'N');
+-- enable optional discounts
+ALTER TABLE beaches.programs ADD COLUMN loyalty_discount VARCHAR(1) DEFAULT 'Y';

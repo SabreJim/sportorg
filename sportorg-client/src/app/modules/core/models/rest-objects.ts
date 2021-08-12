@@ -22,6 +22,7 @@ export interface LookupItem {
   stringId?: string;
   name: string;
   moreInfo?: any;
+  otherId?: any;
   lookup: string;
   description?: string;
   checked?: boolean;

@@ -10,11 +10,9 @@ export class ImagePreviewModalComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
               public matDialogRef: MatDialogRef<ImagePreviewModalComponent>) {
-    console.log('modal got data', data);
     if (data && data.isPreview === false) {
       this.isPreview = false;
     }
-    console.log('modal got data', data, this.isPreview);
     if (data && data.imageId) {
       setTimeout(() => {
         this.imageId = this.data.imageId;

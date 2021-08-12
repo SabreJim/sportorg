@@ -13,7 +13,6 @@ import {EditModalResponse} from "../edit-panel.component";
 export class EditModalComponent {
   constructor (@Inject(MAT_DIALOG_DATA) public data: any,
                public matDialogRef: MatDialogRef<EditModalComponent>) {
-    console.log('modal got data', data);
     if (data && data.columns) {
       if (data.record) {
         this.record = data.record;

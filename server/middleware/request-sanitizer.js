@@ -244,7 +244,8 @@ const programSchema = {
         {fieldName: 'colorId', type: 'int', allowNull: true },
         {fieldName: 'feeId', type: 'int', allowNull: false },
         {fieldName: 'isActive', type: 'string', allowNull: true },
-        {fieldName: 'programDescription', type: 'html', allowNull: true }
+        {fieldName: 'programDescription', type: 'html', allowNull: true },
+        {fieldName: 'loyaltyDiscount', type: 'string', allowNull: true }
     ]
 };
 const feeSchema = {
@@ -278,7 +279,7 @@ const memberSchema = {
         {fieldName: 'cellPhone', type: 'string', allowNull: true },
         {fieldName: 'homePhone', type: 'string', allowNull: true },
         {fieldName: 'license', type: 'string', allowNull: true },
-        {fieldName: 'loyaltyDiscount', type: 'string', allowNull: true }
+        {fieldName: 'isLoyaltyMember', type: 'string', allowNull: true }
     ]
 };
 const userSchema = {

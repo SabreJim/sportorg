@@ -10,6 +10,7 @@ SELECT
     l.street_address as 'location_name',
     p.program_name,
     p.is_active,
+    p.loyalty_discount,
     p.program_description
 FROM programs p
 LEFT JOIN locations l ON p.location_id = l.location_id
@@ -171,7 +172,6 @@ SELECT DISTINCT
             , ']') seasons, ce.member_id
             from (SELECT count(enroll_id) count_enrolls, season_id, member_id FROM beaches.class_enrollments GROUP BY season_id, member_id) ce
             GROUP BY ce.member_id) ce ON ce.member_id = m.member_id
-    	WHERE m.is_active = 'Y'
         ORDER BY member_name;
 
 -- fitness tracker views

@@ -56,7 +56,8 @@ export class AdminPageComponent implements OnInit, OnDestroy {
       new TableColumn('registrationMethod', 'Registration', 'string'),
       new TableColumn('colorId', 'Color', 'number'),
       new TableColumn('isActive', 'Active', 'boolean'),
-      new TableColumn('programDescription', 'Description', 'html')
+      new TableColumn('programDescription', 'Description', 'html'),
+      new TableColumn('loyaltyDiscount', 'Loyalty Discount', 'boolean')
     ],
     getter: this.programService.getAllPrograms,
     setter: this.programService.upsertPrograms,
@@ -114,7 +115,7 @@ export class AdminPageComponent implements OnInit, OnDestroy {
     entityType: 'Member',
     identityField: 'memberId',
     filterBarFields: ['lastName', 'firstName', 'email'],
-    getter: this.memberService.getMyMembers,
+    getter: () => { return this.memberService.getMyMembers(true)},
     setter: this.memberService.upsertMember,
     delete: this.memberService.deleteMember,
     columns: [
@@ -134,7 +135,7 @@ export class AdminPageComponent implements OnInit, OnDestroy {
       new TableColumn('cellPhone', 'Cell #', 'string'),
       new TableColumn('isActive', 'Active', 'boolean'),
       new TableColumn('isAthlete', 'Athlete', 'boolean'),
-      new TableColumn('loyaltyDiscount', 'Loyalty Discount', 'boolean')
+      new TableColumn('isLoyaltyMember', 'Loyalty Member', 'boolean')
     ]
   };
 

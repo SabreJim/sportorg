@@ -15,9 +15,13 @@ export class MembersProxyService extends RestProxyService {
     super(http, appRouter);
   }
 
-  public getMyMembers = (): Observable<AppMember[]> => {
+  public getMyMembers = (showInactive: boolean = false): Observable<AppMember[]> => {
     return new Observable((subscription) => {
-      this.get('my-members/').subscribe((response: ApiResponse<AppMember[]>) => {
+      const params: any = {};
+      if (showInactive){
+        params.showAll = true;
+      }
+      this.get('my-members/', params).subscribe((response: ApiResponse<AppMember[]>) => {
         if (response.hasErrors()) {
           SnackbarService.error('There was an error getting your members');
           subscription.next([]);

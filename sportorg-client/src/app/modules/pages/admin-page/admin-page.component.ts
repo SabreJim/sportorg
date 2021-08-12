@@ -133,7 +133,8 @@ export class AdminPageComponent implements OnInit, OnDestroy {
       new TableColumn('postalCode', 'Postal Code', 'string'),
       new TableColumn('cellPhone', 'Cell #', 'string'),
       new TableColumn('isActive', 'Active', 'boolean'),
-      new TableColumn('isAthlete', 'Athlete', 'boolean')
+      new TableColumn('isAthlete', 'Athlete', 'boolean'),
+      new TableColumn('loyaltyDiscount', 'Loyalty Discount', 'boolean')
     ]
   };
 
@@ -278,7 +279,6 @@ export class AdminPageComponent implements OnInit, OnDestroy {
   public configRows: ConfigRow[] = [];
   public getAppConfig = () => {
     this.configSub = this.configService.getAppConfigs().subscribe((rows: ConfigRow[]) => {
-      console.log('got configs', rows);
       this.configRows = rows;
     })
   }

@@ -40,7 +40,6 @@ export class InvoiceModalComponent implements AfterViewInit {
       if (this.data.invoice.fromType === 'company') {
         this.financeService.getCompany(this.data.invoice.fromId).subscribe((company: Company) => {
           this.fromCompany = company;
-          console.log('fromComp', this.fromCompany);
         });
       }
       if (this.data.invoice.toType === 'company') {
@@ -87,10 +86,6 @@ export class InvoiceModalComponent implements AfterViewInit {
   public editRow = (lineItem: InvoiceItem) => {
     lineItem.isEditing = !lineItem.isEditing;
   };
-
-  public updateSelection = (selectedId: number, fieldName: string) => {
-    console.log('got company', selectedId, fieldName);
-  }
 
   public canSave = () => {
     return this.isAdmin && !equals(this.invoice, this.originalInvoice);

@@ -74,9 +74,6 @@ export class MemberModalComponent implements OnInit {
   public selectGender = (newValue: LookupItem) => {
     this.member.competeGender = (newValue.description === 'M') ? 'M' : 'F';
   };
-  public setYear = (event: number) => {
-    console.log('get year', event);
-  }
 
   public updatePhone = (newValue: string, position: string) => {
     // validate phone numbers

@@ -23,15 +23,64 @@
   font-size: 16px;
   font-weight: bolder;
 }
+.prompt-text {
+  display: flex;
+  flex: 1 1 auto;
+  font-weight: bold;
+  justify-content: center;
+}
+.season-field {
+  display: flex;
+  margin-top: 15px;
+  flex-flow: row wrap;
+  .radio-toggle {
+    display: flex;
+    justify-content: space-evenly;
+    flex: 1;
+    flex-flow: row wrap;
+    .radio-toggle-item {
+      flex: 1;
+    }
+  }
+}
+.register-field {
+  display: flex;
+  margin-top: 15px;
+  max-height: 40vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  .member-radio-group {
+    display: flex;
+    flex-flow: column nowrap;
+    .member-radio {
+      padding: 5px;
+    }
+  }
+
+  .mat-form-field-label {
+    transform: translateY(-20px) !important;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    .mat-label, mat-label {
+      background: white;
+      padding-right: 5px;
+    }
+  }
+}
+.member-buttons {
+  display: flex;
+  justify-content: space-evenly;
+  flex-flow: row wrap;
+  button {
+    padding-bottom: 5px;
+  }
+}
 .select-box, .table-box {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   padding-top: 10px;
-  .prompt-text {
-    display: flex;
-    flex: 1 1 auto;
-  }
+
   app-select-input {
     display: flex;
     margin-left: auto;
@@ -39,7 +88,6 @@
     max-height: 40px;
     background-color: white;
   }
-
 }
 .table-box {
   flex-flow: column nowrap;
@@ -54,7 +102,15 @@
 .class-list {
   border: 1px solid black;
   max-width: calc(100% - 150px);
-  min-width: 400px;
+  min-width: 50vw;
+  padding: 0 20px;
+  .class-time-row {
+    max-width: 100%;
+    .class-time-content {
+      display: flex;
+      flex-flow: row wrap;
+    }
+  }
   span {
     margin:0 10px;
     flex: 1 1 auto;

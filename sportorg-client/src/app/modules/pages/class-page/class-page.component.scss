@@ -1,0 +1,16 @@
+.season-field {
+  display: flex;
+  margin-top: 15px;
+  flex-flow: row wrap;
+  min-width: 50vw;
+  max-width: 80vw;
+  .radio-toggle {
+    display: flex;
+    justify-content: space-evenly;
+    flex: 1;
+    flex-flow: row wrap;
+    .radio-toggle-item {
+      flex: 1;
+    }
+  }
+}

@@ -7,7 +7,6 @@ const createThumbnail = async (originalImage, imageType) => {
     // strip the meta data
     const justData = originalImage.split(';base64,').pop();
     const srcBuffer = Buffer.from(justData, 'base64');
-    console.log('file type', imageType);
     const thumbBuffer = await Sharp(srcBuffer)
         .resize(300)
         .toBuffer();

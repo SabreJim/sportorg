@@ -1,102 +1,98 @@
 <div class="page-wrapper">
-  <h4>Sign up for a Fencing Program</h4>
-  <p class="">
-    To register yourself or someone you are responsible for for a fencing program, please fill out the form below. If you are
-    signing up a returning member, they should already be in the system so please do not create a new member profile. All
-    registration requires that you are signed in to this site, so please log in if you haven't already.
-  </p>
-
+  <h4>Program Registration</h4>
   <mat-vertical-stepper [linear]="true" #stepper class="register-wizard"
-                        appLoginRequired [forceLogin]="currentUser?.isAnonymous">
-    <mat-step [completed]="!!currentSeason" >
-      <ng-template matStepLabel><span>Select a season</span><span class="chosen-value">{{currentSeason?.name}}</span></ng-template>
-      <p class="prompt-text">Select which season you would like to enroll in</p>
-      <app-select-input
-        [showEmpty]="true"
-        [lookupType]="'seasons'"
-        [selected]="currentRegistration.seasonId"
-        (selectionObject)="selectSeason($event)"
-        ></app-select-input>
-      <div class="step-nav-buttons">
-        <button mat-button matStepperNext [disabled]="!currentSeason">Next</button>
-      </div>
-    </mat-step>
-    <mat-step  [editable]="!!currentProgram" [completed]="!!currentProgram">
-      <ng-template matStepLabel><span>Select a program </span><span class="chosen-value">{{currentProgram?.name}}</span></ng-template>
-      <p class="prompt-text">Select a program to register for. A description will be shown when you select a program.</p>
-          <app-select-input
-            [showEmpty]="true"
-            [staticLookup]="allPrograms"
-            [selected]="currentRegistration.programId"
-            (selectionObject)="selectProgram($event)"
-          ></app-select-input>
-        <p class="html-description" [innerHTML]="currentProgram?.description | safePipe: 'html'"></p>
-        <mat-list *ngIf="currentProgram" class="class-list">
-          <div mat-subheader>Classes</div>
-          <mat-list-item *ngFor="let item of includedClasses">
-            <span>{{item.dayOfWeek}}</span><span>{{item.startTime}} -> {{item.endTime}}</span><span>({{item.numberEnrolled}} enrolled)</span>
-          </mat-list-item>
-        </mat-list>
-        <div class="step-nav-buttons">
-          <button mat-button matStepperPrevious>Back</button>
-          <button mat-button matStepperNext [disabled]="!currentProgram">Next</button>
-        </div>
-    </mat-step>
-    <mat-step [editable]="!!currentMember" [completed]="!!currentMember">
-      <ng-template matStepLabel><span>Select a member</span><span class="chosen-value">{{currentMember?.name}}</span></ng-template>
-      <div class="two-column">
-        <div class="column">
-          <p class="prompt-text">Select a fencer to register</p>
-          <app-select-input
-            [showEmpty]="true"
-            [staticLookup]="availableMembers"
-            [selected]="currentRegistration.memberId"
-            (selectionObject)="selectMember($event)"
-          ></app-select-input>
-        </div>
-        <div class="column">
-          <p class="prompt-text">These fencers are already signed up this term:</p>
-          <ul>
-            <li *ngFor="let enrolled of enrolledMembers" role="listitem">{{enrolled.firstName}} {{enrolled.lastName}}</li>
-          </ul>
-        </div>
-      </div>
-        <p class="prompt-text">If a current member you are signing up does not show up, request access below. Or if
+                        appLoginRequired [forceLogin]="currentUser?.isAnonymous" (selectionChange)="checkProgramEnrolled()">
+    <mat-step [completed]="!!currentMember">
+      <ng-template matStepLabel><span>Who is being registered?</span><span class="chosen-value">{{currentMember?.memberName}}</span></ng-template>
+      <p class="prompt-text">Select who to register</p>
+      <mat-form-field class="register-field" floatLabel="always" appearance="outline">
+        <mat-label >My members</mat-label>
+        <input type="number" matInput class="hidden"/>
+        <mat-radio-group class="member-radio-group"
+                         [ngModel]="currentMember" (change)="selectMember($event.value)">
+          <mat-radio-button class="member-radio" [value]=""><em>clear selection</em></mat-radio-button>
+          <mat-radio-button class="member-radio" *ngFor="let member of availableMembers" [value]="member">
+            {{member.memberName}}
+          </mat-radio-button>
+        </mat-radio-group>
+      </mat-form-field>
+      <p class="prompt-text">If a current member you are signing up does not show up, request access below. Or if
         this is an entirely new member of the club, please create a member and select them.</p>
-      <div class="two-column">
-        <div class="column">
-          <button mat-raised-button color="primary" class="action-button" [disabled]="currentMember" (click)="requestMemberAccess()">Request Access</button>
-        </div>
-        <div class="column">
-          <button mat-raised-button color="primary" class="action-button" [disabled]="currentMember" (click)="openAddMember()">Add New Member</button>
-        </div>
+      <div class="member-buttons">
+          <button mat-raised-button color="primary"  [disabled]="!!currentMember" (click)="requestMemberAccess()">Request Access</button>
+          <button mat-raised-button color="primary" [disabled]="!!currentMember" (click)="openAddMember()">Add New Member</button>
       </div>
-
-
       <div class="step-nav-buttons">
-        <button mat-button matStepperPrevious>Back</button>
         <button mat-button matStepperNext [disabled]="!currentMember">Next</button>
       </div>
     </mat-step>
 
-    <mat-step label="Done" [editable]="!!currentSeason && !!currentProgram && !!currentMember">
+    <mat-step [editable]="!!currentMember" [completed]="!!currentProgram" >
+      <ng-template matStepLabel><span>Select a program</span><span class="chosen-value">
+        {{currentProgram?.programName}} {{currentProgram ? '(' + currentProgram.seasonName + ')' : ''}}
+      </span></ng-template>
+      <mat-form-field class="season-field" floatLabel="always" appearance="outline">
+        <mat-label >Season</mat-label>
+        <input type="number" matInput class="hidden"/>
+        <mat-button-toggle-group class="radio-toggle" [value]="currentSeason" (change)="selectSeason($event.value)">
+          <mat-button-toggle class="radio-toggle-item" [value]="season" *ngFor="let season of seasons" >
+            <strong>{{season.name}}</strong> ({{season.moreInfo}})
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </mat-form-field>
+
+      <ng-container *ngIf="!alreadyEnrolled">
+        <p class="prompt-text">Select a program to register for. A description will be shown when you select a program.</p>
+        <mat-form-field class="register-field" floatLabel="always" appearance="outline">
+          <mat-label >Programs</mat-label>
+          <input type="number" matInput class="hidden"/>
+          <mat-radio-group class="member-radio-group"
+                           [value]="currentProgram" (change)="selectProgram($event.value)">
+            <mat-radio-button class="member-radio" *ngFor="let program of allPrograms" [value]="program" [disabled]="alreadyEnrolled">
+              {{program.programName}}
+            </mat-radio-button>
+          </mat-radio-group>
+        </mat-form-field>
+
+        <mat-list *ngIf="currentProgram" class="class-list">
+          <div mat-subheader>Classes</div>
+          <mat-list-item *ngFor="let item of includedClasses" class="class-time-row">
+            <div class="class-time-content">
+              <strong>{{item.dayOfWeek}}</strong><span>{{item.startTime}} -> {{item.endTime}}</span><span>({{item.enrolled}} enrolled)</span>
+            </div>
+          </mat-list-item>
+        </mat-list>
+        <p class="html-description" [innerHTML]="currentProgram?.programDescription | safePipe: 'html'"></p>
+      </ng-container>
+      <ng-container *ngIf="alreadyEnrolled">
+        <p class="prompt-text">This member is already enrolled for season: {{currentSeason.name}}. Please select another member or season.</p>
+      </ng-container>
+
+
+      <div class="step-nav-buttons">
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext [disabled]="!currentProgram">Next</button>
+      </div>
+    </mat-step>
+
+    <mat-step label="Confirm" [editable]="!!currentProgram && !!currentMember">
       <p class="prompt-text">You can now complete this registration. Please read over your selections before registering.</p>
       <div class="summary-box">
         <div class="summary-item">
           <h3>Program</h3>
-          <div class="item-value">{{currentSeason?.name}} {{currentProgram?.name}}</div>
+          <div class="item-value">{{currentSeason?.name}} {{currentProgram?.programName}}</div>
         </div>
         <div class="summary-item">
           <h3>Member/Fencer</h3>
-          <div class="item-value">{{currentMember?.name}}</div>
+          <div class="item-value">{{currentMember?.memberName}}</div>
         </div>
         <div class="summary-item">
           <h3>Cost</h3>
           <div class="item-description"><span>Base program fees</span>
-            <div class="item-value">{{currentProgram?.moreInfo}}</div>
+            <div class="item-value">${{currentProgram?.feeValue}}</div>
           </div>
         </div>
-        <div class="summary-item" *ngIf="currentMember?.description === 'Y'">
+        <div class="summary-item" *ngIf="currentMember?.isLoyaltyMember === 'Y' && currentProgram?.loyaltyDiscount === 'Y'">
           <h3></h3>
           <div class="item-description"><span>Loyalty member discount</span>
             <div class="item-value">-${{LOYALTY_DISCOUNT}}</div>

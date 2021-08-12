@@ -2,7 +2,6 @@
 const cacheResources = async (req, res, next) => {
 
     if (req.url.startsWith('/images/')) {
-        console.log('cached url', req.url);
         if (req.method.toLowerCase() === 'get' || req.method.toLowerCase() === 'head') {
             res.setHeader('Cache-Control', `max-age=31536000, no-cache`);
             res.setHeader('Vary', 'ETag, Content-Encoding');

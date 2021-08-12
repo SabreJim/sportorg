@@ -15,6 +15,46 @@ FROM programs p
 LEFT JOIN locations l ON p.location_id = l.location_id
 LEFT JOIN fee_structures f ON p.fee_id = f.fee_id
 ;
+drop view beaches.v_program_classes;
+CREATE  SQL SECURITY INVOKER VIEW beaches.v_program_classes AS
+SELECT
+    ps2.season_id,
+    CONCAT(s.name, ' ', s.year) as 'season_name',
+    p.program_id,
+    p.program_name,
+    p.color_id,
+    CONCAT(p.program_name, ' ', s.name, ' ', s.year) as 'long_program_name',
+    p.location_id,
+    p.registration_method,
+    f.fee_value,
+    f.fee_id,
+    l.name location_name,
+    p.program_description,
+	ps2.classes,
+    DATE_FORMAT(s.start_date, '%Y-%m-%d') as 'start_date',
+    DATE_FORMAT(s.end_date, '%Y-%m-%d') as 'end_date',
+    p.loyalty_discount,
+    (SELECT count(1) FROM beaches.class_enrollments where season_id = ps2.season_id AND program_id = ps2.program_id) number_enrolled
+FROM beaches.programs p
+    LEFT JOIN (SELECT
+            JSON_ARRAYAGG(JSON_OBJECT(
+            'dayOfWeek',  wd.day_name,
+            'dayId',  ps.day_id,
+            'startTime',  ps.start_time,
+            'endTime', ps.end_time,
+            'duration', ps.duration,
+            'minAge', ps.min_age,
+            'maxAge', ps.max_age,
+            'enrolled', (SELECT count(ce.enroll_id) FROM beaches.class_enrollments ce WHERE ce.season_id = ps.season_id AND ce.program_id = ps.program_id) )
+            ) classes, ps.season_id, ps.program_id
+            from beaches.program_schedules ps
+            LEFT JOIN beaches.week_days wd ON wd.day_id = ps.day_id
+            GROUP BY ps.program_id, ps.season_id) ps2 ON ps2.program_id = p.program_id
+    LEFT OUTER JOIN beaches.seasons s ON ps2.season_id = s.season_id
+    LEFT OUTER JOIN beaches.locations l ON l.location_id = p.location_id
+    LEFT JOIN fee_structures f ON p.fee_id = f.fee_id
+    WHERE s.is_active = 'Y'
+    ORDER BY season_id ASC, program_id ASC;
 
 drop view beaches.v_classes;
 CREATE  SQL SECURITY INVOKER VIEW beaches.v_classes AS
@@ -48,21 +88,22 @@ FROM beaches.program_schedules ps
 drop view beaches.v_lookups;
 CREATE SQL SECURITY INVOKER VIEW beaches.v_lookups
 AS
-SELECT f.fee_id as 'id', f.fee_name as 'name', CONCAT('$', f.fee_value) as 'more_info', 'fees' as 'lookup' FROM beaches.fee_structures f
+SELECT f.fee_id as 'id', f.fee_name as 'name', CONCAT('$', f.fee_value) as 'more_info', null as'other_id', 'fees' as 'lookup' FROM beaches.fee_structures f
 UNION
-SELECT l.location_id as 'id', l.name as 'name', l.street_address as 'more_info', 'locations' as 'lookup' FROM beaches.locations l
+SELECT l.location_id as 'id', l.name as 'name', l.street_address as 'more_info',null as'other_id', 'locations' as 'lookup' FROM beaches.locations l
 UNION
-SELECT p.program_id as 'id', p.program_name as 'name', null as 'more_info', 'programs' as 'lookup' FROM beaches.programs p
+SELECT p.program_id as 'id', p.program_name as 'name', null as 'more_info',null as'other_id', 'programs' as 'lookup' FROM beaches.programs p
 UNION
-SELECT s.season_id as 'id', CONCAT(s.name, ' ', s.year) as 'name', date_format(s.start_date,'%Y-%m-%d') as 'more_info', 'seasons' as 'lookup' FROM beaches.seasons s where s.is_active = 'Y'
+SELECT s.season_id as 'id', CONCAT(s.name, ' ', s.year) as 'name', date_format(s.start_date,'%Y-%m-%d') as 'more_info',
+    (select private_key from beaches.projects where private_key_id = 'currentSeason') as'other_id', 'seasons' as 'lookup' FROM beaches.seasons s where s.is_active = 'Y'
 UNION
-SELECT  r.region_id as 'id', r.region_name as 'name', r.region_code as 'more_info', 'regions' as 'lookup' FROM beaches.regions r
+SELECT  r.region_id as 'id', r.region_name as 'name', r.region_code as 'more_info',null as'other_id', 'regions' as 'lookup' FROM beaches.regions r
 UNION
-SELECT  a.age_id as 'id', a.label as 'name', a.name as 'more_info', 'ageCategories' as 'lookup' FROM beaches.age_categories a
+SELECT  a.age_id as 'id', a.label as 'name', a.name as 'more_info',null as'other_id', 'ageCategories' as 'lookup' FROM beaches.age_categories a
 UNION
-SELECT  c.club_id as 'id', c.club_name as 'name', c.club_abbreviation as 'more_info', 'clubs' as 'lookup' FROM beaches.clubs c
+SELECT  c.club_id as 'id', c.club_name as 'name', c.club_abbreviation as 'more_info',null as'other_id', 'clubs' as 'lookup' FROM beaches.clubs c
 UNION
-SELECT  co.company_id as 'id', co.company_name as 'name', null as 'more_info', 'companies' as 'lookup' FROM beaches.companies co
+SELECT  co.company_id as 'id', co.company_name as 'name', null as 'more_info',null as'other_id', 'companies' as 'lookup' FROM beaches.companies co
 ;
 
 drop view beaches.v_enrollments;
@@ -114,13 +155,23 @@ SELECT DISTINCT
             m.consent_signed,
             m.is_active,
             mu.user_id user_access_id,
+            m.is_loyalty_member,
             (CASE WHEN (SELECT private_key FROM beaches.projects WHERE type = 'config' AND private_key_id = 'currentSeason')
             	IN (SELECT season_id FROM beaches.class_enrollments ce WHERE ce.member_id = m.member_id)
-            	THEN 'Y' ELSE 'N' END) currently_enrolled
+            	THEN 'Y' ELSE 'N' END) currently_enrolled,
+        	ce.seasons
         FROM beaches.members m
-        INNER JOIN beaches.clubs cl ON cl.club_id = m.club_id
+        LEFT JOIN beaches.clubs cl ON cl.club_id = m.club_id
         INNER JOIN beaches.member_users mu ON m.member_id = mu.member_id
-        ;
+    	LEFT JOIN (SELECT CONCAT('[',
+            GROUP_CONCAT(JSON_OBJECT(
+            'seasonId',  ce.season_id,
+            'enrolled',  CASE WHEN count_enrolls > 0 THEN 'Y' ELSE 'N' END))
+            , ']') seasons, ce.member_id
+            from (SELECT count(enroll_id) count_enrolls, season_id, member_id FROM beaches.class_enrollments GROUP BY season_id, member_id) ce
+            GROUP BY ce.member_id) ce ON ce.member_id = m.member_id
+    	WHERE m.is_active = 'Y'
+        ORDER BY member_name;
 
 -- fitness tracker views
 drop view beaches.v_athlete_profiles;

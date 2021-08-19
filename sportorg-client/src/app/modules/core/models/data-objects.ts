@@ -258,3 +258,35 @@ export interface Season {
   endDate: string;
   isActive: 'Y' | 'N';
 }
+export interface Event {
+  eventId: number;
+  eventName: string;
+  eventStartDate: string;
+  eventEndDate: string;
+  baseCost?: number;
+}
+export interface EventItem {
+  eventId: number;
+  eventItemName: string;
+  // TBD
+}
+export interface NewsPost {
+  postId: number;
+  linkTemplateType: string;
+  templateType: string;
+  htmlContent?: string;
+  headerContent: string;
+  headerBackground?: string;
+  headerTextColor?: string;
+  subHeader?: string;
+  headerColor?: string;
+  location?: string;
+  bannerImageId?: number;
+  linkImageId?: number;
+  p1?: string;
+  p2?: string;
+  p3?: string;
+  eventId?: number;
+  publishDate: string;
+  tagIds?: number[];
+}

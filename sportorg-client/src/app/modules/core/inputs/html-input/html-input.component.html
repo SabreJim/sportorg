@@ -1,7 +1,8 @@
-<mat-form-field floatLabel="always" appearance="outline" >
+<mat-form-field floatLabel="always" appearance="outline" class="html-wrapper" >
   <mat-label>{{title}}</mat-label>
   <input type="number" matInput class="hidden"/>
   <button mat-raised-button color="primary" class="action-button"
           [disabled]="disabled"
           (click)="editHtml()">Edit Html</button>
+  <input disabled [value]="htmlPreview" class="preview-input"/>
 </mat-form-field>

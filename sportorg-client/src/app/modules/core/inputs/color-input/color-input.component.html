@@ -1,0 +1,16 @@
+<mat-form-field floatLabel="always" appearance="outline">
+  <mat-label>{{title}}</mat-label>
+  <input type="number" matInput [required]="isRequired" [formControl]="colorFormControl" class="hidden"/>
+  <button mat-raised-button [matMenuTriggerFor]="selectColorMenu" (menuClosed)="clearSelections()">Choose</button>
+  <mat-menu #selectColorMenu="matMenu" [xPosition]="xPosition" [yPosition]="yPosition" [class]="'wide-menu'" >
+    <div class="menu-content color-table" (click)="$event.stopPropagation()">
+      <div class="color-item color-clear" [style.background-color]="'transparent'" (click)="pickColor('transparent')">none</div>
+      <div class="color-item" *ngFor="let colorBox of colorOptions"
+           [style.background-color]="colorBox"
+           (click)="pickColor(colorBox)"
+      ></div>
+    </div>
+  </mat-menu>
+  <div class="show-picked-color" [style.background-color]="chosenColor"></div>
+  <mat-error *ngIf="colorFormControl.hasError('required')">{{title}} is required</mat-error>
+</mat-form-field>

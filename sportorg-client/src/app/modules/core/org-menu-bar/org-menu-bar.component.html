@@ -74,6 +74,7 @@
       <mat-menu #profileMenu>
         <button mat-menu-item  routerLink="/my-profile"><mat-icon>perm_identity</mat-icon>My Profile</button>
         <button *ngIf="currentUser?.isAdmin" mat-menu-item  routerLink="/admin"><mat-icon>security</mat-icon>Admin</button>
+        <button *ngIf="currentUser?.isAdmin" mat-menu-item  routerLink="/edit-post/"><mat-icon>note_add</mat-icon>New Post</button>
         <button mat-menu-item  (click)="logout()"><mat-icon>exit_to_app</mat-icon>Logout</button>
       </mat-menu>
     </div>

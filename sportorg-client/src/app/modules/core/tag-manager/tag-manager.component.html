@@ -1,0 +1,19 @@
+<mat-form-field floatLabel="always" appearance="outline" class="html-wrapper" >
+  <mat-label>{{title}}</mat-label>
+  <input type="number" matInput class="hidden"/>
+  <button mat-raised-button [matMenuTriggerFor]="tagsMenu">Add Tags</button>
+  <mat-menu #tagsMenu="matMenu" [xPosition]="position">
+    <div class="menu-content" (click)="$event.stopPropagation()">
+      <div class="new-tag-row">
+        <button mat-icon-button (click)="editTagName()" color="primary" class="plus-button" [disabled]="isAddingTag">
+          <mat-icon>add_circle_outline</mat-icon></button>
+        <input [disabled]="!isAddingTag" [(ngModel)]="newTagName" class="new-tag-input"/>
+        <button mat-icon-button (click)="saveTagName()" color="primary" class="okay-button" [disabled]="!isAddingTag || !newTagName.length">
+          <mat-icon>check</mat-icon></button>
+    </div>
+      <mat-checkbox *ngFor="let tag of availableTags" [checked]="tag.checked"
+                    (change)="toggleTag($event.checked, tag)">{{tag.name}}</mat-checkbox>
+    </div>
+  </mat-menu>
+  <input disabled [value]="selectedTagsString" class="preview-input"/>
+</mat-form-field>

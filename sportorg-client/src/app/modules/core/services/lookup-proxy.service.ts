@@ -24,6 +24,7 @@ export class LookupProxyService extends RestProxyService {
   protected athleteTypeCache: LookupItem[] = [];
   protected clubCache: LookupItem[] = [];
   protected companyCache: LookupItem[] = [];
+  protected tagsCache: LookupItem[] = [];
 
 
   public Subjects: Record<string, Subject<LookupItem[]>> = {
@@ -155,6 +156,36 @@ export class LookupProxyService extends RestProxyService {
         }
         subscription.next(response.data);
       });
+    });
+  }
+
+  public getTags = (refresh: boolean = false) : Observable<LookupItem[]> => {
+    return new Observable<LookupItem[]>((subscription) => {
+      if (!this.tagsCache.length || refresh) {
+        this.get('tags').subscribe((response: ApiResponse<LookupItem[]>) => {
+          if (response.hasErrors()) {
+            subscription.next([]);
+          } else {
+            this.tagsCache = response.data;
+            subscription.next(response.data);
+          }
+        })
+      } else {
+        subscription.next(this.tagsCache);
+      }
+    });
+  }
+
+  public addTag = (tagName: string): Observable<boolean> => {
+    return new Observable((subscription) => {
+      this.put('tags', {tagName}).subscribe((response: ApiResponse<boolean>) => {
+        if (response.hasErrors() || !response.success) {
+          SnackbarService.notify('The tag could not be saved');
+          subscription.next(false);
+        } else {
+          subscription.next(true);
+        }
+      }, (error: any) => {});
     });
   }
 }

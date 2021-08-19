@@ -10,16 +10,14 @@ import {FormControl} from "@angular/forms";
 export class DatePickerComponent implements OnInit {
 
   @Input() set dateValue (incomingDate: string) { // external setter
-    this.formValue = StaticValuesService.localizeDate(incomingDate);
+    this.dateControl.setValue(StaticValuesService.localizeDate(incomingDate));
   }
   @Input() title = 'Date';
   @Output() dateValueChanged = new EventEmitter<string>();
   constructor() { }
   public dateControl = new FormControl({value: null, disabled: false});
-  public formValue: string;
   public updateValues = () => {
     if (this.dateControl.value) {
-      this.dateValue = this.dateControl.value;
       this.dateValueChanged.emit(StaticValuesService.cleanDate(this.dateControl.value));
     } else {
       this.clearDate();
@@ -27,7 +25,6 @@ export class DatePickerComponent implements OnInit {
   };
   public clearDate = () => {
     this.dateControl.setValue('');
-    this.formValue = null;
     this.dateValueChanged.emit(this.dateValue);
   };
 

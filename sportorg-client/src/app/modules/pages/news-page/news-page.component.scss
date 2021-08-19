@@ -1,0 +1,23 @@
+.current-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  width: 80%;
+  flex-flow: row nowrap;
+  .tag-text {
+    display: flex;
+    flex: 1;
+    margin-right: 10px;
+    justify-content: flex-end;
+  }
+  .tag-list {
+    display: flex;
+    flex: 1;
+    .tag-chip {
+      font-size: 14px;
+      background-color: #2196f3;
+    }
+  }
+}
+

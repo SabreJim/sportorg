@@ -40,7 +40,7 @@ export class StaticValuesService {
     try {
       const temp = new Date(dateInput);
       const offset = temp.getTimezoneOffset() / 60;
-      temp.setHours(temp.getHours() - offset);
+      temp.setHours(temp.getHours() + offset);
       return temp.toISOString();
     }catch (err) {
       return new Date().toISOString();
@@ -144,6 +144,23 @@ export class StaticValuesService {
     { primary: '#1a237e', secondary: '#81c784'},
     { primary: '#1a237e', secondary: '#a5d6a7'},
     { primary: '#1a237e', secondary: '#c8e6c9'},
+
+    // whites
+    { primary: '#1a237e', secondary: '#ffffff'},
+    { primary: '#1a237e', secondary: '#fefefe'},
+    { primary: '#1a237e', secondary: '#eeeeee'},
+    { primary: '#1a237e', secondary: '#ededed'},
+    { primary: '#1a237e', secondary: '#dddddd'},
+    { primary: '#1a237e', secondary: '#d3d3d3'},
+    { primary: '#1a237e', secondary: '#cccccc'},
+
+    // blacks
+    { primary: '#1a237e', secondary: '#000000'},
+    { primary: '#1a237e', secondary: '#111111'},
+    { primary: '#1a237e', secondary: '#020202'},
+    { primary: '#1a237e', secondary: '#333333'},
+    { primary: '#1a237e', secondary: '#444444'},
+    { primary: '#1a237e', secondary: '#555555'},
   ];
 
   public static WEEK_DAYS: LookupItem[] = [

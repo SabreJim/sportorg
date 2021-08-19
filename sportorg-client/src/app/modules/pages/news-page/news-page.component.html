@@ -1,0 +1,19 @@
+<div class="page-wrapper">
+  <div class="current-filter">
+    <span class="tag-text" *ngIf="currentTags.length > 0">Now showing:</span>
+    <mat-chip-list class="tag-list">
+      <mat-chip class="tag-chip" *ngFor="let tag of currentTags" (click)="applyTag(tag)">
+        {{tag.name}}
+        <mat-icon matChipRemove (click)="applyTag(tag)" >cancel</mat-icon>
+      </mat-chip>
+    </mat-chip-list>
+  </div>
+  <div class="current-posts" #postScroller>
+    <app-post-link *ngFor="let post of currentNews"
+       [postRecord]="post"
+       [isAdmin]="isAdmin"
+       (tagSelected)="applyTag($event)"
+    ></app-post-link>
+  </div>
+
+</div>

@@ -11,6 +11,9 @@ import {MyProfilePageComponent} from "./modules/pages/my-profile-page/my-profile
 import {SchedulePageComponent} from "./modules/pages/schedule-page/schedule-page.component";
 import {FitnessPageComponent} from "./modules/fitness-tracker/fitness-page/fitness-page.component";
 import {FitnessProfilePageComponent} from "./modules/fitness-tracker/fitness-profile-page/fitness-profile-page.component";
+import {PostEditorPageComponent} from "./modules/pages/post-editor-page/post-editor-page.component";
+import {PostPageComponent} from "./modules/pages/post-page/post-page.component";
+import {NewsPageComponent} from "./modules/pages/news-page/news-page.component";
 
 
 const routes: Routes = [
@@ -21,10 +24,16 @@ const routes: Routes = [
   { path: 'events', component: EventPageComponent },
   { path: 'my-profile', component: MyProfilePageComponent },
   { path: 'admin', component: AdminPageComponent, canActivate: [RouteGuardService] },
-
+  { path: 'edit-post/:postId', component: PostEditorPageComponent, canActivate: [RouteGuardService] },
+  { path: 'edit-post', component: PostEditorPageComponent, canActivate: [RouteGuardService] },
+  { path: 'news/:postId', component: PostPageComponent},
+  { path: 'event/:postId', component: PostPageComponent},
+  { path: 'camp/:postId', component: PostPageComponent},
   { path: 'fitness-tracker', component: FitnessPageComponent },
   { path: 'fitness-tracker/profile/:athleteId', component: FitnessProfilePageComponent },
 
+  { path: 'home', component: NewsPageComponent },
+  { path: '', redirectTo: '/home', pathMatch: 'full'},
   { path: '**', component: DynamicPageComponent }
 ];
 // DynamicPageComponent catches all other routes and pulls the content from the DB

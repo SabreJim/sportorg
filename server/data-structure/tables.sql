@@ -606,3 +606,45 @@ VALUES
 ('beachesEast', 'config', 'checkinScreeningRequired', 'N');
 -- enable optional discounts
 ALTER TABLE beaches.programs ADD COLUMN loyalty_discount VARCHAR(1) DEFAULT 'Y';
+-- posts tables added
+CREATE TABLE beaches.events (
+    event_id MEDIUMINT NOT NULL auto_increment,
+    event_name VARCHAR(500) NOT NULL,
+    event_start_date DATE,
+    event_end_date DATE,
+    base_cost INT,
+    PRIMARY KEY (event_id)
+);
+CREATE TABLE beaches.posts (
+    post_id MEDIUMINT NOT NULL auto_increment,
+    link_template_type VARCHAR(50) NOT NULL,
+    template_type VARCHAR(50) NOT NULL,
+    html_content MEDIUMTEXT,
+    header_content VARCHAR(1000) NOT NULL,
+    header_background VARCHAR(20),
+    header_text_color VARCHAR(20),
+    sub_header VARCHAR(1000),
+    header_color INT,
+    location VARCHAR(1000),
+    banner_image_id MEDIUMINT REFERENCES files(file_id),
+    link_image_id MEDIUMINT REFERENCES files(file_id),
+    p1 VARCHAR(2000),
+    p2 VARCHAR(2000),
+    p3 VARCHAR(2000),
+    publish_date DATETIME,
+    event_id MEDIUMINT REFERENCES events(event_id),
+    PRIMARY KEY (post_id)
+);
+
+CREATE TABLE beaches.tags (
+    tag_id MEDIUMINT NOT NULL auto_increment,
+    tag_name VARCHAR(50) NOT NULL,
+    tag_type VARCHAR(50),
+    color_id MEDIUMINT,
+    PRIMARY KEY (tag_id)
+);
+CREATE TABLE beaches.post_tags (
+    tag_id MEDIUMINT NOT NULL REFERENCES tags(tag_id),
+    post_id MEDIUMINT NOT NULL REFERENCES posts(post_id),
+    PRIMARY KEY (tag_id, post_id)
+);

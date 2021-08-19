@@ -14,6 +14,10 @@ import {RegisterPageComponent} from "./register-page/register-page.component";
 import { AdminPageComponent } from './admin-page/admin-page.component';
 import { MyProfilePageComponent } from './my-profile-page/my-profile-page.component';
 import { SchedulePageComponent } from './schedule-page/schedule-page.component';
+import {PostEditorPageComponent} from "./post-editor-page/post-editor-page.component";
+import {PostPageComponent} from "./post-page/post-page.component";
+import {PostLinkComponent} from "./post-editor-page/post-link/post-link.component";
+import {NewsPageComponent} from "./news-page/news-page.component";
 
 @NgModule({
   declarations: [
@@ -23,8 +27,12 @@ import { SchedulePageComponent } from './schedule-page/schedule-page.component';
     DynamicPageComponent,
     RegisterPageComponent,
     AdminPageComponent,
+    PostEditorPageComponent,
+    PostPageComponent,
+    PostLinkComponent,
     MyProfilePageComponent,
-    SchedulePageComponent
+    SchedulePageComponent,
+    NewsPageComponent
   ],
   exports: [
 

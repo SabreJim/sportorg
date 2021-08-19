@@ -1,3 +1,7 @@
+-- NOTE TO MySQL DUMMIES: you need to use the following:
+delimiter //
+-- and then end with //
+-- while logged in to the main schema directly
 -- DROP FUNCTION beaches.get_or_create_user ;
 CREATE FUNCTION beaches.get_or_create_user (external_id VARCHAR(50),
     external_type VARCHAR(20),
@@ -263,6 +267,7 @@ BEGIN
     DECLARE family_discount INT DEFAULT 0;
     DECLARE new_invoice_id INT DEFAULT 0;
     DECLARE new_enroll_id INT DEFAULT 0;
+    DECLARE program_loyalty VARCHAR(10) DEFAULT ' ';
     DECLARE program_name VARCHAR(200) DEFAULT ' ';
     DECLARE member_name VARCHAR(200) DEFAULT ' ';
     DECLARE season_name VARCHAR(200) DEFAULT ' ';
@@ -277,7 +282,7 @@ BEGIN
     END IF;
 
     -- calculate the costs and any discounts
-    SELECT fs.fee_value, p.program_name INTO base_cost, program_name
+    SELECT fs.fee_value, p.program_name, p.loyalty_discount INTO base_cost, program_name, program_loyalty
     FROM beaches.programs p
     INNER JOIN beaches.fee_structures fs ON fs.fee_id = p.fee_id
     WHERE p.program_id = p_program_id;
@@ -287,7 +292,7 @@ BEGIN
     WHERE s.season_id = p_season_id;
 
     SELECT  CONCAT(first_name, ', ', last_name),
-            (CASE WHEN is_loyalty_member = 'Y' THEN -50 ELSE 0 END) INTO member_name, loyalty_discount
+            (CASE WHEN is_loyalty_member = 'Y' AND program_loyalty = 'Y' THEN -50 ELSE 0 END) INTO member_name, loyalty_discount
     FROM beaches.members
     WHERE member_id = p_member_id;
 

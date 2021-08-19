@@ -257,7 +257,8 @@ $sportorg-theme: mat-light-theme($primary, $accent, $warn);
   //}
 }
 
-app-string-input, app-number-input, app-boolean-input, app-date-picker, app-select-input, app-time-input {
+app-string-input, app-number-input, app-boolean-input, app-date-picker, app-select-input, app-time-input,
+.app-html-input .app-image-input{
   display:flex;
   flex: 1;
   min-width: 250px;

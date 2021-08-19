@@ -1,0 +1,174 @@
+<div class="page-wrapper">
+  <div class="header-row">
+    <h4>Edit Post</h4>
+    <div class="header-buttons">
+      <button mat-raised-button color="warn" class="action-button"
+              [disabled]="!currentPost?.postId"
+              (click)="unpublishPost()">Unpublish</button>
+      <button mat-raised-button color="warn" class="action-button"
+              [disabled]="!isDirty()"
+              (click)="resetPost()">Reset</button>
+      <button mat-raised-button class="action-button"
+              (click)="previewPost('link')">Preview Link</button>
+      <button mat-raised-button class="action-button"
+              (click)="previewPost('page')">Preview Page</button>
+      <button mat-raised-button color="primary" class="action-button"
+              [disabled]="!isDirty()"
+              (click)="publishPost()">Publish</button>
+    </div>
+  </div>
+  <ng-container *ngIf="showLinkPreview">
+    <app-post-link
+      [postRecord]="previewCopy"
+    ></app-post-link>
+  </ng-container>
+  <ng-container *ngIf="showPagePreview">
+    page preview
+  </ng-container>
+
+<!-- link card template-->
+  <mat-card class="configure-card">
+    <mat-card-header><h3>Configure the Link to the Post</h3></mat-card-header>
+    <div class="top-editor-row">
+      <mat-form-field class="template-picker" floatLabel="always" appearance="outline">
+        <mat-label >Link Template</mat-label>
+        <input type="number" matInput class="hidden"/>
+        <mat-button-toggle-group class="radio-toggle" [value]="currentPost.linkTemplateType" (change)="selectTemplate($event.value, 'link')">
+          <mat-button-toggle class="radio-toggle-item" [value]="template.name" *ngFor="let template of linkTemplateOptions" >
+            <strong>{{template.moreInfo}}</strong>
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </mat-form-field>
+      <app-tag-manager class="tag-manager" [selectedTags]="currentPost.tagIds" (selectedTagsValue)="updateTags($event)"></app-tag-manager>
+    </div>
+    <div class="template-fields" >
+      <app-string-input class="field-item"
+                        [title]="'Title'"
+                        [(value)]="currentPost.headerContent"
+                        [isRequired]="true"
+      ></app-string-input>
+      <app-string-input class="field-item"
+                        [title]="'Sub Header'"
+                        [(value)]="currentPost.subHeader"
+      ></app-string-input>
+      <mat-form-field floatLabel="always" appearance="outline" class="field-item image-picker app-image-input" >
+        <mat-label>Link Image</mat-label>
+        <input type="number" matInput class="hidden"/>
+        <input type="text" disabled [value]="currentPost.linkImageId" />
+        <file-select-button
+          [title]="'link?'"
+          [fileType]="'image'"
+          [category]="'newsPosts'"
+          (updatedId)="updateFileId($event, 'linkImageId')"
+        ></file-select-button>
+        <file-upload-button
+          [fileType]="'image'"
+          [category]="'newsPosts'"
+          [requestType]="'EVENT'"
+          (updatedId)="updateFileId($event, 'linkImageId')"
+        ></file-upload-button>
+      </mat-form-field>
+      <app-color-input class="field-item"
+                       [title]="'Header background'"
+                       [(value)]="currentPost.headerBackground">
+      </app-color-input>
+      <app-color-input class="field-item"
+                       [title]="'Header text color'"
+                       [(value)]="currentPost.headerTextColor">
+      </app-color-input>
+    </div>
+  </mat-card>
+
+
+  <mat-card class="configure-card">
+    <mat-card-header><h3>Configure the Content</h3></mat-card-header>
+    <div class="top-editor-row">
+      <mat-form-field class="template-picker" floatLabel="always" appearance="outline">
+        <mat-label >Template</mat-label>
+        <input type="number" matInput class="hidden"/>
+        <mat-button-toggle-group class="radio-toggle" [value]="currentPost.templateType" (change)="selectTemplate($event.value, 'body')">
+          <mat-button-toggle class="radio-toggle-item" [value]="template.name" *ngFor="let template of templateOptions" >
+            <strong>{{template.moreInfo}}</strong>
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </mat-form-field>
+    </div>
+    <div class="template-fields" >
+      <mat-form-field floatLabel="always" appearance="outline" class="field-item image-picker app-image-input" >
+        <mat-label>Banner Image</mat-label>
+        <input type="number" matInput class="hidden"/>
+        <input type="text" disabled [value]="currentPost.bannerImageId" />
+        <file-select-button
+          [title]="'banner?'"
+          [fileType]="'image'"
+          [category]="'newsPosts'"
+          (updatedId)="updateFileId($event, 'bannerImageId')"
+        ></file-select-button>
+        <file-upload-button
+          [fileType]="'image'"
+          [category]="'newsPosts'"
+          [requestType]="'EVENT'"
+          (updatedId)="updateFileId($event, 'bannerImageId')"
+        ></file-upload-button>
+      </mat-form-field>
+
+      <ng-container *ngIf="currentPost?.templateType === 'html'">
+        <app-html-input class="field-item image-picker app-html-input"
+                        [title]="'HTML'"
+                        [htmlString]="currentPost.htmlContent"
+                        (updateHtml)="updateString( $event, 'htmlContent')"
+        ></app-html-input>
+      </ng-container>
+      <ng-container *ngIf="currentPost?.templateType === 'tournament'">
+        <app-html-input class="field-item image-picker app-html-input"
+                        [title]="'Location'"
+                        [htmlString]="currentPost.location"
+                        (updateHtml)="updateString( $event, 'location')"
+        ></app-html-input>
+        <app-html-input class="field-item image-picker app-html-input"
+                        [title]="'Paragraph 1'"
+                        [htmlString]="currentPost.p1"
+                        (updateHtml)="updateString( $event, 'p1')"
+        ></app-html-input>
+        <app-html-input *ngIf="currentPost.p1" class="field-item image-picker app-html-input"
+                        [title]="'Paragraph 2'"
+                        [htmlString]="currentPost.p2"
+                        (updateHtml)="updateString( $event, 'p2')"
+        ></app-html-input>
+        <app-html-input *ngIf="currentPost.p2" class="field-item image-picker app-html-input"
+                        [title]="'Paragraph 3'"
+                        [htmlString]="currentPost.p3"
+                        (updateHtml)="updateString( $event, 'p3')"
+        ></app-html-input>
+      </ng-container>
+      <ng-container *ngIf="currentPost?.templateType === 'camp'">
+        <app-html-input class="field-item image-picker app-html-input"
+                        [title]="'Location'"
+                        [htmlString]="currentPost.location"
+                        (updateHtml)="updateString( $event, 'location')"
+        ></app-html-input>
+        <app-html-input class="field-item image-picker app-html-input"
+                        [title]="'Paragraph 1'"
+                        [htmlString]="currentPost.p1"
+                        (updateHtml)="updateString( $event, 'p1')"
+        ></app-html-input>
+        <app-html-input *ngIf="currentPost.p1" class="field-item image-picker app-html-input"
+                        [title]="'Paragraph 2'"
+                        [htmlString]="currentPost.p2"
+                        (updateHtml)="updateString( $event, 'p2')"
+        ></app-html-input>
+        <app-html-input *ngIf="currentPost.p2" class="field-item image-picker app-html-input"
+                        [title]="'Paragraph 3'"
+                        [htmlString]="currentPost.p3"
+                        (updateHtml)="updateString( $event, 'p3')"
+        ></app-html-input>
+      </ng-container>
+
+      <app-date-picker class="field-item date-item"
+                       [title]="'Publish Date'"
+                       [dateValue]="currentPost.publishDate"
+                       (dateValueChanged)="setPublishDate($event)"
+      ></app-date-picker>
+    </div>
+  </mat-card>
+</div>

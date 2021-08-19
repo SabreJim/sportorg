@@ -23,11 +23,13 @@ export class HtmlInputComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: string) => {
       if (result && result.length) {
         this.htmlValue = result;
+        this.htmlPreview = result.substr(0, 200);
         this.updateHtml.emit(this.htmlValue);
       }
     });
   }
   public htmlValue: string;
+  public htmlPreview = '';
   constructor(private dialog: MatDialog) { }
 
   ngOnInit() {

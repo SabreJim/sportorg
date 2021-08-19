@@ -45,6 +45,8 @@ import {CheckinMenuComponent} from "./org-menu-bar/checkin-menu/checkin-menu.com
 import {EditModalComponent} from "./edit-panel/edit-modal/edit-modal.component";
 import {environment} from "../../../environments/environment";
 import {AngularFireModule} from "@angular/fire";
+import {TagManagerComponent} from "./tag-manager/tag-manager.component";
+import {ColorInputComponent} from "./inputs/color-input/color-input.component";
 
 @NgModule({
   declarations: [
@@ -62,6 +64,7 @@ import {AngularFireModule} from "@angular/fire";
     HtmlInputComponent,
     NumberInputComponent,
     TimeInputComponent,
+    ColorInputComponent,
     SportorgCalendarComponent,
     ConfirmModalComponent,
     BooleanInputComponent,
@@ -78,6 +81,7 @@ import {AngularFireModule} from "@angular/fire";
     LoginRequiredDirective,
     TabRoutingDirective,
     TooltipIconComponent,
+    TagManagerComponent,
     CheckinModalComponent,
     CheckinMenuComponent,
     MemberScreeningModalComponent,
@@ -107,10 +111,12 @@ import {AngularFireModule} from "@angular/fire";
     StringInputComponent,
     HtmlInputComponent,
     NumberInputComponent,
+    ColorInputComponent,
     TimeInputComponent,
     BooleanInputComponent,
     TooltipComponent,
     TooltipDirective,
+    TagManagerComponent,
     HtmlEditorModalComponent,
     LoginRequiredDirective,
     TabRoutingDirective,

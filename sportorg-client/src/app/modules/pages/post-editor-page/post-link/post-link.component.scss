@@ -1,0 +1,163 @@
+.link-wrapper {
+  display: flex;
+  max-width: 60vw;
+  min-width: 60vw;
+  min-height: 20vw;
+  max-height: 20vw;
+  margin-bottom: 10px;
+  background-color: #1565c00d;
+  overflow: hidden;
+  .tag-items {
+    max-height: 20px;
+    position: absolute;
+    width: calc(100% - 30px);
+    display:flex;
+    justify-content: space-between;
+    overflow: hidden;
+    .chip-edit{
+      display: flex;
+      min-height: 20px;
+      cursor: pointer;
+    }
+    .tag-list {
+      display: flex;
+      justify-content: flex-end;
+      flex: 1;
+      .tag-chip {
+        min-height: 20px !important;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .link-banner-image {
+    position: absolute;
+    object-fit: cover;
+    top: 40px;
+    min-width: calc(100% - 30px);
+    min-height: calc(100% - 180px);
+    cursor: pointer;
+  }
+  .default-html-banner {
+    background-color: royalblue;
+  }
+  .default-tournament-banner {
+    background-color:indianred;
+  }
+  .default-camp-banner {
+    background-color: darkolivegreen;
+  }
+
+  .header-wrapper {
+    position: absolute;
+    background-color: lightgrey;
+    opacity: 0.7;
+    left: 40px;
+    top: 60px;
+    z-index: 15;
+    padding: 5px;
+    border-radius: 5px;
+    pointer: cursor;
+    .link-header-text {
+      z-index: 20;
+      margin: 0;
+    }
+  }
+
+  .sub-header-wrapper {
+    position: absolute;
+    left: 40px;
+    bottom: 140px;
+    z-index: 15;
+    padding: 5px;
+    border-radius: 5px;
+    .link-sub-header-text {
+      z-index: 20;
+      margin: 0;
+      color: white;
+    }
+  }
+
+  .content-preview {
+    top: calc(20vw - 100px);
+    position: absolute;
+    max-height: 120px;
+    overflow: hidden;
+  }
+  .transparency-layer {
+    top: calc(20vw - 100px);
+    position: absolute;
+    min-height: 120px;
+    min-width: calc(100% - 30px);
+    overflow: hidden;
+    z-index: 20;
+    background: linear-gradient(to bottom,transparent,transparent 0%,transparent 80%, #fdfdff 105%)
+  }
+}
+@media (min-width:1601px) {
+  .link-header-text { font-size: 3em }
+  .link-sub-header-text { font-size: 2em }
+}
+@media (max-width:1600px) {
+  .link-header-text { font-size: 2.5em }
+  .link-sub-header-text { font-size: 1.8em }
+  .link-wrapper {
+    min-height: 25vw;
+    max-height: 25vw;
+    .content-preview { top: calc(25vw - 100px) !important; }
+    .transparency-layer { top: calc(25vw - 100px) !important; }
+  }
+}
+@media (max-width: 1300px) {
+  .link-header-text { font-size: 1.6em }
+  .link-sub-header-text {
+    display: none;
+  }
+  .link-wrapper {
+    min-height: 30vw;
+    max-height: 30vw;
+    .content-preview { top: calc(30vw - 100px) !important; }
+    .transparency-layer { top: calc(30vw - 100px) !important; }
+  }
+}
+@media (max-width: 1000px) {
+  .link-header-text { font-size: 1em }
+  .link-sub-header-text { display: none; }
+  .link-wrapper {
+    min-height: 35vw;
+    max-height: 35vw;
+    .content-preview { top: calc(35vw - 100px) !important; }
+    .transparency-layer { top: calc(35vw - 100px) !important; }
+  }
+}
+@media (max-width: 900px) {
+  .link-header-text { font-size: 0.9em }
+  .link-sub-header-text { display: none; }
+  .link-wrapper {
+    min-height: 40vw;
+    max-height: 40vw;
+    .content-preview { top: calc(40vw - 100px) !important; }
+    .transparency-layer { top: calc(40vw - 100px) !important; }
+  }
+}
+@media (max-width: 800px) {
+  .link-header-text { font-size: 0.9em }
+  .link-sub-header-text { display: none; }
+  .link-wrapper {
+    min-height: 45vw;
+    max-height: 45vw;
+    .content-preview { top: calc(45vw - 100px) !important; }
+    .transparency-layer { top: calc(45vw - 100px) !important; }
+  }
+}
+@media (max-width: 700px) {
+  .link-header-text { font-size: 1em }
+  .link-sub-header-text { display: none; }
+  .link-wrapper {
+    min-height: 40vw;
+    max-height: 40vw;
+    .content-preview { display: none !important; }
+    .transparency-layer { display: none !important; }
+    .default-html-banner { min-height: calc(100% - 70px);}
+  }
+}

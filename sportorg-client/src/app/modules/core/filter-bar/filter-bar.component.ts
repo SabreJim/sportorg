@@ -48,7 +48,7 @@ export class FilterBarComponent implements OnInit {
       this._filterConfig.options.map((config: FilterConfig) => {
         if (config.lookupName && this.lookupService.Subjects[config.lookupName]) {
           // automatically get the lookup values
-          this.lookupService.Subjects[config.lookupName].subscribe((items: LookupItem[]) => {
+          this.lookupService.getLookup(config.lookupName).subscribe((items: LookupItem[]) => {
             config.options = items;
           });
         }

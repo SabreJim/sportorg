@@ -115,7 +115,6 @@ export class InvoiceModalComponent implements AfterViewInit {
   };
 
   public printPDF = (afterPrint: () => void = null) => {
-    console.log('found card', this.cardElement, this.invoice);
     const holdAdmin = this.isAdmin;
     this.isAdmin = false;
     this.hideActions = true; // prune out the mat-card-actions element

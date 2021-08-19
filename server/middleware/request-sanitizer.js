@@ -77,6 +77,20 @@ const getCleanBody = (body, schema) => {
             }
         }
     };
+    const cleanDateTime = (field) => {
+        const value = body[field.fieldName];
+        if (validate(value, field)) {
+            if (cleanBody[field.fieldName]  === null) return; // don't process empty date
+            try {
+                const dateObj = new Date(value);
+                dateObj.setHours(dateObj.getHours() - (dateObj.getTimezoneOffset() / 60));
+                const dateString = dateObj.toISOString();
+                cleanBody[field.fieldName] = dateString.replace(/[TZ]/g, ' ');
+            } catch (err) {
+                isValid = false;
+            }
+        }
+    };
     const stringMask = /[^\w\d\s-,.:;()&@]+/g;
     const cleanString = (field) => {
         const value = body[field.fieldName];
@@ -160,6 +174,9 @@ const getCleanBody = (body, schema) => {
                 break;
             case 'date':
                 cleanDate(field);
+                break;
+            case 'dateTime':
+                cleanDateTime(field);
                 break;
             case 'string':
                 cleanString(field);
@@ -465,6 +482,26 @@ const companySchema = {
         {fieldName: 'companyType', type: 'string', allowNull: true }
     ]
 };
+const newsPostSchema = {
+    primaryKey: 'postId',
+    fields: [
+        {fieldName: 'postId', type: 'int', allowNull: false },
+        {fieldName: 'templateType', type: 'string', allowNull: false },
+        {fieldName: 'linkTemplateType', type: 'string', allowNull: false },
+        {fieldName: 'htmlContent', type: 'html', allowNull: true },
+        {fieldName: 'headerContent', type: 'string', allowNull: true },
+        {fieldName: 'subHeader', type: 'string', allowNull: true },
+        {fieldName: 'headerBackground', type: 'string', allowNull: true },
+        {fieldName: 'headerTextColor', type: 'string', allowNull: true },
+        {fieldName: 'bannerImageId', type: 'int', allowNull: true },
+        {fieldName: 'linkImageId', type: 'int', allowNull: true },
+        {fieldName: 'p1', type: 'string', allowNull: true },
+        {fieldName: 'p2', type: 'string', allowNull: true },
+        {fieldName: 'p3', type: 'string', allowNull: true },
+        {fieldName: 'eventId', type: 'int', allowNull: true },
+        {fieldName: 'publishDate', type: 'dateTime', allowNull: true },
+        ]
+};
 
 module.exports = {
     getCleanBody,
@@ -486,5 +523,6 @@ module.exports = {
     questionSchema,
     paymentSchema,
     invoiceSchema,
-    companySchema
+    companySchema,
+    newsPostSchema
 };

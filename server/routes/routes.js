@@ -11,6 +11,7 @@ const Lookups = require('../response-handler/lookups');
 const Authentication = require('../middleware/server-authentication');
 const Files = require('../response-handler/files');
 const AppConfig = require('../response-handler/app-config');
+const News = require('../response-handler/news-posts');
 const jsonBody = require('body-parser').json();
 const fileBody = require('body-parser').json({ limit: '10mb', inflate: true});
 const caching = require('../middleware/caching-service');
@@ -118,6 +119,14 @@ const createRouter = (config) => {
     // ap config
     router.put('/app-config', jsonBody, adminRequired, AppConfig.updateAppConfigs);
     router.get('/app-config', adminRequired, AppConfig.getAppConfigs);
+
+    // news posts
+    router.put('/tags', jsonBody, adminRequired, News.addTag);
+    router.get('/tags', News.getTags);
+    router.get('/news-post/:postId', News.getNewsPost);
+    router.get('/news', News.searchNews);
+    router.put('/news-post', jsonBody, adminRequired, News.publishPost);
+    router.put('/news-post/unpublish/:postId', adminRequired, News.unpublishPost);
 
     return router;
 };

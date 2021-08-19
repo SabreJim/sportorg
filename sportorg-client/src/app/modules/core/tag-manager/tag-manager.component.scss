@@ -1,0 +1,25 @@
+.preview-input {
+  max-width: 250px;
+  min-width: 250px;
+  margin-left: 5px;
+  font-size: 11px;
+  text-overflow: ellipsis;
+}
+.menu-content {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  padding: 8px;
+  font-size: 14px;
+  max-height: 300px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  .mat-raised-button {
+    margin: 10px;
+  }
+}
+.new-tag-row {
+  display: flex;
+  flex-flow: row nowrap;
+  margin-bottom: 5px;
+}

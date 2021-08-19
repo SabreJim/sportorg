@@ -1,0 +1,69 @@
+.configure-card {
+  display: flex;
+  flex-flow: column nowrap;
+  flex: 1;
+  width: 100%;
+  margin-bottom: 20px;
+}
+.template-picker {
+  display: flex;
+  margin-top: 15px;
+  flex-flow: row wrap;
+  min-width: 50vw;
+  max-width: 75vw;
+  .radio-toggle {
+    display: flex;
+    justify-content: space-evenly;
+    flex: 1;
+    flex-flow: row wrap;
+    .radio-toggle-item {
+      flex: 1;
+    }
+  }
+}
+.top-editor-row {
+  display: flex;
+  flex-flow: row wrap;
+  margin-bottom: 20px;
+  .tag-manager {
+    margin-top: 15px;
+  }
+}
+.template-fields {
+  display: flex;
+  flex-flow: row wrap;
+
+  .field-item {
+    display: flex;
+    min-width: 400px;
+    max-width: 75vw;
+  }
+  .image-picker {
+    max-height: 70px;
+    margin: 5px 5px 25px;
+  }
+  .date-item {
+    max-width: 400px;
+  }
+}
+.header-row {
+  display: flex;
+  width: 100%;
+  align-content: center;
+  justify-content: space-between;
+  h4 {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+  }
+  .header-buttons {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+    max-height: 36px;
+    .mat-raised-button {
+      margin-right: 5px;
+    }
+  }
+
+}

@@ -1,0 +1,8 @@
+<div class="page-wrapper">
+  <h2>{{pagePost.headerContent}}</h2>
+  <div class="banner-image" *ngIf="pagePost.bannerImageId">
+    <img class="image-item banner-image" *ngIf="pagePost.linkImageId" [maxSize]="1000"
+         restImage [preview]="false" [restSrcId]="pagePost.linkImageId"  src=""/>
+  </div>
+  <div *ngIf="pagePost.htmlContent?.length" class="dynamic-content"  [innerHTML]="pagePost.htmlContent |safePipe: 'html'"></div>
+</div>

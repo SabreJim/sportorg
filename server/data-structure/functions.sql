@@ -1,8 +1,8 @@
 -- NOTE TO MySQL DUMMIES: you need to use the following:
-delimiter //
+    delimiter //
 -- and then end with //
 -- while logged in to the main schema directly
--- DROP FUNCTION beaches.get_or_create_user ;
+-- DROP FUNCTION beaches.get_or_create_user // ;
 CREATE FUNCTION beaches.get_or_create_user (external_id VARCHAR(50),
     external_type VARCHAR(20),
     user_email VARCHAR(100),
@@ -37,9 +37,10 @@ BEGIN
             SELECT MIN (u.user_id) INTO found_id
                 FROM beaches.users u WHERE LOWER(external_id) = LOWER(u.twitter_id);
         END IF;
-    ELSE -- update the user's display name
-        UPDATE beaches.users SET display_name = user_display_name WHERE user_id = found_id;
     END IF;
+    -- update the user's display name
+    UPDATE beaches.users SET display_name = user_display_name WHERE user_id = found_id;
+
     CALL beaches.assign_members(found_id);
     RETURN found_id;
 END;
@@ -391,6 +392,8 @@ BEGIN
     VALUES
         (v_invoice_id, v_from_id, v_from_type, v_to_id, v_to_type, v_amount, CURDATE(), v_method, CURDATE());
     SELECT LAST_INSERT_ID() INTO new_payment_id;
+    -- also update the invoice
+    UPDATE beaches.invoices SET update_date = CURRENT_TIMESTAMP() WHERE invoice_id = v_invoice_id;
     RETURN new_payment_id;
 END;
 /
@@ -443,3 +446,19 @@ BEGIN
     END IF;
 END;
 /
+
+delimiter //
+DROP FUNCTION beaches.create_invoice; //
+CREATE FUNCTION beaches.create_invoice(from_id INTEGER, from_type VARCHAR(20),
+	to_id INTEGER, to_type VARCHAR(20), due_date VARCHAR(100)) RETURNS INTEGER
+    SQL SECURITY INVOKER
+BEGIN
+	DECLARE new_id INTEGER;
+	INSERT INTO beaches.invoices
+    	(from_id, from_type, to_id, to_type, update_date, due_date, cancelled)
+        VALUES
+        (from_id, from_type, to_id, to_type, CURRENT_TIMESTAMP(), due_date, 'N');
+    SELECT LAST_INSERT_ID() INTO new_id;
+    RETURN new_id;
+END;
+//

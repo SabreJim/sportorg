@@ -25,6 +25,7 @@ import {clone} from 'ramda';
 import {LookupItem} from "../../core/models/rest-objects";
 import {EditModalResponse} from "../../core/edit-panel/edit-panel.component";
 import {SnackbarService} from "../../core/services/snackbar.service";
+import {CurrencyPipe} from "@angular/common";
 
 @Component({
   selector: 'app-my-profile-page',
@@ -60,6 +61,15 @@ export class MyProfilePageComponent implements OnInit, OnDestroy {
     this.authService.getSession();
     this.invoiceSub = this.financialService.Invoices.subscribe((invoices: Invoice[]) => {
       this.myInvoices = invoices;
+      // run totals as well
+      let invoiceTotal = 0;
+      let balanceTotal = 0;
+      invoices.map((r: Invoice) => {
+        invoiceTotal = invoiceTotal + r.invoiceValue;
+        balanceTotal = balanceTotal + r.invoiceValue - r.paidValue;
+      });
+      this.financialSummary.balance = balanceTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD'});
+      this.financialSummary.invoiced = invoiceTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD'});
       this.detector.detectChanges();
     });
     this.paymentSub = this.financialService.Payments.subscribe((payments: Payment[]) => {
@@ -170,6 +180,10 @@ export class MyProfilePageComponent implements OnInit, OnDestroy {
   }
   public invoiceText = () => {
     return StaticValuesService.isMobile() ? 'pdf' : 'Details';
+  }
+  public financialSummary = {
+    invoiced: '$0.00',
+    balance: '$0.00'
   }
   public invoiceColumns: TableColumn[] = [
     TableColumn.fromConfig({fieldName: 'detailsButton', title: '', type: 'button', buttonClass: '',

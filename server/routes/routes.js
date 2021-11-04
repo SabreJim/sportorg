@@ -60,8 +60,10 @@ const createRouter = (config) => {
 
     // user endpoints
     router.get('/users', adminRequired, Users.getUsers);
+    router.get('/users/roles/:userId', adminRequired, Users.getUsersRoles);
+    router.put('/users/roles/:userId/:roleId/:selected', adminRequired, Users.setUserRole);
     router.put('/user', jsonBody, adminRequired, Users.updateUser);
-    router.delete('/members/:userId', adminRequired, Users.deleteUser);
+    router.delete('/users/:userId', adminRequired, Users.deleteUser);
     router.get('/member-users', adminRequired, Users.getMemberUsers);
     router.get('/my-user-profile', requireSession, Users.getMyProfile);
     router.put('/member-users/member/:memberId/user/:userId/link/:setStatus', adminRequired, Users.linkMembers);
@@ -100,6 +102,7 @@ const createRouter = (config) => {
     router.get('/my-invoices/user/:userId', adminRequired, Finances.getUsersInvoices);
     router.get('/my-invoices/', requireSession, Finances.getMyInvoices);
     router.put('/invoice/', jsonBody, adminRequired, Finances.upsertInvoice);
+    router.put('/invoice/create', jsonBody, adminRequired, Finances.createInvoice);
     router.put('/invoice/cancel/:invoiceId', adminRequired, Finances.cancelInvoice);
     router.get('/my-payments/user/:userId', adminRequired, Finances.getUsersPayments);
     router.get('/my-payments/', requireSession, Finances.getMyPayments);
@@ -118,7 +121,7 @@ const createRouter = (config) => {
 
     // ap config
     router.put('/app-config', jsonBody, adminRequired, AppConfig.updateAppConfigs);
-    router.get('/app-config', adminRequired, AppConfig.getAppConfigs);
+    router.get('/app-config', AppConfig.getAppConfigs);
 
     // news posts
     router.put('/tags', jsonBody, adminRequired, News.addTag);

@@ -21,6 +21,42 @@ const getUsers = async(req, res, next) => {
     const users = await MySQL.runQuery(query);
     returnResults(res, users);
 };
+const getUsersRoles = async(req, res, next) => {
+    const userId = req.params.userId;
+    const userRoles = await lookupUserRoles(userId);
+    returnResults(res, userRoles);
+};
+const lookupUserRoles = async (userId) => {
+    const query = `SELECT 
+        r.role_id,
+        r.description role_name,
+        u.user_id,
+        u.display_name user_name,
+        CASE WHEN ur.user_id IS NULL THEN 'N' ELSE 'Y' END selected
+    FROM beaches.roles r
+    CROSS JOIN beaches.users u
+    LEFT JOIN beaches.user_roles ur ON ur.role_id = r.role_id AND ur.user_id = u.user_id
+    WHERE u.user_id = ${userId}`;
+    return await MySQL.runQuery(query);
+}
+
+const setUserRole = async(req, res, next) => {
+    const userId = req.params.userId;
+    const roleId = req.params.roleId;
+    const selected = req.params.selected;
+    let command;
+    if (selected === 'Y') {
+        command = `INSERT INTO beaches.user_roles (user_id, role_id) VALUES (${userId}, ${roleId})`;
+    } else {
+        command = `DELETE FROM beaches.user_roles WHERE user_id = ${userId} AND role_id = ${roleId}`;
+    }
+    const outcome = await MySQL.runCommand(command);
+    if (outcome && outcome.affectedRows) {
+        returnSingle(res, { rowsUpdated: outcome.affectedRows });
+    } else {
+        returnError(res,'User role could not be updated');
+    }
+};
 
 const updateUser = async (req, res, next) => {
     let body = req.body;
@@ -119,6 +155,9 @@ const getMyProfile =  async (req, res) => {
 
 module.exports = {
     getUsers,
+    getUsersRoles,
+    lookupUserRoles,
+    setUserRole,
     updateUser,
     deleteUser,
     getMemberUsers,

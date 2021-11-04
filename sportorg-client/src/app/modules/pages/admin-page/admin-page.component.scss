@@ -11,8 +11,7 @@
   margin: 10px;
 }
 .expand-admin {
-  margin-left: 20px;
-  margin-right: 10px;
+  margin: 10px 10px 20px 20px;
   width: calc(100% - 40px);
 }
 .action-items {
@@ -29,6 +28,11 @@
     display: flex;
     flex: 2 2 auto;
     margin: 0 10px;
+  }
+
+  .roles-list {
+    display: flex;
+    flex: 4;
   }
 }
 .config-box {

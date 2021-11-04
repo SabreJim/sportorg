@@ -3,7 +3,7 @@ import {NewsPost} from "../../core/models/data-objects";
 import {PostsProxyService} from "../../core/services/posts-proxy.service";
 import {Subscription} from "rxjs";
 import {FirebaseAuthService} from "../../core/services/firebase-auth.service";
-import {AppUser} from "../../core/models/authentication";
+import {AppUser, UserRole} from "../../core/models/authentication";
 import {LookupItem} from "../../core/models/rest-objects";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {LookupProxyService} from "../../core/services/lookup-proxy.service";
@@ -21,7 +21,7 @@ export class NewsPageComponent implements OnInit, OnDestroy {
               protected route: ActivatedRoute, protected router: Router, protected lookupService: LookupProxyService) {}
   public currentNews: NewsPost[] = [];
   protected newsSub: Subscription;
-  public isAdmin = false;
+  public hasEditRole = false;
   public currentTags: LookupItem[] = [];
   public allTags: LookupItem[] = [];
   public params: number[] = [];
@@ -43,10 +43,18 @@ export class NewsPageComponent implements OnInit, OnDestroy {
     });
 
     this.auth.CurrentUser.subscribe((user: AppUser) => {
-      if (user?.isAdmin === true) {
-        this.isAdmin = true;
+      if (user?.isAdmin) {
+        this.hasEditRole = true; // admins have edit role
+      } else if (user?.roles?.length) {
+        let hasRole = false;
+        user.roles.map((r: UserRole) => {
+          if (r.roleName === 'create/edit posts' && r.selected === 'Y') {
+            hasRole = true; // has been granted editing role
+          }
+        });
+        this.hasEditRole = hasRole;
       } else {
-        this.isAdmin = false;
+        this.hasEditRole = false; // no role assigned
       }
     });
     this.auth.getSession();

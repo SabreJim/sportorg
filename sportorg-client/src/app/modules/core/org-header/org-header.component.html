@@ -1,5 +1,6 @@
 <div class="header-wrapper">
-  <img src="assets/beaches-logo-notext.png" class="logo-img"/>
+  <img *ngIf="appLogoId"
+    class="image-item logo-img" restImage [restSrcId]="appLogoId" [maxSize]="500" [preview]="false" src="" />
   <h1>Beaches Sabre Club East</h1>
   <div class="info-box">
     <p class="info-line">Fredericton's Greatest Sabre Club</p>

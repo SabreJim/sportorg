@@ -1,6 +1,6 @@
 const MySQL = require('../middleware/mysql-service');
 const { returnResults, returnSingle, returnError } = require('../middleware/response-handler');
-const { getCleanBody, paymentSchema, invoiceSchema } = require('../middleware/request-sanitizer');
+const { getCleanBody, paymentSchema, invoiceSchema, createInvoiceSchema } = require('../middleware/request-sanitizer');
 
 // show members as enrolled or not in the selected season
 const getMyInvoices = async(req, res, next) => {
@@ -26,8 +26,10 @@ const returnInvoices = async (userId, res) => {
             )
         ), ']') as line_items_json,
         CONCAT('$', FORMAT(invoice_amount.amount, 2)) invoice_amount,
+        invoice_amount.amount invoice_value,
         CONCAT('$', FORMAT((SELECT SUM(p.amount) FROM beaches.payments p WHERE p.invoice_id = i.invoice_id AND i.to_id = p.to_id), 2)) paid_amount,
         CONCAT('$', FORMAT(invoice_amount.amount - (SELECT SUM(p.amount) FROM beaches.payments p WHERE p.invoice_id = i.invoice_id AND i.to_id = p.to_id), 2)) balance,
+        (SELECT SUM(p.amount) FROM beaches.payments p WHERE p.invoice_id = i.invoice_id AND i.to_id = p.to_id) paid_value,
         DATE_FORMAT(i.update_date, '%Y-%m-%d') update_date,
         DATE_FORMAT(i.due_date, '%Y-%m-%d') due_date
     FROM beaches.invoices i
@@ -93,12 +95,11 @@ const recordPayment = async(req, res, next) => {
     const myUserId = (req.session && req.session.user_id) ? req.session.user_id : -1;
 
     let body = getCleanBody(req.body, paymentSchema);
-
     let statement = 'SELECT beaches.record_payment( ? , ? ) as new_id';
     const statementResult = await MySQL.runCommand(statement,
         [myUserId, JSON.stringify(body.cleanBody) ]);
-    if (statementResult && statementResult.length) {
-        returnSingle(res, { newId: statementResult[0].newId});
+    if (statementResult && statementResult.new_id) {
+        returnSingle(res, { newId: statementResult.new_id});
     } else {
         returnError(res, 'An error occurred when updating this record');
     }
@@ -146,7 +147,7 @@ const upsertInvoice = async(req, res, next) => {
             }
             if (allChecked) {
                 if (rowsUpdated > 0) {
-                    const parentStatement = `UPDATE beaches.invoices SET upddate_date = CURDATE() WHERE invoice_id = ${body.cleanBody.invoiceId}`;
+                    const parentStatement = `UPDATE beaches.invoices SET update_date = CURDATE() WHERE invoice_id = ${body.cleanBody.invoiceId}`;
                     await MySQL.runCommand(parentStatement);
                 }
                 returnSingle(res, { invoiceId: body.cleanBody.invoiceId })
@@ -155,13 +156,25 @@ const upsertInvoice = async(req, res, next) => {
             }
         }
     } else {
-        // TODO: create a new invoice with no line items
         returnSingle(res, { newId: -1 });
     }
 };
 
+const createInvoice = async(req, res, next) => {
+    // create a new invoice with no line items
+    let body = getCleanBody(req.body, createInvoiceSchema);
+    let statement = 'SELECT beaches.create_invoice( ? , ?, ?, ?, ? ) as new_id';
+    const statementResult = await MySQL.runCommand(statement,
+        [body.cleanBody.fromId, body.cleanBody.fromType, body.cleanBody.toId, body.cleanBody.toType, body.cleanBody.dueDate ]);
+    if (!statementResult || !statementResult.new_id) {
+        returnSingle(res, { newId: statementResult.new_id });
+    } else {
+        returnSingle(res, { newId: -1 });
+    }
+}
+
 const cancelInvoice = async(req, res, next) => {
-    let statement = `UPDATE beaches.invoices SET cancelled = 'Y', update_date = CURDATE() WHERE invoice_id = ?`;
+    let statement = `UPDATE beaches.invoices SET cancelled = 'Y', update_date = CURRENT_TIMESTAMP() WHERE invoice_id = ?`;
     const statementResult = await MySQL.runCommand(statement,
         [req.params.invoiceId ]);
     if (statementResult && statementResult.changedRows) {
@@ -178,6 +191,7 @@ module.exports = {
     getUsersPayments,
     recordPayment,
     upsertInvoice,
+    createInvoice,
     cancelInvoice
 };
 

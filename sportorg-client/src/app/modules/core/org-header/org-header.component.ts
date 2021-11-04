@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, Input, OnInit} from "@angular/core";
 
 
 @Component({
@@ -8,7 +8,7 @@ import {Component, OnInit} from "@angular/core";
 })
 export class OrgHeaderComponent implements OnInit {
 
-
+  @Input() appLogoId: number;
   ngOnInit(): void {
   }
 

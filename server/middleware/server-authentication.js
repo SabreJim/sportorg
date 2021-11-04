@@ -2,6 +2,7 @@ const { returnSingle, returnSuccess, returnError } = require('../middleware/resp
 const firebase = require('firebase-admin');
 const config = require('../../config');
 const MySQL = require('../middleware/mysql-service');
+const Users = require('../response-handler/users');
 const uuid = require('uuid/v4');
 const crypto = require('crypto-js');
 
@@ -51,6 +52,12 @@ const decodeToken = (token) => {
 const getSessionFromHeader = async(request) => {
     const sportorgToken = request.headers['sportorgtoken'];
     CurrentSession = await getSessionByToken(decodeToken(sportorgToken));
+
+    // also get roles for the session
+    if (CurrentSession && CurrentSession.user_id) {
+        const roles = await Users.lookupUserRoles(CurrentSession.user_id);
+        CurrentSession.roles = roles;
+    }
 
     if (CurrentSession.length === 0) {
         // no user found
@@ -139,6 +146,10 @@ const verifyToken = async(req, res, next) => {
             appSession.displayName = existingSession.displayName;
             appSession.memberId = existingSession.memberId;
             appSession.sessionToken = crypto.AES.encrypt(orgToken, application.secretKey).toString();
+            // also retrieve user's roles
+            const roles = await Users.lookupUserRoles(userResponse.userId);
+            appSession.roles = roles;
+
             return returnSingle(res, appSession);
         }).catch(function(error) {
         // Handle error

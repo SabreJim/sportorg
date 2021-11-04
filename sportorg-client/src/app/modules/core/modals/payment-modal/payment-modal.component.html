@@ -9,8 +9,13 @@
             [title]="'From'"
             [showEmpty]="true"
             [staticLookup]="members"
-            [selected]="payment?.fromId"
-            (selectionObject)="selectPayFrom($event)"
+            (selectionObject)="selectPayFrom($event, 'member')"
+          ></app-select-input>
+          <app-select-input
+            [title]="'From company'"
+            [showEmpty]="true"
+            [staticLookup]="companies"
+            (selectionObject)="selectPayFrom($event, 'company')"
           ></app-select-input>
 
           <app-select-input
@@ -20,11 +25,18 @@
             [selected]="payment?.invoiceId"
             (selectionObject)="selectInvoice($event)"
           ></app-select-input>
-          <mat-form-field appearance="outline" floatLabel="always"  class="modal-form-field">
-            <mat-label>Payment to</mat-label>
-            <input matInput [value]="'Beaches Sabre Club East'" [disabled]="'disabled'">
-<!--            TODO: drop down -->
-          </mat-form-field>
+            <app-select-input
+              [title]="'Payment to'"
+              [staticLookup]="companies"
+              [selected]="payment?.toId"
+              (selectionObject)="selectPayTo($event,'company')"
+            ></app-select-input>
+            <app-select-input
+              [title]="'Personal Payment to'"
+              [showEmpty]="true"
+              [staticLookup]="members"
+              (selectionObject)="selectPayTo($event,'member')"
+            ></app-select-input>
 
           <app-number-input
             [title]="'Amount'"

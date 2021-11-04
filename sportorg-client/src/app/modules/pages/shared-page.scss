@@ -77,3 +77,9 @@ p {
   display: flex;
   flex: 1 1 auto;
 }
+@media (max-width: 1000px) {
+  .dynamic-content {
+    max-width: 90vw !important;
+    padding: 0 15px;
+  }
+}

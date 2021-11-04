@@ -648,3 +648,24 @@ CREATE TABLE beaches.post_tags (
     post_id MEDIUMINT NOT NULL REFERENCES posts(post_id),
     PRIMARY KEY (tag_id, post_id)
 );
+-- start of fixes for user_names, updating members, etc
+ALTER TABLE beaches.members MODIFY is_loyalty_member NULL;
+ALTER TABLE beaches.users MODIFY COLUMN display_name VARCHAR(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+CREATE TABLE beaches.roles (
+    role_id MEDIUMINT NOT NULL auto_increment,
+    role_name VARCHAR(50) NOT NULL,
+    description VARCHAR(50),
+    PRIMARY KEY (role_id)
+    );
+INSERT INTO beaches.roles (role_name, description) VALUES ('image_upload', 'upload images');
+INSERT INTO beaches.roles (role_name, description) VALUES ('create_post', 'create/edit posts');
+INSERT INTO beaches.roles (role_name, description) VALUES ('admin_event', 'run events');
+CREATE TABLE beaches.user_roles (
+    role_id MEDIUMINT NOT NULL REFERENCES beaches.roles(role_id),
+    user_id MEDIUMINT NOT NULL REFERENCES beaches.users(user_id),
+    PRIMARY KEY (role_id, user_id)
+    );
+
+INSERT INTO beaches.projects (project_name, type, private_key_id, private_key)
+VALUES ('beachesEast', 'config', 'appLogo', '48');

@@ -42,11 +42,11 @@ const getMemberAttendance = async(req, res, next) => {
             GROUP BY al.member_id) checkout on checkout.member_id = m.member_id
         LEFT JOIN beaches.clubs cl ON cl.club_id = m.club_id          
         WHERE m.is_active = 'Y' AND m.currently_enrolled = 'Y' AND
-            (EXISTS (SELECT user_id from beaches.member_users mu where m.member_id = mu.member_id AND mu.user_id = ${myUserId})
+            (FIND_IN_SET(${myUserId} , m.user_access_ids) > 0
             OR (SELECT u.is_admin FROM beaches.users u where u.user_id = ${myUserId}) = 'Y'
             OR EXISTS (SELECT cau.user_id FROM beaches.club_admin_users cau WHERE cau.user_id = ${myUserId} AND m.club_id = cau.club_id)
             )
-        `;
+        ORDER BY m.first_name`;
     const myMembers = await MySQL.runQuery(query);
     returnResults(res, cleanSelected(myMembers, ['checkedIn', 'checkedOut', 'isFlagged', 'activeScreenRequired', 'consentSigned']));
 };

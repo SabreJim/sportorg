@@ -2,10 +2,11 @@ import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild, ViewContainerRef
 import {Router, Event, NavigationStart} from "@angular/router";
 import {FirebaseAuthService} from "./modules/core/services/firebase-auth.service";
 import {LookupProxyService} from "./modules/core/services/lookup-proxy.service";
-import {AppStatus} from "./modules/core/models/ui-objects";
+import {AppStatus, ConfigRow} from "./modules/core/models/ui-objects";
 import {Subscription} from "rxjs";
 import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from "@angular/material/snack-bar";
 import {StaticValuesService} from "./modules/core/services/static-values.service";
+import {AppConfigService} from "./modules/core/services/app-config.service";
 
 @Component({
   selector: 'app-root',
@@ -19,10 +20,12 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   public readonly FITNESS = 'fitnessTracker';
   public isMobile = StaticValuesService.isMobile;
   public appInUse: string = this.SPORT_ORG;
+  public appLogoId: number;
   protected statusSub: Subscription;
+  protected configSub: Subscription;
   protected bannerRef: MatSnackBarRef<SimpleSnackBar>;
   ngOnDestroy(): void {
-    StaticValuesService.cleanSubs([this.statusSub]);
+    StaticValuesService.cleanSubs([this.statusSub, this.configSub]);
   }
 
   ngOnInit(): void {
@@ -57,6 +60,14 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         });
       }
     });
+
+    this.configSub = this.configService.getAppConfigs().subscribe((rows: ConfigRow[]) => {
+      rows.map((r: ConfigRow) => {
+        if (r.configItem === 'appLogo'){
+          this.appLogoId = Number(r.value);
+        }
+      })
+    });
   }
 
   protected dismissBanner = () => {
@@ -66,7 +77,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   public dismissBannerFn = () => {}
   constructor (private appRouter: Router, private authService: FirebaseAuthService,
-               private lookupService: LookupProxyService, protected matSnackBar: MatSnackBar) {
+               private lookupService: LookupProxyService, protected matSnackBar: MatSnackBar,
+               private configService: AppConfigService) {
     appRouter.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
         // if not logged in and required to be, redirect to login

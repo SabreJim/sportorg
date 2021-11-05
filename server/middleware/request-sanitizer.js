@@ -34,8 +34,12 @@ const getCleanBody = (body, schema) => {
             if (field.fieldName === schema.primaryKey) { // implicitly an insert
                 cleanBody[field.fieldName] = null;
             } else if (field.allowNull) {
-                cleanBody[field.fieldName] = null;
-                body[field.fieldName] = null;
+                if (field.ignoreNull) {
+                    // just ignore the field
+                } else {
+                    cleanBody[field.fieldName] = null;
+                    body[field.fieldName] = null;
+                }
             } else {
                 isValid = false;
                 cleanBody[field.fieldName] = null;
@@ -45,9 +49,13 @@ const getCleanBody = (body, schema) => {
             if (field.fieldName === schema.primaryKey) { // implicitly an insert
                 cleanBody[field.fieldName] = null;
             } else if (field.allowNull) {
-                cleanBody[field.fieldName] = null;
-                body[field.fieldName] = null;
-                return false; // stop checking
+                if (field.ignoreNull) {
+                    // just ignore the field
+                } else {
+                    cleanBody[field.fieldName] = null;
+                    body[field.fieldName] = null;
+                    return false; // stop checking
+                }
             } else {
                 isValid = false;
                 cleanBody[field.fieldName] = null;
@@ -296,7 +304,7 @@ const memberSchema = {
         {fieldName: 'cellPhone', type: 'string', allowNull: true },
         {fieldName: 'homePhone', type: 'string', allowNull: true },
         {fieldName: 'license', type: 'string', allowNull: true },
-        {fieldName: 'isLoyaltyMember', type: 'string', allowNull: true }
+        {fieldName: 'isLoyaltyMember', type: 'string', allowNull: true, ignoreNull: true }
     ]
 };
 const userSchema = {
@@ -468,6 +476,16 @@ const invoiceSchema = {
         {fieldName: 'dueDate', type: 'date', allowNull: true }
     ]
 };
+const createInvoiceSchema = {
+    primaryKey: 'fromId',
+    fields: [
+        {fieldName: 'fromId', type: 'int', allowNull: false },
+        {fieldName: 'fromType', type: 'string', allowNull: false },
+        {fieldName: 'toId', type: 'int', allowNull: false },
+        {fieldName: 'toType', type: 'string', allowNull: false },
+        {fieldName: 'dueDate', type: 'date', allowNull: true }
+    ]
+};
 
 const companySchema = {
     primaryKey: 'companyId',
@@ -523,6 +541,7 @@ module.exports = {
     questionSchema,
     paymentSchema,
     invoiceSchema,
+    createInvoiceSchema,
     companySchema,
     newsPostSchema
 };

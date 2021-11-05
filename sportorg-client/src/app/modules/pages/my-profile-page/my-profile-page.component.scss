@@ -18,6 +18,13 @@
 
 }
 .table-box {
+  .invoice-summary {
+    display: flex;
+    width: 100%;
+    h3 {
+      flex: 1;
+    }
+  }
   flex-flow: column nowrap;
   .select-table {
     display: flex;

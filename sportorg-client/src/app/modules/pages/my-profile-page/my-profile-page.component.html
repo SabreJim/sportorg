@@ -75,6 +75,18 @@
       <h1>Financials</h1>
     </mat-expansion-panel-header>
     <div class="table-box">
+      <div class="invoice-summary">
+        <h3>Summary</h3>
+        <app-string-input class="field-item" [title]="'Invoiced'"
+                          [(value)]="financialSummary.invoiced"
+                          [disabled]="true"
+        ></app-string-input>
+        <app-string-input class="field-item" [title]="'Balance'"
+                          [(value)]="financialSummary.balance"
+                          [disabled]="true"
+        ></app-string-input>
+
+      </div>
       <p class="prompt-text">
         These are invoices that have been issued. If you feel that these records are not accurate, please contact the administrator.
       </p>

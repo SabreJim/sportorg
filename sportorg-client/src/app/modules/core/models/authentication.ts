@@ -11,12 +11,14 @@ export class AppUser {
   isAdmin?: boolean;
   isFitnessAdmin?: boolean;
   isActive?: boolean;
+  roles?: UserRole[];
 
   constructor() {
     this.isAnonymous = true;
     this.displayName = "Anonymous";
     this.isAdmin = false;
     this.isFitnessAdmin = false;
+    this.roles = [];
   }
 }
 
@@ -27,6 +29,17 @@ export interface AppSession {
   isFitnessAdmin?: string;
   memberId: string;
   isActive: string;
+  roles?: UserRole[];
+}
+
+export interface UserRole {
+  userId: number;
+  userName?: string;
+  roleId: number;
+  roleName: string;
+  description: string;
+  selected?: string;
+  isSelected?: boolean;
 }
 export interface UserData { // for managing other users
   userId: number;

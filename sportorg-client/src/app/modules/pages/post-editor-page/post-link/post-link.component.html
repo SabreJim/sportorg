@@ -1,6 +1,6 @@
 <mat-card class="link-wrapper">
   <div class="tag-items">
-    <mat-chip *ngIf="isAdmin"  color="primary" class="chip-edit" selected (click)="editPost()">Edit</mat-chip>
+    <mat-chip *ngIf="hasEditRole"  color="primary" class="chip-edit" selected (click)="editPost()">Edit</mat-chip>
     <mat-chip-list class="tag-list">
       <mat-chip class="tag-chip" *ngFor="let tag of myTags" (click)="applyFilter(tag)">{{tag.name}}</mat-chip>
     </mat-chip-list>

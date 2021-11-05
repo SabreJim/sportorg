@@ -3,7 +3,7 @@ import {AngularFireAuth} from "@angular/fire/auth";
 import firebase from 'firebase/app';
 // import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 // import FacebookAuthProvider = firebase.auth.FacebookAuthProvider;
-import {AppSession, AppUser, UserData, UserProfile} from "../models/authentication";
+import {AppSession, AppUser, UserData, UserProfile, UserRole} from "../models/authentication";
 import {Observable, Subject} from "rxjs";
 import {RestProxyService} from "./rest-proxy.service";
 import {ApiResponse} from "../models/rest-objects";
@@ -94,6 +94,11 @@ export class FirebaseAuthService extends RestProxyService {
             this.currentUser.isAdmin = response.data.isAdmin === 'Y';
             this.currentUser.isFitnessAdmin = response.data.isFitnessAdmin === 'Y';
             this.currentUser.isActive = response.data.isActive === 'Y';
+            if (response.data?.roles?.length) {
+              this.currentUser.roles = response.data.roles;
+            } else {
+              this.currentUser.roles = [];
+            }
             this.CurrentUser.next(this.currentUser);
           });
         });
@@ -156,6 +161,32 @@ export class FirebaseAuthService extends RestProxyService {
         } else {
           subscription.next(response.data || []);
           this.Users.next(response.data || []);
+        }
+      }, (error: any) => {});
+    });
+  };
+
+  public getUserRoles = (userId: number): Observable<UserRole[]> => {
+    return new Observable((subscription) => {
+      this.get(`users/roles/${userId}`).subscribe((response: ApiResponse<UserRole[]>) => {
+        if (response.hasErrors()) {
+          SnackbarService.error('There was an error getting user roles');
+          subscription.next([]);
+        } else {
+          subscription.next(response.data || []);
+        }
+      }, (error: any) => {});
+    });
+  };
+  public setUserRole = (userId: number, roleId: number, selected: string): Observable<boolean> => {
+    return new Observable((subscription) => {
+      this.put(`users/roles/${userId}/${roleId}/${selected}`, {}).subscribe((response: ApiResponse<any>) => {
+        if (response.hasErrors()) {
+          SnackbarService.error('There was an error setting user roles');
+          subscription.next(false);
+        } else {
+          SnackbarService.notify(`User's role has been updated`);
+          subscription.next(true);
         }
       }, (error: any) => {});
     });

@@ -67,6 +67,32 @@
           </div>
         </mat-expansion-panel>
 
+      <mat-expansion-panel (afterExpand)="getMemberUsers()" class="expand-admin">
+        <mat-expansion-panel-header class="panel-header">
+          <h3>Grant Roles to Users</h3>
+        </mat-expansion-panel-header>
+        <div class="table-box">
+          <p class="prompt-text">
+            Users can be assigned one or more roles within the app.
+          </p>
+          <div class="action-items">
+            <app-select-input
+              [staticLookup]="userRows"
+              (selectionObject)="showUserRoles($event)"
+            ></app-select-input>
+            <div class="roles-list">
+              <mat-chip-list multiple selectable>
+                <mat-chip *ngFor="let role of selectedUserRoles"
+                          [selected]="role.isSelected"
+                          [value]="role.roleId"
+                          [removable]="false"
+                          (click)="updateUserRole(role)"
+                >{{role.description}}</mat-chip>
+              </mat-chip-list>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
 
       <mat-expansion-panel (afterExpand)="getMemberAttendance()" class="expand-admin">
         <mat-expansion-panel-header class="panel-header">

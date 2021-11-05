@@ -24,7 +24,7 @@ export class PostLinkComponent implements OnInit, OnDestroy {
     return this._postRecord;
   }
   private _postRecord: NewsPost;
-  @Input() isAdmin = false;
+  @Input() hasEditRole = false;
   @Output() tagSelected = new EventEmitter<LookupItem>();
 
   public myTags: LookupItem[] = [];

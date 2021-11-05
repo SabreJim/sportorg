@@ -209,6 +209,8 @@ export interface Invoice {
   dueDate?: string;
   balance?: string;
   status?: string;
+  invoiceValue?: number;
+  paidValue?: number;
 }
 export interface InvoiceItem {
   itemId: number;

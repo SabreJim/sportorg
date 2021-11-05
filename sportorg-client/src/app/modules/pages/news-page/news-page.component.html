@@ -11,7 +11,7 @@
   <div class="current-posts" #postScroller>
     <app-post-link *ngFor="let post of currentNews"
        [postRecord]="post"
-       [isAdmin]="isAdmin"
+       [hasEditRole]="hasEditRole"
        (tagSelected)="applyTag($event)"
     ></app-post-link>
   </div>

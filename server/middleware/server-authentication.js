@@ -2,6 +2,7 @@ const { returnSingle, returnSuccess, returnError } = require('../middleware/resp
 const firebase = require('firebase-admin');
 const config = require('../../config');
 const MySQL = require('../middleware/mysql-service');
+const Users = require('../response-handler/users');
 const uuid = require('uuid/v4');
 const crypto = require('crypto-js');
 
@@ -139,6 +140,10 @@ const verifyToken = async(req, res, next) => {
             appSession.displayName = existingSession.displayName;
             appSession.memberId = existingSession.memberId;
             appSession.sessionToken = crypto.AES.encrypt(orgToken, application.secretKey).toString();
+            // also retrieve user's roles
+            const roles = await Users.lookupUserRoles(userResponse.userId);
+            appSession.roles = roles;
+
             return returnSingle(res, appSession);
         }).catch(function(error) {
         // Handle error

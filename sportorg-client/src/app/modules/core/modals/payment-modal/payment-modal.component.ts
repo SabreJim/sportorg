@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import {AppMember, Invoice, Payment} from "../../models/data-objects";
 import {Subscription} from "rxjs";
 import {LookupItem} from "../../models/rest-objects";
-import {FinancialProxyService} from "../../services/financial-proxy.service";
+import {LookupProxyService} from "../../services/lookup-proxy.service";
 
 @Component({
   selector: 'app-payment-modal',
@@ -12,12 +12,13 @@ import {FinancialProxyService} from "../../services/financial-proxy.service";
 })
 export class PaymentModalComponent implements AfterViewInit {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  constructor(protected lookupProxy: LookupProxyService, @Inject(MAT_DIALOG_DATA) public data: any,
               public matDialogRef: MatDialogRef<PaymentModalComponent>) {
   }
 
   public payment: Payment;
   public members: LookupItem[] = [];
+  public companies: LookupItem[] = [];
   protected allInvoices: Invoice[] = [];
   public memberInvoices: LookupItem[] = [];
   public paymentMethods: LookupItem[] = [
@@ -39,8 +40,11 @@ export class PaymentModalComponent implements AfterViewInit {
     }
     if (this.data && this.data.paymentId) {
       // use the provided payment if editing
-
     }
+    this.lookupProxy.getLookup('companies').subscribe((items: LookupItem[]) => {
+      this.companies = items;
+    });
+
     setTimeout(() => {
       this.payment = tempPayment;
       if (this.data){
@@ -62,20 +66,37 @@ export class PaymentModalComponent implements AfterViewInit {
     });
   }
 
-  public selectPayFrom = (event: LookupItem) => {
+  public selectPayFrom = (event: LookupItem, source: string) => {
     if (!event || !event.id) return;
     this.payment.fromId = event.id;
     const tempInvoices: LookupItem[] = [];
     this.allInvoices.map((invoice: Invoice) => {
-      if (invoice.fromId === this.payment.fromId) {
-        tempInvoices.push({
-          id: invoice.invoiceId,
-          name: `${invoice.invoiceAmount} from: ${invoice.updateDate}`,
-          lookup: 'invoice'
-        })
+      if (source === 'company') {
+        if (invoice.fromId === this.payment.fromId &&invoice.fromType === 'company') {
+          tempInvoices.push({
+            id: invoice.invoiceId,
+            name: `${invoice.invoiceAmount} from: ${invoice.updateDate}`,
+            lookup: 'invoice'
+          });
+        }
+      } else {
+        if (invoice.fromId === this.payment.fromId &&invoice.fromType !== 'company') {
+          tempInvoices.push({
+            id: invoice.invoiceId,
+            name: `${invoice.invoiceAmount} from: ${invoice.updateDate}`,
+            lookup: 'invoice'
+          });
+        }
       }
     });
+    // set the payment from type
+    this.payment.fromType = source;
     this.memberInvoices = tempInvoices;
+  }
+  public selectPayTo = (event: LookupItem, source: string) => {
+    if (!event || !event.id) return;
+    this.payment.toId = event.id;
+    this.payment.fromType = source;
   }
 
   public selectInvoice = (event: LookupItem) => {

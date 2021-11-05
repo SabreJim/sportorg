@@ -76,7 +76,7 @@ export class FinancialProxyService extends RestProxyService {
 
   public createInvoice = (newInvoice: NewInvoice): Observable<boolean> => {
     return new Observable((subscription) => {
-      this.put('create-invoice/', newInvoice).subscribe((response: ApiResponse<any>) => {
+      this.put('invoice/create', newInvoice).subscribe((response: ApiResponse<any>) => {
         if (response.hasErrors() || !response.success) {
           SnackbarService.error(`Invoice could not be created as requested`);
           subscription.next(false);

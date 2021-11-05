@@ -7,7 +7,7 @@ import {ProgramsProxyService} from "../../core/services/programs-proxy.service";
 import {FirebaseAuthService} from "../../core/services/firebase-auth.service";
 import {MembersProxyService} from "../../core/services/member-proxy.service";
 import {AppMember, AppMemberUser, MemberAttendance} from "../../core/models/data-objects";
-import {UserData} from "../../core/models/authentication";
+import {UserData, UserRole} from "../../core/models/authentication";
 import {Subscription} from "rxjs";
 import {LookupItem} from "../../core/models/rest-objects";
 import {PageProxyService} from "../../core/services/page-proxy.service";
@@ -165,6 +165,23 @@ export class AdminPageComponent implements OnInit, OnDestroy {
         this.unlinkMemberUser = memberUsers;
       }
     };
+    public updateUserRole = (role: UserRole) => {
+      const newState = role.isSelected ? 'N' : 'Y';
+      this.authService.setUserRole(role.userId, role.roleId, newState).subscribe((success:boolean) => {
+        if (success) {
+          role.isSelected = !role.isSelected;
+        }
+      })
+    }
+    public selectedUserRoles: UserRole[] = [];
+    public showUserRoles = (user: LookupItem) => {
+      this.authService.getUserRoles(user.id).subscribe((roles: UserRole[]) => {
+        this.selectedUserRoles = roles.map((r: UserRole) => {
+          r.isSelected = r.selected === 'Y';
+          return r;
+        })
+      })
+    }
     public getMemberAttendance = () => {
       let requestDate = null;
       if (this.attendDate && this.attendDate.toISOString) {
@@ -281,7 +298,7 @@ export class AdminPageComponent implements OnInit, OnDestroy {
   public getAppConfig = () => {
     this.configSub = this.configService.getAppConfigs().subscribe((rows: ConfigRow[]) => {
       this.configRows = rows;
-    })
+    });
   }
   public saveConfig = () => {
 

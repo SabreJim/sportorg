@@ -37,6 +37,7 @@ export interface UserRole {
   userName?: string;
   roleId: number;
   roleName: string;
+  description: string;
   selected?: string;
   isSelected?: boolean;
 }

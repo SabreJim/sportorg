@@ -29,7 +29,8 @@ const getUsersRoles = async(req, res, next) => {
 const lookupUserRoles = async (userId) => {
     const query = `SELECT 
         r.role_id,
-        r.description role_name,
+        r.description,
+        r.role_name,
         u.user_id,
         u.display_name user_name,
         CASE WHEN ur.user_id IS NULL THEN 'N' ELSE 'Y' END selected
@@ -141,7 +142,6 @@ const getMyProfile =  async (req, res) => {
             (SELECT mm.email) my_email,
             (SELECT mm.street_address) my_address,
             GROUP_CONCAT(CONCAT(m.first_name, ' ', m.last_name)) my_fencers
-            
         FROM beaches.users u
         LEFT JOIN beaches.member_users mmu ON mmu.user_id = u.user_id AND mmu.is_primary = 'Y'
         LEFT JOIN beaches.members mm ON mm.member_id = mmu.member_id

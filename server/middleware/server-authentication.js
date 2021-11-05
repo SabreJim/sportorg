@@ -53,12 +53,6 @@ const getSessionFromHeader = async(request) => {
     const sportorgToken = request.headers['sportorgtoken'];
     CurrentSession = await getSessionByToken(decodeToken(sportorgToken));
 
-    // also get roles for the session
-    if (CurrentSession && CurrentSession.user_id) {
-        const roles = await Users.lookupUserRoles(CurrentSession.user_id);
-        CurrentSession.roles = roles;
-    }
-
     if (CurrentSession.length === 0) {
         // no user found
         CurrentSession = Object.assign({}, defaultSession);

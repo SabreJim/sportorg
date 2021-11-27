@@ -505,7 +505,7 @@ BEGIN
 
 	-- find athlete by license
 	SELECT athlete_id INTO v_athlete_id
-	FROM beaches.athlete_profiles WHERE national_num = p_license AND LENGTH(national_num) > 0;;
+	FROM beaches.athlete_profiles WHERE national_num = p_license AND LENGTH(national_num) > 0;
 	IF v_athlete_id IS NULL THEN -- backup check by name
 		SELECT athlete_id INTO v_athlete_id
 		FROM beaches.athlete_profiles WHERE

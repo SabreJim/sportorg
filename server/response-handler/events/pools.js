@@ -48,6 +48,9 @@ const getPool = async(req, res) => {
         INNER JOIN beaches.event_rounds er ON er.event_id = p.event_id AND er.event_round_id = p.event_round_id AND er.round_type_id = 1
         WHERE p.pool_id = ${poolId}`);
     const pool = getPool[0];
+    if (!pool) {
+        return returnError(res, 'Pool not found');
+    }
     const getAthletes = `SELECT
         pa.pool_id,
         pa.athlete_id,

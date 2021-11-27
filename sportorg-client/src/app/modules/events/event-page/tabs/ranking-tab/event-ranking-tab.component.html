@@ -10,6 +10,7 @@
     <div class="title-item small-hide" title="Hits Scored">HS</div>
     <div class="title-item mid-hide" title="Hits Received">HR</div>
     <div class="title-item " title="plus/minus">+/-</div>
+    <div class="title-item " title="Promoted">Pr</div>
   </div>
   <div *ngFor="let athlete of rankedAthletes" class="ranking-item">
     <div class="rank-value">{{athlete.roundRank}}</div>
@@ -21,5 +22,6 @@
     <div class="rank-value small-hide" title="Hits Scored">{{athlete.poolHitsScored}}</div>
     <div class="rank-value mid-hide" title="Hits Received">{{athlete.poolHitsReceived}}</div>
     <div class="rank-value " title="plus/minus">{{athlete.poolDiff}}</div>
+    <div class="rank-value " title="Promoted"><mat-icon>{{athlete.promoted === 'Y' ? 'check_box' : 'check_box_outline_blank'}}</mat-icon></div>
   </div>
 </div>

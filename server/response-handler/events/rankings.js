@@ -195,7 +195,8 @@ const getEventRoundRankings = async(req, res) => {
             era.matches pool_matches,
             era.hits_scored pool_hits_scored,
             era.hits_received pool_hits_received,
-            (era.hits_scored - era.hits_received) pool_diff
+            (era.hits_scored - era.hits_received) pool_diff,
+            era.promoted
         FROM beaches.event_round_athletes era 
         INNER JOIN beaches.athlete_profiles ap ON ap.athlete_id = era.athlete_id
         LEFT JOIN beaches.clubs c ON c.club_id = ap.club_id

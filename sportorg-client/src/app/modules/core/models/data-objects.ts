@@ -398,6 +398,7 @@ export interface EventPoolAthlete extends EventAthlete {
   poolHitsReceived?: number;
   poolDiff?: number;
   poolRank?: number;
+  promoted?: string;
 }
 export interface PoolOrderItem {
   athlete1Id: number;

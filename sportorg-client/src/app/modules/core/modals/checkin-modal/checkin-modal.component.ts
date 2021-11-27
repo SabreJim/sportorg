@@ -5,6 +5,12 @@ import {MembersProxyService} from "../../services/member-proxy.service";
 import {Subscription} from "rxjs";
 import {StaticValuesService} from "../../services/static-values.service";
 import {FormControl} from "@angular/forms";
+export interface ConsentPerson {
+  memberId: number;
+  lastName: string;
+  firstName: string;
+  screeningAnswers?: ScreeningAnswer[];
+}
 
 @Component({
   selector: 'app-checkin-modal',
@@ -22,6 +28,9 @@ export class CheckinModalComponent implements OnInit, OnDestroy {
       this.currentMember = this.data.member;
       this.questionGroup = this.data.questions;
       this.title = this.data.title;
+      if (this.data.questionPrompt) {
+        this.questionPrompt = this.data.questionPrompt;
+      }
     }
     this.questionSub = this.memberService.getScreeningQuestions(this.questionGroup).subscribe((questions: ScreeningQuestion[]) => {
       this.questions = questions;
@@ -32,7 +41,8 @@ export class CheckinModalComponent implements OnInit, OnDestroy {
   protected questionGroup: string;
   protected questionSub: Subscription;
   public title: string;
-  public currentMember: MemberAttendance;
+  public questionPrompt = 'Please answer each of the following questions to the best of your knowledge before entering the club';
+  public currentMember: ConsentPerson;
   public questions: ScreeningQuestion[];
   public allAnswered: boolean = false;
   public isMobile = StaticValuesService.isMobile;

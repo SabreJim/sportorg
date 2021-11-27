@@ -1,0 +1,100 @@
+<div class="event-page-wrapper" >
+  <div class="header-row-shared">
+    <div class="return-alt-button white-border" title="Return to Event" routerLink="/porthos/event/pool/{{pool?.poolId}}">
+      <mat-icon>keyboard_return</mat-icon>
+    </div>
+    <div class="on-deck-wrapper">
+      <mat-label class="border-div-label">On Deck</mat-label>
+      <div class="shared-row">
+        <span class="text-overflow">{{onDeckMatch?.athlete1LastName}}, {{onDeckMatch?.athlete1FirstName}}</span>
+        <span>{{onDeckMatch?.orderText}}</span>
+        <span class="text-overflow">{{onDeckMatch?.athlete2LastName}}, {{onDeckMatch?.athlete2FirstName}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="editor-wrapper">
+
+    <div class="timer-wrapper">
+      <mat-label class="border-div-label">Timer</mat-label>
+      <div class="front-icons">
+        <button mat-mini-fab class="timer-button white-border"(click)="setTimer(1)">
+          1 m
+        </button>
+        <button mat-mini-fab class="timer-button white-border"(click)="setTimer(3)">
+          3 m
+        </button>
+        <button mat-mini-fab class="timer-button white-border"(click)="resetTimer()">
+          <mat-icon>restart_alt</mat-icon>
+        </button>
+      </div>
+      <div class="single-row" (click)="toggleTimer()">
+        <div class="timer-display {{timerObject.timerEnded ? 'blink' : ''}}">
+          {{timerObject.minutes}}:{{timerObject.seconds | number: '2.0-0'}}
+        </div>
+        <div class="milli-display {{timerObject.timerEnded ? 'blink' : ''}}">
+          {{timerObject.milliseconds | number: '3.0-0'}}
+        </div>
+      </div>
+      <div class="back-icons">
+        <span>Period</span>
+        <button mat-mini-fab class="timer-button white-border {{currentPeriod > 0 ? 'period-set' : ''}}"(click)="setPeriod(1)">
+          1
+        </button>
+        <button mat-mini-fab class="timer-button white-border {{currentPeriod > 1 ? 'period-set' : ''}}"(click)="setPeriod(2)">
+          2
+        </button>
+        <button mat-mini-fab class="timer-button white-border {{currentPeriod > 2 ? 'period-set' : ''}}"(click)="setPeriod(3)">
+          3
+        </button>
+      </div>
+    </div>
+    <div class="scores-wrapper">
+      <div class="double-row">
+        <div class="score-box" (click)="addToScore($event,1, 1)" >
+          {{currentMatch?.athlete1Score}}
+          <button mat-raised-button class="score-butt white-border"(click)="addToScore($event,1, -1)">
+            <mat-icon>keyboard_arrow_down</mat-icon>
+          </button>
+        </div>
+        <div class="score-name text-overflow">{{currentMatch?.athlete1LastName}}</div>
+        <div class="score-name score-name-sm text-overflow">{{currentMatch?.athlete1FirstName}}</div>
+      </div>
+      <div class="double-row">
+        <div class="score-box" (click)="addToScore($event,2 ,1)">
+          {{currentMatch?.athlete2Score}}
+          <button mat-raised-button class="score-button white-border"(click)="addToScore($event,2, -1)">
+            <mat-icon>keyboard_arrow_down</mat-icon>
+          </button>
+        </div>
+        <div class="score-name text-overflow">{{currentMatch?.athlete2LastName}}</div>
+        <div class="score-name score-name-sm text-overflow">{{currentMatch?.athlete2FirstName}}</div>
+      </div>
+    </div>
+
+    <div class="done-wrapper">
+      <button mat-raised-button class="return-button white-border"
+              (click)="saveScore()" [disabled]="!currentMatch || currentMatch.completed === 'Y'">
+        Done
+      </button>
+      <button mat-raised-button class="return-button white-border" *ngIf="currentMatch && currentMatch.completed === 'Y'"
+              (click)="reopenMatch()" >
+        Re-open
+      </button>
+    </div>
+    <div class="navigate-wrapper">
+      <div class="single-row">
+        <button mat-raised-button class="return-button white-border" title="Previous match"
+                (click)="goToPrevious()" [disabled]="!this.previousMatch">
+          <mat-icon>fast_rewind</mat-icon>
+        </button>
+        <div class="counter-item">{{matchesCompleted}} / {{totalMatches}}</div>
+        <button mat-raised-button class="return-button white-border" title="Next match"
+                (click)="goToNext()" [disabled]="!this.nextMatch">
+          <mat-icon>fast_forward</mat-icon>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+

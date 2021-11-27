@@ -1,7 +1,9 @@
 <mat-form-field floatLabel="always" appearance="outline">
   <mat-label>{{title}}</mat-label>
-  <input type="number" matInput [required]="isRequired" [formControl]="numberFormControl"/>
-  <button mat-button *ngIf="numberFormControl.value" matSuffix mat-icon-button (click)="clearNumber()">
+  <span *ngIf="prefix" matPrefix>{{prefix}}</span>
+  <input type="number" matInput [required]="isRequired" [formControl]="numberFormControl" [min]="min" [max]="max"/>
+  <span *ngIf="suffix" matSuffix>{{suffix}}</span>
+  <button mat-button *ngIf="numberFormControl.value && !numberFormControl.disabled" matSuffix mat-icon-button (click)="clearNumber()">
     <mat-icon>close</mat-icon>
   </button>
   <mat-error *ngIf="numberFormControl.hasError('required')">{{title}} is required</mat-error>

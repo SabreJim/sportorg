@@ -1,0 +1,7 @@
+
+.table-chips {
+ ::ng-deep.mat-chip-list-wrapper {
+   overflow-x: auto;
+   flex-flow: row nowrap;
+ }
+}

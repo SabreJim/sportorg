@@ -105,6 +105,12 @@ UNION
 SELECT  c.club_id as 'id', c.club_name as 'name', c.club_abbreviation as 'more_info',null as'other_id', 'clubs' as 'lookup' FROM beaches.clubs c
 UNION
 SELECT  co.company_id as 'id', co.company_name as 'name', null as 'more_info',null as'other_id', 'companies' as 'lookup' FROM beaches.companies co
+UNION
+SELECT  ty.athlete_type_id as 'id', ty.type_name as 'name', null as 'more_info',null as'other_id', 'athleteTypes' as 'lookup' FROM beaches.athlete_types ty
+UNION
+SELECT  g.gender_id as 'id', g.gender_name as 'name', null as 'more_info',null as'other_id', 'genders' as 'lookup' FROM beaches.genders g
+UNION
+SELECT  es.event_status_id as 'id', es.status_name as 'name', null as 'more_info',null as'other_id', 'eventStatuses' as 'lookup' FROM beaches.event_statuses es
 ;
 
 drop view beaches.v_enrollments;
@@ -184,7 +190,10 @@ SELECT
     ap.first_name,
     ap.last_name,
     ap.year_of_birth,
-    ap.compete_gender,
+    ap.compete_gender_id,
+    g.gender_name,
+    c.club_id,
+    c.club_abbreviation club,
     ap.fitness_level,
     (SELECT CONCAT('[',GROUP_CONCAT(athlete_type_id), ']') type_ids FROM beaches.athlete_profile_types WHERE athlete_id = ap.athlete_id GROUP BY athlete_id) type_ids,
         JSON_ARRAY(
@@ -196,8 +205,9 @@ SELECT
         JSON_OBJECT('name', 'handSpeed', 'value', ap.hand_speed)
     ) as stats,
     (SELECT MAX(event_date) FROM beaches.exercise_event ee WHERE ee.athlete_id = ap.athlete_id) as last_workout
-FROM beaches.athlete_profiles ap;
-;
+FROM beaches.athlete_profiles ap
+INNER JOIN beaches.genders g ON g.gender_id = ap.compete_gender_id
+LEFT JOIN beaches.clubs c ON c.club_id = ap.club_id;
 
 drop view beaches.v_exercise_logs;
 CREATE SQL SECURITY INVOKER VIEW beaches.v_exercise_logs
@@ -215,7 +225,7 @@ SELECT
     (COALESCE(e.hand_speed_value, 0) * ee.exercise_quantity) as hand_speed_points,
     ee.event_date,
     ap.year_of_birth,
-    ap.compete_gender,
+    g.gender_name,
     CONCAT('[',(SELECT GROUP_CONCAT(atp.athlete_type_id) FROM beaches.athlete_profile_types atp WHERE atp.athlete_id = ee.athlete_id), ']' ) as athlete_type_ids,
     ap.fitness_level as user_fitness_level,
     ap.balance as user_balance_level,
@@ -226,7 +236,8 @@ SELECT
     ap.hand_speed as user_hand_speed_level
 FROM beaches.exercise_event ee
     INNER JOIN beaches.exercises e on ee.exercise_id = e.exercise_id
-    INNER JOIN beaches.athlete_profiles ap ON ee.athlete_id = ap.athlete_id;
+    INNER JOIN beaches.athlete_profiles ap ON ee.athlete_id = ap.athlete_id
+    INNER JOIN beaches.genders g ON g.gender_id = ap.compete_gender_id;
 
 
 -- required to grant permissions on secondary view
@@ -276,4 +287,36 @@ FROM beaches.v_exercise_logs el
 WHERE DATE(el.event_date) > (NOW() - INTERVAL 7 DAY)
 GROUP BY el.athlete_id, log_agg.fitness_gains, log_agg.balance_gains, log_agg.flexibility_gains, log_agg.power_gains,
 log_agg.endurance_gains, log_agg.foot_speed_gains, log_agg.hand_speed_gains
+;
+
+-- events and tournaments
+drop view beaches.v_scheduled_events;
+CREATE SQL SECURITY INVOKER VIEW beaches.v_scheduled_events
+AS
+SELECT
+	se.scheduled_event_id,
+	se.scheduled_event_name,
+	cl.club_id host_club_id,
+	cl.club_name host_club_name,
+	se.event_logo_id,
+	se.location_name,
+	se.location_address,
+	se.description_html,
+	se.contact_email,
+	se.external_registration_link,
+	se.map_link_url,
+	DATE_FORMAT(se.start_date, '%b %e, %Y') start_date,
+	DATE_FORMAT(se.end_date, '%b %e, %Y') end_date,
+	DATE_FORMAT(se.registration_deadline_date, '%b %e, %Y') registration_deadline_date,
+	CASE WHEN CURDATE() <= se.registration_deadline_date THEN 'Y' ELSE 'N' END registration_open,
+	(SELECT GROUP_CONCAT(DISTINCT ac.label) age_categories
+		FROM beaches.events e
+		INNER JOIN beaches.age_categories ac ON ac.age_id = e.primary_age_category_id
+		WHERE e.scheduled_event_id = se.scheduled_event_id GROUP BY e.scheduled_event_id) ages,
+	(SELECT GROUP_CONCAT(DISTINCT t.type_name) types
+		FROM beaches.events e
+		INNER JOIN beaches.athlete_types t ON t.athlete_type_id = e.athlete_type_id
+		WHERE e.scheduled_event_id = se.scheduled_event_id GROUP BY e.scheduled_event_id) event_types
+FROM beaches.scheduled_events se
+LEFT JOIN beaches.clubs cl ON cl.club_id = se.host_club_id
 ;

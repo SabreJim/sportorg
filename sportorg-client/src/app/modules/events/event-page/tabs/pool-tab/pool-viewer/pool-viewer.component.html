@@ -1,0 +1,69 @@
+<div class="event-page-wrapper">
+  <div class="header-row">
+    <div class="return-button white-border" title="Return to Event" routerLink="/porthos/{{pool?.eventId}}">
+      <mat-icon>keyboard_return</mat-icon>
+    </div>
+    <h1>{{pool?.poolName}}</h1>
+  </div>
+  <div class="pool-content">
+      <div  class="pool-item" >
+        <div class="pool-title">
+          <div class="pool-name title-item">Pool {{pool?.poolNumber}}</div>
+          <div class="title-item">Referee: {{pool?.refereeId}}</div>
+          <div class="title-item">Piste assigned: {{pool?.assignedPiste}}</div>
+        </div>
+        <div class="athlete-list">
+          <div class="athlete-item title-row" >
+            <span class="athlete-text small-hide">Name</span>
+            <span class="athlete-value mid-hide">Club</span>
+            <span class="athlete-value"></span>
+            <span class="score-value" *ngFor="let score of pool.athletes[0].poolScores">{{score.vsOrder}}</span>
+            <span class="spacer-value"></span>
+            <span class="summary-value">V</span>
+            <span class="summary-value">HS</span>
+            <span class="summary-value">HR</span>
+            <span class="summary-value">+/-</span>
+
+            <span class="summary-value">Pl</span>
+          </div>
+          <div class="athlete-item" *ngFor="let athlete of pool.athletes">
+            <span class="athlete-text small-hide" (click)="showAthlete(athlete)">{{athlete.lastName.toUpperCase()}}, {{athlete.firstName}}</span>
+            <span class="athlete-value mid-hide">{{athlete.club}}</span>
+            <span class="athlete-value" (click)="showAthlete(athlete)">{{athlete.poolOrder}}</span>
+            <span class="score-value {{score.vsOrder === athlete.poolOrder ? 'blank-value' : ''}}"
+                  (click)="editPool()"
+                  *ngFor="let score of athlete.poolScores">
+              {{score.score === 5 || (score.completed && score.score > score.vsScore) ? 'V' : ''}}
+              {{score.completed === 'N' || (score.completed === 'Y' && score.score < 5) ? score.score : ''}}
+            </span>
+            <span class="spacer-value"></span>
+            <span class="summary-value">{{athlete.poolVictories}}</span>
+            <span class="summary-value">{{athlete.poolHitsScored}}</span>
+            <span class="summary-value">{{athlete.poolHitsReceived}}</span>
+            <span class="summary-value">{{athlete.poolDiff}}</span>
+            <span class="summary-value">{{athlete.poolRank}}</span>
+
+          </div>
+        </div>
+        <div class="athlete-viewer" *ngIf="shownAthlete">
+          <div class="athlete-item">
+            <span class="athlete-text" (click)="showAthlete(shownAthlete)">{{shownAthlete?.lastName.toUpperCase()}}, {{shownAthlete.firstName}}</span>
+            <span class="athlete-value">{{shownAthlete.club}}</span>
+            <span class="athlete-value" (click)="showAthlete(shownAthlete)">{{shownAthlete.poolOrder}}</span>
+          </div>
+          <div class="athlete-item">
+            <span class="summary-value">V:</span><span class="score-value">{{shownAthlete.poolVictories}}</span>
+            <span class="summary-value">HS:</span><span class="score-value">{{shownAthlete.poolHitsScored}}</span>
+            <span class="summary-value">HR:</span><span class="score-value">{{shownAthlete.poolHitsReceived}}</span>
+            <span class="summary-value">+/-:</span><span class="score-value">{{shownAthlete.poolDiff}}</span>
+            <span class="summary-value">Pl:</span><span class="score-value">{{shownAthlete.poolRank}}</span>
+          </div>
+        </div>
+
+        <div class="order-viewer">
+          <mat-label class="border-div-label">Bout order</mat-label>
+          <div class="order-item {{order.completed === 'Y' ? 'completed' : ''}}" *ngFor="let order of pool.boutOrders">{{order.orderText}}</div>
+        </div>
+      </div>
+    </div>
+</div>

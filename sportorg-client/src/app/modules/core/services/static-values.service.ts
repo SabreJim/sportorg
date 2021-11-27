@@ -104,6 +104,10 @@ export class StaticValuesService {
     handSpeed: 'fas fa-hand-sparkles'
   };
 
+  public static getRoundedPercent = (value: number, percent: number) => {
+    return value ? Math.ceil(value * (percent/100)) : 0;
+  }
+
   public static MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];

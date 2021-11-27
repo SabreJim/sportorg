@@ -1,0 +1,15 @@
+.athletes-wrapper {
+  display: flex;
+  flex-flow: column nowrap;
+  .athlete-row {
+    display: flex;
+    width: 100%;
+    margin-bottom: 10px;
+    .register-button {
+      display: flex;
+    }
+    .athlete-name, .msg {
+      flex: 1;
+    }
+  }
+}

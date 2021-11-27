@@ -47,6 +47,13 @@ import {environment} from "../../../environments/environment";
 import {AngularFireModule} from "@angular/fire";
 import {TagManagerComponent} from "./tag-manager/tag-manager.component";
 import {ColorInputComponent} from "./inputs/color-input/color-input.component";
+import {ScheduledEventModalComponent} from "./modals/scheduled-event-modal/scheduled-event-modal.component";
+import {ValidatingModalComponent} from "./modals/validating-modal/validating-modal.component";
+import {ContextMenuDirective} from "./directives/context-menu/context-menu.directive";
+import {ContextMenuComponent} from "./directives/context-menu/context-menu.component";
+import {EventItemModalComponent} from "./modals/event-item-modal/event-item-modal.component";
+import {ValidatingPanelComponent} from "./validating-panel/validating-panel.component";
+import {KeyboardCaptureDirective} from "./directives/keyboard-capture.directive";
 
 @NgModule({
   declarations: [
@@ -88,7 +95,14 @@ import {ColorInputComponent} from "./inputs/color-input/color-input.component";
     FileUploadButtonComponent,
     FileSelectButtonComponent,
     RestImageDirective,
-    ImagePreviewModalComponent
+    ImagePreviewModalComponent,
+    ScheduledEventModalComponent,
+    EventItemModalComponent,
+    ValidatingModalComponent,
+    ValidatingPanelComponent,
+    ContextMenuDirective,
+    ContextMenuComponent,
+    KeyboardCaptureDirective
   ],
   exports: [
     OrgHeaderComponent,
@@ -123,7 +137,11 @@ import {ColorInputComponent} from "./inputs/color-input/color-input.component";
     FileUploadButtonComponent,
     FileSelectButtonComponent,
     RestImageDirective,
-    FilterBarComponent
+    FilterBarComponent,
+    ScheduledEventModalComponent,
+    EventItemModalComponent,
+    ContextMenuDirective,
+    KeyboardCaptureDirective
   ],
   imports: [
     MaterialModule,
@@ -147,7 +165,10 @@ import {ColorInputComponent} from "./inputs/color-input/color-input.component";
     InvoiceModalComponent,
     PaymentModalComponent,
     MemberScreeningModalComponent,
-    ImagePreviewModalComponent
+    ImagePreviewModalComponent,
+    ScheduledEventModalComponent,
+    EventItemModalComponent,
+    ContextMenuComponent
   ]
 })
 export class CoreModule { }

@@ -15,7 +15,7 @@ export class SafePipe implements PipeTransform {
         return this.sanitizer.bypassSecurityTrustHtml(this.prepareHtml(value));
       case 'style': return this.sanitizer.bypassSecurityTrustStyle(value);
       case 'script': return this.sanitizer.bypassSecurityTrustScript(value);
-      case 'url': return ;
+      case 'url': return this.sanitizer.bypassSecurityTrustUrl(value);;
       case 'resourceUrl': return this.sanitizer.bypassSecurityTrustResourceUrl(value);
       default: throw new Error(`Invalid safe type specified: ${type}`);
     }
@@ -26,6 +26,9 @@ export class SafePipe implements PipeTransform {
       .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
   }
   protected prepareHtml(content: string) {
-    return content.replace(/&quot;/g, '"');
+    if (content?.length) {
+      return content.replace(/&quot;/g, '"');
+    }
+    return '';
   }
 }

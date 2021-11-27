@@ -1,0 +1,52 @@
+<div class="modal-wrapper">
+  <div class="form-scroller">
+    <form autocomplete="off" novalidate class="form-wrapper">
+      <mat-card class="field-card">
+        <div class="form-header"><h2>Edit an Event</h2></div>
+        <div class="form-content">
+          <app-string-input class="wide-field" [title]="'Event name'" [isRequired]="true" [orgFormControl]="eventNameControl"></app-string-input>
+          <app-select-input
+            [title]="'Age category'"
+            [showEmpty]="true"
+            [lookupType]="'ageCategories'"
+            [selectControl]="ageCategoryControl"
+            [selected]="record?.primaryAgeCategoryId"
+            (selectionObject)="updateName($event)"
+          ></app-select-input>
+
+          <app-select-input
+            [title]="'Event Type'"
+            [showEmpty]="true"
+            [lookupType]="'athleteTypes'"
+            [selectControl]="athleteTypeControl"
+            [selected]="record?.athleteTypeId"
+            (selectionObject)="updateName($event)"
+          ></app-select-input>
+          <app-select-input
+            [title]="'Gender'"
+            [showEmpty]="true"
+            [lookupType]="'genders'"
+            [selectControl]="genderControl"
+            [selected]="record?.genderId"
+            (selectionObject)="updateName($event)"
+          ></app-select-input>
+          <app-time-input
+            [title]="'Start time'"
+            [timeControl]="startTimeControl"
+            [isRequired]="true"
+          ></app-time-input>
+          <app-date-picker [title]="'Event Date'" [dateControl]="eventDateControl"
+                           [minDate]="minDate" [maxDate]="maxDate"></app-date-picker>
+
+        </div>
+      </mat-card>
+    </form>
+  </div>
+  <div class="action-bar">
+    <button mat-raised-button [mat-dialog-close]>Cancel</button>
+    <button mat-raised-button (click)="resetRecord()" [disabled]="!canReset">Reset</button>
+    <div [matTooltip]="disableSaveMessage" [matTooltipDisabled]="canSave">
+      <button mat-raised-button color="primary" [disabled]="!canSave" (click)="saveAndClose()">Save</button>
+    </div>
+  </div>
+</div>

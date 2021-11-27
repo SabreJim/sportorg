@@ -1,0 +1,109 @@
+<mat-card class="field-card round-card">
+  <div class="round-header">
+    <h2>{{record?.roundName}}</h2>
+    <div [matTooltip]="'Athletes must be ready in the round'"
+         [matTooltipDisabled]="record.athletesReady > 0"
+         *ngIf="record.roundTypeId === 1" class="action-button">
+      <button mat-raised-button color="{{record.eventRoundStatusId === 1 ? 'primary' : 'warn'}}" class="ready-round-button action-button"
+        (click)="createPools()" [disabled]="record.athletesReady === 0">
+        {{record.eventRoundStatusId === 1 ? 'Create Pools' : 'Clear Pools'}}
+      </button>
+    </div>
+    <div [matTooltip]="'Athletes must be in round, and matches must not have started'"
+         [matTooltipDisabled]="record.eventRoundStatusId <= 2 && record.athletesReady > 0"
+         *ngIf="record.roundTypeId === 2" class="action-button">
+      <button mat-raised-button color="primary" class="ready-round-button action-button"
+              (click)="createTableau()" [disabled]="record.eventRoundStatusId > 2 || record.athletesReady === 0">
+        {{record.eventRoundStatusId === 1 ? 'Create Tableau' : 'Clear Tableau'}}
+      </button>
+    </div>
+
+    <div [matTooltip]="'Create the pool/tableau before starting the round'"
+         [matTooltipDisabled]="record.eventRoundStatusId === 2 && record.athletesReady > 0"
+         *ngIf="record.roundTypeId !== 3" class="action-button">
+      <button mat-raised-button color="primary" class="start-round-button action-button"
+        (click)="setRoundStatus(3)" [disabled]="record.eventRoundStatusId !== 2 || record.athletesReady === 0">
+        Start Round
+      </button>
+    </div>
+
+    <div [matTooltip]="'All matches must be recorded before ending the round'"
+         [matTooltipDisabled]="record.eventRoundStatusId === 4 && record.athletesReady > 0"
+         *ngIf="record.roundTypeId !== 3" class="action-button">
+      <button mat-raised-button color="primary" class="end-round-button action-button"
+        (click)="setRoundStatus(5)" [disabled]="record.eventRoundStatusId !== 4">
+        End Round
+      </button>
+    </div>
+
+    <button *ngIf="record.roundTypeId !== 3"
+      mat-raised-button color="warn" class="action-button" [disabled]="!canDelete"
+            (click)="deleteRound()">Delete<mat-icon>cancel</mat-icon>
+    </button>
+    <div *ngIf="record.roundTypeId === 3" [matTooltip]="'Previous round must be ended first, and no changes can be pending'"
+         [matTooltipDisabled]="record.relatedRoundStatusId === 5 || canSave">
+      <button mat-raised-button color="primary" class="action-button" [disabled]="record.relatedRoundStatusId !== 5"
+        (click)="performSelection()">Promote Athletes
+      </button>
+    </div>
+
+  </div>
+
+  <app-select-input
+    [title]="'Round type'"
+    [showEmpty]="false"
+    [disabled]="record.eventRoundStatusId !== 1 || record.roundTypeId === 3"
+    [staticLookup]="roundTypes"
+    [selected]="record.roundTypeId"
+    (selectedChange)="setValue($event, 'roundTypeId')">
+  </app-select-input>
+  <app-number-input [value]="record.athletesReady" [title]="'Athletes in round'" [disabled]="true"></app-number-input>
+  <ng-container *ngIf="record.roundTypeId === 1" > <!-- pool configuration -->
+    <app-number-input [value]="record.numberOfPools" [title]="'Number of pools'"
+                      [disabled]="true"
+    ></app-number-input>
+    <app-number-input [value]="record.preferredPoolSize" [title]="'Preferred size'"
+                      [disabled]="record.eventRoundStatusId !== 1"
+                      (valueChange)="applyPoolSize($event)"
+                      [max]="15" [min]="1"
+    ></app-number-input>
+    <app-string-input [value]="record.roundDescription" [title]="'Pool format'" [disabled]="true"></app-string-input>
+  </ng-container>
+  <ng-container *ngIf="record.roundTypeId === 2"> <!-- DE configuration -->
+    <mat-form-field floatLabel="always" appearance="outline" class="form-field-item">
+      <mat-label>Direct elimination to</mat-label>
+      <input type="number" matInput class="hidden"/>
+      <mat-radio-group class="member-radio-group"
+                       [ngModel]="record.athletesPromoted" (change)="setValue($event.value, 'athletesPromoted')">
+        <mat-radio-button class="member-radio" *ngFor="let deLevel of deLevelOptions" [value]="deLevel.id">
+          {{deLevel.name}}
+        </mat-radio-button>
+      </mat-radio-group>
+    </mat-form-field>
+    <app-string-input [value]="record.roundDescription" [title]="'Tableau format'" [disabled]="true"></app-string-input>
+
+  </ng-container>
+  <ng-container *ngIf="record.roundTypeId === 3"> <!-- selection configuration -->
+    <mat-form-field floatLabel="always" appearance="outline" class="form-field-item">
+      <mat-label>Pools to use for selection/ranking</mat-label>
+      <input type="number" matInput class="hidden"/>
+      <mat-checkbox class="multi-select" *ngFor="let poolOption of record.poolRoundOptions"
+                    [checked]="poolOption.checked"
+                    (change)="setCheckedInSet($event, 'poolRoundsUsed', poolOption.id )">
+        {{poolOption.name}}
+      </mat-checkbox>
+    </mat-form-field>
+    <app-number-input [value]="record.promotedPercent" [title]="'Athletes promoted %'" [suffix]="'%'"
+                      [min]="1" [max]="100"
+                      (valueChange)="setPromotedPercent($event)"
+    ></app-number-input>
+    <app-number-input [value]="tempAthletesPromoted" [title]="'Athletes promoted to next round'" [disabled]="true"
+    ></app-number-input>
+  </ng-container>
+
+  <div [matTooltip]="disableSaveMessage" [matTooltipDisabled]="canSave">
+    <button mat-raised-button color="primary" class="action-button" [disabled]="!canSave"
+            (click)="saveRound()">Save<mat-icon>done</mat-icon>
+    </button>
+  </div>
+</mat-card>

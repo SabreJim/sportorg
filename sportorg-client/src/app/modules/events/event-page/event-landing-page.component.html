@@ -1,0 +1,113 @@
+<div class="event-page-wrapper">
+  <div class="header-row">
+    <div class="return-button white-border" title="Return to Event Page" routerLink="/event/{{scheduledEventId}}">
+      <mat-icon>keyboard_return</mat-icon>
+    </div>
+    <h1>{{eventConfig?.eventName}}</h1>
+    <div class="sub-header-row">
+      <div class="event-desc">
+        {{eventConfig?.gender}} {{eventConfig?.eventAgeCategory}} {{eventConfig?.athleteType}}
+      </div>
+      <div class="event-status white-border">
+        <strong>Status:</strong> {{eventConfig?.eventStatus}}
+      </div>
+      <div class="event-date mid-hide">{{eventConfig?.eventDate}}</div>
+      <div class="event-time mid-hide">{{eventConfig?.startTime}}</div>
+    </div>
+  </div>
+  <mat-tab-group dynamicHeight mat-align-tabs="center" (selectedIndexChange)="refreshTabs($event)">
+    <mat-tab label="Format">
+      <mat-accordion class="event-accordion" [multi]="true" >
+        <mat-expansion-panel class="event-panel format-card" [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Event Format</mat-panel-title>
+            <button *ngIf="hasEventRole"  mat-raised-button color="primary" class="edit-format-button"
+                    (click)="editFormat($event)">
+              Manage Format
+            </button>
+          </mat-expansion-panel-header>
+          <div class="event-details-wrapper">
+            <div class="event-detail">
+              <div class="title">Registered / Checked-in</div>
+              <div class="value">{{eventConfig?.registeredNum}} / {{eventConfig?.checkedInNum}}</div>
+            </div>
+            <div class="event-detail">
+              <div class="title">Ranked from</div>
+              <div class="value">{{eventConfig?.eventRankCircuits}}</div>
+            </div>
+
+            <ng-container *ngFor="let round of eventConfig.rounds">
+              <div class="event-detail" >
+                <div class="title">Round {{round.eventRoundId}}</div>
+                <div class="value" *ngIf="round.roundTypeId < 3">{{round.roundDescription}}</div>
+              </div>
+              <div class="event-detail" *ngIf="round.roundTypeId === 3">
+                <div class="title">Promoted to next round</div>
+                <div class="value">{{getPercent(round.athletesReady, round.promotedPercent)}} ({{round.promotedPercent | number: '1.0-0'}}%)</div>
+              </div>
+            </ng-container>
+          </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel class="event-panel athletes-list" [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Registered Athletes</mat-panel-title>
+          </mat-expansion-panel-header>
+          <app-table ngClass="event-app-table"
+                     [tableColumns]="athleteColumns"
+                     [gridData]="athleteRows"
+          ></app-table>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-tab>
+    <mat-tab *ngFor="let round of eventConfig.rounds" label="{{round.roundName}}">
+      <ng-container *ngIf="round.roundTypeId === 1">
+        <app-event-pool-tab class="pool-tab"
+          [eventId]="round.eventId"
+          [eventRoundId]="round.eventRoundId"
+          [refresh]="round.refreshFlag"
+        ></app-event-pool-tab>
+      </ng-container>
+      <ng-container *ngIf="round.roundTypeId === 2">
+        <app-event-tableau-tab class="pool-tab"
+                            [eventId]="round.eventId"
+                            [eventRoundId]="round.eventRoundId"
+                            [refresh]="round.refreshFlag"
+        ></app-event-tableau-tab>
+      </ng-container>
+      <ng-container *ngIf="round.roundTypeId === 3">
+        <app-event-ranking-tab class="pool-tab"
+                               [eventId]="round.eventId"
+                               [eventRoundId]="round.eventRoundId"
+                               [roundTypeId]="round.roundTypeId"
+                               [refresh]="round.refreshFlag"
+        ></app-event-ranking-tab>
+      </ng-container>
+    </mat-tab>
+  </mat-tab-group>
+
+</div>
+
+<ng-template #checkinTemplate let-row="row">
+  <ng-container *ngIf="row.hasAccess === 'Y' && eventConfig.eventStatusId === 2">
+    <button *ngIf="row.consentSigned === 'N' && eventConfig.consentRequired === 'Y'"  mat-raised-button color="primary" class="edit-format-button"
+            (click)="consentAthlete(row)">Consent</button>
+    <button *ngIf="(row.consentSigned === 'Y' || eventConfig.consentRequired === 'N') && row.checkedIn === 'N'"  mat-raised-button color="primary" class="edit-format-button"
+            (click)="checkinAthlete(row)">Check In</button>
+    <mat-icon *ngIf="row.checkedIn === 'Y' && (row.consentSigned === 'Y' || eventConfig.consentRequired === 'N')">check_box</mat-icon>
+  </ng-container>
+  <ng-container *ngIf="row.hasAccess !== 'Y' || eventConfig.eventStatusId !== 2">
+    <mat-icon *ngIf="row.checkedIn === 'Y'">check_box</mat-icon>
+    <mat-icon *ngIf="row.checkedIn !== 'Y'">check_box_outline_blank</mat-icon>
+  </ng-container>
+</ng-template>
+
+<ng-template #paidTemplate let-row="row">
+  <ng-container *ngIf="hasEventRole || row.hasAccess === 'Y'">
+    <mat-icon *ngIf="row.registrationPaid === 'Y'">check_box</mat-icon>
+    <mat-icon *ngIf="row.registrationPaid !== 'Y'">check_box_outline_blank</mat-icon>
+  </ng-container>
+  <ng-container *ngIf="!hasEventRole && row.hasAccess !== 'Y'">
+    <span>?</span>
+  </ng-container>
+</ng-template>

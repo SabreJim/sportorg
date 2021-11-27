@@ -7,6 +7,7 @@ import {Router} from "@angular/router";
 import {MenuItem, AppStatus} from "../models/ui-objects";
 import {SnackbarService} from "./snackbar.service";
 import {FeeStructure} from "../models/data-objects";
+import {clone} from 'ramda';
 
 
 @Injectable({providedIn: 'root'})
@@ -25,7 +26,8 @@ export class LookupProxyService extends RestProxyService {
   protected clubCache: LookupItem[] = [];
   protected companyCache: LookupItem[] = [];
   protected tagsCache: LookupItem[] = [];
-
+  protected genderCache: LookupItem[] = [];
+  protected eventStatusCache: LookupItem[] = [];
 
   public Subjects: Record<string, Subject<LookupItem[]>> = {
     fees: new Subject<LookupItem[]>(),
@@ -36,9 +38,19 @@ export class LookupProxyService extends RestProxyService {
     ageCategories: new Subject<LookupItem[]>(),
     athleteTypes: new Subject<LookupItem[]>(),
     clubs: new Subject<LookupItem[]>(),
-    companies: new Subject<LookupItem[]>()
+    companies: new Subject<LookupItem[]>(),
+    genders: new Subject<LookupItem[]>(),
+    eventStatuses: new Subject<LookupItem[]>(),
   };
-
+  public static staticLookups = {
+    deLevelOptions: [
+      {id: 0, checked: true, name: `Completion`, lookup: 'deLevel'},
+      {id: 4, checked: true, name: `Semis(4)`, lookup: 'deLevel'},
+      {id: 8, checked: true, name: `Top 8`, lookup: 'deLevel'},
+      {id: 16, checked: true, name: `Top 16`, lookup: 'deLevel'},
+      {id: 32, checked: true, name: `Top 32`, lookup: 'deLevel'}
+    ]
+  };
   protected pushLookups = () => {
     this.Subjects.fees.next(this.feeCache);
     this.Subjects.locations.next(this.locationCache);
@@ -49,6 +61,8 @@ export class LookupProxyService extends RestProxyService {
     this.Subjects.athleteTypes.next(this.athleteTypeCache);
     this.Subjects.clubs.next(this.clubCache);
     this.Subjects.companies.next(this.companyCache);
+    this.Subjects.genders.next(this.genderCache);
+    this.Subjects.eventStatuses.next(this.eventStatusCache);
   };
   public refreshLookups = (repull: boolean = false) => {
     const extractLookup = (source: LookupItem[], name: string, byId: boolean = false) => {
@@ -80,6 +94,8 @@ export class LookupProxyService extends RestProxyService {
           this.athleteTypeCache = extractLookup(response.data, 'athleteTypes');
           this.clubCache = extractLookup(response.data, 'clubs');
           this.companyCache = extractLookup(response.data, 'companies');
+          this.genderCache = extractLookup(response.data, 'genders');
+          this.eventStatusCache = extractLookup(response.data, 'eventStatuses');
           this.pushLookups();
         }
       }, (error: any) => {});
@@ -92,7 +108,11 @@ export class LookupProxyService extends RestProxyService {
       return new Observable<LookupItem[]>((subscription) => {
         if (!this.Subjects[lookupName]) {
           //check for static sets
-          subscription.next([]);
+          if (LookupProxyService.staticLookups[lookupName]) {
+            subscription.next(clone(LookupProxyService.staticLookups[lookupName]));
+          } else {
+            subscription.next([]);
+          }
         }
         this.Subjects[lookupName].subscribe((items: LookupItem[]) => {
           subscription.next(items);

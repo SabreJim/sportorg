@@ -1,0 +1,28 @@
+<div class="modal-wrapper-min">
+  <div class="form-scroller">
+    <form autocomplete="off" novalidate class="form-wrapper">
+      <div class="form-header"><h2>Register for {{eventName}}</h2></div>
+      <mat-card class="field-card">
+        <app-string-input [orgFormControl]="searchControl" *ngIf="athletes && athletes.length > 10"
+          (valueChange)="searchAthletes($event)"></app-string-input>
+        <div class="form-content athletes-wrapper">
+          <div class="athlete-row" *ngFor="let athlete of filteredAthletes">
+            <strong class="athlete-name">{{athlete.lastName.toUpperCase()}}, {{athlete.firstName}} ({{athlete.club}})</strong>
+            <button *ngIf="athlete.isRegistered === 'N'"  mat-raised-button color="primary" class="register-button"
+              (click)="registerAthlete(athlete)">
+              Register
+            </button>
+            <button *ngIf="athlete.isRegistered === 'Y'" mat-raised-button color="accent" class="register-button"
+                    [disabled]="!hasEventRole"
+                    (click)="removeAthlete(athlete)">
+              {{hasEventRole ? 'Remove' : 'Registered'}}
+            </button>
+          </div>
+        </div>
+      </mat-card>
+    </form>
+  </div>
+  <div class="action-bar">
+    <button mat-raised-button [mat-dialog-close]>Done</button>
+  </div>
+</div>

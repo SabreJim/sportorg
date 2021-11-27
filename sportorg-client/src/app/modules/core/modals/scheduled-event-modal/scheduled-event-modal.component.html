@@ -1,0 +1,64 @@
+<div class="modal-wrapper">
+  <div class="form-scroller">
+    <form autocomplete="off" novalidate class="form-wrapper">
+      <mat-card class="field-card">
+        <div class="form-header"><h2>Edit a Scheduled Event</h2></div>
+        <div class="form-content">
+          <app-string-input class="wide-field" [title]="'Event name'" [isRequired]="true" [orgFormControl]="eventNameControl"></app-string-input>
+
+          <app-select-input
+            [title]="'Host club'"
+            [showEmpty]="true"
+            [lookupType]="'clubs'"
+            [selectControl]="hostClubControl"
+            [selected]="record?.hostClubId"
+          ></app-select-input>
+
+          <mat-form-field floatLabel="always" appearance="outline" class="field-item image-picker app-image-input" >
+            <mat-label>Event Logo</mat-label>
+            <input type="number" matInput class="hidden"/>
+            <input type="text" disabled [value]="record?.eventLogoId" />
+            <file-select-button
+              [title]="'link?'"
+              [fileType]="'image'"
+              [category]="'logos'"
+              (updatedId)="updateLogoId($event)"
+            ></file-select-button>
+            <file-upload-button
+              [fileType]="'image'"
+              [category]="'logos'"
+              [requestType]="'EVENT'"
+              (updatedId)="updateLogoId($event)"
+            ></file-upload-button>
+          </mat-form-field>
+
+          <app-date-picker [title]="'Registration Deadline'" [dateControl]="deadlineControl"
+                           [maxDate]="maxDeadlineDate"
+                           (dateValueChanged)="setDateRestrict($event, 'deadline')"></app-date-picker>
+          <app-date-picker [title]="'Start Date'" [dateControl]="startDateControl" [isRequired]="true"
+                           [minDate]="minStartDate" [maxDate]="maxStartDate"
+                           (dateValueChanged)="setDateRestrict($event, 'start')"></app-date-picker>
+          <app-date-picker [title]="'End Date'" [dateControl]="endDateControl" [isRequired]="true"
+                           [minDate]="minEndDate"
+                           (dateValueChanged)="setDateRestrict($event, 'end')"></app-date-picker>
+          <app-string-input [title]="'Location (name)'" [orgFormControl]="locationNameControl"></app-string-input>
+          <app-string-input class="wide-field" [title]="'Location (address)'" [orgFormControl]="locationAddressControl"></app-string-input>
+          <app-string-input [title]="'Map link'" [orgFormControl]="mapLinkUrlControl"></app-string-input>
+          <app-string-input [title]="'Contact email'" [orgFormControl]="contactEmailControl"></app-string-input>
+          <app-string-input [title]="'External registration link'" [orgFormControl]="regLinkControl"></app-string-input>
+          <app-html-input [title]="'Description'" [htmlString]="record?.descriptionHtml"
+                          (updateHtml)="updateDescription($event)"></app-html-input>
+          <p class="prompt-text">*To manage specific events in this schedule, go to the Scheduled Event's page
+          while logged in with a role that can edit the event.</p>
+        </div>
+      </mat-card>
+    </form>
+  </div>
+  <div class="action-bar">
+    <button mat-raised-button [mat-dialog-close]>Cancel</button>
+    <button mat-raised-button (click)="resetRecord()" [disabled]="!canReset">Reset</button>
+    <div [matTooltip]="disableSaveMessage" [matTooltipDisabled]="canSave">
+      <button mat-raised-button color="primary" [disabled]="!canSave" (click)="saveAndClose()">Save</button>
+    </div>
+  </div>
+</div>

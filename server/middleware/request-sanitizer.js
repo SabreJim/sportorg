@@ -6,7 +6,60 @@ const sanitizeHtml = (text) => {
         allowedAttributes: { a: [ 'href', 'name', 'target' ], font: ['color'] }
     })
 }
+// helper function for building out filtered requests
+const getCompoundFilter = (filterName, query, values, tableField, findInSet = false) => {
+    let filter = '';
+    if (query[filterName]) {
+        let ids = [];
+        values.map((v) => {
+            if (query[filterName].includes(v.name)) {
+                ids.push(v.value);
+            }
+        });
+        if (ids.length) {
+            if (findInSet) { //many-to-many query
+                const orMatches = [];
+                ids.map((idValue) => {
+                    orMatches.push(`FIND_IN_SET('${idValue}', ${tableField}) > 0`);
+                });
+                filter = `AND (${orMatches.join(' OR ')})`;
+            } else { // many-to-one query
+                filter = `AND ${tableField} IN ('${ids.join("','")}') `;
+            }
+        }
+    }
+    return filter;
+};
+const getIdFilter = (filterName, query, tableField) => {
+    let filter = '';
+    if (query[filterName]) {
+        let ids = query[filterName].split(',');
+        if (ids.length) {
+            const orMatches = [];
+            ids.map((idValue) => {
+                orMatches.push(`${tableField} = ${idValue}`);
+            });
+            filter = `AND (${orMatches.join(' OR ')})`;
+        }
+    }
+    return filter;
+}
 
+// take a set of ids/values eg: '1,3,17' and create a filter to check if any rows contain any of those values
+const getMultiFilter = (filterName, query,tableField, subQuery) => {
+    let filter = '';
+    if (query[filterName]) {
+        let ids = query[filterName].split(',');
+        if (ids.length) {
+            const orMatches = [];
+            ids.map((idValue) => {
+                orMatches.push(`FIND_IN_SET((${subQuery} = ${idValue}), ${tableField}) > 0`);
+            });
+            filter = `AND (${orMatches.join(' OR ')})`;
+        }
+    }
+    return filter;
+};
 
 const mixedJoin = (source, skipHead = false) => {
     let arr = '';
@@ -17,7 +70,7 @@ const mixedJoin = (source, skipHead = false) => {
     }
     safeSource.map((item) => {
         if (typeof item === 'string'){
-            arr = arr.concat(`"${item}", `)
+            arr = arr.concat(`'${item}', `)
         } else {
             arr = arr.concat(`${item}, `)
         }
@@ -116,7 +169,12 @@ const getCleanBody = (body, schema) => {
             }
         }
     };
-
+    const cleanJson = (field) => {
+        const value = body[field.fieldName];
+        if (validate(value, field)) {
+            cleanBody[field.fieldName] = value;
+        }
+    };
     const cleanHtml = (field) => {
         const value = body[field.fieldName];
         if (value == null) {
@@ -133,6 +191,21 @@ const getCleanBody = (body, schema) => {
         }
     };
 
+    const cleanUrl = (field) => {
+        const value = body[field.fieldName];
+        if (value == null) {
+            cleanBody[field.fieldName] = '';
+            return true;
+        }
+        if (validate(value, field)) {
+            if (typeof value !== 'string') {
+                isValid = false;
+            } else {
+                // strip out unsafe HTML tags, then replace quotes with html codes to save to MySQL
+                cleanBody[field.fieldName] = value.replace(/"/g, '&quot;');
+            }
+        }
+    };
     const cleanBoolean = (field) => {
         const value = body[field.fieldName];
         if (validate(value, field)) {
@@ -189,8 +262,14 @@ const getCleanBody = (body, schema) => {
             case 'string':
                 cleanString(field);
                 break;
+            case 'json':
+                cleanJson(field);
+                break;
             case 'html':
                 cleanHtml(field);
+                break;
+            case 'url':
+                cleanUrl(field);
                 break;
             case 'boolean':
                 cleanBoolean(field);
@@ -213,7 +292,7 @@ const getCleanBody = (body, schema) => {
     const setters = [];
     for (let i = 0; i < keys.length; i++) {
         if (typeof values[i] === 'string') {
-            setters.push(`${keys[i]} = "${values[i]}"`);
+            setters.push(`${keys[i]} = '${values[i]}'`);
         } else {
             setters.push(`${keys[i]} = ${values[i]}`);
         }
@@ -292,7 +371,7 @@ const memberSchema = {
         {fieldName: 'middleName', type: 'string', allowNull: true },
         {fieldName: 'lastName', type: 'string', allowNull: false },
         {fieldName: 'yearOfBirth', type: 'int', allowNull: true },
-        {fieldName: 'competeGender', type: 'string', allowNull: true },
+        {fieldName: 'competeGenderId', type: 'int', allowNull: true },
         {fieldName: 'isActive', type: 'string', allowNull: false },
         {fieldName: 'isAthlete', type: 'string', allowNull: false },
         {fieldName: 'membershipStart', type: 'date', allowNull: true },
@@ -344,7 +423,7 @@ const fitnessProfileSchema = {
         {fieldName: 'lastName', type: 'string', allowNull: false },
         {fieldName: 'memberId', type: 'int', allowNull: true },
         {fieldName: 'yearOfBirth', type: 'int', allowNull: false },
-        {fieldName: 'competeGender', type: 'string', allowNull: false },
+        {fieldName: 'competeGenderId', type: 'int', allowNull: false },
         {fieldName: 'typeIds', type: 'int-array', allowNull: false }
     ]
 };
@@ -408,7 +487,7 @@ const menuSchema = {
         {fieldName: 'title', type: 'string', allowNull: false },
         {fieldName: 'altTitle', type: 'string', allowNull: true },
         {fieldName: 'link', type: 'html', allowNull: false },
-        {fieldName: 'parentMenuId', type: 'int', allowNull: false },
+        {fieldName: 'parentMenuId', type: 'int', allowNull: true },
         {fieldName: 'orderNumber', type: 'int', allowNull: false }
     ]
 };
@@ -521,7 +600,69 @@ const newsPostSchema = {
         ]
 };
 
+const scheduledEventSchema = {
+    primaryKey: 'scheduledEventId',
+    fields: [
+        {fieldName: 'scheduledEventId', type: 'int', allowNull: false },
+        {fieldName: 'scheduledEventName', type: 'string', allowNull: false },
+        {fieldName: 'hostClubId', type: 'int', allowNull: true },
+        {fieldName: 'eventLogoId', type: 'int', allowNull: true },
+        {fieldName: 'locationName', type: 'string', allowNull: true },
+        {fieldName: 'locationAddress', type: 'string', allowNull: true },
+        {fieldName: 'mapLinkUrl', type: 'url', allowNull: true },
+        {fieldName: 'startDate', type: 'date', allowNull: true },
+        {fieldName: 'endDate', type: 'date', allowNull: true },
+        {fieldName: 'contactEmail', type: 'string', allowNull: true },
+        {fieldName: 'descriptionHtml', type: 'html', allowNull: true },
+        {fieldName: 'externalRegistrationLink', type: 'string', allowNull: true },
+        {fieldName: 'registrationDeadlineDate', type: 'date', allowNull: true }
+    ]
+};
+const EventItemSchema = {
+    primaryKey: 'eventId',
+    fields: [
+        {fieldName: 'eventId', type: 'int', allowNull: false },
+        {fieldName: 'scheduledEventId', type: 'int', allowNull: false },
+        {fieldName: 'eventName', type: 'string', allowNull: false },
+        {fieldName: 'primaryAgeCategoryId', type: 'int', allowNull: false },
+        {fieldName: 'athleteTypeId', type: 'int', allowNull: false },
+        {fieldName: 'genderId', type: 'int', allowNull: false },
+        {fieldName: 'eventDate', type: 'date', allowNull: false },
+        {fieldName: 'startTime', type: 'string', allowNull: false }
+    ]
+};
+
+const EventRoundSchema = {
+    primaryKey: 'eventRoundId',
+    fields: [
+        {fieldName: 'eventId', type: 'int', allowNull: false },
+        {fieldName: 'eventRoundId', type: 'int', allowNull: false },
+        {fieldName: 'roundTypeId', type: 'int', allowNull: false },
+        {fieldName: 'preferredPoolSize', type: 'int', allowNull: true },
+        {fieldName: 'numberOfPools', type: 'int', allowNull: true },
+        {fieldName: 'promotedPercent', type: 'int', allowNull: true },
+        {fieldName: 'athletesPromoted', type: 'int', allowNull: true },
+        {fieldName: 'rankFromPoolsJson', type: 'json', allowNull: true },
+    ]
+};
+
+const PoolScoreSchema = {
+    primaryKey: 'athlete1Id',
+    fields: [
+        {fieldName: 'athlete1Id', type: 'int', allowNull: false },
+        {fieldName: 'athlete2Id', type: 'int', allowNull: false },
+        {fieldName: 'athlete1Score', type: 'int', allowNull: false },
+        {fieldName: 'athlete2Score', type: 'int', allowNull: false },
+        {fieldName: 'completed', type: 'string', allowNull: false },
+        {fieldName: 'scoreOrderNum', type: 'int', allowNull: false }
+    ]
+}
+
+
 module.exports = {
+    getCompoundFilter,
+    getIdFilter,
+    getMultiFilter,
     getCleanBody,
     classScheduleSchema,
     seasonSchema,
@@ -543,5 +684,9 @@ module.exports = {
     invoiceSchema,
     createInvoiceSchema,
     companySchema,
-    newsPostSchema
+    newsPostSchema,
+    scheduledEventSchema,
+    EventItemSchema,
+    EventRoundSchema,
+    PoolScoreSchema
 };

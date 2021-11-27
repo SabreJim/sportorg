@@ -1,0 +1,67 @@
+<div class="page-wrapper">
+  <div class="header-row">
+    <h2>{{scheduledEvent.scheduledEventName}}</h2>
+      <button mat-raised-button color="primary" class="edit-button" (click)="editScheduledEvent()"
+              *ngIf="hasEventRole">Edit Scheduled Event</button>
+  </div>
+
+  <div class="top-row">
+    <div class="host-logo">
+        <img class="image-item banner-image" [maxSize]="300"
+             restImage [preview]="false" [restSrcId]="scheduledEvent?.eventLogoId"  src=""/>
+    </div>
+
+    <mat-card class="event-details">
+      <div class="detail-item">
+        <strong>Dates:</strong><span>{{scheduledEvent.startDate}} to {{scheduledEvent.endDate}}</span>
+      </div>
+      <div class="detail-item" >
+        <strong>Registration:</strong><span>{{scheduledEvent.registrationDeadlineDate || scheduledEvent.startDate}}</span>
+      </div>
+      <div class="detail-item" *ngIf="scheduledEvent.externalRegistrationLink">
+        <strong>Register here:</strong><span><a [href]="scheduledEvent.externalRegistrationLink |safePipe: 'url'"></a></span>
+      </div>
+      <div class="detail-item" *ngIf="scheduledEvent.hostClubId">
+        <strong>Host:</strong><span>{{scheduledEvent.hostClubName}}</span>
+      </div>
+      <div class="detail-item">
+        <strong>Location:</strong><span>{{scheduledEvent.locationName}}</span>
+      </div>
+      <div class="detail-item" *ngIf="scheduledEvent.locationAddress">
+        <strong>Address:</strong>
+        <a *ngIf="scheduledEvent.mapLinkUrl" [href]="scheduledEvent.mapLinkUrl | safePipe: 'url'" target="_blank">
+          {{scheduledEvent.locationAddress}}
+        </a>
+        <span *ngIf="!scheduledEvent.mapLinkUrl">{{scheduledEvent.locationAddress}}</span>
+      </div>
+      <div class="detail-item">
+        <strong>Contact:</strong><span class="wrap-text">{{scheduledEvent.contactEmail}}</span>
+      </div>
+    </mat-card>
+
+  </div>
+
+  <div class="description dynamic-content" [innerHTML]="scheduledEvent.descriptionHtml |safePipe: 'htmlUrl'"></div>
+  <div class="events-table primary-table-box">
+    <h3>List of Events</h3>
+    <app-table ngClass="primary-table"
+               [tableColumns]="eventColumns"
+               [gridData]="eventRows"
+               [isEditable]="hasEventRole"
+               [canAddRows]="hasEventRole"
+               (editRow)="editEvent($event)"
+    ></app-table>
+  </div>
+</div>
+
+<ng-template #eventLinkTemplate let-row="row">
+  <span title="Go to this event"><a routerLink="/porthos/{{row.eventId}}">{{row.eventName}}</a></span>
+</ng-template>
+
+<ng-template #registerTemplate let-row="row">
+  <div class="button-wrapper" [matTooltip]="registrationDisabledMsg" [matTooltipDisabled]="registrationDisabledMsg.length === 0">
+    <button mat-raised-button color="primary" class="edit-button"
+            [disabled]="registrationDisabledMsg.length > 0" (click)="registerForEvent(row)">Register</button>
+  </div>
+
+</ng-template>

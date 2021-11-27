@@ -1,6 +1,6 @@
 const MySQL = require('../middleware/mysql-service');
 const { returnResults, returnSingle, returnError, cleanSelected, getDateOnly } = require('../middleware/response-handler');
-const { memberSchema, getCleanBody } = require('../middleware/request-sanitizer');
+const { memberSchema, getCleanBody, getCompoundFilter } = require('../middleware/request-sanitizer');
 
 const getMyMembers = async(req, res, next) => {
     const myUserId = (req.session && req.session.user_id) ? req.session.user_id : -1;
@@ -176,21 +176,6 @@ const getScreeningQuestions = async (req, res) => {
 
 // for users looking up the list of club members. No authorization required and only show public information
 const getAnonymousMembers = async(req, res, next) => {
-    const getCompoundFilter = (filterName, query, values, tableField) => {
-        let filter = '';
-        if (query[filterName]) {
-            let ids = [];
-            values.map((v) => {
-                if (query[filterName].includes(v.name)) {
-                    ids.push(v.value);
-                }
-            });
-            if (ids.length) {
-                filter = `AND ${tableField} IN ('${ids.join("','")}') `;
-            }
-        }
-        return filter;
-    }
     let activeFilter = getCompoundFilter('memberTypes', req.query,
         [{name: 'isActive', value: 'Y'}, {name: 'isInactive', value: 'N'}], 'm.is_active');
     let athleteFilter = getCompoundFilter('memberTypes', req.query,

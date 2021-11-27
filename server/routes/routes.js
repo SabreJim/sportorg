@@ -12,6 +12,8 @@ const Authentication = require('../middleware/server-authentication');
 const Files = require('../response-handler/files');
 const AppConfig = require('../response-handler/app-config');
 const News = require('../response-handler/news-posts');
+const Events = require('../response-handler/events/event');
+const Rankings = require('../response-handler/events/rankings');
 const jsonBody = require('body-parser').json();
 const fileBody = require('body-parser').json({ limit: '10mb', inflate: true});
 const caching = require('../middleware/caching-service');
@@ -67,8 +69,6 @@ const createRouter = (config) => {
     router.get('/member-users', adminRequired, Users.getMemberUsers);
     router.get('/my-user-profile', requireSession, Users.getMyProfile);
     router.put('/member-users/member/:memberId/user/:userId/link/:setStatus', adminRequired, Users.linkMembers);
-
-    // event endpoints
 
     // dynamic page content
     router.get('/page-content/:pageName', PageContent.getPage);
@@ -130,7 +130,6 @@ const createRouter = (config) => {
     router.get('/news', News.searchNews);
     router.put('/news-post', jsonBody, requireRole('create_post'), News.publishPost);
     router.put('/news-post/unpublish/:postId', adminRequired, News.unpublishPost);
-
     return router;
 };
 

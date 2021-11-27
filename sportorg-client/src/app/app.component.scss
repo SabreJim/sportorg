@@ -85,6 +85,11 @@ org-menu-bar {
     }
   }
 }
+::ng-deep.mat-menu-content{
+  app-table {
+    width: 100%;
+  }
+}
 
 @media (max-width: 1000px) {
   .side-bar-content {

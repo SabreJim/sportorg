@@ -14,6 +14,12 @@ import {FitnessProfilePageComponent} from "./modules/fitness-tracker/fitness-pro
 import {PostEditorPageComponent} from "./modules/pages/post-editor-page/post-editor-page.component";
 import {PostPageComponent} from "./modules/pages/post-page/post-page.component";
 import {NewsPageComponent} from "./modules/pages/news-page/news-page.component";
+import {EventItemPageComponent} from "./modules/pages/event-page/event-item-page/event-item-page.component";
+import {EventLandingPageComponent} from "./modules/events/event-page/event-landing-page.component";
+import {RankingPageComponent} from "./modules/pages/ranking-page/ranking-page.component";
+import {RankingItemPageComponent} from "./modules/pages/ranking-page/ranking-item-page/ranking-item-page.component";
+import {PoolViewerComponent} from "./modules/events/event-page/tabs/pool-tab/pool-viewer/pool-viewer.component";
+import {PoolEditorComponent} from "./modules/events/event-page/tabs/pool-tab/pool-editor/pool-editor.component";
 
 
 const routes: Routes = [
@@ -23,15 +29,23 @@ const routes: Routes = [
   { path: 'members', component: MemberPageComponent },
   { path: 'events', component: EventPageComponent },
   { path: 'my-profile', component: MyProfilePageComponent },
+  { path: 'rankings', component: RankingPageComponent },
+  { path: 'rankings/:circuitId', component: RankingItemPageComponent },
   { path: 'admin', component: AdminPageComponent, canActivate: [RouteGuardService] },
   { path: 'edit-post/:postId', component: PostEditorPageComponent, canActivate: [RouteGuardService] },
   { path: 'edit-post', component: PostEditorPageComponent, canActivate: [RouteGuardService] },
   { path: 'news/:postId', component: PostPageComponent},
-  { path: 'event/:postId', component: PostPageComponent},
+  { path: 'event/:scheduledEventId', component: EventItemPageComponent},
   { path: 'camp/:postId', component: PostPageComponent},
   { path: 'fitness-tracker', component: FitnessPageComponent },
   { path: 'fitness-tracker/profile/:athleteId', component: FitnessProfilePageComponent },
 
+  // event manager routes
+  { path: 'porthos/:eventId', component: EventLandingPageComponent },
+  { path: 'porthos/event/pool/:poolId', component: PoolViewerComponent },
+  { path: 'porthos/event/pool-edit/:poolId', component: PoolEditorComponent },
+
+  // default routes
   { path: 'home', component: NewsPageComponent },
   { path: '', redirectTo: '/home', pathMatch: 'full'},
   { path: '**', component: DynamicPageComponent }

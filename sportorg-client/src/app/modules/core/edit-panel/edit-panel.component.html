@@ -34,5 +34,6 @@
     (selectedRow)="notifySelectionState($event, true)"
     (deselectedRow)="notifySelectionState($event, false)"
     [altClass]="tableAltClass"
+    [(nudgeView)]="nudgeTable"
   ></app-table>
 </mat-expansion-panel>

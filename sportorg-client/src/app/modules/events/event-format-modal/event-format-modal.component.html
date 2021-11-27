@@ -1,0 +1,50 @@
+<div class="modal-wrapper">
+  <div class="form-scroller">
+    <form autocomplete="off" novalidate class="form-wrapper">
+      <div class="form-header"><h2>Format for: {{eventName}}</h2></div>
+      <mat-card class="field-card">
+        <div class="form-content format-wrapper">
+          <app-string-input [value]="eventConfig?.eventStatus.toString()" [title]="'Current status'" [disabled]="true"></app-string-input>
+          <app-string-input [value]="eventConfig?.registeredNum.toString()" [title]="'Registered fencers'" [disabled]="true"></app-string-input>
+          <app-string-input [value]="eventConfig?.checkedInNum.toString()" [title]="'Checked in fencers'" [disabled]="true"></app-string-input>
+
+          <button mat-raised-button color="primary" class="action-button" *ngIf="eventConfig?.eventStatusId === 1"
+                  (click)="setEventStatus(2)">Open Check-in</button>
+          <button mat-raised-button color="primary" class="action-button" *ngIf="eventConfig?.eventStatusId === 2"
+                  (click)="setEventStatus(3)">Close Check-in</button>
+          <button mat-raised-button color="warn" class="action-button" *ngIf="eventConfig?.eventStatusId > 2"
+                  (click)="setEventStatus(2)">Re-open Check-in</button>
+          <button class="mat-button action-button" mat-raised-button [matMenuTriggerFor]="rankingMenu">Rank Athletes From</button>
+          <mat-menu #rankingMenu  yPosition="below" class="ranking-menu-wrapper">
+            <div class="select-menu">
+              <mat-checkbox class="multi-select" *ngFor="let circuit of availableCircuits"
+                            [checked]="circuit.checked"
+                            (change)="selectCircuit($event, circuit)">
+                {{circuit.name}}
+              </mat-checkbox>
+            </div>
+          </mat-menu>
+          <button mat-raised-button color="{{eventConfig?.rankedNum > 0 ? 'warn' : 'primary'}}" class="action-button"
+                  (click)="rerunRankings()">{{eventConfig?.rankedNum > 0 ? 'Clear rankings' : 'Run rankings'}}</button>
+          <div class="action-button" [matTooltip]="'Rounds cannot be added once the event has started'" [matTooltipDisabled]="eventConfig?.eventStatusId <= 3">
+            <button mat-raised-button color="primary" class="add-format-button action-button"
+                    [disabled]="eventConfig?.eventStatusId > 3"
+                    (click)="addEventRound()">
+              Add a Round
+              <mat-icon>add_box</mat-icon>
+            </button>
+          </div>
+
+        </div>
+      </mat-card>
+      <app-event-format-item *ngFor="let round of eventConfig?.rounds"
+                             [record]="round"
+                             [canDelete]="round.eventRoundId === eventConfig.rounds[eventConfig.rounds.length - 1].eventRoundId"
+                             (updateRounds)="getFormat()"
+      ></app-event-format-item>
+    </form>
+  </div>
+  <div class="action-bar">
+    <button mat-raised-button (click)="closeModal()">Done</button>
+  </div>
+</div>

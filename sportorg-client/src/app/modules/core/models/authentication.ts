@@ -1,6 +1,7 @@
 
 export class AppUser {
   isAnonymous: boolean;
+  sessionChecked: boolean;
   displayName: string;
   email: string;
   photoURL: string;
@@ -15,6 +16,7 @@ export class AppUser {
 
   constructor() {
     this.isAnonymous = true;
+    this.sessionChecked = false;
     this.displayName = "Anonymous";
     this.isAdmin = false;
     this.isFitnessAdmin = false;

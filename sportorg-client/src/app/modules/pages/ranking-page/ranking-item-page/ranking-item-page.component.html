@@ -1,0 +1,18 @@
+<div class="page-wrapper">
+  <h2>Ranking: {{circuitName}}</h2>
+  <mat-card class="table-card">
+    <app-table ngClass="primary-table"
+               [tableColumns]="rankingColumns"
+               [gridData]="athleteRows"
+               [altClass]="'tall-input-table'"
+    ></app-table>
+  </mat-card>
+</div>
+
+<ng-template #eventsTemplate let-row="row" >
+  <div class="event-list">
+    <div class="event-point" *ngFor="let ev of row.events" title="{{ev.eventName}}">
+      {{ev.points}}
+    </div>
+  </div>
+</ng-template>

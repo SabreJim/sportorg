@@ -286,7 +286,8 @@ CREATE TABLE beaches.athlete_profiles (
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     year_of_birth INT NOT NULL,
-    compete_gender VARCHAR(1) NOT NULL,
+    compete_gender_id  NOT NULL DEFAULT 1 references beaches.genders(gender_id),
+    club_id MEDIUMINT NOT NULL DEFAULT 1 references beaches.clubs(club_id),
     balance INT DEFAULT 1,
     flexibility INT DEFAULT 1,
     power INT DEFAULT 1,
@@ -607,14 +608,7 @@ VALUES
 -- enable optional discounts
 ALTER TABLE beaches.programs ADD COLUMN loyalty_discount VARCHAR(1) DEFAULT 'Y';
 -- posts tables added
-CREATE TABLE beaches.events (
-    event_id MEDIUMINT NOT NULL auto_increment,
-    event_name VARCHAR(500) NOT NULL,
-    event_start_date DATE,
-    event_end_date DATE,
-    base_cost INT,
-    PRIMARY KEY (event_id)
-);
+
 CREATE TABLE beaches.posts (
     post_id MEDIUMINT NOT NULL auto_increment,
     link_template_type VARCHAR(50) NOT NULL,
@@ -669,3 +663,220 @@ CREATE TABLE beaches.user_roles (
 
 INSERT INTO beaches.projects (project_name, type, private_key_id, private_key)
 VALUES ('beachesEast', 'config', 'appLogo', '48');
+
+-- events for scheduling tournaments
+CREATE TABLE beaches.genders (
+gender_id MEDIUMINT NOT NULL,
+gender_name VARCHAR(20) NOT NULL,
+PRIMARY KEY (gender_id)
+);
+INSERT INTO beaches.genders (gender_id, gender_name) VALUES (1, 'Female');
+INSERT INTO beaches.genders (gender_id, gender_name) VALUES (2, 'Male');
+INSERT INTO beaches.genders (gender_id, gender_name) VALUES (3, 'Mixed');
+
+CREATE TABLE beaches.scheduled_events (
+    scheduled_event_id MEDIUMINT NOT NULL auto_increment,
+    scheduled_event_name VARCHAR(200) NOT NULL,
+    host_club_id MEDIUMINT references beaches.clubs(club_id),
+    event_logo_id MEDIUMINT references beaches.files(file_id),
+    location_name VARCHAR(100),
+    location_address VARCHAR(200),
+    map_link_url VARCHAR(800),
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    contact_email VARCHAR(100),
+    description_html VARCHAR(1000),
+    external_registration_link VARCHAR(100),
+    registration_deadline_date DATE,
+    PRIMARY KEY (scheduled_event_id)
+    );
+DROP TABLE beaches.events;
+CREATE TABLE beaches.event_circuits (
+    circuit_id MEDIUMINT NOT NULL references beaches.circuits(circuit_id),
+    event_id MEDIUMINT NOT NULL references beaches.events(event_id),
+    PRIMARY KEY (circuit_id, event_id)
+);
+
+
+CREATE TABLE beaches.events (
+    event_id MEDIUMINT NOT NULL auto_increment,
+    scheduled_event_id MEDIUMINT references beaches.scheduled_events(scheduled_event_id),
+    event_name VARCHAR(200) NOT NULL,
+    primary_age_category_id MEDIUMINT references beaches.age_categories(age_id),
+    athlete_type_id MEDIUMINT references beaches.athlete_type(athlete_type_id),
+    gender VARCHAR(1) NOT NULL DEFAULT 'X' CHECK(gender IN  ('F', 'M', 'X')),
+    event_date DATE NOT NULL,
+    start_time VARCHAR(20),
+    consent_required VARCHAR(1) NOT NULL DEFAULT 'Y' CHECK(checkin_required IN  ('Y', 'N')),
+    circuit_id MEDIUMINT references beaches.event_circuits(circuit_id),
+    PRIMARY KEY (event_id)
+    );
+   CREATE TABLE beaches.event_registrations (
+   	event_id MEDIUMINT NOT NULL references beaches.events(event_id),
+   	athlete_id MEDIUMINT NOT NULL references beaches.athlete_profiles(athlete_id),
+   	checked_in VARCHAR(1) NOT NULL default 'N',
+   	consent_signed VARCHAR(1) NOT NULL default 'N',
+   	registration_paid VARCHAR(1) NOT NULL default 'N',
+   	entry_ranking DECIMAL(6,2),
+   	current_ranking INT,
+   	final_ranking INT,
+   	PRIMARY KEY (event_id, athlete_id)
+   );
+   CREATE TABLE beaches.event_regions (
+   	event_region_id MEDIUMINT NOT NULL auto_increment,
+   	region_name VARCHAR(100) NOT NULL,
+   	PRIMARY KEY (event_region_id)
+   );
+INSERT INTO beaches.event_regions (region_name) VALUES ('New Brunswick');
+INSERT INTO beaches.event_regions (region_name)  VALUES ('Atlantic');
+INSERT INTO beaches.event_regions (region_name)  VALUES ('Quebec Youth');
+INSERT INTO beaches.event_regions (region_name)  VALUES ('Canadian National');
+   CREATE TABLE beaches.event_statuses (
+   	event_status_id MEDIUMINT NOT NULL,
+   	status_name VARCHAR(100) NOT NULL,
+   	PRIMARY KEY (event_status_id)
+   );
+INSERT INTO beaches.event_statuses (event_status_id, status_name) VALUES (1, 'Created');
+INSERT INTO beaches.event_statuses (event_status_id, status_name) VALUES (2, 'Check-in Open');
+INSERT INTO beaches.event_statuses (event_status_id, status_name) VALUES (3, 'Check-in Closed');
+INSERT INTO beaches.event_statuses (event_status_id, status_name) VALUES (4, 'Active');
+INSERT INTO beaches.event_statuses (event_status_id, status_name) VALUES (5, 'Completed');
+ALTER TABLE beaches.events ADD COLUMN
+event_status_id MEDIUMINT NOT NULL DEFAULT 1 REFERENCES beaches.event_statuses(event_status_id);
+
+   CREATE TABLE beaches.event_round_statuses (
+   	event_round_status_id MEDIUMINT NOT NULL,
+   	status_name VARCHAR(100) NOT NULL,
+   	PRIMARY KEY (event_round_status_id)
+   );
+INSERT INTO beaches.event_round_statuses (event_round_status_id, status_name) VALUES (1, 'Initial');
+INSERT INTO beaches.event_round_statuses (event_round_status_id, status_name) VALUES (2, 'Created');
+INSERT INTO beaches.event_round_statuses (event_round_status_id, status_name) VALUES (3, 'Running');
+INSERT INTO beaches.event_round_statuses (event_round_status_id, status_name) VALUES (4, 'Completed');
+INSERT INTO beaches.event_round_statuses (event_round_status_id, status_name) VALUES (5, 'Closed');
+
+CREATE TABLE beaches.event_rounds (
+   	event_id MEDIUMINT NOT NULL references beaches.events(event_id),
+   	event_round_id MEDIUMINT NOT NULL,
+   	round_type_id MEDIUMINT NOT NULL,
+   	event_round_status_id MEDIUMINT NOT NULL DEFAULT 1 REFERENCES beaches.event_round_statuses(event_round_status_id),
+   	preferred_pool_size INT,
+   	number_of_pools INT,
+   	athletes_promoted INT,
+   	rank_from_pools_json VARCHAR(50),
+   	promoted_percent INT,
+   	PRIMARY KEY (event_id, event_round_id, round_type_id));
+
+CREATE TABLE beaches.circuits (
+   	circuit_id MEDIUMINT NOT NULL auto_increment,
+   	circuit_name VARCHAR(100) NOT NULL,
+   	athlete_type_id MEDIUMINT NOT NULL REFERENCES beaches.athlete_types(athlete_type_id),
+   	age_category_id MEDIUMINT NOT NULL REFERENCES beaches.age_cateogories(age_id),
+   	gender VARCHAR(1) NOT NULL DEFAULT 'X' CHECK(gender IN  ('F', 'M', 'X')),
+   	event_region_id MEDIUMINT REFERENCES beaches.event_regions (event_region_id),
+   	max_event_num INT NOT NULL DEFAULT 5,
+   	national_code VARCHAR(10),
+   	PRIMARY KEY (circuit_id)
+   );
+
+-- sample consent questions
+INSERT INTO beaches.questions (question_group, en_text, answer_group_id, allowed_invalid, expected_answer)
+VALUES
+('event-consent-form', 'I will observe the rules and directions of ...', 2, 0, 3);
+
+CREATE TABLE beaches.log_actions (
+   	action_id MEDIUMINT NOT NULL auto_increment,
+   	entity_id MEDIUMINT NOT NULL,
+   	entity_type VARCHAR(30) NOT NULL,
+   	action_name VARCHAR(30) NOT NULL,
+   	new_value VARCHAR(100),
+   	new_id MEDIUMINT,
+   	user_id MEDIUMINT NOT NULL REFERENCES beaches.users(user_id),
+   	updated DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   	PRIMARY KEY (action_id)
+   );
+
+-- add one of these for each ranking we will be importing
+INSERT INTO beaches.events (event_name, primary_age_category_id, athlete_type_id, gender_id, event_date)
+VALUES ('SMS national rankings', 13, 3, 2, CURDATE());
+-- also add a circuit to import into
+INSERT INTO beaches.circuits (circuit_name, athlete_type_id, age_category_id, event_region_id, gender_id, national_code)
+VALUES ('SMS national rankings', 3, 13, 4, 2, 'SMS');
+
+
+ALTER TABLE beaches.athlete_profiles ADD COLUMN national_num VARCHAR(20);
+ALTER TABLE beaches.athlete_profiles ADD COLUMN region_id MEDIUMINT references beaches.regions(region_id);
+
+CREATE TABLE beaches.circuit_results (
+   	circuit_id MEDIUMINT NOT NULL references beaches.circuits(circuit_id),
+   	event_id MEDIUMINT NOT NULL references beaches.events(event_id),
+   	athlete_id MEDIUMINT NOT NULL references beaches.athlete_profiles(athlete_id),
+   	points DECIMAL(6,2) NOT NULL,
+   	PRIMARY KEY (circuit_id, event_id, athlete_id)
+   );
+
+CREATE TABLE beaches.event_round_athletes (
+   	event_id MEDIUMINT NOT NULL references beaches.events(event_id),
+   	event_ranking_round_id MEDIUMINT NOT NULL,
+   	athlete_id MEDIUMINT NOT NULL references beaches.athlete_profiles(athlete_id),
+   	rank DECIMAL(6,2),
+   	victories INT,
+   	matches INT,
+   	hits_scored INT,
+   	hits_received INT,
+   	promoted VARCHAR(1) DEFAULT 'N' CHECK(promoted IN  ('Y', 'N')),
+   	PRIMARY KEY (event_id, event_ranking_round_id, athlete_id));
+
+  CREATE TABLE beaches.pools (
+   	pool_id MEDIUMINT NOT NULL auto_increment,
+   	event_id MEDIUMINT NOT NULL references beaches.events(event_id),
+   	event_round_id MEDIUMINT NOT NULL references beaches.event_rounds(event_round_id),
+   	pool_number INT NOT NULL,
+   	referee_id MEDIUMINT,
+   	assigned_piste VARCHAR(20),
+   	current_match INT NOT NULL DEFAULT 1,
+   	completed VARCHAR(1) DEFAULT 'N' CHECK(completed IN  ('Y', 'N')),
+    last_update_index MEDIUMINT NOT NULL DEFAULT 1,
+   	PRIMARY KEY (pool_id)
+   );
+
+CREATE TABLE beaches.pool_athletes (
+   	pool_id MEDIUMINT NOT NULL references beaches.pools(pool_id),
+   	athlete_id MEDIUMINT NOT NULL references beaches.athlete_profiles(athlete_id),
+   	order_number INT NOT NULL,
+   	athlete_signature VARCHAR(1) DEFAULT 'N' CHECK(athlete_signature IN  ('Y', 'N')),
+   	PRIMARY KEY (pool_id, athlete_id)
+   );
+
+CREATE TABLE beaches.pool_scores (
+   	pool_id MEDIUMINT NOT NULL references beaches.pools(pool_id),
+   	athlete1_id MEDIUMINT NOT NULL references beaches.athlete_profiles(athlete_id),
+   	athlete2_id MEDIUMINT NOT NULL references beaches.athlete_profiles(athlete_id),
+   	athlete1_score INT,
+   	athlete2_score INT,
+   	score_order_num INT NOT NULL,
+   	completed VARCHAR(1) DEFAULT 'N' CHECK(completed IN  ('Y', 'N')),
+   	PRIMARY KEY (pool_id, athlete1_id, athlete2_id)
+   );
+
+CREATE TABLE beaches.pool_match_orders (
+    order_id MEDIUMINT NOT NULL auto_increment,
+    pool_size INT NOT NULL,
+    order_string VARCHAR(400) NOT NULL,
+    protection_order VARCHAR(1) DEFAULT 'N' CHECK(protection_order IN  ('Y', 'N')),
+    PRIMARY KEY (order_id)
+);
+INSERT INTO beaches.pool_match_orders (pool_size, order_string) VALUES
+(4, '1-4,2-3,1-3,2-4,3-4,1-2');
+INSERT INTO beaches.pool_match_orders (pool_size, order_string) VALUES
+(5, '1-2,3-4,5-1,2-3,5-4,1-3,2-5,4-1,3-5,4-2');
+INSERT INTO beaches.pool_match_orders (pool_size, order_string) VALUES
+(6, '1-2,4-5,2-3,5-6,3-1,6-4,2-5,1-4,5-3,1-6,4-2,3-6,5-1,3-4,6-2');
+INSERT INTO beaches.pool_match_orders (pool_size, order_string) VALUES
+(7, '1-4,2-5,3-6,7-1,5-4,2-3,6-7,5-1,4-3,6-2,5-7,3-1,4-8,7-2,3-5,1-6,2-4,7-3,6-5,1-2,4-7');
+INSERT INTO beaches.pool_match_orders (pool_size, order_string) VALUES
+(8, '2-3,1-5,7-4,6-8,1-2,3-4,5-6,8-7,4-1,5-2,8-3,6-7,4-2,8-1,7-5,3-6,2-8,5-4,6-1,3-7,4-8,2-6,3-5,1-7,4-6,8-5,7-2,1-3');
+INSERT INTO beaches.pool_match_orders (pool_size, order_string) VALUES
+(9, '1-9,2-8,3-7,4-6,1-5,2-9,8-3,7-4,6-5,1-2,9-3,8-4,7-5,6-1,3-2,9-4,5-8,7-6,3-1,2-4,5-9,8-6,7-1,4-3,5-2,6-9,8-7,4-1,5-3,6-2,9-7,1-8,4-5,3-6,2-7,9-8');
+INSERT INTO beaches.pool_match_orders (pool_size, order_string) VALUES
+(10, '1-4,6-9,2-5,7-10,3-1,8-6,4-5,9-10,2-3,7-8,5-1,10-6,4-2,9-7,5-3,10-8,1-2,6-7,3-4,8-9,5-10,1-6,2-7,3-8,4-9,6-5,10-2,8-1,7-4,9-3,2-6,5-8,4-10,1-9,3-7,8-2,6-4,9-5,10-3,7-1,4-8,2-9,3-6,5-7,1-10');

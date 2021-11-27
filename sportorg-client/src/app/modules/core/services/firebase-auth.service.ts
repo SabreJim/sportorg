@@ -24,6 +24,7 @@ export class FirebaseAuthService extends RestProxyService {
   }
 
   public CurrentUser = new Subject<AppUser>();
+  public Roles = new Subject<UserRole[]>();
   public Users = new Subject<UserData[]>();
   public enableAuthentication = () => {
     // Initialize Firebase
@@ -36,6 +37,7 @@ export class FirebaseAuthService extends RestProxyService {
        this.currentUser.displayName = user.displayName;
         this.currentUser.email = user.email;
         this.currentUser.isAnonymous = false;
+        this.currentUser.sessionChecked = true;
         this.currentUser.photoURL = user.photoURL;
         this.currentUser.userId = user.uid;
         this.currentUser.providerId = 'google.com';
@@ -99,14 +101,15 @@ export class FirebaseAuthService extends RestProxyService {
             } else {
               this.currentUser.roles = [];
             }
+            this.Roles.next(this.currentUser.roles);
             this.CurrentUser.next(this.currentUser);
           });
         });
       });
-
     } else {
       this.CurrentUser.next(this.currentUser);
     }
+
   };
 
   public getMyProfile = (): Observable<UserProfile> => {
@@ -125,7 +128,31 @@ export class FirebaseAuthService extends RestProxyService {
 
   public isAdmin = (): boolean => {
     return (this.currentUser && !this.currentUser.isAnonymous && this.currentUser.isAdmin);
-  }
+  };
+
+  // if the user is not logged in, this will not return any result so state will not change
+  public hasRole = (roleName: string) => {
+    const checkRole = (user: AppUser) => {
+      if (user.isAnonymous) return false;
+      if (user.isAdmin) return true;
+      let hasEventRole = false;
+      user.roles.map((r: UserRole) => {
+        if (r.roleName === roleName && r.selected === 'Y') {
+          hasEventRole = true;
+        }
+      });
+      return hasEventRole;
+    }
+    return new Observable<boolean>((subscription) => {
+      if (this.currentUser && this.currentUser.sessionChecked) { // already logged in
+        subscription.next(checkRole(this.currentUser));
+      } else { // user is logged in and awaiting session information
+        this.Roles.subscribe((roles: UserRole[]) => {
+          subscription.next(checkRole(this.currentUser));
+        });
+      }
+    });
+  };
 
   public logout = (skipRedirect: boolean = false): void => {
     const purgeSession = () => {

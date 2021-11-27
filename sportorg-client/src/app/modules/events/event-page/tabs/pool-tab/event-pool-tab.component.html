@@ -1,0 +1,20 @@
+<h3 *ngIf="placeholder?.length" class="placeholder-header">{{placeholder}}</h3>
+<div class="pools-container">
+  <div *ngFor="let pool of roundPools" class="pool-item" (click)="launchPool(pool)">
+    <div class="pool-title" >
+      <div class="pool-name title-item">{{pool.poolName}}</div>
+      <div class="title-item mid-hide">Referee: {{pool.refereeId}}</div>
+      <div class="title-item small-hide">Completed: {{pool.completedMatches || '0'}} / {{pool.matchesNum || '?'}}</div>
+      <div class="title-item">Piste assigned: {{pool.assignedPiste}}</div>
+    </div>
+    <div class="athlete-list">
+      <div class="athlete-item" *ngFor="let athlete of pool.athletes">
+        <span class="athlete-value">{{athlete.poolOrder}}</span>
+        <span class="athlete-text">{{athlete.firstName}}</span><span class="athlete-text">{{athlete.lastName}}</span>
+        <span class="athlete-value mid-hide">{{athlete.club}}</span><span class="athlete-value">{{athlete.roundRank}}</span>
+
+      </div>
+    </div>
+  </div>
+</div>
+

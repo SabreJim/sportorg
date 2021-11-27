@@ -1,0 +1,20 @@
+<div class="page-wrapper">
+  <h2> Rankings</h2>
+  <button mat-raised-button color="primary" class="edit-button update-rankings" (click)="requestRankingUpdate()"
+          *ngIf="isAdmin">Check for updates</button>
+  <mat-card class="table-card">
+    <app-filter-bar
+      [filterConfig]="filterConfig"
+      (requestFilter)="filterRankings($event)"
+    ></app-filter-bar>
+    <app-table ngClass="primary-table"
+               [tableColumns]="rankingColumns"
+               [gridData]="rankingRows"
+               [altClass]="'tall-input-table'"
+    ></app-table>
+  </mat-card>
+</div>
+
+<ng-template #rankingLinkTemplate let-row="row">
+  <a routerLink="/rankings/{{row.circuitId}}">{{row.circuitName}}</a>
+</ng-template>

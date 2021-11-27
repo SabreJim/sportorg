@@ -18,6 +18,9 @@ import {PostEditorPageComponent} from "./post-editor-page/post-editor-page.compo
 import {PostPageComponent} from "./post-page/post-page.component";
 import {PostLinkComponent} from "./post-editor-page/post-link/post-link.component";
 import {NewsPageComponent} from "./news-page/news-page.component";
+import {EventItemPageComponent} from "./event-page/event-item-page/event-item-page.component";
+import {RankingPageComponent} from "./ranking-page/ranking-page.component";
+import {RankingItemPageComponent} from "./ranking-page/ranking-item-page/ranking-item-page.component";
 
 @NgModule({
   declarations: [
@@ -32,7 +35,10 @@ import {NewsPageComponent} from "./news-page/news-page.component";
     PostLinkComponent,
     MyProfilePageComponent,
     SchedulePageComponent,
-    NewsPageComponent
+    NewsPageComponent,
+    EventItemPageComponent,
+    RankingPageComponent,
+    RankingItemPageComponent
   ],
   exports: [
 

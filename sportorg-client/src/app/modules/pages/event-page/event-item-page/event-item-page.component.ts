@@ -105,7 +105,7 @@ export class EventItemPageComponent implements OnInit, AfterViewInit, OnDestroy 
     this.userProxy.hasRole('admin_event').subscribe((value: boolean) => {
       this.hasEventRole = value;
     });
-    this.userProxy.getSession();
+    // this.userProxy.getSession();
   }
   ngAfterViewInit () {
     this.eventColumns  = [

@@ -19,7 +19,7 @@ const addEventRoutes = (config) => {
     router.put('/event-item', jsonBody, requireRole('admin_event'), Events.upsertEventItem);
     router.get('/event-config/:eventId', Events.getEventConfig);
     router.get('/event-config/athletes/:eventId', addSession, Events.getEventRegisteredAthletes);
-    router.get('/my-event-athletes/:eventId', requireSession, Events.getMyAthletesByEvent);
+    router.get('/my-event-athletes/:eventId', addSession, Events.getMyAthletesByEvent);
     router.put('/event-athlete/status/:eventId/:athleteId', jsonBody, requireSession, Events.setEventAthleteStatus);
     router.put('/event-item/add-round/:eventId', requireRole('admin_event'), Events.addEventRound);
     router.put('/event/:eventId/status/:eventStatusId', requireRole('admin_event'), Events.setEventStatus);

@@ -690,7 +690,6 @@ CREATE TABLE beaches.scheduled_events (
     registration_deadline_date DATE,
     PRIMARY KEY (scheduled_event_id)
     );
-DROP TABLE beaches.events;
 CREATE TABLE beaches.event_circuits (
     circuit_id MEDIUMINT NOT NULL references beaches.circuits(circuit_id),
     event_id MEDIUMINT NOT NULL references beaches.events(event_id),
@@ -707,7 +706,7 @@ CREATE TABLE beaches.events (
     gender VARCHAR(1) NOT NULL DEFAULT 'X' CHECK(gender IN  ('F', 'M', 'X')),
     event_date DATE NOT NULL,
     start_time VARCHAR(20),
-    consent_required VARCHAR(1) NOT NULL DEFAULT 'Y' CHECK(checkin_required IN  ('Y', 'N')),
+    consent_required VARCHAR(1) NOT NULL DEFAULT 'N' CHECK(checkin_required IN  ('Y', 'N')),
     circuit_id MEDIUMINT references beaches.event_circuits(circuit_id),
     PRIMARY KEY (event_id)
     );
@@ -795,6 +794,10 @@ CREATE TABLE beaches.log_actions (
    	updated DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    	PRIMARY KEY (action_id)
    );
+ALTER TABLE beaches.events ADD COLUMN
+gender_id MEDIUMINT NOT NULL DEFAULT 3 REFERENCES beaches.genders(gender_id);
+ALTER TABLE beaches.circuits ADD COLUMN
+gender_id MEDIUMINT NOT NULL DEFAULT 3 REFERENCES beaches.genders(gender_id);
 
 -- add one of these for each ranking we will be importing
 INSERT INTO beaches.events (event_name, primary_age_category_id, athlete_type_id, gender_id, event_date)

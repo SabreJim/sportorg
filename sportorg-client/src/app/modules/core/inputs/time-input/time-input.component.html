@@ -1,7 +1,7 @@
 <mat-form-field floatLabel="always" appearance="outline">
   <mat-label>{{title}}</mat-label>
-  <input matInput type="time" [value]="timeValue" (change)="updateValue($event)" />
-  <button mat-button *ngIf="timeValue" matSuffix mat-icon-button (click)="clearTime()">
+  <input matInput type="time" [formControl]="timeControl" [required]="isRequired" />
+  <button mat-button *ngIf="timeControl.value" matSuffix mat-icon-button (click)="clearTime()">
     <mat-icon>close</mat-icon>
   </button>
 </mat-form-field>

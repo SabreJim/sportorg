@@ -180,7 +180,7 @@ export class FitnessPageComponent implements OnInit, OnDestroy {
         firstName: '',
         lastName: '',
         yearOfBirth: null,
-        competeGender: 'M',
+        competeGenderId: 1,
         stats: [],
         generatedFromMember: false,
         createNewPlaceholder: true

@@ -28,10 +28,10 @@ export class FitnessProfileModalComponent implements OnInit {
     } else { // a new member object
       this.newProfile = Object.assign({}, this.defaultProfile);
     }
-    this.typeSub = this.fitnessProxy.getMyAthleteTypes(this.data.athleteId).subscribe((types: FitnessGroupType[]) => {
+    this.typeSub = this.fitnessProxy.getMyAthleteTypes(this.newProfile.athleteId).subscribe((types: FitnessGroupType[]) => {
       this.typeOptions = types;
     });
-    this.groupSub = this.fitnessProxy.getMyGroups(this.data.athleteId).subscribe((groups: FitnessGroup[]) => {
+    this.groupSub = this.fitnessProxy.getMyGroups(this.newProfile.athleteId).subscribe((groups: FitnessGroup[]) => {
       this.groupOptions = groups;
     });
   }
@@ -42,7 +42,7 @@ export class FitnessProfileModalComponent implements OnInit {
     firstName: null,
     lastName: null,
     yearOfBirth: 2000,
-    competeGender: null,
+    competeGenderId: null,
     stats: [],
     typeIds: [],
     isEpee: 'N',
@@ -65,7 +65,7 @@ export class FitnessProfileModalComponent implements OnInit {
     return (foundItem) ? foundItem.id : null;
   };
   public selectGender = (newValue: LookupItem) => {
-    this.newProfile.competeGender = (newValue.description === 'M') ? 'M' : 'F';
+    this.newProfile.competeGenderId = newValue.id;
   };
 
   public updateName = (newValue: string, position: string, isRequired = false) => {
@@ -106,7 +106,7 @@ export class FitnessProfileModalComponent implements OnInit {
   // validate the input and send the data to be saved
   public saveForm = () => {
     let anyInvalid = false;
-    let requiredFields = ['firstName', 'lastName', 'yearOfBirth', 'competeGender'];
+    let requiredFields = ['firstName', 'lastName', 'yearOfBirth', 'competeGenderId'];
     // check required fields are filled in
     requiredFields.map((fieldName: string) => {
       if (!this.newProfile[fieldName]) {

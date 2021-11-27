@@ -3,7 +3,7 @@ export interface FitnessProfile {
   firstName: string;
   lastName: string;
   yearOfBirth: number;
-  competeGender: 'M' | 'F';
+  competeGenderId: number;
   stats: FitnessProfileStat[];
   typeIds?: number[];
   isEpee?: string;

@@ -10,9 +10,9 @@ import {
 } from '@angular/core';
 import {TableColumn} from "../models/ui-objects";
 import { MatCheckbox, MatCheckboxChange } from "@angular/material/checkbox";
-import { MatSelectChange } from "@angular/material/select";
 import {CdkVirtualScrollViewport} from "@angular/cdk/scrolling";
 import {SnackbarService} from "../services/snackbar.service";
+import {ContextMenuItem} from "../directives/context-menu/context-menu.directive";
 
 export interface TableRow {
   isSelected: boolean;
@@ -27,7 +27,13 @@ export interface TableRow {
 export class AppTableComponent implements AfterViewInit, OnDestroy {
   constructor(private detector: ChangeDetectorRef) { }
 
-  @Input() tableColumns: TableColumn[] = [];
+  @Input() set tableColumns (cols: TableColumn[]) {
+    this._tableColumns = cols;
+    this.toggleHide('', false); // build the list of hidden columns, if any
+  } get tableColumns() {
+    return this._tableColumns;
+  }
+  private _tableColumns = [];
   @Input() set gridData(rows: any[]) {
     this.gridDataRows = rows;
     if (rows && rows.length && rows[0].hasOwnProperty('isSelected')) {
@@ -47,8 +53,7 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
     } else {
       this.clearSelections();
     }
-
-    this.linkScrolling();
+    this.adjustLayout();
     this.detector.detectChanges();
   } get gridData () { return this.gridDataRows; }
   public gridDataRows: TableRow[] = [];
@@ -60,6 +65,17 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
   @Input() trackById: string;
   @Input() altClass: string = '';
   @Input() defaultObject: any = {};
+  @Input() set nudgeView(doit: boolean) {
+    if (doit) {
+      this.adjustLayout();
+      this.nudgeView = false;
+    }
+    this._nudgeView = false;
+  } get nudgeView() {
+    return this._nudgeView;
+  }
+  private _nudgeView: boolean = false;
+  @Output() nudgeViewChange = new EventEmitter<boolean>();
   @Output() editRow = new EventEmitter<any>();
   @Output() selectedRows = new EventEmitter<any[]>();
   @Output() selectedRow = new EventEmitter<any>();
@@ -123,6 +139,25 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
       this.editRow.emit(this.defaultObject);
     }
   };
+  // hiding and showing columns
+  public toggleHide = (title: string, hide: boolean) => {
+    const hiddenColumns: ContextMenuItem[] = [];
+    this.tableColumns.map((c: TableColumn) => {
+      if (c.title === title) {
+        c.showColumn = !hide;
+      }
+      if (!c.showColumn) {
+        hiddenColumns.push({ menuTitle: c.title, menuAction: () => this.toggleHide(c.title, false) });
+      }
+    });
+    this.tableContextMenu[0].subMenu = hiddenColumns;
+    setTimeout(this.adjustLayout);
+  }
+
+  public tableContextMenu: ContextMenuItem[] = [
+    { menuTitle: 'Show columns', subMenu: []}
+  ];
+
   // Sorting
   public sortColumn: string = '';
   public sort = (column: TableColumn) => {
@@ -149,16 +184,17 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
   // Manage synced up scrolling
   @ViewChild(CdkVirtualScrollViewport)  ScrollArea: CdkVirtualScrollViewport;
   @ViewChild('scrollingHeader')  TableHeader: ElementRef;
-  public readonly ROW_SIZE = 46;
+  public readonly ROW_SIZE = 36;
   public SCROLL_MIN_BUFFER = 20 * this.ROW_SIZE;
   public SCROLL_MAX_BUFFER = 100 * this.ROW_SIZE;
   public sharedWidth = '100px';
+  public sharedContainerWidth = '100px';
   public vertScrollShown = true;
   protected scrollSync = (event: Event) => {
-    this.TableHeader.nativeElement.scrollLeft = (event.target as HTMLElement).scrollLeft;
+    this.TableHeader.nativeElement.scroll((event.target as HTMLElement).scrollLeft, 0);
     this.detector.detectChanges();
   };
-  protected linkScrolling = () => {
+  public adjustLayout = () => {
     setTimeout(() => {
       try {
         const innerElem = (this.ScrollArea.elementRef.nativeElement.childNodes[0] as HTMLElement);
@@ -169,12 +205,20 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
         // if the inner scrolling area is wider than the container, set the inner header to match
         if (innerElem.scrollWidth > outerElem.clientWidth) {
           this.sharedWidth = `${innerElem.scrollWidth}px`;
+          if (this.vertScrollShown) {
+            this.sharedContainerWidth = `calc(${outerElem.clientWidth}px)`;
+          } else {
+            this.sharedContainerWidth = `calc(${outerElem.clientWidth - 16}px)`;
+          }
           outerElem.onscroll = this.scrollSync;
-        } else {
+        } else { // no horizontal scrolling so don't care about scrolling the header in sync
           if (this.vertScrollShown) {
             this.sharedWidth = `calc(${outerElem.clientWidth}px)`;
+            this.sharedContainerWidth = `calc(${outerElem.clientWidth}px)`;
           } else {
-            this.sharedWidth = `calc(${outerElem.clientWidth - 10}px)`;
+            this.sharedWidth = `calc(100%)`;
+            // this.sharedWidth = `calc(${outerElem.clientWidth - 16}px)`;
+            this.sharedContainerWidth = `calc(100%)`;
           }
         }
       } catch (err) {
@@ -183,8 +227,9 @@ export class AppTableComponent implements AfterViewInit, OnDestroy {
       this.detector.detectChanges();
     });
   };
+
   ngAfterViewInit(): void {
-    this.linkScrolling();
+    this.adjustLayout();
   }
   ngOnDestroy() {
     this.detector.detach();

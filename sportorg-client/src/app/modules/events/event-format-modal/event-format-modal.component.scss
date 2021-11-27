@@ -1,0 +1,31 @@
+.action-button {
+  max-height: 40px;
+  align-self: center;
+  margin: 0 10px;
+}
+
+.round-card {
+  display: flex;
+  flex-flow: row wrap;
+  .round-header {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+}
+.select-menu {
+  padding: 10px;
+}
+.form-field-item {
+  display: flex;
+  flex: 1;
+  max-height: 70px;
+  margin: 5px 5px 25px;
+  .mat-radio-group {
+    display: flex;
+    .mat-radio-button {
+      margin: 0 5px;
+    }
+  }
+}

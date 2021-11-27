@@ -1,3 +1,35 @@
 <div class="page-wrapper">
   <h1>Events</h1>
+  <mat-card class="table-card">
+    <app-filter-bar
+      [filterConfig]="filterConfig"
+      (requestFilter)="filterEvents($event)"
+    ></app-filter-bar>
+    <app-table ngClass="primary-table"
+               [tableColumns]="eventColumns"
+               [gridData]="eventRows"
+               [isEditable]="hasEventRole"
+               [canAddRows]="hasEventRole"
+               (editRow)="editEvent($event)"
+    ></app-table>
+  </mat-card>
 </div>
+
+<ng-template #ageCategoryTemplate let-row="row">
+  <mat-chip-list class="table-chips">
+    <mat-chip *ngFor="let age of row.ageOptions" [selectable]="false" >{{age}}</mat-chip>
+  </mat-chip-list>
+</ng-template>
+<ng-template #eventTypeTemplate let-row="row">
+  <mat-chip-list class="table-chips">
+    <mat-chip *ngFor="let eType of row.eventTypeOptions" [selectable]="false" >{{eType}}</mat-chip>
+  </mat-chip-list>
+</ng-template>
+
+<ng-template #locationTemplate let-row="row">
+  <span title="{{row.locationAddress || 'address not available'}}">{{row.locationName}}</span>
+</ng-template>
+
+<ng-template #eventLinkTemplate let-row="row">
+  <span title="View this event"><a routerLink="/event/{{row.scheduledEventId}}">{{row.scheduledEventName}}</a></span>
+</ng-template>

@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, ValidatorFn, Validators} from "@angular/forms";
 import {debounceTime, distinctUntilChanged, filter} from "rxjs/operators";
 import {StaticValuesService} from "../../services/static-values.service";
+import {OrgFormControl} from "../../modals/validating-modal/validating-modal.component";
 
 @Component({
   selector: 'app-string-input',
@@ -11,8 +12,8 @@ import {StaticValuesService} from "../../services/static-values.service";
 export class StringInputComponent implements OnInit {
 
   @Input() set value (newValue: string) {
-    if (this.textFormControl) {
-      this.textFormControl.setValue(newValue);
+    if (this.orgFormControl) {
+      this.orgFormControl.setValue(newValue);
     }
   }
   @Input() useTextArea: boolean = false;
@@ -34,17 +35,17 @@ export class StringInputComponent implements OnInit {
   protected _validationType = '';
   @Input() set disabled (setDisabled: boolean) {
     if (setDisabled) {
-      this.textFormControl.enable();
+      this.orgFormControl.disable();
     } else {
-      this.textFormControl.disable()
+      this.orgFormControl.enable();
     }
   }
   @Output() valueChange = new EventEmitter<string>();
   @Output() valid = new EventEmitter<boolean>();
 
-  public textFormControl = new FormControl();
+  @Input() orgFormControl = new OrgFormControl('name');
   public clearString = () => {
-    this.textFormControl.setValue(null);
+    this.orgFormControl.setValue(null);
     this.valueChange.emit(null);
   }
 
@@ -56,8 +57,8 @@ export class StringInputComponent implements OnInit {
     if (this.validationType && this.validationType === 'email'){
       validators.push(Validators.email);
     }
-    this.textFormControl.setValidators(validators);
-    this.textFormControl.updateValueAndValidity();
+    this.orgFormControl.setValidators(validators);
+    this.orgFormControl.updateValueAndValidity();
   }
 
   public updateValue =(event: Event) => {
@@ -68,18 +69,18 @@ export class StringInputComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.textFormControl.valueChanges
+    this.orgFormControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((newText) => {
         if (newText && newText.length) {
           this.valueChange.emit(newText);
         } else {
           this.valueChange.emit(null);
-          this.textFormControl.setValue(null);
+          this.orgFormControl.setValue(null);
         }
       });
 
-    this.textFormControl.statusChanges
+    this.orgFormControl.statusChanges
       .pipe().subscribe((status: string) => {
       this.valid.emit(status === 'VALID');
     });

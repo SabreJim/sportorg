@@ -1,0 +1,56 @@
+.placeholder-header {
+  width: 100%;
+  display:flex;
+  text-align: center;
+}
+.pools-container {
+  display: flex;
+  flex-flow: row wrap;
+  flex: 1;
+  .pool-item {
+    display: flex;
+    border: 5px solid white;
+    border-radius: 10px;
+    flex: 1;
+    max-width: calc(50% - 60px);
+    min-width: calc(50% - 60px);
+    margin: 10px;
+    padding: 10px;
+    flex-flow: column nowrap;
+
+    .pool-title {
+      font-weight: bolder;
+      font-size: 1.2em;
+      display: flex;
+      flex-flow: row nowrap;
+      margin-bottom: 15px;
+      .title-item {
+        display: flex;
+        flex: 1;
+      }
+    }
+    .athlete-list {
+      display: flex;
+      flex-flow: column nowrap;
+      .athlete-item {
+        display: flex;
+        flex: 1;
+        width: 100%;
+        border-bottom: 1px dotted white;
+        .athlete-value {
+          flex: 1;
+        }
+        .athlete-text {
+          flex: 3;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1000px) {
+  .pool-item {
+    max-width: calc(100% - 50px) !important;
+    min-width: calc(100% - 50px) !important;
+  }
+}

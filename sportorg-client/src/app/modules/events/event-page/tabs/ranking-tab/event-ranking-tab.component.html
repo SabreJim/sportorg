@@ -1,0 +1,25 @@
+<h3 *ngIf="placeholder?.length" class="placeholder-header">{{placeholder}}</h3>
+<div class="ranking-container">
+  <div class="ranking-title" >
+    <div class="title-item">Rank</div>
+    <div class="athlete-name">Athlete</div>
+    <div class="title-item small-hide">Club</div>
+    <div class="title-item small-hide" title="victories">V</div>
+    <div class="title-item mid-hide" title="matches">Match</div>
+    <div class="title-item " title="victory percent">V%</div>
+    <div class="title-item small-hide" title="Hits Scored">HS</div>
+    <div class="title-item mid-hide" title="Hits Received">HR</div>
+    <div class="title-item " title="plus/minus">+/-</div>
+  </div>
+  <div *ngFor="let athlete of rankedAthletes" class="ranking-item">
+    <div class="rank-value">{{athlete.roundRank}}</div>
+    <div class="athlete-name text-overflow">{{athlete.lastName.toUpperCase()}}, {{athlete.firstName}}</div>
+    <div class="rank-value small-hide" >{{athlete.club}}</div>
+    <div class="rank-value small-hide" title="victories">{{athlete.poolVictories}}</div>
+    <div class="rank-value mid-hide" title="matches">{{athlete.poolMatches}}</div>
+    <div class="rank-value " title="victory percent">{{athlete.poolVictoryPercent | number: '1.0-3'}}</div>
+    <div class="rank-value small-hide" title="Hits Scored">{{athlete.poolHitsScored}}</div>
+    <div class="rank-value mid-hide" title="Hits Received">{{athlete.poolHitsReceived}}</div>
+    <div class="rank-value " title="plus/minus">{{athlete.poolDiff}}</div>
+  </div>
+</div>

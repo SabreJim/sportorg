@@ -1,0 +1,55 @@
+.placeholder-header {
+  width: 100%;
+  display:flex;
+  text-align: center;
+}
+.ranking-container {
+  display: flex;
+  flex-flow: row wrap;
+  flex: 1;
+  border: 5px solid white;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 10px;
+  flex-flow: column nowrap;
+  .ranking-title, .ranking-item {
+    max-width: calc(90vw - 60px);
+    min-width: calc(60vw - 60px);
+  }
+  .ranking-title {
+    font-weight: bolder;
+    font-size: 1.2em;
+    display: flex;
+    flex-flow: row nowrap;
+    margin-bottom: 15px;
+    .title-item {
+      display: flex;
+      flex: 1;
+    }
+    .athlete-name {
+      display: flex;
+      flex: 3;
+    }
+  }
+
+  .ranking-item {
+    display: flex;
+    flex: 1;
+    flex-flow: row nowrap;
+    border-bottom: 1px dotted white;
+    margin-bottom: 10px;
+    .rank-value {
+      flex: 1;
+    }
+    .athlete-name {
+      flex: 3;
+    }
+  }
+}
+
+@media (max-width: 1000px) {
+  .ranking-title, .ranking-item {
+    //max-width: calc(100vw - 50px) !important;
+    //min-width: calc(100vw - 50px) !important;
+  }
+}

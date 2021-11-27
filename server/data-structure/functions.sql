@@ -167,7 +167,7 @@ BEGIN
     DECLARE v_first VARCHAR(200) default null;
     DECLARE v_last VARCHAR(200) default null;
     DECLARE v_yob INT default null;
-    DECLARE v_gender VARCHAR(1) default null;
+    DECLARE v_gender INT default null;
 
     DECLARE existing_id INT default null;
     DECLARE type_index INT DEFAULT 0;
@@ -178,7 +178,7 @@ BEGIN
     set v_first = JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.firstName'));
     set v_last = JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.lastName'));
     set v_yob = JSON_EXTRACT(request_body,'$.yearOfBirth');
-    set v_gender = JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.competeGender'));
+    set v_gender = JSON_UNQUOTE(JSON_EXTRACT(request_body,'$.competeGenderId'));
 
     SELECT athlete_id INTO existing_id
     from beaches.athlete_profiles ap WHERE ap.athlete_id = v_athlete_id;
@@ -188,11 +188,11 @@ BEGIN
             first_name = v_first,
             last_name = v_last,
             year_of_birth = v_yob,
-            compete_gender = v_gender
+            compete_gender_id = v_gender
         WHERE athlete_id = v_athlete_id;
     ELSE -- insert it
         INSERT INTO beaches.athlete_profiles
-            (first_name, last_name, year_of_birth, compete_gender)
+            (first_name, last_name, year_of_birth, compete_gender_id)
             VALUES
             (v_first, v_last, v_yob, v_gender);
             SET existing_id = LAST_INSERT_ID();
@@ -462,3 +462,71 @@ BEGIN
     RETURN new_id;
 END;
 //
+
+-- drop procedure update_ranking;
+delimiter //
+CREATE PROCEDURE update_ranking (
+    p_first_name VARCHAR(30),
+    p_last_name VARCHAR(30),
+    p_license VARCHAR(30),
+    p_points DECIMAL,
+    p_club_name VARCHAR(10),
+    p_region_code VARCHAR(10),
+    p_circuit_id INT,
+    p_event_id INT
+    )
+    SQL SECURITY INVOKER
+BEGIN
+	DECLARE v_athlete_id INT;
+	DECLARE v_region_id INT;
+	DECLARE v_club_id INT;
+	DECLARE v_gender_id INT;
+	DECLARE v_athlete_type_id INT;
+
+	-- back fill any missing regions or clubs
+	SELECT region_id INTO v_region_id
+	FROM beaches.regions WHERE region_code = p_region_code;
+	IF v_region_id IS NULL THEN
+		INSERT INTO beaches.regions (region_name, country_code, region_code)
+		VALUES (p_region_code, 'CAN', p_region_code);
+		SELECT LAST_INSERT_ID() INTO v_region_id;
+	END IF;
+	SELECT club_id INTO v_club_id
+	FROM beaches.clubs WHERE club_abbreviation = p_club_name;
+	IF v_club_id IS NULL THEN
+		INSERT INTO beaches.clubs (club_name, club_abbreviation)
+		VALUES (p_club_name, p_club_name);
+		SELECT LAST_INSERT_ID() INTO v_club_id;
+	END IF;
+
+	-- get gender, weapon from event
+	SELECT gender_id, athlete_type_id INTO v_gender_id, v_athlete_type_id
+	FROM beaches.events where event_id = p_event_id;
+
+	-- find athlete by license
+	SELECT athlete_id INTO v_athlete_id
+	FROM beaches.athlete_profiles WHERE national_num = p_license AND LENGTH(national_num) > 0;;
+	IF v_athlete_id IS NULL THEN -- backup check by name
+		SELECT athlete_id INTO v_athlete_id
+		FROM beaches.athlete_profiles WHERE
+		UPPER(first_name) = UPPER(p_first_name) AND UPPER(last_name) = UPPER(p_last_name);
+		IF v_athlete_id IS NULL THEN -- create the profile
+			INSERT INTO beaches.athlete_profiles
+			(first_name, last_name, year_of_birth, compete_gender_id, club_id, national_num, region_id)
+			VALUES
+			(p_first_name, p_last_name, 2000, v_gender_id, v_club_id, p_license, v_region_id);
+			SELECT LAST_INSERT_ID() INTO v_athlete_id;
+		ELSE -- update the athlete with their CFF number
+			UPDATE beaches.athlete_profiles SET national_num = p_license WHERE athlete_id = v_athlete_id;
+		END IF;
+	END IF;
+
+	-- now finally insert the ranking value
+	INSERT INTO beaches.circuit_results
+	(circuit_id, event_id, athlete_id, points)
+	VALUES
+	(p_circuit_id, p_event_id, v_athlete_id, p_points)
+	ON DUPLICATE KEY UPDATE points = p_points;
+END;
+//
+

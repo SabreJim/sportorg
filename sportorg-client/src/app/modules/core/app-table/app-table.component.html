@@ -1,6 +1,6 @@
-<table ngClass="sportorg-table {{altClass}}">
+<table ngClass="sportorg-table {{altClass}}" (window:resize)="adjustLayout()">
   <thead>
-    <div #scrollingHeader ngClass="header-container {{vertScrollShown ? 'shorter-header' : ''}}">
+    <div #scrollingHeader ngClass="header-container {{vertScrollShown ? 'shorter-header' : ''}}" [style.min-width]="sharedContainerWidth" [style.max-width]="sharedContainerWidth">
       <tr class="header-row" [style.min-width]="sharedWidth" [style.max-width]="sharedWidth">
         <th *ngIf="isEditable || canAddRows" class="header-cell edit-header"><mat-icon (click)="addNew()">add_box</mat-icon></th>
         <th *ngIf="canSelect" class="header-cell edit-header">&nbsp;</th>
@@ -9,7 +9,7 @@
                       [ngTemplateOutletContext]="{column: column }"></ng-container>
       </tr>
     </div>
-    <th ngClass="header-cell scroll-spanner"></th>
+    <th ngClass="header-cell scroll-spanner" *ngIf="vertScrollShown"></th>
   </thead>
 
   <cdk-virtual-scroll-viewport [itemSize]="ROW_SIZE" class="body-scroll"
@@ -30,19 +30,23 @@
 </table>
 
 <ng-template #headerCell let-column="column">
-  <th class="header-cell {{column.displayType}}-header" [hidden]="!column.showColumn">
+  <th class="header-cell {{column.displayType}}-header {{column.showColumn ? '' : 'hidden'}}"
+      orgContextMenu [contextItems]="tableContextMenu"
+      [style.min-width]="column.setWidth" [style.max-width]="column.setWidth">
     <button class="sort-button" (click)="sort(column)"
             [ngClass]="{'sorted-on': sortColumn === column.fieldName, 'not-sorted': sortColumn !== column.fieldName}">
       <mat-icon *ngIf="column.sortDirection === 'ASC'">arrow_upward</mat-icon>
       <mat-icon *ngIf="column.sortDirection === 'DESC'">arrow_downward</mat-icon>
     </button>
     <div class="header-text">{{column.title}}</div>
+    <button class="hide-button" (click)="toggleHide(column.title, true)"><mat-icon>visibility_off</mat-icon></button>
   </th>
 </ng-template>
 
 <ng-template #dataCell let-row="row" let-column="column">
-  <td class="body-cell {{column.displayType}}-cell" [hidden]="!column.showColumn">
-    <span *ngIf="column.displayType !== 'boolean' && column.displayType !== 'button'" class="content" [innerHTML]="row[column.displayField] | safePipe: 'html'"></span>
+  <td class="body-cell {{column.displayType}}-cell {{column.showColumn ? '' : 'hidden'}}" [style.min-width]="column.setWidth" [style.max-width]="column.setWidth">
+    <span *ngIf="column.displayType !== 'boolean' && column.displayType !== 'button' && column.displayType !== 'template'"
+          class="content" [innerHTML]="row[column.displayField] | safePipe: 'html'"></span>
     <span *ngIf="column.displayType === 'boolean'" class="content">
       <mat-icon>{{(row[column.displayField] === true || row[column.displayField] === 'Y') ? 'check_box' : 'check_box_outline_blank'  }}</mat-icon>
     </span>
@@ -50,6 +54,10 @@
                   <button class="mat-raised-button mat-button-base mat-primary {{row[column.buttonClass]}}"
                           [disabled]="column.buttonDisabledFn(row)"
                           (click)="column.buttonFn(row, $event)">{{column.buttonTextFn(row)}}</button>
+    </span>
+    <span *ngIf="column.displayType === 'template'" class="content">
+          <ng-container [ngTemplateOutlet]="column.templateRef"
+                        [ngTemplateOutletContext]="{row: row, column: column }"></ng-container>
     </span>
   </td>
 </ng-template>

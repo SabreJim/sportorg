@@ -1,6 +1,7 @@
 // import {EventAction, EventColor} from 'calendar-utils';
 import {LookupItem} from "./rest-objects";
 import {Observable} from "rxjs";
+import {TemplateRef} from "@angular/core";
 
 export interface ColumnConfig {
   title: string;
@@ -15,6 +16,8 @@ export interface ColumnConfig {
   buttonFn?: (any, event: MouseEvent) => void;
   buttonTextFn?: (any) => string;
   buttonDisabledFn?: (any) => boolean;
+  templateRef?: TemplateRef<any>;
+  setWidth?: string;
   sortDirection?: 'ASC' | 'DESC';
 }
 export class TableColumn {
@@ -31,10 +34,13 @@ export class TableColumn {
   buttonDisabledFn?: (any) => boolean;
   showColumn: boolean;
   sortDirection: 'ASC' | 'DESC';
+  templateRef?: TemplateRef<any>;
+  setWidth?: string;
   static fromConfig = (config: ColumnConfig) => {
     const column = new TableColumn(config.fieldName, config.title, config.type, config.displayField);
     column.lookupField = config.lookupField;
     column.lookupStatic = config.lookupStatic;
+    column.showColumn = config.showColumn !== undefined ? config.showColumn : true;
     column.buttonClass = config.buttonClass || '';
     column.buttonFn = config.buttonFn || function() { return null; };
     column.buttonTextFn = config.buttonTextFn || function () { return 'click me'};
@@ -42,6 +48,8 @@ export class TableColumn {
     if (config.displayType) {
       column.displayType = config.displayType;
     }
+    column.templateRef = config.templateRef ? config.templateRef : null;
+    column.setWidth = config.setWidth ? config.setWidth : '';
     return column;
   }
   constructor (fieldName: string, title: string, type: string, displayField?: string) {
@@ -52,7 +60,7 @@ export class TableColumn {
     } else {
       this.displayField = fieldName;
     }
-    if (['string' , 'long-string' , 'number', 'currency' ,'date', 'time', 'select', 'boolean', 'html', 'image'].includes(type)) {
+    if (['string' , 'long-string' , 'number', 'currency' ,'date', 'time', 'select', 'boolean', 'html', 'image', 'template'].includes(type)) {
       this.type = type;
     } else {
       this.type = 'string';

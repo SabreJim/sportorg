@@ -25,9 +25,13 @@ export interface FilterConfig {
   lookupName?: string;
 }
 
-export interface FilterRequest {
+export class FilterRequest {
   search: string;
   filters: { [key: string]: any }
+  constructor(filters:  { [key: string]: any } = {}) {
+    this.search = '';
+    this.filters = filters;
+  }
 }
 
 @Component({

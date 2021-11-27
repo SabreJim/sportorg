@@ -18,6 +18,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   // app names
   public readonly SPORT_ORG = 'beachesEast';
   public readonly FITNESS = 'fitnessTracker';
+  public readonly EVENT_APP = 'eventApp';
   public isMobile = StaticValuesService.isMobile;
   public appInUse: string = this.SPORT_ORG;
   public appLogoId: number;
@@ -82,8 +83,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     appRouter.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
         // if not logged in and required to be, redirect to login
-        if (event.url && event.url.toLowerCase && (event.url.toLowerCase()).includes('fitness-tracker')){
+        if (event?.url?.toLowerCase().includes('fitness-tracker')) {
           this.appInUse = this.FITNESS;
+        } else if (event?.url?.toLowerCase().includes('porthos')) {
+          this.appInUse = this.EVENT_APP;
         } else {
           this.appInUse = this.SPORT_ORG;
         }

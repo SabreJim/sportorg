@@ -11,25 +11,29 @@ import {
 import {LookupProxyService} from "../../services/lookup-proxy.service";
 import {LookupItem} from "../../models/rest-objects";
 import { MatSelectChange } from "@angular/material/select";
-import {StaticValuesService} from "../../services/static-values.service";
+import {OrgFormControl} from "../../modals/validating-modal/validating-modal.component";
 
 @Component({
   selector: 'app-select-input',
   templateUrl: './select-input.component.html',
   styleUrls: ['./select-input.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SelectInputComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() lookupType: string;
   @Input() showEmpty = true;
   @Input() title: string;
-  @Input() disabled: boolean = false;
+  @Input() set disabled (setDisabled: boolean) {
+    if (setDisabled) {
+      this.selectControl.disable();
+    } else {
+      this.selectControl.enable();
+    }
+  }
   @Input() required: boolean = false;
   @Input() set staticLookup (items: LookupItem[]) {
     if (items && items.length) {
       this.options = items;
-      if (!this.isDestroyed) this.detector.detectChanges();
     }
   };
 
@@ -37,24 +41,23 @@ export class SelectInputComponent implements OnInit, AfterViewInit, OnDestroy {
     if (newValue !== null && newValue !== undefined) {
       if ( this.options.length) { // lookup already available
         setTimeout(() => {
-          this.selectedValue = newValue;
-          if (!this.isDestroyed) this.detector.detectChanges();
+          this.selectControl.setValue(newValue);
         });
       } else { // park the value for after the lookup arrives
-        this.selectedValue = newValue;
+        this.selectControl.setValue(newValue);
       }
     } else if (this.options.length) {  // a blank value is being set after the component has been initialized
-      this.selectedValue = null;
+      this.selectControl.setValue(null);
       this.selectionObject.emit(null);
       this.selectedChange.emit(null);
     }
-  } get selected() { return this.selectedValue; }
+  } get selected() { return this.selectControl.value; }
+  @Input() selectControl = new OrgFormControl('select');
   @Output() selectedChange =  new EventEmitter<number>();
   @Output() selectionObject =  new EventEmitter<LookupItem>();
-  public selectedValue: number = null;
   public options: LookupItem[] = [];
   protected isDestroyed = false;
-  constructor(private lookupService: LookupProxyService, private detector: ChangeDetectorRef) { }
+  constructor(private lookupService: LookupProxyService) { }
 
   ngOnInit() {
   }
@@ -68,16 +71,14 @@ export class SelectInputComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.lookupService.Subjects[this.lookupType]) {
       this.lookupService.Subjects[this.lookupType].subscribe((items: LookupItem[]) => {
         this.options = items;
-        if (this.selectedValue) {
-          this.selected = this.selectedValue; // in case of timing issue
+        if (this.selectControl.value) { // in case of timing issue
+          this.selected = this.selectControl.value;
         }
-        if (!this.isDestroyed) this.detector.detectChanges();
       });
       this.lookupService.refreshLookups();
     }
   }
   ngOnDestroy() {
-    this.detector.detach();
     this.isDestroyed = true;
   }
 

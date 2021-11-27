@@ -1,0 +1,18 @@
+.modal-form-field {
+  display: flex;
+}
+.modal-wrapper {
+  .form-content{
+    .wide-field {
+      flex: 2;
+    }
+  }
+}
+.prompt-text {
+  min-width: 100%;
+  padding-top: 15px;
+}
+.image-picker {
+  max-height: 70px;
+  margin: 5px 5px 25px;
+}

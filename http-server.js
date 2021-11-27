@@ -33,6 +33,9 @@ app.use('/rest', appRouter(config));
 const fitnessRouter = require('./server/routes/fitness-routes');
 app.use('/rest/fitness', fitnessRouter(config));
 
+const eventRouter = require('./server/routes/event-routes');
+app.use('/rest/porthos', eventRouter(config));
+
 // a router to handle all static page requests
 app.use('/app', express.static(path.join(__dirname, '/sportorg-client/dist/sportorg-client')));
 

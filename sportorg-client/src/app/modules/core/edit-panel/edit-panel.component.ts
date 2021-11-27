@@ -59,7 +59,7 @@ export class EditPanelComponent implements OnInit {
 
   public gridData: SearchableGridRow[] = [];
   public filteredGridData: SearchableGridRow[] = [];
-
+  public nudgeTable = false;
   public refreshData = () => {
     if (this.configObject.columns && this.configObject.columns.length && this.configObject.getter) {
       this.configObject.getter().subscribe((rows: any) => {
@@ -84,10 +84,10 @@ export class EditPanelComponent implements OnInit {
           this.gridData = rows; // no need for a searchable string
           this.filteredGridData = rows;
         }
-
         this.detector.detectChanges();
-      })
+      });
     }
+    this.nudgeTable = true;
   };
 
   public editRow = (rowObject: any) => {

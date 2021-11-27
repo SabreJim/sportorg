@@ -3,6 +3,7 @@ import {FormControl, Validators} from "@angular/forms";
 import {debounceTime, distinctUntilChanged} from "rxjs/operators";
 import {Subscription} from "rxjs";
 import {StaticValuesService} from "../../services/static-values.service";
+import {OrgFormControl} from "../../modals/validating-modal/validating-modal.component";
 
 @Component({
   selector: 'app-number-input',
@@ -18,6 +19,10 @@ export class NumberInputComponent implements OnInit {
   }
   @Input() numberType: 'int' | 'float' = 'int';
   @Input() title: string;
+  @Input() max: number;
+  @Input() min = 1;
+  @Input() prefix: string = null;
+  @Input() suffix: string = null;
   @Input() set isRequired (newValue: boolean) {
     this._isRequired = newValue;
     if (this.numberFormControl) {
@@ -28,11 +33,18 @@ export class NumberInputComponent implements OnInit {
   }
   protected _isRequired = false;
   protected changeSub: Subscription;
+  @Input() set disabled (setDisabled: boolean) {
+    if (setDisabled) {
+      this.numberFormControl.disable();
+    } else {
+      this.numberFormControl.enable();
+    }
+  }
 
   @Output() valueChange = new EventEmitter<number>();
   @Output() valid = new EventEmitter<boolean>();
 
-  public numberFormControl = new FormControl();
+  @Input() numberFormControl = new OrgFormControl('number');
 
   public clearNumber = () => {
     this.valueChange.emit(null);

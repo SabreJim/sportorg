@@ -5,16 +5,16 @@
             appTooltip [hangRight]="true" [tooltipData]="hint"
     ><mat-icon>info</mat-icon></button>
     <input type="text" matInput [required]="isRequired"
-            [formControl]="textFormControl"/>
-    <button mat-button *ngIf="textFormControl.value" matSuffix mat-icon-button (click)="clearString()">
+            [formControl]="orgFormControl"/>
+    <button mat-button *ngIf="orgFormControl.value && !orgFormControl.disabled" matSuffix mat-icon-button (click)="clearString()">
       <mat-icon>close</mat-icon>
     </button>
-    <mat-error *ngIf="textFormControl.hasError('required')">{{title}} is required</mat-error>
+    <mat-error *ngIf="orgFormControl.hasError('required')">{{title}} is required</mat-error>
   </mat-form-field>
 </ng-container>
 <ng-container *ngIf="useTextArea === true">
   <textarea matInput
-            [value]="textFormControl.value"
+            [value]="orgFormControl.value"
             (input)="updateValue($event)"
             cdkTextareaAutosize
             #autosize="cdkTextareaAutosize"

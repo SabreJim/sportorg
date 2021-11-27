@@ -126,10 +126,11 @@ const getGroupAthletes = async (req, res) => {
             ap.athlete_id,
             CONCAT(UPPER(ap.last_name), ', ', ap.first_name) athlete_name,
             ap.year_of_birth,
-            ap.compete_gender,
+            g.gender_name,
             ap.fitness_level,
             (CASE WHEN COALESCE(ag.athlete_id, ai.invitee_id) IS NULL THEN 'N' ELSE 'Y' END) is_selected
         FROM beaches.athlete_profiles ap
+            INNER JOIN beaches.genders g ON g.gender_id = ap.compete_gender_id
             LEFT JOIN beaches.athlete_groups ag ON ag.athlete_id = ap.athlete_id AND group_id = ${groupId}
             LEFT JOIN beaches.access_invites ai ON ai.invite_offer_type = 'fitness_group' 
                 AND ai.invite_offered_id = ${groupId} AND invitee_type = 'athlete' AND invitee_id = ap.athlete_id

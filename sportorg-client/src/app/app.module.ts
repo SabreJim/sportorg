@@ -8,6 +8,7 @@ import {PagesModule} from "./modules/pages/pages.module";
 import {CoreModule} from "./modules/core/core.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {FitnessTrackerModule} from "./modules/fitness-tracker/fitness-tracker.module";
+import {EventsModule} from "./modules/events/events.module";
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import {FitnessTrackerModule} from "./modules/fitness-tracker/fitness-tracker.mo
     MaterialModule,
     CoreModule,
     PagesModule,
-    FitnessTrackerModule
+    FitnessTrackerModule,
+    EventsModule
   ],
   providers: [
   ],

@@ -1,0 +1,71 @@
+.header-row {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  width: 100%;
+  h2 {
+    display: flex;
+  }
+  .edit-button {
+    position: absolute;
+    left: 5vw;
+  }
+}
+.top-row {
+  display: flex;
+  flex: 1;
+  flex-flow: row wrap;
+  width: 100%;
+  margin: 15px;
+  .location-details, .event-details {
+    background-color: rgb(0 0 0 /4%);
+  }
+  .host-logo { flex: 1 }
+  .event-details { flex: 2 }
+  .location-details, .host-logo, .event-details, .map-details {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    margin: 5px;
+  }
+  .detail-item {
+    display: flex;
+    flex: 1;
+    flex-flow: row nowrap;
+    font-size: 1.4em;
+    max-height: 1.8em;
+    margin: 10px;
+    strong {
+      flex: 1;
+      align-self: center;
+      min-width: 130px;
+      font-size: 0.9em;
+    }
+    span, a {
+      flex: 2;
+      align-self: center;
+      text-align: left;
+    }
+    .wrap-text {
+      word-break: break-word;
+    }
+  }
+  .map-image {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    overflow: auto;
+  }
+}
+.description {
+  display: flex;
+  flex: 1;
+  width: 90%;
+  margin: 20px;
+}
+.events-table {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  margin: 20px;
+}

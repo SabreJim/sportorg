@@ -23,7 +23,7 @@ CREATE TABLE beaches.members (
     middle_name VARCHAR(50),
     last_name VARCHAR(50),
     year_of_birth INTEGER,
-    compete_gender CHAR(1),
+    compete_gender_id  NOT NULL DEFAULT 1 references beaches.genders(gender_id),
     is_active CHAR(1),
     is_athlete CHAR(1) DEFAULT 'Y',
     membership_start DATE,

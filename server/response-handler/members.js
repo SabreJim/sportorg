@@ -208,7 +208,7 @@ const getAnonymousMembers = async(req, res, next) => {
             m.last_name,
             m.member_name,
             m.compete_age,
-            m.compete_gender,
+            m.compete_gender_id,
             m.is_athlete,
             m.membership_start,
             m.license,

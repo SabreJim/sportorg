@@ -8,6 +8,7 @@ import {PoolsProxyService} from "../../../core/services/events/pools-proxy.servi
 import {StaticValuesService} from "../../../core/services/static-values.service";
 import {LookupProxyService} from "../../../core/services/lookup-proxy.service";
 import {Subscription} from "rxjs";
+import {TableauProxyService} from "../../../core/services/events/tableau-proxy.service";
 
 @Component({
   selector: 'app-event-format-item',
@@ -16,7 +17,7 @@ import {Subscription} from "rxjs";
 })
 export class EventFormatItemComponent extends ValidatingPanelComponent<EventRound> implements OnInit, OnDestroy {
   constructor(protected eventProxy: EventsProxyService, protected poolProxy: PoolsProxyService,
-              protected lookupProxy: LookupProxyService){
+              protected lookupProxy: LookupProxyService, protected tableaProxy: TableauProxyService){
     super();
   }
 
@@ -90,7 +91,9 @@ export class EventFormatItemComponent extends ValidatingPanelComponent<EventRoun
   // DE functions
   /////////////////////////////
   public createTableau = () => {
+    this.tableaProxy.createTableau(this.record.eventId, this.record.eventRoundId).subscribe((success: boolean) => {
 
+    });
   }
 
   ngOnDestroy(): void {

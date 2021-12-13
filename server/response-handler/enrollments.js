@@ -73,7 +73,7 @@ const getMyMembersEnrolled = async(req, res, next) => {
             m.first_name,
             m.last_name,
             m.year_of_birth,
-            m.compete_gender,
+            m.compete_gender_id,
             m.is_active,
             m.is_athlete,
             m.email,

@@ -151,7 +151,7 @@ SELECT DISTINCT
             m.last_name,
             m.year_of_birth,
             CONVERT((SELECT private_key FROM beaches.projects where type = 'config' AND private_key_id = 'currentYear'), SIGNED) - m.year_of_birth compete_age,
-            m.compete_gender,
+            m.compete_gender_id,
             DATE_FORMAT(m.membership_start, '%Y-%m-%d') as 'membership_start',
             m.email,
             m.street_address,

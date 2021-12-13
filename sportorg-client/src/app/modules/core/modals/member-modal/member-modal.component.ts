@@ -35,7 +35,7 @@ export class MemberModalComponent implements OnInit {
     lastName: null,
     name: null,
     yearOfBirth: null,
-    competeGender: 'M',
+    competeGenderId: 3,
     isActive: 'Y',
     isAthlete: 'Y',
     membershipStart: null,
@@ -62,17 +62,22 @@ export class MemberModalComponent implements OnInit {
   public composedAddress = '';
   public genderLookup: LookupItem[] = [
     {id: 1, lookup: 'gender', name: 'Male', description: 'M'},
-    {id: 2, lookup: 'gender', name: 'Female', description: 'F'}
+    {id: 2, lookup: 'gender', name: 'Female', description: 'F'},
+    {id: 3, lookup: 'gender', name: 'Other', description: 'X'},
+
   ];
 
-  public decodeLookup = (value: string, lookup: LookupItem[]) => {
-    const foundItem = lookup.find((item: LookupItem) => {
-      return item.description === value;
-    });
-    return (foundItem) ? foundItem.id : null;
-  };
+  // public decodeLookup = (value: string, lookup: LookupItem[]) => {
+  //   const foundItem = lookup.find((item: LookupItem) => {
+  //     return item.description === value;
+  //   });
+  //   return (foundItem) ? foundItem.id : null;
+  // };
+  // public selectGender = (newValue: LookupItem) => {
+  //   this.member.competeGender = (newValue.description === 'M') ? 'M' : 'F';
+  // };
   public selectGender = (newValue: LookupItem) => {
-    this.member.competeGender = (newValue.description === 'M') ? 'M' : 'F';
+    this.member.competeGenderId = newValue.id;
   };
 
   public updatePhone = (newValue: string, position: string) => {

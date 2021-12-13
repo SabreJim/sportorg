@@ -29,12 +29,12 @@
       ></app-string-input>
 
       <app-select-input
-        [staticLookup]="genderLookup"
         [title]="'Gender (for competition)'"
-        [selected]="decodeLookup(member.competeGender, genderLookup)"
+        [staticLookup]="genderLookup"
+        [required]="true"
+        [selected]="member.competeGenderId"
         (selectionObject)="selectGender($event)"
       ></app-select-input>
-
       <app-boolean-input (valueChanged)="member.isAthlete = ($event === 'Y') ? 'Y': 'N'"
                          [title]="'Athlete'"
                          [value]="member.isAthlete" ></app-boolean-input>
@@ -61,7 +61,7 @@
   <mat-card class="field-card">
     <div class="form-header"><h2>Contact Info</h2></div>
     <div class="form-content">
-      <app-string-input [value]="member.email"
+      <app-string-input [(value)]="member.email"
                         [title]="'Email'"
                         [isRequired]="true"
                         [validationType]="'email'"

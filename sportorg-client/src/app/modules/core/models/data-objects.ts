@@ -102,7 +102,7 @@ export interface AppMember {
   memberName?: string;
   name: string;
   yearOfBirth: number;
-  competeGender: 'M' | 'F',
+  competeGenderId: number;
   isActive: 'Y' | 'N';
   isAthlete: 'Y' | 'N';
   membershipStart: string;

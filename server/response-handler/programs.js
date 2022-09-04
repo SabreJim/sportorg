@@ -12,7 +12,7 @@ const getActivePrograms = async(req, res, next) => {
     if (req.query && req.query.seasonId) {
         seasonFilter = ` AND p.season_id = ${req.query.seasonId}`;
     }
-    const query = `SELECT p.* from v_program_classes p WHERE 1 = 1 ${seasonFilter} ORDER BY program_id`;
+    const query = `SELECT p.* from v_program_classes p WHERE 1 = 1 ${seasonFilter} ORDER BY program_name`;
     const programs = await MySQL.runQuery(query);
     returnResults(res, parseHtmlFields(programs, ['programDescription']));
 };

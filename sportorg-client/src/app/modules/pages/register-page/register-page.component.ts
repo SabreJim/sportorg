@@ -65,6 +65,10 @@ export class RegisterPageComponent implements AfterViewInit, OnDestroy {
               protected LookupService: LookupProxyService, protected detector: ChangeDetectorRef) {
   }
 
+  public checkIfLoginRequired = () => {
+    return !this.currentUser || this.currentUser?.isAnonymous;
+  }
+
   public selectSeason = (season: LookupItem) => {
     if (season && season.id) {
       this.currentRegistration.seasonId = season.id;

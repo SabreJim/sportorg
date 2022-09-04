@@ -54,6 +54,7 @@ import {ContextMenuComponent} from "./directives/context-menu/context-menu.compo
 import {EventItemModalComponent} from "./modals/event-item-modal/event-item-modal.component";
 import {ValidatingPanelComponent} from "./validating-panel/validating-panel.component";
 import {KeyboardCaptureDirective} from "./directives/keyboard-capture.directive";
+import {SeasonSwitcherComponent} from "./season-switcher/season-switcher.component";
 
 @NgModule({
   declarations: [
@@ -97,6 +98,7 @@ import {KeyboardCaptureDirective} from "./directives/keyboard-capture.directive"
     RestImageDirective,
     ImagePreviewModalComponent,
     ScheduledEventModalComponent,
+    SeasonSwitcherComponent,
     EventItemModalComponent,
     ValidatingModalComponent,
     ValidatingPanelComponent,
@@ -139,6 +141,7 @@ import {KeyboardCaptureDirective} from "./directives/keyboard-capture.directive"
     RestImageDirective,
     FilterBarComponent,
     ScheduledEventModalComponent,
+    SeasonSwitcherComponent,
     EventItemModalComponent,
     ContextMenuDirective,
     KeyboardCaptureDirective

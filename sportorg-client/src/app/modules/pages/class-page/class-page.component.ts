@@ -1,9 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ClassRecord, ProgramRecord} from "../../core/models/data-objects";
-import {LookupProxyService} from "../../core/services/lookup-proxy.service";
-import {ClassesProxyService} from "../../core/services/classes-proxy.service";
+import {ProgramRecord} from "../../core/models/data-objects";
 import {Subscription} from "rxjs";
-import {clone} from 'ramda';
 import {NavigationEnd, Router} from "@angular/router";
 import {StaticValuesService} from "../../core/services/static-values.service";
 import {ProgramsProxyService} from "../../core/services/programs-proxy.service";
@@ -21,12 +18,9 @@ export class ClassPageComponent implements OnInit, OnDestroy {
   private programSubscription: Subscription;
 
   public currentPrograms: ProgramRecord[] = [];
-  public seasons: LookupItem[] = [];
-  public defaultSeason: LookupItem;
   public currentSeason: LookupItem;
 
-  constructor(protected lookupProxy: LookupProxyService, protected classProxy: ClassesProxyService,
-              private appRouter: Router, private programProxy: ProgramsProxyService) {
+  constructor(private appRouter: Router, private programProxy: ProgramsProxyService) {
     appRouter.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         // get the 'fragment' and scroll the html anchor into view
@@ -73,12 +67,6 @@ export class ClassPageComponent implements OnInit, OnDestroy {
       this.currentPrograms = programs;
     });
 
-    this.lookupProxy.getLookup('seasons').subscribe((items: LookupItem[]) => {
-      this.seasons = items;
-      const currentSeason = items.find(i => i.id === parseInt(i.otherId));
-      this.selectSeason(currentSeason);
-      this.defaultSeason = clone(currentSeason);
-    });
   }
 
   ngOnDestroy(): void {

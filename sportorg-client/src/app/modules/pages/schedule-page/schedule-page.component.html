@@ -3,11 +3,25 @@
     <mat-expansion-panel-header class="panel-header">
       <h1>Weekly Schedule</h1>
     </mat-expansion-panel-header>
-    <div class="primary-table-box">
-      <sportorg-calendar
-        [isExpanded]="false"
-        [showExpand]="true"
-      ></sportorg-calendar>
+    <season-switcher (seasonChanged)="selectSeason($event)"></season-switcher>
+    <div class="schedule-grid" >
+      <div class="day-column" *ngFor="let weekHeader of weekdays">
+        <div class="day-header grid-item">{{weekHeader.dayName}}</div>
+          <ng-container *ngIf="dayColumns[weekHeader.id]">
+            <div class="class-item grid-item" [style.max-height]="maxClassHeight"
+                 *ngFor="let dayClass of dayColumns[weekHeader.id]">
+              <span class="name">{{dayClass.programName}}</span>
+              <span class="name" *ngIf="dayClass.secondProgramName">and {{dayClass.secondProgramName}}</span>
+              <span class="time">{{dayClass.startTime}}</span>
+              <span class="time">to {{dayClass.endTime}}</span>
+              <span class="date" *ngIf="dayClass.startDate">Starting:{{dayClass.startDate}}</span>
+
+            </div>
+          </ng-container>
+      </div>
+
+
     </div>
+
   </mat-expansion-panel>
 </div>

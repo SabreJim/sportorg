@@ -46,7 +46,16 @@ export interface ClassRecord {
   feeId: number;
   feeValue: number;
 }
-
+export interface ClassItem {
+  dayId: number;
+  startTime: string;
+  endTime: string;
+  colorId?: number;
+  locationName: string;
+  programName: string;
+  secondProgramName?: string;
+  startDate?: string;
+}
 export interface ProgramRecord {
   programId: number;
   programName: string;
@@ -63,7 +72,10 @@ export interface ProgramRecord {
   classes?: any;
   daysText?: string;
   seasonName?: string;
+  seasonId: number;
   loyaltyDiscount?: string;
+  startDate?: string;
+  classItems?: ClassItem[]
 }
 
 export interface ProgramSchedule {

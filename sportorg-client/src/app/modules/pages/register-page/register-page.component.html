@@ -1,7 +1,7 @@
 <div class="page-wrapper">
   <h4>Program Registration</h4>
   <mat-vertical-stepper [linear]="true" #stepper class="register-wizard"
-                        appLoginRequired [forceLogin]="currentUser?.isAnonymous" (selectionChange)="checkProgramEnrolled()">
+                        appLoginRequired [checkForceLogin]="checkIfLoginRequired" (selectionChange)="checkProgramEnrolled()">
     <mat-step [completed]="!!currentMember">
       <ng-template matStepLabel><span>Who is being registered?</span><span class="chosen-value">{{currentMember?.memberName}}</span></ng-template>
       <p class="prompt-text">Select who to register</p>
@@ -16,10 +16,9 @@
           </mat-radio-button>
         </mat-radio-group>
       </mat-form-field>
-      <p class="prompt-text">If a current member you are signing up does not show up, request access below. Or if
-        this is an entirely new member of the club, please create a member and select them.</p>
+      <p class="prompt-text">If you are signing up for the first time, please create a member and select them.</p>
       <div class="member-buttons">
-          <button mat-raised-button color="primary"  [disabled]="!!currentMember" (click)="requestMemberAccess()">Request Access</button>
+<!--          <button mat-raised-button color="primary"  [disabled]="!!currentMember" (click)="requestMemberAccess()">Request Access</button>-->
           <button mat-raised-button color="primary" [disabled]="!!currentMember" (click)="openAddMember()">Add New Member</button>
       </div>
       <div class="step-nav-buttons">

@@ -185,8 +185,9 @@ const getCleanBody = (body, schema) => {
             if (typeof value !== 'string') {
                 isValid = false;
             } else {
-                // strip out unsafe HTML tags, then replace quotes with html codes to save to MySQL
+                // strip out unsafe HTML tags, then replace quotes with html codes or double quote marks to save to MySQL
                 cleanBody[field.fieldName] = sanitizeHtml(value).replace(/"/g, '&quot;');
+                cleanBody[field.fieldName] = cleanBody[field.fieldName].replace(/'/g, "''");
             }
         }
     };
@@ -299,7 +300,6 @@ const getCleanBody = (body, schema) => {
 
     }
     const insertValues = `( ${keys.slice(1).join(', ')} ) VALUES (${mixedJoin(values, true)})`;
-
     return {
         isEdit: !!cleanBody[schema.primaryKey],
         setters,

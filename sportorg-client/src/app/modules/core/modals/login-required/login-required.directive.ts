@@ -13,12 +13,13 @@ import {LoginRequiredComponent} from "./login-required.component";
 @Directive({selector: '[appLoginRequired]'})
 export class LoginRequiredDirective implements OnInit, OnDestroy {
   @Input() forceLogin: boolean = false;
+  @Input() checkForceLogin: () => boolean;
 
 
   constructor (public dialog: MatDialog) {}
 
   @HostListener('click', ['$event']) bypassClick(event: MouseEvent) {
-    if (this.forceLogin === true) {
+    if (this.forceLogin === true || (this.checkForceLogin && this.checkForceLogin() === true)) {
       event.preventDefault();
       event.stopImmediatePropagation();
 

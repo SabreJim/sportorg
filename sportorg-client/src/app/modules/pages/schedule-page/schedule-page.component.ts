@@ -71,20 +71,17 @@ export class SchedulePageComponent implements OnInit {
         if (program.classes?.length) {
           program.classes.map((currentClass: any) => {
             let foundDay = daysObj[currentClass.dayId];
-            const foundClass = foundDay.find(c => c.startTime === currentClass.startTime);
+            const colorMatch = StaticValuesService.ORG_COLORS[program.colorId];
             const classInfo: ClassItem = {
               dayId: currentClass.dayId,
               startTime: makeTime(currentClass.startTime),
               endTime: makeTime(currentClass.endTime),
               colorId: program.colorId || 10,
+              bgColor: colorMatch.secondary,
+              textColor: colorMatch.primary,
               locationName: program.locationName,
               programName: program.programName,
-              startDate: (program.startDate !== this.currentSeason.moreInfo) ? program.startDate : null // if not equal to program startDate
-            }
-            if (foundClass) {
-              console.log('merge titles', foundClass, currentClass);
-              classInfo.secondProgramName = foundClass.programName; // preserve the dupe name
-              foundDay = foundDay.filter(c => c.startTime !== currentClass.startTime); // remove dupe
+              startDate: (currentClass.startDate !== this.currentSeason.moreInfo) ? currentClass.startDate : null // if not equal to program startDate
             }
             foundDay.push(classInfo);
           });
@@ -104,7 +101,6 @@ export class SchedulePageComponent implements OnInit {
           maxClasses = sortedArr.length;
         }
       }
-      console.log('made array', daysArr);
       this.maxClassHeight = `${100 / maxClasses}%`;
       this.dayColumns = daysArr;
     }

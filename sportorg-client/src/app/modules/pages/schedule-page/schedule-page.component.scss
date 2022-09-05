@@ -13,7 +13,6 @@
       align-items: center;
       margin: 5px;
       justify-content: center;
-      border: 1px solid white;
       border-radius: 10px;
     }
     .day-column {
@@ -26,10 +25,12 @@
       min-height: 60px;
       font-size: 1.8em;
       font-weight: 700;
+      border: 10px solid white;
     }
     .class-item {
       min-height: 60px;
       flex-flow: column nowrap;
+      padding: 15px;
       span {
         text-align:center;
         font-size: 1.2em;
@@ -38,6 +39,9 @@
         font-weight: 700;
         font-size: 1.3em;
         margin-bottom: 5px;
+      }
+      .date {
+        font-style: italic;
       }
     }
   }

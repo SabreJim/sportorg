@@ -42,6 +42,7 @@ FROM beaches.programs p
             'dayOfWeek',  wd.day_name,
             'dayId',  ps.day_id,
             'startTime',  ps.start_time,
+            'startDate', ps.start_date,
             'endTime', ps.end_time,
             'duration', ps.duration,
             'minAge', ps.min_age,

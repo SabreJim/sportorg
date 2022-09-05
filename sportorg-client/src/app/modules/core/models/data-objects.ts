@@ -51,6 +51,8 @@ export interface ClassItem {
   startTime: string;
   endTime: string;
   colorId?: number;
+  bgColor: string;
+  textColor: string;
   locationName: string;
   programName: string;
   secondProgramName?: string;

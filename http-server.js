@@ -15,12 +15,7 @@ if (process.env && process.env.SPORTORG_MYSQL && config.mysql){
     config.mysql.password = process.env.SPORTORG_MYSQL;
     config.mysql.user = process.env.SPORTORG_USER;
     config.mysql.database = process.env.SPORTORG_DB;
-    console.log('Configuring DB from environment variable', config);
-
-    config.mysql.host = '162.216.113.174';
-    config.mysql.user = 'deviladmin';
-    config.mysql.password = 'RuleNum3#';
-    // deviladmin /
+    console.log('Configuring DB from environment variable');
 }
 // establish DB connection pool
 mysqlDB.buildDBConnections(config);

@@ -49,7 +49,7 @@ export class SchedulePageComponent implements OnInit {
   }
 
   public applySeason = () => {
-    if (this.currentSeason.id > 0 && this.allPrograms?.length) {
+    if (this.currentSeason?.id > 0 && this.allPrograms?.length) {
       this.currentPrograms = this.allPrograms.filter((program: ProgramRecord) => {
         return program.seasonId === this.currentSeason.id;
       });

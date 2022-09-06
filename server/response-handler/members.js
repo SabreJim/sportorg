@@ -1,5 +1,5 @@
 const MySQL = require('../middleware/mysql-service');
-const { returnResults, returnSingle, returnError, cleanSelected, getDateOnly } = require('../middleware/response-handler');
+const { returnResults, returnSingle, returnError, cleanSelected, getDateOnly, parseHtmlFields} = require('../middleware/response-handler');
 const { memberSchema, getCleanBody, getCompoundFilter } = require('../middleware/request-sanitizer');
 
 const getMyMembers = async(req, res, next) => {
@@ -10,6 +10,13 @@ const getMyMembers = async(req, res, next) => {
                         OR (SELECT u.is_admin FROM beaches.users u where u.user_id = ${myUserId}) = 'Y'
                         OR EXISTS (SELECT cau.user_id FROM beaches.club_admin_users cau WHERE cau.user_id = ${myUserId} AND m.club_id = cau.club_id))`;
     const myMembers = await MySQL.runQuery(query);
+    myMembers.map((member) => {
+        try {
+            member.seasonEnrollments = JSON.parse(member.seasons);
+        } catch(err) {
+            member.seasonEnrollments = [];
+        }
+    })
     returnResults(res, myMembers);
 };
 

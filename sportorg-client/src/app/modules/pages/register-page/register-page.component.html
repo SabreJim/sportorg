@@ -9,7 +9,7 @@
         <mat-label >My members</mat-label>
         <input type="number" matInput class="hidden"/>
         <mat-radio-group class="member-radio-group"
-                         [ngModel]="currentMember" (change)="selectMember($event.value)">
+                         [value]="currentMember" (change)="selectMember($event.value)">
           <mat-radio-button class="member-radio" [value]=""><em>clear selection</em></mat-radio-button>
           <mat-radio-button class="member-radio" *ngFor="let member of availableMembers" [value]="member">
             {{member.memberName}}
@@ -30,14 +30,11 @@
       <ng-template matStepLabel><span>Select a program</span><span class="chosen-value">
         {{currentProgram?.programName}} {{currentProgram ? '(' + currentProgram.seasonName + ')' : ''}}
       </span></ng-template>
+
       <mat-form-field class="season-field" floatLabel="always" appearance="outline">
         <mat-label >Season</mat-label>
+        <season-switcher (seasonChanged)="selectSeason($event)"></season-switcher>
         <input type="number" matInput class="hidden"/>
-        <mat-button-toggle-group class="radio-toggle" [value]="currentSeason" (change)="selectSeason($event.value)">
-          <mat-button-toggle class="radio-toggle-item" [value]="season" *ngFor="let season of seasons" >
-            <strong>{{season.name}}</strong> ({{season.moreInfo}})
-          </mat-button-toggle>
-        </mat-button-toggle-group>
       </mat-form-field>
 
       <ng-container *ngIf="!alreadyEnrolled">

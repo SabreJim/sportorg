@@ -177,7 +177,9 @@ SELECT DISTINCT
             'seasonId',  ce.season_id,
             'enrolled',  CASE WHEN count_enrolls > 0 THEN 'Y' ELSE 'N' END))
             , ']') seasons, ce.member_id
-            from (SELECT count(enroll_id) count_enrolls, season_id, member_id FROM beaches.class_enrollments GROUP BY season_id, member_id) ce
+            from (SELECT count(enroll_id) count_enrolls, season_id, member_id FROM beaches.class_enrollments
+            	ORDER BY season_id DESC
+                GROUP BY season_id, member_id) ce
             GROUP BY ce.member_id) ce ON ce.member_id = m.member_id
         ORDER BY member_name;
 

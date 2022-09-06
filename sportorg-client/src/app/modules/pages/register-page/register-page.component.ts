@@ -119,9 +119,6 @@ export class RegisterPageComponent implements AfterViewInit, OnDestroy {
 
   public selectMember = (member: AppMember) => {
     if (member) {
-      if (member.seasons && member.seasons.length && !member.seasonEnrollments) {
-        member.seasonEnrollments = JSON.parse(member.seasons);
-      }
       this.currentMember = member;
       this.currentRegistration.memberId = this.currentMember.memberId;
     } else {

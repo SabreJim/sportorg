@@ -132,6 +132,8 @@ export interface AppMember {
   isLoyaltyMember?: string;
   seasons?: string;
   seasonEnrollments?: MemberSeasonEnrollment[];
+  clubId?: number;
+  clubName?: string;
 }
 export interface MemberSeasonEnrollment {
   seasonId: number;

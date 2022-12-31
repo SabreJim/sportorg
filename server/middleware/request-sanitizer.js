@@ -383,7 +383,8 @@ const memberSchema = {
         {fieldName: 'cellPhone', type: 'string', allowNull: true },
         {fieldName: 'homePhone', type: 'string', allowNull: true },
         {fieldName: 'license', type: 'string', allowNull: true },
-        {fieldName: 'isLoyaltyMember', type: 'string', allowNull: true, ignoreNull: true }
+        {fieldName: 'isLoyaltyMember', type: 'string', allowNull: true, ignoreNull: true },
+        {fieldName: 'clubId', type: 'int', allowNull: true}
     ]
 };
 const userSchema = {

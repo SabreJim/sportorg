@@ -447,11 +447,12 @@ CREATE TABLE beaches.clubs (
     club_abbreviation VARCHAR(10) NOT NULL,
     club_address VARCHAR(250) NULL,
     club_link VARCHAR(250) NULL,
+    can_register_members CHAR(1) NOT NULL DEFAULT 'N',
     PRIMARY KEY(club_id)
 );
-INSERT INTO beaches.clubs (club_name, club_abbreviation, club_address, club_link)
+INSERT INTO beaches.clubs (club_name, club_abbreviation, club_address, club_link, can_register_members)
 VALUES
-('Beaches East Sabre Club', 'BSCE', '512 George Street, Fredericton, NB', 'sabrebrain.com');
+('Beaches East Sabre Club', 'BSCE', '512 George Street, Fredericton, NB', 'sabrebrain.com', 'Y');
 
 ALTER TABLE beaches.members
 ADD club_id MEDIUMINT REFERENCES beaches.clubs(club_id);

@@ -29,7 +29,7 @@
     "@types/rx": "^4.1.2",
     "angular2-fontawesome": "^5.2.1",
     "date-fns": "^1.30.1",
-    "firebase": "^8.9.0",
+    "firebase": "^8.10.1",
     "font-awesome": "^4.7.0",
     "jqwidgets-ng": "^8.3.3",
     "jqwidgets-scripts": "^8.3.2",

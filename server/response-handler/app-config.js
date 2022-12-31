@@ -11,14 +11,12 @@ const getAppConfigs = async(req, res, next) => {
 
 const updateAppConfigs = async (req, res, next) => {
     let body = req.body;
+    const updatePromises = body.map(async (row) => {
+        const statement = `UPDATE beaches.projects SET private_key = '${row.value}' WHERE private_key_id = '${row.configItem}';`;
+        await MySQL.runCommand(statement);
+    });
+    await Promise.all(updatePromises);
     returnSingle(res, {});
-    // let statement = `UPDATE beaches.projects SET ${cleanProgram.setters.join(', ')} WHERE program_id = ${cleanProgram.cleanBody.programId}`;
-    // const statementResult = await MySQL.runCommand(statement);
-    // if (statementResult && statementResult.affectedRows) {
-    //     returnSingle(res, {affectedRows: statementResult.affectedRows});
-    // } else {
-    //     returnError(res, 'An error occurred when updating this record');
-    // }
 };
 
 module.exports = {

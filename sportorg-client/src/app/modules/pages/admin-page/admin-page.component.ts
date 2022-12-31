@@ -135,7 +135,9 @@ export class AdminPageComponent implements OnInit, OnDestroy {
       new TableColumn('cellPhone', 'Cell #', 'string'),
       new TableColumn('isActive', 'Active', 'boolean'),
       new TableColumn('isAthlete', 'Athlete', 'boolean'),
-      new TableColumn('isLoyaltyMember', 'Loyalty Member', 'boolean')
+      new TableColumn('isLoyaltyMember', 'Loyalty Member', 'boolean'),
+      TableColumn.fromConfig({ fieldName: 'clubId', title: 'Club', type: 'select', displayField: 'clubName',
+        lookupField: 'appClubs' }),
     ]
   };
 
@@ -301,7 +303,9 @@ export class AdminPageComponent implements OnInit, OnDestroy {
     });
   }
   public saveConfig = () => {
-
+    this.configSub = this.configService.updateConfigs(this.configRows).subscribe((result: any) => {
+      this.getAppConfig();
+    })
   }
 
   public companyConfig: AdminConfig = {

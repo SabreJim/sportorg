@@ -24,6 +24,7 @@ export class LookupProxyService extends RestProxyService {
   protected ageCategoryCache: LookupItem[] = [];
   protected athleteTypeCache: LookupItem[] = [];
   protected clubCache: LookupItem[] = [];
+  protected appClubCache: LookupItem[] = [];
   protected companyCache: LookupItem[] = [];
   protected tagsCache: LookupItem[] = [];
   protected genderCache: LookupItem[] = [];
@@ -38,6 +39,7 @@ export class LookupProxyService extends RestProxyService {
     ageCategories: new Subject<LookupItem[]>(),
     athleteTypes: new Subject<LookupItem[]>(),
     clubs: new Subject<LookupItem[]>(),
+    appClubs: new Subject<LookupItem[]>(),
     companies: new Subject<LookupItem[]>(),
     genders: new Subject<LookupItem[]>(),
     eventStatuses: new Subject<LookupItem[]>(),
@@ -60,6 +62,7 @@ export class LookupProxyService extends RestProxyService {
     this.Subjects.ageCategories.next(this.ageCategoryCache);
     this.Subjects.athleteTypes.next(this.athleteTypeCache);
     this.Subjects.clubs.next(this.clubCache);
+    this.Subjects.appClubs.next(this.appClubCache);
     this.Subjects.companies.next(this.companyCache);
     this.Subjects.genders.next(this.genderCache);
     this.Subjects.eventStatuses.next(this.eventStatusCache);
@@ -93,6 +96,7 @@ export class LookupProxyService extends RestProxyService {
           this.ageCategoryCache = extractLookup(response.data, 'ageCategories', true);
           this.athleteTypeCache = extractLookup(response.data, 'athleteTypes');
           this.clubCache = extractLookup(response.data, 'clubs');
+          this.appClubCache = extractLookup(response.data, 'appClubs');
           this.companyCache = extractLookup(response.data, 'companies');
           this.genderCache = extractLookup(response.data, 'genders');
           this.eventStatusCache = extractLookup(response.data, 'eventStatuses');

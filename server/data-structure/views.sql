@@ -105,6 +105,9 @@ SELECT  a.age_id as 'id', a.label as 'name', a.name as 'more_info',null as'other
 UNION
 SELECT  c.club_id as 'id', c.club_name as 'name', c.club_abbreviation as 'more_info',null as'other_id', 'clubs' as 'lookup' FROM beaches.clubs c
 UNION
+SELECT  c.club_id as 'id', c.club_name as 'name', c.club_abbreviation as 'more_info',null as'other_id', 'appClubs' as 'lookup'
+    FROM beaches.clubs c WHERE c.can_register_members = 'Y'
+UNION
 SELECT  co.company_id as 'id', co.company_name as 'name', null as 'more_info',null as'other_id', 'companies' as 'lookup' FROM beaches.companies co
 UNION
 SELECT  ty.athlete_type_id as 'id', ty.type_name as 'name', null as 'more_info',null as'other_id', 'athleteTypes' as 'lookup' FROM beaches.athlete_types ty
@@ -147,6 +150,7 @@ SELECT DISTINCT
             m.is_athlete,
             m.club_id,
             cl.club_abbreviation,
+            cl.club_name,
             m.first_name,
             m.middle_name,
             m.last_name,
@@ -159,6 +163,8 @@ SELECT DISTINCT
             m.cell_phone,
             m.home_phone,
             m.postal_code,
+            m.province_id,
+            r.region_name province_name,
             m.license,
             m.consent_signed,
             m.is_active,
@@ -169,6 +175,7 @@ SELECT DISTINCT
             	THEN 'Y' ELSE 'N' END) currently_enrolled,
         	ce.seasons
         FROM beaches.members m
+        LEFT JOIN beaches.regions r ON r.region_id = m.province_id
         LEFT JOIN beaches.clubs cl ON cl.club_id = m.club_id
         LEFT JOIN (SELECT GROUP_CONCAT(user_id) access, member_id FROM beaches.member_users GROUP BY member_id) mu
         	ON mu.member_id = m.member_id
@@ -178,8 +185,8 @@ SELECT DISTINCT
             'enrolled',  CASE WHEN count_enrolls > 0 THEN 'Y' ELSE 'N' END))
             , ']') seasons, ce.member_id
             from (SELECT count(enroll_id) count_enrolls, season_id, member_id FROM beaches.class_enrollments
-            	ORDER BY season_id DESC
-                GROUP BY season_id, member_id) ce
+                GROUP BY season_id, member_id
+                ORDER BY season_id DESC) ce
             GROUP BY ce.member_id) ce ON ce.member_id = m.member_id
         ORDER BY member_name;
 

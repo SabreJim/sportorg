@@ -35,10 +35,18 @@
         [selected]="member.competeGenderId"
         (selectionObject)="selectGender($event)"
       ></app-select-input>
+
       <app-boolean-input (valueChanged)="member.isAthlete = ($event === 'Y') ? 'Y': 'N'"
                          [title]="'Athlete'"
                          [value]="member.isAthlete" ></app-boolean-input>
 
+      <app-select-input
+        [title]="'Club'"
+        [showEmpty]="true"
+        [lookupType]="'appClubs'"
+        [selected]="member?.clubId"
+        (selectionObject)="selectClub($event)"
+      ></app-select-input>
     </div>
   </mat-card>
 

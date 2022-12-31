@@ -1,20 +1,31 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Inject, OnInit} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import {AppMember} from "../../models/data-objects";
 import {LookupItem} from "../../models/rest-objects";
 import {StaticValuesService} from "../../services/static-values.service";
+import {FirebaseAuthService} from "../../services/firebase-auth.service";
+import {AppUser} from "../../models/authentication";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-member-modal',
   templateUrl: './member-modal.component.html',
   styleUrls: ['./member-modal.component.scss']
 })
-export class MemberModalComponent implements OnInit {
+export class MemberModalComponent implements OnInit, AfterViewInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: AppMember,
-              public matDialogRef: MatDialogRef<MemberModalComponent>) {
+              public matDialogRef: MatDialogRef<MemberModalComponent>,
+              private authService: FirebaseAuthService) {
   }
-
+  public currentUser: AppUser;
+  private userSub: Subscription;
+  ngAfterViewInit() {
+    this.userSub = this.authService.CurrentUser.subscribe((user: AppUser) => {
+      this.currentUser = user;
+    });
+    this.authService.getSession();
+  };
   ngOnInit() {
     if (this.data.memberId) {
       setTimeout(()=> {
@@ -78,6 +89,9 @@ export class MemberModalComponent implements OnInit {
   // };
   public selectGender = (newValue: LookupItem) => {
     this.member.competeGenderId = newValue.id;
+  };
+  public selectClub = (newValue: LookupItem) => {
+    this.member.clubId = newValue.id;
   };
 
   public updatePhone = (newValue: string, position: string) => {

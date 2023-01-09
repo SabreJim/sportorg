@@ -35,7 +35,7 @@
     "jqwidgets-scripts": "^8.3.2",
     "jspdf": "^2.3.1",
     "moment-timezone": "^0.5.35",
-    "rrule": "^2.6.6",
+    "rrule": "^2.7.1",
     "rxjs": "~6.6.3",
     "tslib": "^2.0.0",
     "uuid": "^3.4.0",

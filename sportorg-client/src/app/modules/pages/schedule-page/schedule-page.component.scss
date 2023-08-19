@@ -6,6 +6,7 @@
     display: flex;
     flex: 1;
     flex-flow: row nowrap;
+    overflow-x: auto;
     .grid-item {
       display: flex;
       flex: 1;
@@ -19,6 +20,13 @@
       display: flex;
       flex: 1;
       flex-flow: column nowrap;
+      min-width: 250px;
+    }
+    .day-column-row {
+      display: flex;
+      flex-flow: row nowrap;
+      min-height: 125px;
+      margin: 5px 0px;
     }
     .day-header {
       max-height: 60px;
@@ -28,9 +36,9 @@
       border: 10px solid white;
     }
     .class-item {
-      min-height: 60px;
+      min-height: 100%;
       flex-flow: column nowrap;
-      padding: 15px;
+      margin: 5px;
       span {
         text-align:center;
         font-size: 1.2em;

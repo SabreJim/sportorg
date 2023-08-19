@@ -57,6 +57,9 @@ export class StringInputComponent implements OnInit {
     if (this.validationType && this.validationType === 'email'){
       validators.push(Validators.email);
     }
+    if (this.validationType && this.validationType === 'phone'){
+      validators.push(Validators.pattern(StaticValuesService.phonePattern));
+    }
     this.orgFormControl.setValidators(validators);
     this.orgFormControl.updateValueAndValidity();
   }

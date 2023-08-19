@@ -55,11 +55,12 @@ export class StaticValuesService {
     return emailPattern.test(email);
   };
 
+  public static phonePattern = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
   public static validatePhone = (phoneNum: string, required: boolean = false) => {
   if (!phoneNum || !phoneNum.length) {
     return !required; // handle simplest cases
   }
-    const phonePattern = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    const phonePattern = StaticValuesService.phonePattern;
     return phonePattern.test(phoneNum);
   };
   public static formatPhone = (phoneNum: string) => {
@@ -67,7 +68,7 @@ export class StaticValuesService {
       return phoneNum; // handle simplest cases
     }
     const cleanNumbers = phoneNum.toString().replace(/\D/g, '');
-    return `(${cleanNumbers.slice(0, 3)} )${cleanNumbers.slice(3, 6)}-${cleanNumbers.slice(6,10)}`;
+    return `(${cleanNumbers.slice(0, 3)})${cleanNumbers.slice(3, 6)}-${cleanNumbers.slice(6,10)}`;
   };
 
   public static getUITime = (time: string) => {

@@ -5,24 +5,43 @@
     </mat-expansion-panel-header>
     <season-switcher (seasonChanged)="selectSeason($event)"></season-switcher>
     <div class="schedule-grid" >
-      <div class="day-column" *ngFor="let weekHeader of weekdays">
-        <div class="day-header grid-item">{{weekHeader.dayName}}</div>
-          <ng-container *ngFor="let dayClass of dayColumns[weekHeader.id]">
-            <div class="class-item grid-item"
-                 [style.max-height]="maxClassHeight"
-                 [style.backgroundColor]="dayClass.bgColor"
-                 [style.borderColor]="dayClass.bgColor"
-                 [style.color]="dayClass.textColor">
-              <span class="name">{{dayClass.programName}}</span>
-              <span class="name" *ngIf="dayClass.secondProgramName">and {{dayClass.secondProgramName}}</span>
-              <span class="time">{{dayClass.startTime}}</span>
-              <span class="time">to {{dayClass.endTime}}</span>
-              <span class="date" *ngIf="dayClass.startDate">Starting:{{dayClass.startDate}}</span>
+      <ng-container *ngFor="let weekHeader of weekdays">
+        <div *ngIf="dayColumns[weekHeader.id] && dayColumns[weekHeader.id].length > 0" class="day-column">
+          <div class="day-header grid-item">{{weekHeader.dayName}}</div>
+          <ng-container *ngFor="let startTime of startTimes">
+            <div class="day-column-row">
+
+              <ng-container *ngFor="let dayClass of dayColumns[weekHeader.id]">
+                <div *ngIf="dayClass.startTime === startTime" class="class-item grid-item"
+                     [style.max-height]="maxClassHeight"
+                     [style.backgroundColor]="dayClass.bgColor"
+                     [style.borderColor]="dayClass.bgColor"
+                     [style.color]="dayClass.textColor">
+                  <span class="name">{{dayClass.programName}}</span>
+                  <span class="name" *ngIf="dayClass.secondProgramName">and {{dayClass.secondProgramName}}</span>
+                  <span class="time">{{dayClass.startTime}}</span>
+                  <span class="time">to {{dayClass.endTime}}</span>
+                  <span class="date" *ngIf="dayClass.startDate">Starting:{{dayClass.startDate}}</span>
+                </div>
+              </ng-container>
             </div>
           </ng-container>
-      </div>
+        </div>
 
-
+<!--          <ng-container *ngFor="let dayClass of dayColumns[weekHeader.id]">-->
+<!--            <div class="class-item grid-item"-->
+<!--                 [style.max-height]="maxClassHeight"-->
+<!--                 [style.backgroundColor]="dayClass.bgColor"-->
+<!--                 [style.borderColor]="dayClass.bgColor"-->
+<!--                 [style.color]="dayClass.textColor">-->
+<!--              <span class="name">{{dayClass.programName}}</span>-->
+<!--              <span class="name" *ngIf="dayClass.secondProgramName">and {{dayClass.secondProgramName}}</span>-->
+<!--              <span class="time">{{dayClass.startTime}}</span>-->
+<!--              <span class="time">to {{dayClass.endTime}}</span>-->
+<!--              <span class="date" *ngIf="dayClass.startDate">Starting:{{dayClass.startDate}}</span>-->
+<!--            </div>-->
+<!--          </ng-container>-->
+      </ng-container>
     </div>
 
   </mat-expansion-panel>

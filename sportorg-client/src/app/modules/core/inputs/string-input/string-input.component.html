@@ -10,6 +10,7 @@
       <mat-icon>close</mat-icon>
     </button>
     <mat-error *ngIf="orgFormControl.hasError('required')">{{title}} is required</mat-error>
+    <mat-error *ngIf="orgFormControl.hasError('pattern')">{{title}} is invalid</mat-error>
   </mat-form-field>
 </ng-container>
 <ng-container *ngIf="useTextArea === true">

@@ -77,10 +77,14 @@
 
       <app-string-input [value]="member.cellPhone"
                         [title]="'Cell phone'"
+                        [validationType]="'phone'"
+                        (valid)="checkValid($event, 'cellPhone')"
                         (valueChange)="updatePhone($event, 'cellPhone')"></app-string-input>
 
       <app-string-input [value]="member.homePhone"
                         [title]="'Home phone'"
+                        [validationType]="'phone'"
+                        (valid)="checkValid($event, 'homePhone')"
                         (valueChange)="updatePhone($event, 'homePhone')"></app-string-input>
     </div>
   </mat-card>

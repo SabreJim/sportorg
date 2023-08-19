@@ -18,6 +18,7 @@ export class SchedulePageComponent implements OnInit {
   protected programSub: Subscription;
   public allPrograms: ProgramRecord[];
   public currentPrograms: ProgramRecord[];
+  public startTimes: string[] = [];
   public dayColumns: ClassItem[][] = [];
   public weekdays: DateHeader[] = [];
   public maxClassHeight = '100%';
@@ -70,7 +71,11 @@ export class SchedulePageComponent implements OnInit {
       this.currentPrograms.map((program: ProgramRecord) => {
         if (program.classes?.length) {
           program.classes.map((currentClass: any) => {
+            const startTime = makeTime(currentClass.startTime);
             let foundDay = daysObj[currentClass.dayId];
+            if (this.startTimes.indexOf(startTime) === -1) {
+              this.startTimes.push(startTime);
+            }
             const colorMatch = StaticValuesService.ORG_COLORS[program.colorId];
             const classInfo: ClassItem = {
               dayId: currentClass.dayId,
@@ -87,6 +92,7 @@ export class SchedulePageComponent implements OnInit {
           });
         }
       });
+      this.startTimes.sort();
       const daysArr: ClassItem[][] = [];
       let maxClasses = 1;
       for (let key in Object.keys(daysObj)) {

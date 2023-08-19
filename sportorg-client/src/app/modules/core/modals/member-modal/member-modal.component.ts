@@ -61,10 +61,10 @@ export class MemberModalComponent implements OnInit, AfterViewInit {
     license: null
   };
 
-  public invalid: string[] = [];
+  public invalid: string[] = ['No values yet'];
   public checkValid = (isValid: boolean, fieldName: string) => {
     if (isValid && this.invalid.includes(fieldName)) {
-     this.invalid = this.invalid.filter(item => item !== fieldName);
+     this.invalid = this.invalid.filter(item => item !== fieldName && item !== 'No values yet');
     }
     if (!isValid && !(this.invalid.includes(fieldName))) {
       this.invalid.push(fieldName);
@@ -97,12 +97,7 @@ export class MemberModalComponent implements OnInit, AfterViewInit {
   public updatePhone = (newValue: string, position: string) => {
     // validate phone numbers
     const isValidPhone = StaticValuesService.validatePhone(newValue);
-    this.checkValid(isValidPhone, position);
-    if (isValidPhone) {
-      this.member[position] = StaticValuesService.formatPhone(newValue);
-    } else {
-      this.member[position] = newValue;
-    }
+    this.member[position] = StaticValuesService.formatPhone(newValue); //newValue;
   };
 
 
